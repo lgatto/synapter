@@ -64,7 +64,7 @@
                            loadMasterData = function() {
                              if (!.self$Master)
                                stop("Identification final peptide is not a master file")
-                             message("Reading master Master peptide file...")
+                             message("Reading master identification peptide file...")
                              ext <- getExtension(.self$IdentPeptideFile)
                              if (tolower(ext) == "csv") {
                                .self$IdentPeptideData <- read.csv(.self$IdentPeptideFile,

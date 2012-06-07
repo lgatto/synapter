@@ -11,7 +11,7 @@
 
 
 filterFunction <- function(x) { 
-  ## keep only function 1 in MSe Pep2DAMRT
+  ## keep only function 1 in Pep3DAMRT
   return(x[x$Function == 1,])
 }
 
@@ -51,46 +51,46 @@ filterProtFpr <- function(pepdata, fpr) {
   pepdata[pepdata$protein.falsePositiveRate < fpr, ]
 }
 
-filterCommonSeq <- function(msepep, hdmsepep) {
+filterCommonSeq <- function(quantpep, identpep) {
   ## keep common sequences
-  cmnseq <- intersect(msepep$peptide.seq, hdmsepep$peptide.seq)
-  msepep <- msepep[msepep$peptide.seq %in% cmnseq, ]
-  hdmsepep <- hdmsepep[hdmsepep$peptide.seq %in% cmnseq, ]
-  return(list(msepep = msepep,
-              hdmsepep = hdmsepep))
+  cmnseq <- intersect(quantpep$peptide.seq, identpep$peptide.seq)
+  quantpep <- quantpep[quantpep$peptide.seq %in% cmnseq, ]
+  identpep <- identpep[identpep$peptide.seq %in% cmnseq, ]
+  return(list(quantpep = quantpep,
+              identpep = identpep))
 }
 
 
-filterKeepUniqueSeq <- function(msepep, hdmsepep) {
+filterKeepUniqueSeq <- function(quantpep, identpep) {
   ## DEBUG: some sequences are not unique
-  hdmse2keep <- names(which(table(hdmsepep$peptide.seq)==1))
-  mse2keep   <- names(which(table(msepep$peptide.seq)==1))
+  ident2keep <- names(which(table(identpep$peptide.seq)==1))
+  quant2keep   <- names(which(table(quantpep$peptide.seq)==1))
   ## DEBUD: save csv for diagnostic
-  ## write.csv(msepep[!msepep$peptide.seq %in% mse2keep, ],
-  ##          file="mse_pep_file_duplicated_entries.csv")
-  ## write.csv(hdmsepep[!hdmsepep$peptide.seq %in% hdmse2keep, ],
-  ##          file="hdmse_pep_file_duplicated_entries.csv")
+  ## write.csv(quantpep[!quantpep$peptide.seq %in% quant2keep, ],
+  ##          file="quant_pep_file_duplicated_entries.csv")
+  ## write.csv(identpep[!identpep$peptide.seq %in% ident2keep, ],
+  ##          file="ident_pep_file_duplicated_entries.csv")
   ## DEBUG: remove these from data
-  hdmsepep <- hdmsepep[hdmsepep$peptide.seq %in% hdmse2keep, ] 
-  msepep   <-   msepep[  msepep$peptide.seq %in% mse2keep, ]
-  return(list(msepep=msepep,
-              hdmsepep=hdmsepep))
+  identpep <- identpep[identpep$peptide.seq %in% ident2keep, ] 
+  quantpep <- quantpep[quantpep$peptide.seq %in% quant2keep, ]
+  return(list(quantpep = quantpep,
+              identpep = identpep))
 }
 
 
-filterKeepUniqueProt <- function(msepep, hdmsepep) {
+filterKeepUniqueProt <- function(quantpep, identpep) {
   ## DEBUG: there is still one protein that is
   ##        not common and unique in each data set
   ## if (debug) {
-  ##   venn <- Venn(list(mse = msepep$peptide.seq,
-  ##                     hdmse = hdmsepep$peptide.seq))
+  ##   venn <- Venn(list(quant = quantpep$peptide.seq,
+  ##                     ident = identpep$peptide.seq))
   ##   return(venn)
   ## }
-  msespecific <- setdiff(msepep$peptide.seq,hdmsepep$peptide.seq)
-  hdmsepep <- hdmsepep[!hdmsepep$peptide.seq %in% msespecific, ]
-  msepep   <-   msepep[!msepep$peptide.seq %in% msespecific, ]
-  return(list(msepep=msepep,
-              hdmsepep=hdmsepep))
+  quantspecific <- setdiff(quantpep$peptide.seq, identpep$peptide.seq)
+  identpep <- identpep[!identpep$peptide.seq %in% quantspecific, ]
+  quantpep <-quantpep[!quantpep$peptide.seq %in% quantspecific, ]
+  return(list(quantpep = quantpep,
+              identpep = identpep))
 }  
 
 
@@ -137,21 +137,21 @@ modelRetTime <- function(xx, span) {
               sd = sd))
 }
 
-doHDMSePredictions <- function(hdmsepep, model, nsd) {
+doHDMSePredictions <- function(identpep, model, nsd) {
   ## changes in v 0.4.6 - if available, ans is retrieved
   ## from the input data.frame, else it is computed using
   ## the model. 
-  if (all(c("predictedRt", "sdRt") %in% names(hdmsepep))) {
-    ## get from hdmsepep dataframe
+  if (all(c("predictedRt", "sdRt") %in% names(identpep))) {
+    ## get from identpep dataframe
     .fitted <- NA
-    .predicted <- hdmsepep$predictedRt
-    .sd <- hdmsepep$sdRt
+    .predicted <- identpep$predictedRt
+    .sd <- identpep$sdRt
   } else {
     ## compute from model 
-    .o <- order(hdmsepep$precursor.retT)
-    .allpreds <- predict(model$lo, data.frame(precursor.retT.ident = hdmsepep$precursor.retT), se=TRUE)
+    .o <- order(identpep$precursor.retT)
+    .allpreds <- predict(model$lo, data.frame(precursor.retT.ident = identpep$precursor.retT), se=TRUE)
     .sd <- .allpreds$se.fit[.o] * sqrt(model$lo$n) ## get sd from se
-    .predicted <- hdmsepep$precursor.retT - .allpreds$fit[.o]
+    .predicted <- identpep$precursor.retT - .allpreds$fit[.o]
     .fitted <- .allpreds$fit[.o]
   }
   if (!missing(nsd)) {
@@ -165,29 +165,29 @@ doHDMSePredictions <- function(hdmsepep, model, nsd) {
               predicted = .predicted,
               lower = .lower,
               upper = .upper,
-              mass = hdmsepep$peptide.mhp,
+              mass = identpep$peptide.mhp,
               sd = .sd)
   stopifnot(length(ans$predicted) == length(ans$sd))
   return(ans)
 }
 
 
-findMSeEMRTs <- function(hdmsepep,                         
-                         mse,
+findMSeEMRTs <- function(identpep,                         
+                         pep3d,
                          mergedpep,
                          nsd,
                          ppmthreshold, 
                          model) {
-  hdmseData <- doHDMSePredictions(hdmsepep, model, nsd)
+  hdmseData <- doHDMSePredictions(identpep, model, nsd)
   ## sanity checking - v 0.4.6
   stopifnot(all(hdmseData$lower <= hdmseData$upper))
   stopifnot(length(hdmseData$lower) == length(hdmseData$upper))
   n <- length(hdmseData$lower)
   res <- lapply(1:n, function(x) {
     ## matching on rt
-    selRt <- (mse$rt_min > hdmseData$lower[x] & mse$rt_min < hdmseData$upper[x]) 
+    selRt <- (pep3d$rt_min > hdmseData$lower[x] & pep3d$rt_min < hdmseData$upper[x]) 
     ## matching on mass error ppm
-    selPpm <- abs(error.ppm(obs = mse$mwHPlus , theo = hdmseData$mass[x])) < ppmthreshold
+    selPpm <- abs(error.ppm(obs = pep3d$mwHPlus , theo = hdmseData$mass[x])) < ppmthreshold
     .k <- selRt & selPpm
     ## res[[x]] <<- which(.k)
     ## sum(.k)
@@ -196,18 +196,18 @@ findMSeEMRTs <- function(hdmsepep,
   k <- sapply(res, length)
   
   n <- length(k)
-  m <- ncol(mse)
-  mse2 <- mse[1:length(k),] ## all cols of type numeric
+  m <- ncol(pep3d)
+  pep3d2 <- pep3d[1:length(k),] ## all cols of type numeric
   for (i in 1:n) {
     if (k[i] == 1) {
-      mse2[i, ] <- mse[res[[i]], ]
+      pep3d2[i, ] <- pep3d[res[[i]], ]
     } else {
-      ## mse2[i, ] <- rep(k[i], m) ## change in v 0.7.7      
-      mse2[i, ] <- c(k[i], rep(NA, m-1))
+      ## pep3d2[i, ] <- rep(k[i], m) ## change in v 0.7.7      
+      pep3d2[i, ] <- c(k[i], rep(NA, m-1))
     }
   }
 
-  ans <- cbind(hdmsepep, mse2)
+  ans <- cbind(identpep, pep3d2)
   
   matched.quant.spectrumIDs <- sapply(res, paste, collapse = ",")
   ans$matched.quant.spectrumIDs <- matched.quant.spectrumIDs
@@ -221,7 +221,7 @@ findMSeEMRTs <- function(hdmsepep,
   ## since v 0.5.0 - removing multiply matched EMRTs
   ## dupIDs <- ans$spectrumID[ans$Function == 1 & duplicated(ans$spectrumID)]
   ## dupRows <- ans$spectrumID %in% dupIDs
-  ## ans[dupRows, (ncol(hdmsepep)+1) : ncol(ans)] <- -1 
+  ## ans[dupRows, (ncol(identpep)+1) : ncol(ans)] <- -1 
   
   return(ans)
 }
@@ -290,8 +290,8 @@ lightMatchedEMRTs <- function(x) {
 
 
 gridSearch2 <- function(model,
-                        hdmsepep,
-                        mse,
+                        identpep,
+                        pep3d,
                         mergedPeptides,
                         ## fdr,
                         ppms,
@@ -317,8 +317,8 @@ gridSearch2 <- function(model,
       ._k <- ._k + 1
       nsd <- nsds[i]
       ppm <- ppms[j]
-      matchedEMRTs <- findMSeEMRTs(hdmsepep, 
-                                   mse,
+      matchedEMRTs <- findMSeEMRTs(identpep, 
+                                   pep3d,
                                    mergedPeptides,
                                    nsd, ppm,
                                    model)
@@ -379,13 +379,13 @@ getQs <- function(x, qtls) {
     return(list(x=xi, y=yi))
 }
 
-keepUniqueSpectrumIds <- function(mse) {
-  ## The MSe EMRTs spectra are duplicated
+keepUniqueSpectrumIds <- function(pep3d) {
+  ## The EMRTs spectra are duplicated
   ## for different charge states, isotopes, ...
   ## This functions removes the duplicated
   ## spectrum ids and keeps the first instances
   ## only
-  mse[!duplicated(mse$spectrumID),]
+  pep3d[!duplicated(pep3d$spectrumID),]
 }
 
 score2pval <- function(xx) {  
