@@ -27,8 +27,8 @@ plotLowess <- function(xx,
   plot(xx$precursor.retT.ident, xx$deltaRt,
        col = "#8FBDDA80", ## col2hcl("steelblue", alpha=.5),
        pch = 19,
-       ylab = expression(HDMS[e] - MS[e]),
-       xlab = expression(HDMS[e]~retention~time))
+       ylab = expression(Identification - Quantitation),
+       xlab = expression(Identification~retention~time))
   abline(h=0)
   grid()
   ## quick lowess to get range
@@ -36,9 +36,9 @@ plotLowess <- function(xx,
   plot(xx$precursor.retT.ident, xx$deltaRt,
        col = "#8FBDDA80", ## col2hcl("steelblue", alpha=.5),
        pch = 19,
-       ylab = expression(HDMS[e] - MS[e]),
+       ylab = expression(Identification - Quantitation),
        ylim = range(lws$y) + c(-.2,.2),
-       xlab = expression(HDMS[e]~retention~time))
+       xlab = expression(Identification~retention~time))
   abline(h=0)
   grid()
   cls <- brewer.pal(length(f), "Set1")  
@@ -76,8 +76,8 @@ plotLowess2 <- function(xx, model, nsd, ...) {
        col = "#8FBDDA80", ## col2hcl("steelblue", alpha=.5),
        pch = 19,
        ylim = ylim,
-       ylab = expression(HDMS[e] - MS[e]),
-       xlab = expression(HDMS[e]~retention~time),
+       ylab = expression(Identification - Quantitation),
+       xlab = expression(Identification~retention~time),
        type = "n",
        ...)
   grid()

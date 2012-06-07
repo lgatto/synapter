@@ -36,3 +36,7 @@ clean:
 	rm -f $(LATEXFILES)
 	rm -f *~
 	rm -rf sweave-cache
+
+pdfclean:
+	make clean
+	rm synapter.pdf

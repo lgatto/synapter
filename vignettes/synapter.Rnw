@@ -163,13 +163,45 @@ Preparation of the data for \Rpackage{synapter} requires the \texttt{.raw} data 
 
 %% A detailed overview of the PLGS operation is given in an accompanying document 'PLGS Data Processing for \Rpackage{synapter}', accessible with the \Rfunction{plgsGuide()} function. A brief overview is given here.
 
+We also highly recommend users to acquaint themselves with the PLGS search algorithm for data independent acquisitions \citep{PLGS2009}.
+
+
+First the user has to specify the output folders for files to be used in synapter analysis as demonstrated in figure \ref{fig:plgs1}. After the folders are specified ignore the message that appears requiring restarting PLGS.
+
+\begin{figure}[!hbt]
+  \begin{center}
+    \includegraphics[width=0.3\linewidth]{./Figures/PLGS_output_files1.jpg}
+    \includegraphics[width=0.3\linewidth]{./Figures/PLGS_output_files2.jpg}
+    \includegraphics[width=0.3\linewidth]{./Figures/PLGS_output_files3.jpg}
+    \caption{Specifying PLGS output folders. The last message can be ignored.}
+    \label{fig:plgs1}
+  \end{center}
+\end{figure}
+
 At the first stage PLGS performs noise reduction and centroiding, based on user specified preferences called \textit{processing parameters}. These preferences determine thresholds in intensity for discriminating between noise peaks and peptide and fragment ion peaks in high and low energy functions of an acquisition. The optimal value of these parameters is sample dependant and different between MSe and HDMSe modes. For \Rpackage{synapter} to function properly all acquisitions in the analysis have to be processed with the same thresholds, optimal for the mode identifications are transferred from (typically HDMSe mode). The user is expected to identify optimal parameters himself for every new sample type by repeatedly analysing a representative acquisition with different thresholds.  
 
 After the ions peaks have been determined and centroided, the ions representing charge states and isotopes of a peptide are collapsed into a single entity called EMRT (exact mass retention time pair). The EMRTs in low energy function represent unidentified peptides and are assigned peptides sequences during database search. The total list of EMRTs can be found in the \texttt{pep3DAMRT.csv} file and it is one of the \Rpackage{synapter} input files for the runs used for quantitation (typically MSe mode)
 
-Prior to the database search, randomised entries are added to the database to allow PLGS to compute \textit{protein false positive rate}. The randomised entries can either be added automatically or manually, using the \textit{Randomise Databank} function in the \textit{Databank admin tool}. To properly prepare the files for \Rpackage{synapter}, the user has to add randomised entries manually via \textit{Databank admin tool}, since only then randomised entries identified in the database search will be displayed in the \textit{csv} output.
+Prior to the database search, randomised entries are added to the database to allow PLGS to compute \textit{protein false positive rate}. The randomised entries can either be added automatically or manually, using the \textit{Randomise Databank} function in the \textit{Databank admin tool}. To properly prepare the files for \Rpackage{synapter}, the user has to add randomised entries manually via \textit{Databank admin tool}, since only then randomised entries identified in the database search will be displayed in the \textit{csv} output. Figure \ref{fig:plgs2} demonstrates how to create a randomised databank manually using one randomised entry per regular entry.
 
-The user is also expected to use a minimum of 1 fragment per peptide, 3 fragments per protein and 1 peptide per protein identification thresholds and 100\% \textit{False Positive Rate} for protein identification during database search for all of the acquisitions in the analysis. This allows to maximise the number of identified peptides from the randomised part of the database, needed to estimate peptide identifications statistics. The total list of identified peptides is given in \texttt{final\_peptide.csv} files. A single \texttt{final\_peptide.csv} file has to be supplied to \Rpackage{synapter} for every run in the analysis (for both identification and quantitation runs).
+\begin{figure}[!hbt]
+  \begin{center}
+    \includegraphics[width=0.3\linewidth]{./Figures/PLGS_create_databank1.jpg}
+    \includegraphics[width=0.3\linewidth]{./Figures/PLGS_create_databank2.jpg}
+    \caption{Databank creation in PLGS.}
+    \label{fig:plgs2}
+  \end{center}
+\end{figure}
+
+\begin{figure}[!hbt]
+  \begin{center}
+    \includegraphics[width=0.3\linewidth]{./Figures/PLGS_db_search_options.jpg}
+    \caption{Databank search options.}
+    \label{fig:plgs3}
+  \end{center}
+\end{figure}
+
+The user is also expected to use a minimum of 1 fragment per peptide, 3 fragments per protein and 1 peptide per protein identification thresholds and 100\% \textit{False Positive Rate}\footnote{This is erroneously termed false postive rate in the software and manuscript and should be considered a false discovery rate.} for protein identification during database search for all of the acquisitions in the analysis as demonstrated in figure \ref{fig:plgs3}. This allows to maximise the number of identified peptides from the randomised part of the database, needed to estimate peptide identifications statistics. The total list of identified peptides is given in \texttt{final\_peptide.csv} files. A single \texttt{final\_peptide.csv} file has to be supplied to \Rpackage{synapter} for every run in the analysis (for both identification and quantitation runs).
 
 
 \subsection{HDMSe/MSe data analysis}\label{sec:synapter}
@@ -483,6 +515,8 @@ exprs(msUps) <- t(apply(exprs(msUps), 1, "/", meds))
 @ 
 
 This same procedure could be applied with a set of constant spikes to estimate absolute protein quantities.
+
+%% Maybe a section with a PCA plot...
 
 \subsection{Statistical analysis of differentially expressed proteins}
 

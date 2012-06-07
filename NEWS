@@ -1,3 +1,12 @@
+CHANGES IN VERSION 0.9.1
+-------------------------
+ o more doc completion <2012-06-07 Thu>
+ o fixed type in dim <2012-06-07 Thu>
+ o added PLGS ref and screenshots to 
+   vignette <2012-06-07 Thu>
+ o finished methods documentation in 
+   Synapter.Rd <2012-06-07 Thu>
+
 CHANGES IN VERSION 0.9.0
 -------------------------
  o moved repo to github <2012-06-06 Wed>

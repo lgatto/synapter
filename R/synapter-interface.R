@@ -42,8 +42,8 @@ setMethod("dim", "Synapter",
           function(x) {
             dims <- list(IdentPeptideData = dim(x$IdentPeptideData),
                          QuantPeptideData = dim(x$QuantPeptideData),
-                         MergedPeptides = dim(xx$MergedFeatures),
-                         MatchedEMRTs = dim(xx$MatchedEMRTs))
+                         MergedPeptides = dim(x$MergedFeatures),
+                         MatchedEMRTs = dim(x$MatchedEMRTs))
             dims
           })
 
@@ -130,13 +130,13 @@ setMethod(setPepScoreFdr, "Synapter",
           function(object, fdr = 0.01) object$setPepScoreFdr(fdr))
 
 setMethod(getPepScoreFdr, "Synapter",
-          function(object, fdr = 0.01) object$PepScoreFdr)
+          function(object) object$PepScoreFdr)
 
 setMethod(setProtFpr, "Synapter",
           function(object, fpr = 0.01) object$setProtFpr(fpr))
 
 setMethod(getProtFpr, "Synapter",
-          function(object, fpr = 0.01) object$ProtFpr)
+          function(object) object$ProtFpr)
 
 setMethod(setIdentPpmError, "Synapter",
           function(object, ppm = 10) object$setIdentPpmError(ppm))
@@ -208,16 +208,17 @@ setMethod(getPepNumbers, "Synapter",
 
 
 setMethod(showFdrStats, "Synapter",
-          function(object) {
-            k <- c("0.001" = 0.001, "0.01" = 0.01, "0.05" = 0.05, "0.1" = 0.1)
+          function(object,
+                   k = c(0.001, 0.01, 0.05, 0.1)) {
+            names(k) <- as.character(k)
             ident <- list(pval = object$IdentPeptideData$pval,
                           BH = object$IdentPeptideData$BH,
                           Bonf = object$IdentPeptideData$Bonferroni,
                           qval = object$IdentPeptideData$qval)
-            quant <- list(pval = object$QuantPeptideData$pval,
-                          BH = object$QuantPeptideData$BH,
-                          Bonf = object$QuantPeptideData$Bonferroni,
-                          qval = object$QuantPeptideData$qval)
+                     quant <- list(pval = object$QuantPeptideData$pval,
+                                   BH = object$QuantPeptideData$BH,
+                                   Bonf = object$QuantPeptideData$Bonferroni,
+                                   qval = object$QuantPeptideData$qval)
             .f <- function(x, k)
               sapply(k, function(.k) round(100 * sum(x<=.k)/length(x), 2))
             ans1 <- sapply(ident, .f, k)
@@ -373,7 +374,7 @@ setMethod(plotFdr, "Synapter",
               plot(qv1[qv1 >= rng[1] & qv1 <= rng[2]],
                    (1 + sum(qv1 < rng[1])):sum(qv1 <= rng[2]),
                    type = "l", xlab = "FDR cut-off",
-                   ylab = "significant tests",
+                   ylab = "significant peptides",
                    col = "red", ...)
               lines(qv2[qv2 >= rng[1] & qv2 <= rng[2]],
                     (1 + sum(qv2 < rng[1])):sum(qv2 <= rng[2]),
@@ -383,7 +384,7 @@ setMethod(plotFdr, "Synapter",
                      bty = "n", cex = .6)
               plot((1 + sum(qv1 < rng[1])):sum(qv1 <= rng[2]),
                    qv1[qv1 >= rng[1] & qv1 <= rng[2]] * (1 + sum(qv1 < rng[1])):sum(qv1 <= rng[2]), 
-                   type = "l", xlab = "significant tests",
+                   type = "l", xlab = "significant peptides",
                    ylab = "expected false positives",
                    col = "red", ...)
               lines((1 + sum(qv2 < rng[1])):sum(qv2 <= rng[2]),
