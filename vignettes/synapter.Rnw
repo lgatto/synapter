@@ -496,7 +496,7 @@ In the above example, quantitation values and statistics data are saved in a sum
 
 \begin{figure}[!hbt]
 \begin{center}
-<<estimateFdrPlot,fig=T,echo=T,tikz=T,width=4,height=4>>=
+<<volcano,fig=T,echo=T,tikz=T,width=4,height=4>>=
 plot(res$lfc, -log10(res$qv),
      col = ifelse(grepl("ups$", rownames(res)),
        "#4582B3AA",
@@ -517,9 +517,10 @@ legend("topright", c("UPS", "E. coli"),
 \end{center}
 \end{figure}
 
+
 \begin{figure}[!hbt]
 \begin{center}
-<<estimateFdrPlot,fig=T,echo=T,tikz=T,width=4,height=4>>=
+<<hmap,fig=T,echo=T,tikz=T,width=4,height=4>>=
 heatmap(exprs(msUps)[grep("ups",featureNames(msUps)),])
 @
 \caption{A heatmap of all UPS1 proteins present in the final dataset.}
