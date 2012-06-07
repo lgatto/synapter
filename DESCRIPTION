@@ -1,0 +1,15 @@
+Package: synapter
+Type: Package
+Title: Label-free data analysis pipeline for optimal identification and quantitation
+Version: 0.9.0
+Author: Laurent Gatto, Pavel V. Shliaha and Nick J. Bond
+Maintainer: Laurent Gatto <lg390@cam.ac.uk>
+Depends: R (>= 2.15), methods, MSnbase
+Imports: hwriter, tcltk, tcltk2, RColorBrewer, Cairo, lattice, 
+	 qvalue, multtest, utils, Biobase
+Suggests: synapterdata, pgfSweave, xtable
+Description: The synapter package provides functionality to combine one or 
+	     several [HD]MSe files to [HD]MSe files to optimise identification and 
+	     quantitation data.
+License: GPL-2
+biocViews: Bioinformatics, MassSpectrometry, Proteomics, GUI

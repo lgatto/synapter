@@ -1,0 +1,632 @@
+\name{Synapter}
+
+% constructor
+\alias{Synapter}
+\alias{class:Synapter}
+
+% descriptors
+\alias{show,Synapter-method}
+\alias{dim,Synapter-method}
+\alias{inputFiles,Synapter-method}
+\alias{inputFiles}
+\alias{getLog,Synapter-method}
+\alias{getLog}
+
+% analysers
+\alias{mergePeptides,Synapter-method}
+\alias{mergePeptides}
+\alias{modelRt,Synapter-method}
+\alias{modelRt}
+\alias{findEMRTs,Synapter-method}
+\alias{findEMRTs}
+\alias{searchGrid,Synapter-method}
+\alias{searchGrid}
+
+% setters and getters
+\alias{getGrid,Synapter-method}
+\alias{getGrid}
+\alias{getGridDetails,Synapter-method}
+\alias{getGridDetails}
+\alias{getBestGridValue,Synapter-method}
+\alias{getBestGridValue}
+\alias{getBestGridParams,Synapter-method}
+\alias{getBestGridParams}
+\alias{setBestGridParams,Synapter-method}
+\alias{setBestGridParams}
+\alias{setPepScoreFdr,Synapter-method}
+\alias{setPepScoreFdr}
+\alias{getPepScoreFdr,Synapter-method}
+\alias{getPepScoreFdr}
+\alias{setIdentPpmError,Synapter-method}
+\alias{setIdentPpmError}
+\alias{getIdentPpmError,Synapter-method}
+\alias{getIdentPpmError}
+\alias{setQuantPpmError,Synapter-method}
+\alias{setQuantPpmError}
+\alias{getQuantPpmError,Synapter-method}
+\alias{getQuantPpmError}
+\alias{setPpmError,Synapter-method}
+\alias{setPpmError}
+\alias{setLowessSpan,Synapter-method}
+\alias{setLowessSpan}
+\alias{getLowessSpan,Synapter-method}
+\alias{getLowessSpan}
+\alias{setRtNsd,Synapter-method}
+\alias{setRtNsd}
+\alias{getRtNsd,Synapter-method}
+\alias{getRtNsd}
+\alias{getPpmErrorQs,Synapter-method}
+\alias{getPpmErrorQs}
+\alias{getRtQs,Synapter-method}
+\alias{getRtQs}
+\alias{getPepNumbers,Synapter-method}
+\alias{getPepNumbers}
+\alias{showFdrStats,Synapter-method}
+\alias{showFdrStats}
+\alias{setProtFpr,Synapter-method}
+\alias{setProtFpr}
+\alias{getProtFpr,Synapter-method}
+\alias{getProtFpr}
+\alias{getEMRTtable,Synapter-method}
+\alias{getEMRTtable}
+\alias{performance,Synapter-method}
+\alias{performance}
+
+% filters
+\alias{filterUniqueDbPeptides,Synapter-method}
+\alias{filterUniqueDbPeptides}
+\alias{filterUniqueQuantDbPeptides,Synapter-method}
+\alias{filterUniqueQuantDbPeptides}
+\alias{filterUniqueIdentDbPeptides,Synapter-method}
+\alias{filterUniqueIdentDbPeptides}
+\alias{filterQuantPepScore,Synapter-method}
+\alias{filterQuantPepScore}
+\alias{filterIdentPepScore,Synapter-method}
+\alias{filterIdentPepScore}
+\alias{filterIdentPpmError,Synapter-method}
+\alias{filterIdentPpmError}
+\alias{filterQuantPpmError,Synapter-method}
+\alias{filterQuantPpmError}
+\alias{filterIdentProtFpr,Synapter-method}
+\alias{filterIdentProtFpr}
+\alias{filterQuantProtFpr,Synapter-method}
+\alias{filterQuantProtFpr}
+
+% plotting
+\alias{plotEMRTtable,Synapter-method}
+\alias{plotEMRTtable}
+\alias{plotFeatures,Synapter-method}
+\alias{plotFeatures}
+\alias{plotGrid,Synapter-method}
+\alias{plotGrid}
+\alias{plotPepScores,Synapter-method}
+\alias{plotPepScores}
+\alias{plotPpmError,Synapter-method}
+\alias{plotPpmError}
+\alias{plotFdr,Synapter-method}
+\alias{plotFdr}
+\alias{plotRt,Synapter-method}
+\alias{plotRt}
+\alias{plotRtDiffs,Synapter-method}
+\alias{plotRtDiffs}
+	      
+% exporters
+\alias{writeMatchedEMRTs,Synapter-method}
+\alias{writeMatchedEMRTs}
+\alias{writeMergedPeptides,Synapter-method}
+\alias{writeMergedPeptides}
+\alias{writeIdentPeptides,Synapter-method}
+\alias{writeIdentPeptides}
+\alias{writeQuantPeptides,Synapter-method}
+\alias{writeQuantPeptides}
+
+
+% other
+\alias{as.MSnSet.Synapter}
+
+\docType{class}
+\encoding{UTF-8}
+
+\title{Class "Synapter"}
+
+
+\description{
+  A reference class to store, manage and process Synapt G2 data
+  to combine identification and quantitation results.
+
+  The data, intermediate and final results are stored together
+  in such a ad-how container called a class. In the frame of the
+  analysis of a set of 3 data files, namely as identification peptide,
+  a quantitation peptide and a quantitation Pep3D, such a container is created
+  and populated, updated according to the user's instructions
+  and used to display and export results.
+
+  The functionality of the \code{synapter} package implemented in the
+  \code{Synapter} class in described in the \emph{Details} section
+  below. Documentation for the individual methods is provided in the
+  \emph{Methods} section. Finally, a complete example of an analysis is
+  provided in the \emph{Examples} section, at the end of this document. 
+}
+
+\usage{
+Synapter(filenames, master) ## creates an instance of class 'Synapter'
+}
+
+\arguments{
+  \item{filenames}{A named \code{list} of file names to be load. The
+    names must be 'identpeptide', 'quantpeptide', 'quantpep3d' and 'fasta'.
+    If missing, dialog boxes pop up to select the the four files
+    manually.
+    \code{identpeptide} can be a \code{csv} final peptide file (from
+    PLGS) or a saved \code{"\linkS4class{MasterPeptides}"} data object as
+    created by \code{\link{makeMaster}} if working with  \emph{master}
+    peptide data. To serialise the \code{"\linkS4class{MasterPeptides}"}
+    instance, use the \code{saveRDS} function, and file extenstion
+    \code{rds}.
+  }
+  \item{master}{A \code{logical} that defines if the identification file is a
+    \emph{master} file. See \code{\link{makeMaster}} for details
+    about this strategy.
+  }
+}
+
+\details{
+  A \code{Synapter} object logs every operation that is applied to
+  it. When displayed with \code{show} or when the name of the instance
+  is typed at the R console, the original input file names, all
+  operations and resulting the size of the respective data are
+  displayed. This allows the user to trace the effect of respective
+  operations. 
+  
+  \subsection{Loading the data}{    
+    The construction of the data and analysis container, technically
+    defined as an instance or object of class \code{Synapter}, is created
+    with the \code{Synapter} constructor. This function opens four dialog
+    boxes for the user to point to the input files,
+    namely (and in that order), the identification final peptide csv file, the
+    quantitation final peptide  csv file and the quantitation Pep3D csv file (as exported
+    from the PLGS software) and the fasta file use for peptide
+    identification. 
+    The files are read and the data is stored in the newly
+    created \code{Synapter} instance. The file names can also be
+    specified as a named list with names 'identpeptide', 'quantpeptide'
+    and 'quantpep3d' respectively.
+
+    The final peptide files are filtered
+    to retain peptides with \code{matchType} corresponding to
+    \code{PepFrag1} and \code{PepFrag2}, corresponding to unmodified
+    round 1 and 2 peptide identification. Other types, like
+    \code{NeutralLoss_NH3}, \code{NeutralLoss_H20}, \code{InSource},
+    \code{MissedCleavage} or \code{VarMod} are not considered in the rest
+    of the analysis. The quantitation Pep3D data is filtered to retain
+    \code{Function} equal to \code{1} and unique quantitation spectrum ids,
+    i.e. unique entries for multiple charge states or isotopes of an EMRT
+    (exact mass-retention time features).
+
+    Then, p-values for \code{Regular} peptides are computed based on
+    the \code{Regular} and \code{Random} database types score
+    distributions, as described in  \cite{\enc{Käll}{Kall} et al.,
+      2008a}. Only unique peptide sequences are taken into account:
+    in case of duplicated peptides, only one entry is kept. 
+    Empirical p-values are adjusted using \cite{Bonferroni}
+    and \cite{Benjamini and Hochberg, 1995} (\code{multtest} package)
+    and q-values are computed using the \code{qvalue} package
+    (\cite{\enc{Käll}{Kall} et al. 2008b}). Only \code{Regular} entries
+    are stored in the resulting data for subsequent analysis.
+
+    The data tables can be exported as \code{csv} spreadsheets with the 
+    \code{writeIdentPeptides} and \code{writeQuantPeptides} methods. 
+  }
+
+  \subsection{Filtering identification and quantitation peptide}{  
+    The first step of the analysis aims to match reliable peptide.
+    The final peptide datasets are
+    filtered based on the FDR (BH is default) using the
+    \code{filterQuantPepScore} and  \code{filterIdentPepScore}
+    methods. Several plots are provided to illustrate peptide score
+    densities (from which p-values are estimated, \code{plotPepScores};
+    use \code{getPepNumbers} to see how many peptides were available) and
+    q-values (\code{plotFdr}). 
+
+    Peptides matching to multiple proteins in the fasta file (non-unique
+    tryptic identification and quantitation peptides) can be
+    discarded with the \code{filterUniqueDbPeptides} method. 
+    
+    Another filtering criterion is mass accuracy. Error tolerance
+    quantiles (in ppm, parts per million) can be visulaised with the
+    \code{plotPpmError} method. The values can be retrieved with
+    \code{getPpmErrorQs}. Filtering is then done separately for
+    identification and quantitation peptide data using
+    \code{filterIdentPpmError} and \code{filterQuantPpmError}
+    respectively. The previous plotting functions can be used again to
+    visualise the resulting distribution. 
+
+    Filtering can also be performed at the level of protein false
+    positive rate, as computed by the PLGS application
+    (\code{protein.falsePositiveRate} column), which counts the
+    percentage of decoy proteins that have been identified prior to the
+    regular protein of interest. This can be done with the
+    \code{filterIdentProtFpr} and \code{filterQuantProtFpr} methods.
+    Note that this field is erroneously called a false positive rate in
+    the PLGS software and the associated manuscript; it is a false
+    discivery rate. 
+  }
+
+  \subsection{Merging identification and quantitation peptides}{
+    Common and reliable identificaiton and quantitation peptides are
+    then matched based on their sequences and merged using the
+    \code{mergePeptides} method. 
+  }
+
+  \subsection{Retention time modelling}{
+    Systematic differences between identification features and
+    quantitation features retention times are modelled by
+    fitting a local regression (see the \code{\link{loess}} function for
+    details), using the \code{modelRt} method. The smoothing parameter,
+    or number of neighbour data points used the for local fit, is
+    controlled by the \code{span} parameter that can be set in the above
+    method.
+
+    The effect of this paramter can be observed with the \code{plotRt}
+    method, specifying \code{what = "data"} as parameters. The resulting
+    model can then be visualised with the above method specifying
+    \code{what = "model"}, specifiying up to 3 number of standard
+    deviations to plot. A histogram of rentention time differences can
+    be produced with the \code{plotRtDiffs} method.
+
+    Mention \code{plotFeatures} here.
+  }
+
+  \subsection{Grid search to optimise EMRT matching parameters}{
+    Matching of identification peptides and quantitation EMRTs is done
+    within a mass tolerance in parts per million (ppm) and the modelled
+    retention time +/- a certain number of standard deviations.
+    To help in the choice of these two parameters, a grid search over a
+    set of possible values is performed and performance metrics are
+    recorded, to guide in the selection of a 'best' pair of parameters. 
+
+    The following metrics are computed:
+    (1) the percentage of identification
+    peptides that matched a single quantitation EMRT (called \code{prcntTotal}),
+    (2) the percentage of identification peptides used in the retention time
+    model that matched the quantitation EMRT corresponding to the
+    correct quantitation peptide in ident/quant pair of the model
+    (called \code{prcntModel}) 
+    and
+    (3) the detailed about the matching of the features used for
+    modelling (accessible with \code{getGridDetails}) and the
+    corresponding \code{details} grid that reports the percentage of
+    correct unique assignments.
+    The detailed grid results specify the number of non
+    matched identification peptides (0), the number of correctly (1) or
+    wronlgy (-1) uniquely matched identification peptides, the number of 
+    identification peptides that matched 2 or more peptides including
+    (2+) or excluding (2-) the correct quantitation equivalent are also
+    available. 
+
+    See the next section for additional details about how matching.
+    The search is performed with the \code{searchGrid} method, possibly
+    on a subset of the data (see Methods and Examples sections for more
+    details).
+
+    The parameters used for matching can be set manually with
+    \code{setPpmError} and \code{setRtNsd} respectively, or using
+    \code{setBestGridParams} to apply best parameters as defined using
+    the grid search. See example and method documentation for details.
+  }
+
+  \subsection{Matching identification peptides and quantitation EMRTs}{
+    The identification peptide - quantitation EMRT matching is performed
+    using the best parameters, as defined above with a grid search, or
+    using user-defined parameters.
+
+    Note that prior to any matching, the original identification peptides
+    (i.e. not those that have been filtered along the quantitation peptides to
+    create merged peptides used for retention time modelling, noted with
+    an '*' in the log) are filtered on the peptide false discovery
+    rate and protein false postive rate, using t same FDR and FPR
+    thresholds defined for the merging filtering. 
+
+    Matching is considered successful when one and only one EMRT is
+    found in the mass tolerance/retention time window defined by the
+    error ppm and number of retention time standard deviations
+    parameters. The values of uniquely matched EMRTs are reported in the
+    final \emph{matched} dataframe that can be exported (see below). If
+    however, none or more than one EMRTs are matched, 0 or the number of
+    matches are reported. 
+    
+    As identificaiton peptides are serially individually matched to 'close'
+    EMRTs, it is possible for peptides to be matched the same EMRT
+    independently. Such cases are reported as -1 in the results
+    dataframes. 
+
+    The results can be assess using the \code{plotEMRTtable} (or
+    \code{getEMRTtable} to retrieve the values) and \code{performace}
+    methods. The former shows the number of identification peptides assigned to
+    none (0), exactly 1 (1) or more (> 2) EMRTs.
+    The latter method reports matched identification peptides, the number of
+    (q-value and protein FPR filtered) identification and quantitation peptides.
+    Matched EMRT and quantitation peptide numbers are then compared
+    calculating the synapter enrichment (100 * ( synapter - quant ) / quant) 
+    and Venn counts.    
+  }
+
+  \subsection{Exporting and saving data}{
+    The merged identification and quantitation peptides can be exported
+    to csv using the  \code{writeMergedPeptides} method. Similarely, the
+    matched identification peptides and quantitation EMRTs are exported
+    with \code{writeMatchedEMRTs}. 
+
+    Complete \code{Synapter} instances can be serialised with
+    \code{save}, as any R object, and reloaded with \code{load} for
+    further analysis. 
+  }
+}
+
+
+\section{Methods}{
+  
+  \subsection{Analysis methods}{
+    
+    \describe{
+      \item{mergePeptides}{\code{signature(object = "Synapter")}: Merges 
+	quantitation and identification final peptide dataframes. }
+      \item{modelRt}{\code{signature(object = "Synapter",
+	  span = "numeric")}: Performs LOWESS retention time alignment using
+	\code{span} parameter value. }
+      \item{findEMRTs}{\code{signature(object = "Synapter", ppm =
+      "numeric", nsd = "numeric")}: Finds EMRTs matching identification peptides
+      using \code{ppm} mass tolerance and \code{nsd} number of retention
+      time standard deviations. The last two parameters are optional if
+      previously set with \code{setPpmError} and \code{setRtNsd} or,
+      better, \code{setBestGridParams}. }      
+    \item{searchGrid}{\code{signature(object="Synapter",
+	ppms="character", nsds="character", subset="numeric", n =
+	"numeric", verbose="logical")}: Performs a grid search. The grid
+      is defined by the \code{ppm} and \code{nsd} numerical vectors,
+      representing the sequence of values to be tested. Default are
+      \code{seq(5, 20, 2)} and \code{seq(0.5, 5, 0.5)}
+      respectively. \code{subset} and \code{n} allow to use a randomly
+      chosen subset of the data for the grid search to reduce search
+      time. \code{subset} is a numeric, between 0 and 1, describing the
+      percentage of data to be used; \code{n} specifies the absolute
+      number of feature to use. The default is to use all
+      data. \code{verbose} controls whether textual output should be
+      printed to the console. }
+    }
+  }
+
+  \subsection{Methods to display, access and set data}{
+  
+    \describe{
+      \item{show}{\code{signature(object = "Synapter")}: Display
+	\code{object} by printing a summary to the console. }
+      \item{dim}{\code{signature(x="Synapter")}: ... }    
+      \item{inputFiles}{\code{signature(object="Synapter")}: ... }
+      \item{getLog}{\code{signature(object="Synapter")}: ... }
+      \item{getGrid}{\code{signature(object="Synapter")}: ... }
+      \item{getGridDetails}{\code{signature(object="Synapter")}: ... }
+      \item{getBestGridValue}{\code{signature(object="Synapter")}: ... }
+      \item{getBestGridParams}{\code{signature(object="Synapter")}: ... }
+      \item{setBestGridParams}{\code{signature(object="Synapter",
+	  what="character")}: Describe \code{auto} (default),
+	\code{model}, \code{total} and \code{details}. }	
+      \item{setPepScoreFdr}{\code{signature(object="Synapter")}: ... }
+      \item{getPepScoreFdr}{\code{signature(object="Synapter")}: ... }
+      \item{setIdentPpmError}{\code{signature(object="Synapter")}: ... }
+      \item{getIdentPpmError}{\code{signature(object="Synapter")}: ... }
+      \item{setQuantPpmError}{\code{signature(object="Synapter")}: ... }
+      \item{getQuantPpmError}{\code{signature(object="Synapter")}: ... }
+      \item{setPpmError}{\code{signature(object="Synapter")}: ... }
+      \item{setLowessSpan}{\code{signature(object="Synapter")}: ... }
+      \item{getLowessSpan}{\code{signature(object="Synapter")}: ... }
+      \item{setRtNsd}{\code{signature(object="Synapter")}: ... }
+      \item{getRtNsd}{\code{signature(object="Synapter")}: ... }
+      \item{getPpmErrorQs}{\code{signature(object="Synapter")}: ... }
+      \item{getRtQs}{\code{signature(object="Synapter")}: ... }
+      \item{getPepNumbers}{\code{signature(object="Synapter")}: Returns
+	the number of regular and random quantitation and identification
+	peptide considered for p-value calculation and used to plot the
+	score densities (see \code{plotPepScores}). Especially the
+	difference between random and regular entries are informative in
+	respect with the confidence of the random scores distribution. } 
+      \item{showFdrStats}{\code{signature(object="Synapter")}: ... }
+      \item{plotEMRTtable}{\code{signature(object="Synapter")}: ... }
+      \item{performance}{\code{signatute(object="Synapter")}: ... }
+    }
+  }
+
+  \subsection{Filters}{
+  
+    \describe{
+      \item{filterUniqueDbPeptides}{\code{signature(object="Synapter")}:
+	This method first digests the fasta database file and keeps
+	unique tryptic peptides. Those peptide sequences are then used
+	as a filter against the identification and quantitation
+	peptides, where only unique proteotyptic instances (no
+	miscleavage allowed) are eventually kept in the \code{object}
+	instance. 
+	This method also removes any additional duplicated
+	peptides, that would not match any peptides identified in the
+	fasta database.}
+      \item{filterUniqueQuantDbPeptides}{\code{signature(object="Synapter")}:
+	As \code{filterUniqueDbPeptides} for quantitation peptides only. }
+      \item{filterUniqueIdentDbPeptides}{\code{signature(object="Synapter")}:
+	As \code{filterUniqueDbPeptides} for identification peptides only. }
+      \item{filterQuantPepScore}{\code{signature(object="Synapter", filter
+	  = "character")}: ... }
+      \item{filterIdentPepScore}{\code{signature(object="Synapter",
+	  method = "charactet")}: ... }
+      \item{filterQuantProtFpr}{\code{signature(object="Synapter")}: ... }
+      \item{filterIdentProtFpr}{\code{signature(object="Synapter")}: ... }
+      \item{filterQuantpmError}{\code{signature(object="Synapter")}: ... }
+      \item{filterIdentPpmError}{\code{signature(object="Synapter")}: ... }
+    }
+  }
+
+  \subsection{Plotting}{
+  
+    \describe{
+      \item{plotPpmError}{\code{signature(object="Synapter")}: ... }
+      \item{plotRtDiffs}{\code{signature(object="Synapter", ...)}: ... }
+      \item{plotRt}{\code{signature(object="Synapter")}: ... }
+      \item{plotPepScores}{\code{signature(object="Synapter")}: Plots
+	the distribution of random and regular peptide scores for identification
+	and quantitation features. Duplicated peptide sequences are considered
+	once to avoid biasing the densities. This reflects how peptide
+	p-values are computed. See also \code{getPepNumbers}. }	
+      \item{plotFdr}{\code{signature(object="Synapter"), method =
+	  "character"}: ... }
+      \item{plotEMRTtable}{\code{signature(object="Synapter")}: ... }
+      \item{plotGrid}{\code{signature(object="Synapter")}: ... }
+      \item{plotFeatures}{\code{signature(object="Synapter")}: ... }
+    }
+  }
+
+  \subsection{Exporters}{
+  
+    \describe{
+      \item{writeMergedPeptides}{\code{signature(object="Synapter")}: ... }
+      \item{writeMatchedEMRTs}{\code{signature(object="Synapter")}: ... }
+      \item{writeIdentPeptides}{\code{signature(object="Synapter")}: ... }
+      \item{writeQuantPeptides}{\code{signature(object="Synapter")}: ... }
+    }
+  }
+
+  \subsection{Other}{
+
+    \describe{
+      \item{as(, "MSnSet")}{\code{signature(x = "Synapter")}: Coerce 
+	object from \code{Synapter} to \code{MSnSet} class. }
+    }
+  }
+}
+
+
+\references{
+  \enc{Käll}{Kall} L, Storey JD, MacCoss MJ, Noble WS
+  Posterior error probabilities and false discovery rates: two sides of
+  the same coin. 
+  J Proteome Res. 2008a Jan; 7:(1)40-4 
+
+  Bonferroni single-step adjusted p-values for strong control of the
+  FWER.
+
+  Benjamini Y. and Hochberg Y.
+  Controlling the false discovery rate: a practical and powerful
+  approach to multiple testing.
+  J. R. Statist. Soc. B., 1995, Vol. 57: 289-300.
+
+  \enc{Käll}{Kall}, Storey JD, MacCoss MJ, Noble WS
+  Assigning significance to peptides identified by tandem mass
+  spectrometry using decoy databases. 
+  J Proteome Res. 2008b Jan; 7:(1)29-34 
+  
+}
+
+
+\examples{
+\dontrun{
+library(synapter) ## always needed
+## (1) Construction - to create your own data objects
+synapterTiny <- Synapter()
+}
+
+## let's use synapterTiny, shipped with the package
+synapterTinyData() ## loads/prepares the data
+synapterTiny ## show object
+
+## (2) Filtering
+## (2.1) Peptide scores and FDR
+
+## visualise/explore peptide id scores
+plotPepScores(synapterTiny)
+getPepNumbers(synapterTiny)
+
+## filter data
+filterUniqueDbPeptides(synapterTiny) ## keeps unique proteotypic peptides
+
+## visualise before FDR filtering
+plotFdr(synapterTiny)
+
+setPepScoreFdr(synapterTiny, fdr = 0.01) ## optional
+filterQuantPepScore(synapterTiny, fdr = 0.01) ## specifying FDR
+filterIdentPepScore(synapterTiny) ## FDR not specified, using previously set value
+
+## (2.2) Mass tolerance
+getPpmErrorQs(synapterTiny)
+plotPpmError(synapterTiny, what="Ident")
+plotPpmError(synapterTiny, what="Quant")
+
+setIdentPpmError(synapterTiny, ppm = 20) ## optional
+filterQuantPpmError(synapterTiny, ppm = 20) 
+## setQuantPpmError(synapterTiny, ppm = 20) ## set quant ppm threshold below  
+filterIdentPpmError(synapterTiny, ppm=20) 
+
+filterIdentProtFpr(synapterTiny, fpr = 0.01)
+filterQuantProtFpr(synapterTiny, fpr = 0.01)
+
+getPpmErrorQs(synapterTiny) ## to be compared with previous output
+
+## (3) Merge peptide sequences
+mergePeptides(synapterTiny)
+
+## (4) Retention time modelling
+plotRt(synapterTiny, what="data")
+setLowessSpan(synapterTiny, 0.05)
+modelRt(synapterTiny) ## the actual modelling
+getRtQs(synapterTiny)
+plotRtDiffs(synapterTiny)
+## plotRtDiffs(synapterTiny, xlim=c(-1, 1), breaks=500) ## pass parameters to hist()
+plotRt(synapterTiny, what="model") ## using default nsd 1, 3, 5
+plotRt(synapterTiny, what="model", nsd=0.5) ## better focus on model
+
+plotFeatures(synapterTiny, what="all")
+setRtNsd(synapterTiny, 2)     ## RtNsd and PpmError are used for detailed plot
+setPpmError(synapterTiny, 10) ## if not set manually, default values are set automatically
+plotFeatures(synapterTiny, what="some", xlim=c(30,50), ylim=c(1160, 1165))
+## best plotting to svg for zooming
+
+set.seed(1) ## only for reproducibility of this example
+
+## (5) Grid search to optimise EMRT matching parameters
+searchGrid(synapterTiny,
+           ppms = 7:10,  ## default values are 5, 7, ..., 20
+           nsds = 1:3,   ## default values are 0.5, 1,  ..., 5
+           subset = 0.2) ## default is 1
+## alternatively, use 'n = 1000' to use exactly
+## 1000 randomly selected features for the grid search
+getGrid(synapterTiny)  ## print the grid
+getGridDetails(synapterTiny)  ## grid details
+plotGrid(synapterTiny, what = "total")   ## plot the grid for total matching
+plotGrid(synapterTiny, what = "model")   ## plot the grid for matched modelled feature 
+plotGrid(synapterTiny, what = "details") ## plot the detail grid
+getBestGridValue(synapterTiny)  ## return best grid values
+getBestGridParams(synapterTiny) ## return parameters corresponding to best values
+setBestGridParams(synapterTiny, what = "auto") ## sets RtNsd and PpmError according the grid results
+## 'what' could also be "model", "total" or "details"
+## setPpmError(synapterTiny, 12) ## to manually set values
+## setRtNsd(synapterTiny, 2.5)
+
+## (6) Matching ident peptides and quant EMRTs
+findEMRTs(synapterTiny)
+plotEMRTtable(synapterTiny)
+getEMRTtable(synapterTiny)
+performance(synapterTiny)
+
+\dontrun{
+## (7) Exporting data to csv spreadsheets
+writeMergedPeptides(synapterTiny, what = "light") ## or what="full"
+writeMergedPeptides(synapterTiny, file = "myresults.csv", what="light") 
+writeMatchedEMRTs(synapterTiny, what = "light")   ## or what="full"
+writeMatchedEMRTs(synapterTiny, file = "myresults2.csv", what="light")
+## These will export the filter peptide data
+writeIdentPeptides(synapterTiny, file = "myIdentPeptides.csv") 
+writeQuantPeptides(synapterTiny, file = "myQuantPeptides.csv")
+## If used right after loading, the non-filted data will be exported
+}}
+
+\author{Laurent Gatto \email{lg390@cam.ac.uk}}
+
+\keyword{classes}
+

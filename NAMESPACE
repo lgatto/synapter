@@ -1,0 +1,93 @@
+import(qvalue)
+import(multtest)
+import(hwriter)
+import(tcltk)
+import(tcltk2)
+import(Cairo)
+import(lattice)
+import(RColorBrewer)
+import(utils)
+importFrom(Biobase, addVigs2WinMenu)
+import(MSnbase)
+
+export(Synapter, ## constructor
+       as.MSnSet.Synapter,
+       synergise,
+       synapterGUI,
+       makeMaster,
+       writeMasterPeptides,
+       estimateMasterFdr,
+       inspectPeptideScores,
+       synapterGuide,
+       synapterTinyData)
+
+exportClasses(MasterPeptides,
+              MasterFdrResults)
+
+exportMethods(show, 
+              inputFiles,
+              getLog,
+              mergePeptides,
+              modelRt,
+              findEMRTs,
+              searchGrid,
+              ## getters and setters
+              getGrid,
+              getGridDetails,
+              getBestGridValue,
+              getBestGridParams,
+              setBestGridParams,
+              setPepScoreFdr,
+              getPepScoreFdr,
+              setProtFpr,
+              getProtFpr,
+              setIdentPpmError,
+              getIdentPpmError,
+              setQuantPpmError,
+              getQuantPpmError,
+              setPpmError,
+              setLowessSpan,
+              getLowessSpan,
+              setRtNsd,
+              getRtNsd,
+              getPpmErrorQs,
+              getRtQs,
+              getPepNumbers,
+              showFdrStats,
+              getEMRTtable,
+              performance,
+              ## filtering prior to merging
+              filterQuantPepScore,
+              filterIdentPepScore,
+              filterIdentPpmError,
+              filterQuantPpmError,
+              filterIdentProtFpr,
+              filterQuantProtFpr,
+              filterUniqueDbPeptides,
+              filterUniqueQuantDbPeptides,
+              filterUniqueIdentDbPeptides,
+              ## plotting
+              plotPpmError,
+              plotRtDiffs,
+              plotRt,
+              plotPepScores,
+              plotFdr,
+              plotEMRTtable,
+              plotGrid,
+              plotFeatures,
+              ## exporters
+              writeMergedPeptides,
+              writeMatchedEMRTs,
+              writeIdentPeptides,
+              writeQuantPeptides,              
+              ## MasterFdrResults and MasterPeptides
+              bestComb,
+              allComb,
+              masterFdr,
+              fileNames,
+              plot,
+              show)
+              
+              
+
+

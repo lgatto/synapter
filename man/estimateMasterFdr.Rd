@@ -1,0 +1,61 @@
+\name{estimateMasterFdr}
+\alias{estimateMasterFdr}
+\title{Computes FDR for all possible final peptide combinations}
+\usage{
+  estimateMasterFdr(pepfiles, fastafile, masterFdr = 0.025,
+    fdr = 0.01, proteotypic = TRUE, verbose = TRUE)
+}
+\arguments{
+  \item{pepfiles}{A \code{list} of final peptide
+  filenames.}
+
+  \item{fastafile}{A \code{character} with the fasta
+  filename.}
+
+  \item{masterFdr}{A \code{numeric} indicating the maximum
+  merged false discovery to be allowed.}
+
+  \item{fdr}{Peptide FDR level for individual peptide files
+  filtering.}
+
+  \item{proteotypic}{Logical. Should number proteotypic
+  peptides be used to choose best combination and plot
+  results or total number of unique peptides.}
+
+  \item{verbose}{Should progress messages be printed?}
+}
+\value{
+  An instance of class
+  \code{"\linkS4class{MasterFdrResults}"}. See details
+  above.
+}
+\description{
+  This function takes all possible combination of
+  \code{pepfiles} of length greater or equal than 2 and
+  computes the number of estimated incorrect petides, the
+  number of unique peptides, the number of unique
+  protetypic peptides and the false discovery rate after
+  merging for each combination. The best combination has an
+  fdr lower than \code{masterFdr} and the highest number of
+  unique (proteotypic) peptides.
+}
+\details{
+  The false discovery rate for the master (merged) file is
+  calcualted by summing the number of estimated false
+  discoveries for each individual final peptide file
+  (number of unique peptides in that file multiplied by
+  \code{fdr}) divided by the total number of unique
+  peptides for that specific combination.
+
+  The function returns an instance of the class
+  \code{"\linkS4class{MasterFdrResults}"}.
+}
+\author{
+  Laurent Gatto
+}
+\seealso{
+  The \code{\link{makeMaster}} function to combine the
+  peptide data as suggested by \code{estimateMasterFdr}
+  into one single \emph{master} peptide file.
+}
+
