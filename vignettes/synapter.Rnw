@@ -106,6 +106,22 @@ Finally, section \ref{sec:msnbase} illustrates a complete pipeline including \Rp
 
 \bigskip
 
+The rationale underlying \Rpackage{synapter}'s functionality are described in two research papers, currently in preparation.
+
+\begin{itemize}
+\item 
+  Shliaha, P.V., Bond N.J., Gatto L. and Lilley K.S. 
+  \emph{The Effects of Ion Mobility Separation on Data Independent Acquisition in Proteomics Studies.}, in prep.   
+\item 
+  Shliaha P.V.,  Gatto L., Bond N.J. and Lilley K.S.  
+  \emph{Synapter: Improving qualitative and quantitative performance for label free proteomics}, in prep.
+\end{itemize}
+
+The first one describes the benefits of ion mobility separation on identification and the effects on quantitation, that led to the development of \Rpackage{synapter}, which in described and illustrated in the second reference.
+
+
+\bigskip
+
 \Rpackage{synapter} is written for \R, \citep{R} an open source, cross platform, freely available statistical computing environment and programming language\footnote{\url{http://www.r-project.org/}}. Functionality available in the \R environment can be extended though the usage of packages. Thousands of developers have contributed packages that are distributed via the Comprehensive R Archive Network (CRAN) or through specific initiatives like the Bioconductor\footnote{\url{http://www.bioconductor.org/}} project \citep{Gentleman2004}, focusing on the analysis and comprehension of high-throughput biological data.
 
 \Rpackage{synapter} is such an \R package dedicated to the analysis of label-free proteomics data. To obtain detailed information about any function in the package, it is possible to access it's documentation by preceding it's name with a question mark at the command line prompt. For example, to obtain information about the \Rpackage{synapter} package, one would type \Rfunction{?synapter}. 

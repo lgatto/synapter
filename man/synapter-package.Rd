@@ -4,20 +4,21 @@
 \docType{package}
 
 \title{
-  Combines label-free data for optimal identification and quantitation 
+  Combine label-free data for optimal identification and quantitation 
 }
 
 \description{
-  The synapter package provides functionality to reanalyse proteomics
-  data acquired on a Synapt G2 mass spectrometer. One or several 
-  files possibly run with additional ion mobility separation can be
-  combined to other files to optimise identification and quantitation.  
+  The synapter package provides functionality to reanalyse label-free
+  proteomics data acquired on a Synapt G2 mass spectrometer. One or several 
+  runs, possibly processed with additional ion mobility separation to
+  increase identification accuracy can be combined to other quantitation
+  files to maximise identification and quantitation accuracy.  
 }
 
 
 \details{
   Three pipelines of variying flexibility are proposed the preform data
-  analysis: (1) a graphical user interface is provided with the
+  analysis: (1) a graphical user interface is provided through the
   \code{synatperGUI} function, (2) the \code{synergise} function is a
   single entry function for a complete analysis and (3) low level,
   step-by-step data processing can be achieved as described in 
@@ -35,6 +36,18 @@ Laurent Gatto, Pavel V. Shliaha and Nick J. Bond
 
 Maintainer: Laurent Gatto <lg390@cam.ac.uk>
 }
+
+\references{
+  Shliaha P.V.,  Gatto L., Bond N.J. and Lilley K.S.
+  \emph{Synapter: Improving qualitative and quantitative performance for
+    label free proteomics}, in prep.
+
+  Shliaha, P.V., Bond N.J., Gatto L. and Lilley K.S.
+  \emph{The Effects of Ion Mobility Separation on Data Independent
+    Acquisition in Proteomics Studies.}, in prep. 
+}
+
+
 
 \keyword{ package }
 

@@ -132,7 +132,7 @@
 
 \description{
   A reference class to store, manage and process Synapt G2 data
-  to combine identification and quantitation results.
+  to combine identification and quantitation results. 
 
   The data, intermediate and final results are stored together
   in such a ad-how container called a class. In the frame of the
@@ -145,7 +145,11 @@
   \code{Synapter} class in described in the \emph{Details} section
   below. Documentation for the individual methods is provided in the
   \emph{Methods} section. Finally, a complete example of an analysis is
-  provided in the \emph{Examples} section, at the end of this document. 
+  provided in the \emph{Examples} section, at the end of this document.
+
+  See also papers by Shliaha et al. for details about ion mobility
+  separation and the manuscript describing the \code{synapter}
+  methodology. 
 }
 
 \usage{
@@ -521,7 +525,14 @@ Synapter(filenames, master) ## creates an instance of class 'Synapter'
   Assigning significance to peptides identified by tandem mass
   spectrometry using decoy databases. 
   J Proteome Res. 2008b Jan; 7:(1)29-34 
-  
+
+  Shliaha P.V.,  Gatto L., Bond N.J. and Lilley K.S.
+  Synapter: Improving qualitative and quantitative performance for label free
+  proteomics, in prep. 
+
+  Shliaha, P.V., Bond N.J., Gatto L. and Lilley K.S.
+  The Effects of Ion Mobility Separation on Data Independent Acquisition
+  in Proteomics Studies., in prep. 
 }
 
 
