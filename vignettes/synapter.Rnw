@@ -34,7 +34,7 @@
 }
 
 \author{Laurent Gatto\footnote{\email{lg390@cam.ac.uk}}\\ 
-  Nick J. Bond\footnote{\email{ njb70cam@gmail.com}}\\ 
+  Nick J. Bond\footnote{\email{njb70cam@gmail.com}}\\ 
   Pavel V. Shliaha\footnote{\email{pvs22@cam.ac.uk}}\\
   Cambridge Center for Proteomics\\
   University of Cambridge
@@ -50,7 +50,7 @@
 \vskip 0.3in minus 0.1in
 \hrule
 \begin{abstract}
-  This vignette describes the functionality implemented in the \Rpackage{synapter} package. It allows to re-analyse label-free quantitative proteomics data obtained on a Synapt G2 instrument to optimise quantitation and identification. Several combination stategies are possible and described. Typically, a user can combine identification-optimised data (HDMSe data using ion mobility separation) and quantitation-optimised data (MSe data). Additionally, a method to combine several data files into a \emph{master} set while controlling the false discovery rate, is presented.
+  This vignette describes the functionality implemented in the \Rpackage{synapter} package. It allows to re-analyse label-free quantitative proteomics data obtained on a Synapt G2 instrument to optimise quantitation and identification. Several combination strategies are possible and described. Typically, a user can combine identification-optimised data (HDMSe data using ion mobility separation) and quantitation-optimised data (MSe data). Additionally, a method to combine several data files into a \emph{master} set while controlling the false discovery rate, is presented.
 \end{abstract}
 \textit{Keywords}: Mass Spectrometry (MS), proteomics, bioinformatics, IMS, ion mobility separation
 ion mobility, Synapt, label free, data independent acquisition.
@@ -92,9 +92,9 @@ The example that motivated the development of this package was to combine data o
 \item standard MSe data (acquired without ion mobility separation), providing better data quantitation. 
 \end{enumerate}
 
-The former is data is called \emph{identification peptides} and the latter \emph{quantitation peptides}, irrespective of the acquisition mode (HDMSe or MSe). This HDMSe/MSe design is used in this document to illstrate the \Rpackage{synapter} package.
+The former is data is called \emph{identification peptides} and the latter \emph{quantitation peptides}, irrespective of the acquisition mode (HDMSe or MSe). This HDMSe/MSe design is used in this document to illustrate the \Rpackage{synapter} package.
 
-However, although HDMSe mode possesses superior identification and MSe mode superior quantitation capabilities and transferring identifications from HDMSe to MSe is a priori the most efficent setup, identifications can be transferred between any runs, independently of the acquisition mode. This allows to reduce the number of missing values, one of the primary limitation of label-free proteomics. Thus users will benefit from \Rpackage{synapter}'s functionality even if they run their instruments in a single mode (HDMSe or MSe only). 
+However, although HDMSe mode possesses superior identification and MSe mode superior quantitation capabilities and transferring identifications from HDMSe to MSe is a priori the most efficient setup, identifications can be transferred between any runs, independently of the acquisition mode. This allows to reduce the number of missing values, one of the primary limitation of label-free proteomics. Thus users will benefit from \Rpackage{synapter}'s functionality even if they run their instruments in a single mode (HDMSe or MSe only). 
 
 However, as will be shown in section \ref{sec:analysis}, transferring identifications from multiple runs to each other increases analysis time and peptide FDR within the analysis. \Rpackage{synapter} allows to minimise these effects to acceptable degree by choosing runs to transfer identifications from and merging them in the master HDMSE file.  
 
@@ -222,14 +222,14 @@ plotRt(ups25b, what = "model", nsd = 1)
 
 For a detailed description of the parameters and the processing pipeline, see the documentation of the \Rfunction{synergise} function.
 
-  \item[Grid search] Matching peptides to quantified EMRTs is done in the two dimensional retention time vs. precursor mass space. The optimal tolerances in both dimensions are estimated by a grid search that uses common identification/quantitation peptides. The size of the grid, i.e. the range of the retention time (nsd, number of standard deviations in the retention time model) and mass tolerance (ppm) to be searched can be defined here. In addition, it is possible to select a subset of the data to reduce search time.
-For a detailed description of the parameters, see the documentation of the \Rfunction{synergize} function.
+  \item[Grid search] Matching peptides to quantified EMRTs is done in the two dimensional retention time vs. precursor mass space. The optimal tolerances in both dimensions are estimated by a grid search that uses common identification/quantitation peptides. The size of the grid, i.e. the range of the retention time (\texttt{nsd}, number of standard deviations in the retention time model) and mass tolerance (\texttt{ppm}) to be searched can be defined here. In addition, it is possible to select a subset of the data to reduce search time.
+For a detailed description of the parameters, see the documentation of the \Rfunction{synergise} function.
 \end{description}
 
 Once all the input has been specified, pressing the \texttt{Run} button in the lower left corner of the GUI starts the \Rpackage{synapter} run: all \Robject{n} analyses are executed one after each other and a complete report in \texttt{html} as well as several result files are created in the respective output folders.
 
 \subsubsection{Wrapper function} 
-The \Rfunction{synergise} function is a high level wrapper that implements a suggested analysis to combine two files (see next paragraph for details). A set of parameters can be passed, although sensible defaults are provided. While the analysis is executed, a html report is created, including all result files in text spreadsheet (\texttt{csv} format) and binary \R output. This level allows easy scripting for automated batch analysis. Using data from the \Rpackage{synapterdata} package, the following code chunk illustrates the \Rfunction{synerigse} usage.
+The \Rfunction{synergise} function is a high level wrapper that implements a suggested analysis to combine two files (see next paragraph for details). A set of parameters can be passed, although sensible defaults are provided. While the analysis is executed, a html report is created, including all result files in text spreadsheet (\texttt{csv} format) and binary \R output. This level allows easy scripting for automated batch analysis. Using data from the \Rpackage{synapterdata} package, the following code chunk illustrates the \Rfunction{synergise} usage.
 
 %% <<rndseed,echo=FALSE,eval=TRUE>>=
 %%   set.seed(123)
@@ -300,7 +300,7 @@ $$FDR_{master} = \frac{nfd_{1} + nfd_{2}}{union(peptides~HDMSe_{1}, peptides~HDM
 
 where $nfd_{i}$ is the number of false discoveries in HDMSe file $i$. Note that we do not make any assumptions about repeated identification in multiple files here.
 
-\Rfunction{estimateMasterFdr} generalised this for any number of HDMSe files and indicates the best combination at a fixed user-specifed \Robject{masterFdr} level. Mandatory input is a list of HDMSe file names and a fasta database file name to filter non-unique proteotypic peptides. 
+\Rfunction{estimateMasterFdr} generalised this for any number of HDMSe files and indicates the best combination at a fixed user-specified \Robject{masterFdr} level. Mandatory input is a list of HDMSe file names and a fasta database file name to filter non-unique proteotypic peptides. 
 
 <<inputfiles, echo=FALSE, eval=TRUE>>=
 inputfiles <- getHDMSeFinalPeptide()
@@ -338,8 +338,8 @@ See \Rfunction{?estimateMasterFdr} and references therein for more details about
 \subsubsection{Generating a \emph{master} file}
 \label{sec:makeMaster}
 
-Now that we have identified which files should be used to create the master file, we can directly pass the relevant HDMSe files to the \Rfunction{makeMaster} function to generate the \emph{master} file.
-The function has one mandatory input parameter, \Robject{hdmsefiles}, a list oh HDMSe file names to be merged. The output is an object of class \Robject{MasterPeptides} that stores the relevant peptides from the original input files. The result can be saved to disk using \Rfunction(saveRDS) for further analysis, as descibed in section \ref{sec:synapter}.
+Now that we have identified which files should be used to create the master file, we can directly pass the relevant identification files to the \Rfunction{makeMaster} function to generate the \emph{master} file.
+The function has one mandatory input parameter, \Robject{pepfiles}, a list oh identification file names to be merged. The output is an object of class \Robject{MasterPeptides} that stores the relevant peptides from the original input files. The result can be saved to disk using \Rfunction{saveRDS} for further analysis, as descibed in section \ref{sec:synapter}.
 
 
 <<master, echo=TRUE, eval=TRUE>>=
@@ -358,7 +358,7 @@ More details can be found in the function documentation accessible with \Rfuncti
 
 The functionality described in this section relies on the \Rpackage{MSnbase} package \citep{Gatto2012}, which is installed by default with \Rpackage{synapter}. Please refer to the \Rpackage{MSnbase} Bioconductor webpage\footnote{\url{http://bioconductor.org/packages/release/bioc/html/MSnbase.html}}, the associated vignettes and the respective manual pages for more details.
 
-The \Rpackage{synapterdata} already provides preprocessed PLGS data. Six \Robject{Synapter} instances are available: 3 replicates (labeled \texttt{a}, \texttt{b} and \texttt{c}) of the Universal Proteomics Standard (UPS1) 48 protein mix at 25 fmol and 3 replicates at 50 fmol, in a constance \textit{E. coli} background. The 6 files can be loaded in your working space with 
+The \Rpackage{synapterdata} already provides preprocessed PLGS data. Six \Robject{Synapter} instances are available: 3 replicates (labelled \texttt{a}, \texttt{b} and \texttt{c}) of the Universal Proteomics Standard (UPS1) 48 protein mix at 25 fmol and 3 replicates at 50 fmol, in a constant \textit{E. coli} background. The 6 files can be loaded in your working space with 
 
 <<loadups, eval=T, echo=T>>=
 data(ups25a, ups25b, ups25c, ups50a, ups50b, ups50c)
@@ -366,7 +366,7 @@ data(ups25a, ups25b, ups25c, ups50a, ups50b, ups50c)
 
 \subsection{Applying the \emph{Top 3} approach}\label{sec:top3}
 
-We will start by describing the analysis of \Robject{ups25a} in details, and then show how to analyse all the runs using more compact code. The first step of our analysis is to convert the \Rpackage{synpater} object output (a \Robject{Synapter} instance), into a \Rpackage{MSnbase}-compatible object, called an \Robject{MSnSet}, that we will name \Robject{ms25a}. We can obtain a description of the \Robject{MSnSet} object by typing its name.
+We will start by describing the analysis of \Robject{ups25a} in details, and then show how to analyse all the runs using more compact code. The first step of our analysis is to convert the \Rpackage{synapter} object output (a \Robject{Synapter} instance), into a \Rpackage{MSnbase}-compatible object, called an \Robject{MSnSet}, that we will name \Robject{ms25a}. We can obtain a description of the \Robject{MSnSet} object by typing its name.
 
 <<setas,echo=TRUE,eval=TRUE>>=
 ms25a <- as(ups25a, "MSnSet")
@@ -383,7 +383,7 @@ sampleNames(ms25a) <- "ups25a"
 sampleNames(ms25a)
 @ 
 
-Quantitative data and metadata, which has been acquired by \Rpackage{synapter}, can be extracted with the \Rfunction{exprs} and \Rfunction{fData} methods.
+Quantitative data and meta-data, which has been acquired by \Rpackage{synapter}, can be extracted with the \Rfunction{exprs} and \Rfunction{fData} methods.
 
 <<accessor>>=
 tail(exprs(ms25a))
@@ -443,7 +443,7 @@ We now have 6 \Robject{MSnSet} instances, containing protein quantitation for th
 
 \subsection{Combining data and filtering}
 
-We now want to filter data out based on missing quantiation data, retaining proteins that have been quantified in at a least two out of three replicates. Filtering based on missing data can be done using the \Rfunction{filterNA} method and a maximum missing data content as defined by \Robject{pNA}. Multiple \Robject{MSnSet} instances can be combined with the \Rfunction{combine} method, which is described in details in the \texttt{MSnbase-demo} vignette\footnote{The vignette is accessible from within \R with \Rfunction{vignette("MSnbase-demo", package = "MSnbase")}.}. The 6 objects have appropriate distinct sample namse and common feature (protein) names, which will be used to properly combine the quantitation data. 
+We now want to filter data out based on missing quantitation data, retaining proteins that have been quantified in at a least two out of three replicates. Filtering based on missing data can be done using the \Rfunction{filterNA} method and a maximum missing data content as defined by \Robject{pNA}. Multiple \Robject{MSnSet} instances can be combined with the \Rfunction{combine} method, which is described in details in the \texttt{MSnbase-demo} vignette\footnote{The vignette is accessible from within \R with \Rfunction{vignette("MSnbase-demo", package = "MSnbase")}.}. The 6 objects have appropriate distinct sample names and common feature (protein) names, which will be used to properly combine the quantitation data. 
 
 <<combine25, echo=TRUE>>=
 ms25 <- combine(ms25a, ms25b)
@@ -463,7 +463,7 @@ ms50 <- filterNA(ms50, pNA = 1/3)
 dim(ms50)
 @ 
 
-Similarely, the 50 fmol group retains \Sexpr{nrow(ms50)} entries with at least 2 out of 3 quantitation values, out of the \Sexpr{nrow(ms50a)} initial proteins.
+Similarly, the 50 fmol group retains \Sexpr{nrow(ms50)} entries with at least 2 out of 3 quantitation values, out of the \Sexpr{nrow(ms50a)} initial proteins.
 
 We now combine the two subgroups into one \Robject{MSnSet} object that contains all 6 samples and filter for proteins that are observed in both groups, i.e retaining proteins with a maximum of 2/6 missing values. We also compute a summary table with the number of protein that have 4, 5, or 6 quantitation values across the 6 samples.
 
@@ -474,7 +474,7 @@ head(exprs(msUps))
 table(apply(exprs(msUps), 1, function(.x) sum(!is.na(.x))))
 @ 
 
-We obtain a final dataset containing \Sexpr{ncol(msUps)} proteins. Finally, we normalise protein intensities in each sample to correct for experimental loading biaises and pipetting errors. To do so, we compute 6 sample medians using all constant \textit{E. coli} background proteins and divide each protein by its respective sample mean. 
+We obtain a final data set containing \Sexpr{ncol(msUps)} proteins. Finally, we normalise protein intensities in each sample to correct for experimental loading biases and pipetting errors. To do so, we compute 6 sample medians using all constant \textit{E. coli} background proteins and divide each protein by its respective sample mean. 
 
 <<scale>>=
 ecoli <- -grep("ups$", featureNames(msUps)) 
@@ -486,9 +486,9 @@ This same procedure could be applied with a set of constant spikes to estimate a
 
 \subsection{Statistical analysis of differentially expressed proteins}
 
-The UPS1 spiked-in protein mix is composed of 48 proteins, \Sexpr{length(grep("ups", featureNames(msUps)))} of which have been observed and quantified in our final data object. In this sectoin, we will now analyse the \Sexpr{ncol(msUps)} proteins to extract those that show differences between the two groups and show that these candidats represent the UPS1 spikes.
+The UPS1 spiked-in protein mix is composed of 48 proteins, \Sexpr{length(grep("ups", featureNames(msUps)))} of which have been observed and quantified in our final data object. In this section, we will now analyse the \Sexpr{ncol(msUps)} proteins to extract those that show differences between the two groups and show that these candidates represent the UPS1 spikes.
 
-The \R environment and many of the available packages allow extremely powerful statistical analysis\footnote{For best performance with small number of samples and mor complex designs, we however recommend the Bioconductor \Rpackage{limma} package \citep{limma} availabel at \url{http://www.bioconductor.org/packages/release/bioc/html/limma.html}}. In this document, we will apply a standard t-test for convenience, using the \Rfunction{t.test} function, to calculate p-value for individual proteins (\Robject{pv} variable below). We then perform multiple comparison adjustment using the \Rfunction{qvalue} from the \Rpackage{qvalue} package, that implements the method from \citep{Storey2003} (\Robject{qv} variable below). We will also compute $log_2$ fold-changes and illustrate the results on a volcano plot (figure \ref{fig:volcano}). Figure \ref{fig:hmap} illustrates the UPS1 proteins and samples on a classical heatmap.
+The \R environment and many of the available packages allow extremely powerful statistical analysis\footnote{For best performance with small number of samples and more complex designs, we however recommend the Bioconductor \Rpackage{limma} package \citep{limma} available at \url{http://www.bioconductor.org/packages/release/bioc/html/limma.html}}. In this document, we will apply a standard t-test for convenience, using the \Rfunction{t.test} function, to calculate p-value for individual proteins (\Robject{pv} variable below). We then perform multiple comparison adjustment using the \Rfunction{qvalue} from the \Rpackage{qvalue} package, that implements the method from \citep{Storey2003} (\Robject{qv} variable below). We will also compute $log_2$ fold-changes and illustrate the results on a volcano plot (figure \ref{fig:volcano}). Figure \ref{fig:hmap} illustrates the UPS1 proteins and samples on a classical heatmap.
 
 
 <<stats>>=
@@ -528,7 +528,7 @@ legend("topright", c("UPS", "E. coli"),
        col = c("#4582B3AA", "#A1A1A1AA"),
        pch = 19, bty = "n")
 @
-\caption{On the volcano plot, each protein is represented by a dot and positioned according to its $log_2$ fold-change along the x axis and $-log_{10}$ of its q-value along the y axis. Proteins with large fold-changes are positioned on the sides of the plot, while proteins with low q-values are at the top of the figure. The most promising candidats are this located on the top corners. In our case, the UPS proteins (in blue) have $log2$ fold-changes around -1 (vertical dotted line), as expected. The horizontal dotted line represents a q-value threshold of 0.05.}
+\caption{On the volcano plot, each protein is represented by a dot and positioned according to its $log_2$ fold-change along the x axis and $-log_{10}$ of its q-value along the y axis. Proteins with large fold-changes are positioned on the sides of the plot, while proteins with low q-values are at the top of the figure. The most promising candidates are this located on the top corners. In our case, the UPS proteins (in blue) have $log2$ fold-changes around -1 (vertical dotted line), as expected. The horizontal dotted line represents a q-value threshold of 0.05.}
 \label{fig:volcano}
 \end{center}
 \end{figure}
@@ -539,7 +539,7 @@ legend("topright", c("UPS", "E. coli"),
 <<hmap,fig=T,echo=T,tikz=T,width=4,height=4>>=
 heatmap(exprs(msUps)[grep("ups",featureNames(msUps)),])
 @
-\caption{A heatmap of all UPS1 proteins present in the final dataset.}
+\caption{A heatmap of all UPS1 proteins present in the final data set.}
 \label{fig:hmap}
 \end{center}
 \end{figure}
@@ -571,9 +571,9 @@ fn <- which(grepl("ups",rownames(res)) & res$qv > 0.06)
 @ %%$
 
 A total \Sexpr{sum(res$qv < 0.05)} %%$ 
-proteins show a statistically different pattern between the two groups, at a false discrivery rate of 5\%. 
+proteins show a statistically different pattern between the two groups, at a false discovery rate of 5\%. 
 Table \ref{tab:ups} summarises the results for all UPS1 proteins.  
-We observe one false positive, namely \texttt{ECOT\_ECODH}. Another backgroung protein (which is outside of the graph limits) showing strong deviations, is \texttt{B1X7X2\_ECODH}, with a $log_2$ fold-change of \Sexpr{round(res[j, "lfc"], 2)} (but a q-value above our threshold of 0.05, see table \ref{tab:outliers}). The quantitation value for the run \Robject{ups25a} is clearly wrong and at the origin of the extreme fold-change. 
+We observe one false positive, namely \texttt{ECOT\_ECODH}. Another background protein (which is outside of the graph limits) showing strong deviations, is \texttt{B1X7X2\_ECODH}, with a $log_2$ fold-change of \Sexpr{round(res[j, "lfc"], 2)} (but a q-value above our threshold of 0.05, see table \ref{tab:outliers}). The quantitation value for the run \Robject{ups25a} is clearly wrong and at the origin of the extreme fold-change. 
 
 \clearpage
 
