@@ -226,9 +226,9 @@ The GUI is a graphical layer between the user and the \Rfunction{synergise} func
 
 \begin{figure}[!hbt]
   \begin{center}
-    \includegraphics[width=0.3\linewidth]{./Figures/GUI-Tab1.png}
-    \includegraphics[width=0.3\linewidth]{./Figures/GUI-Tab2.png}
-    \includegraphics[width=0.3\linewidth]{./Figures/GUI-Tab3.png}
+    \includegraphics[width=0.3\linewidth]{./Figures/GUI-Tab1.jpg}
+    \includegraphics[width=0.3\linewidth]{./Figures/GUI-Tab2.jpg}
+    \includegraphics[width=0.3\linewidth]{./Figures/GUI-Tab3.jpg}
     \caption{Screenshots of the 3 input tabs of the \Rfunction{synapterGUI} function. From left to right: (1) the data input tab, (2) the data filtering and retention time modelling tab and 
 (3) the grid search tab.}
     \label{fig:gui}

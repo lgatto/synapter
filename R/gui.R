@@ -93,7 +93,8 @@ synapterGUI <- function(n = 1) {
                    command = function() {  
                      x <- tclvalue(tcl(treeWidget,"selection","get"))
                      if (x != "" &
-                         (length(grep("Quant", x))   == 1 |
+                         (length(grep("Quant", x)) == 1 |
+                          length(grep("Ident", x)) == 1 |
                           length(grep("fasta", x)) == 1 ) &
                          length(grep("Val", x)) == 0) {
                        f <- tk_choose.files("",
