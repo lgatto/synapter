@@ -323,7 +323,7 @@ To illustrate how FDR is estimated for \emph{master} HDMSe files, let's consider
 
 \item In the first one, the two files (each with $1000$ peptides filtered at an FDR of $0.01$) to be combined are nearly identical, sharing $900$ peptides. The combined data will have $900 (shared) +  2 \times 100 (unique)$ peptides and each file, taken separately is estimated to have $1000 \times 0.01 = 10$ false positive identifications. We thus estimate the upper FDR bound after merging the two files to be $\frac{20}{1100} = 0.0182$.
 
-\item In the second hypothetical case, the two files (again each with $1000$ peptides filtered at a FDR of $0.01$) to be combined are very different and share only $100$ peptides. The combined data will have $100 (shared) + 2 \times 900 (unique)$ peptides and, as above, each file is estimated to have $10$ false discoveries. In this case, we obtain an upper FDR bound of $frac{20}{1900} = 0.0105$.
+\item In the second hypothetical case, the two files (again each with $1000$ peptides filtered at a FDR of $0.01$) to be combined are very different and share only $100$ peptides. The combined data will have $100 (shared) + 2 \times 900 (unique)$ peptides and, as above, each file is estimated to have $10$ false discoveries. In this case, we obtain an upper FDR bound of $\frac{20}{1900} = 0.0105$.
 
 \end{itemize}
 
