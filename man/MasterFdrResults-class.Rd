@@ -50,7 +50,7 @@ Objects are created with the \code{\link{estimateMasterFdr}} function.
 }
 
 \references{
-  Bond N. J., Shliaha P.V., Gatto L. and Lilley K.S., in prep.
+  Shliaha P.V., Bond N. J., Lilley K.S. and Gatto L., in prep.
 }
 
 \author{
@@ -64,8 +64,6 @@ library(synapterdata)
 loadMaster()
 class(master)
 master
-bestComb(master)
-plot(master)
 }
 }
 

@@ -1,15 +1,3 @@
-## getPepScoreParams <- function(logfile) {
-##   ## We want 'Median Random pepScore' and 'Std Random pepScore' values
-##   l <- readLines(logfile)
-##   i <- grep("Median Random pepScore", l)
-##   l <- l[i]
-##   medianRndScore <- as.numeric(sub(" Std.+$","",sub("Median Random pepScore ", "", l)))
-##   stdRndScore <- as.numeric(sub("Median Random pepScore.+Std Random pepScore ", "", l))
-##   return(list(medianRndScore = medianRndScore,
-##               stdRndScore = stdRndScore))
-## }
-
-
 filterFunction <- function(x) { 
   ## keep only function 1 in Pep3DAMRT
   return(x[x$Function == 1,])
@@ -297,7 +285,7 @@ gridSearch2 <- function(model,
                         ppms,
                         nsds,
                         verbose = TRUE) {
-  ## As initial gridSeach, but now returns a list
+  ## As initial gridSearch, but now returns a list
   ## with two grids; first one as before, percent of
   ## uniquely matched features; second is percent of
   ## correctly assigned features (based on marged feautres
@@ -394,30 +382,6 @@ score2pval <- function(xx) {
   nrnd <- length(srnd)
   sapply(sreg, function(x) sum(srnd >= x)/nrnd)
 }
-
-
-## version in use in version <= 0.8.0
-## getIdStats <- function(pepdata) {
-##   dbtypes <- sort(unique(pepdata$protein.dataBaseType))
-##   if (any(dbtypes != c("Random", "Regular"))) {
-##     stop("[Regular and Random] not found.")
-##   } else {
-##     ans <- matrix(NA, nrow(pepdata), 4)
-##     colnames(ans) <- c("pval", "Bonferroni", "BH", "qval")
-##     rownames(ans) <- rownames(pepdata)
-##     for (pepfragX in c("PepFrag1", "PepFrag2")) {
-##       pepsel <- pepdata$peptide.matchType == pepfragX
-##       regsel <- pepdata$protein.dataBaseType == "Regular"
-##       sel <- pepsel & regsel
-##       ans[sel, "pval"] <- .pv <- score2pval(pepdata[pepsel, ])
-##       ans[sel, "qval"] <- qvalue(.pv)$qvalues
-##       .adj <- mt.rawp2adjp(.pv)
-##       ans[sel, "BH"] <- .adj$adjp[order(.adj$index), "BH"]
-##       ans[sel, "Bonferroni"] <- .adj$adjp[order(.adj$index), "Bonferroni"]
-##     }
-##   }
-##   return(ans)                             
-## }
 
 getIdStats <- function(pepdata) {
   dbtypes <- sort(unique(pepdata$protein.dataBaseType))

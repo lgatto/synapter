@@ -85,14 +85,24 @@
 \author{
   Laurent Gatto
 }
+\references{
+  Shliaha P.V., Bond N. J., Lilley K.S. and Gatto L., in
+  prep.
+}
 \seealso{
   See the \code{\link{Synapter}} class manual page for
   detailed information on filtering and modelling and the
   general algorithm implemented in the \code{synapter}
-  package. The \code{\link{estimateMasterFdr}} function
-  allows to control false dicovery rate when combining
-  several peptide files while maximising the number of
+  package.
+
+  The \code{\link{estimateMasterFdr}} function allows to
+  control false dicovery rate when combining several
+  peptide files while maximising the number of
   identifications and suggest which combination of peptide
   files to use.
+
+  The vignette, accessible with \code{synapterGuide()}
+  illustrates a complete pipeline using
+  \code{estimateMasterFdr} and \code{makeMaster}.
 }
 

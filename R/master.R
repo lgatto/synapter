@@ -80,9 +80,14 @@ writeMasterPeptides <- function(x, file, ...) {
 ##' @return An instance of class \code{"\linkS4class{MasterFdrResults}"}.
 ##' See details above.
 ##' @author Laurent Gatto
+##' @references Shliaha P.V., Bond N. J., Lilley K.S. and Gatto L., in prep.
 ##' @seealso The \code{\link{makeMaster}} function to combine
 ##' the peptide data as suggested by \code{estimateMasterFdr} into
 ##' one single \emph{master} peptide file.
+##' 
+##' The vignette, accessible with \code{synapterGuide()}
+##' illustrates a complete pipeline using \code{estimateMasterFdr} and
+##' \code{makeMaster}.
 estimateMasterFdr <- function(pepfiles,
                               fastafile,
                               masterFdr = 0.025,
@@ -253,13 +258,19 @@ setMethod("allComb", "MasterFdrResults",
 ##' @return An instance of class \code{"\linkS4class{MasterPeptides}"}.
 ##' @author Laurent Gatto
 ##' @aliases writeMasterPeptides
+##' @references Shliaha P.V., Bond N. J., Lilley K.S. and Gatto L., in prep.
 ##' @seealso See the \code{\link{Synapter}} class manual page for
 ##' detailed information on filtering and modelling and the general
 ##' algorithm implemented in the \code{synapter} package.
+##' 
 ##' The \code{\link{estimateMasterFdr}} function allows to control
 ##' false dicovery rate when combining several peptide files while
 ##' maximising the number of identifications and suggest which
 ##' combination of peptide files to use.
+##' 
+##' The vignette, accessible with \code{synapterGuide()}
+##' illustrates a complete pipeline using \code{estimateMasterFdr} and
+##' \code{makeMaster}.
 makeMaster <- function(pepfiles, 
                        fdr = 0.01, span = 0.05,
                        verbose = TRUE) {

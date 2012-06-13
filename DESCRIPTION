@@ -6,8 +6,8 @@ Version: 0.99.1
 Author: Laurent Gatto, Pavel V. Shliaha and Nick J. Bond
 Maintainer: Laurent Gatto <lg390@cam.ac.uk>
 Depends: R (>= 2.15), methods, MSnbase
-Imports: hwriter, tcltk, tcltk2, RColorBrewer, Cairo, lattice, qvalue,
-        multtest, utils, Biobase
+Imports: hwriter, tcltk, tcltk2, RColorBrewer, lattice, qvalue, 
+	 multtest, utils, Biobase 
 Suggests: synapterdata, pgfSweave, xtable
 Description: The synapter package provides functionality to reanalyse 
 	     label-free proteomics data acquired on a Synapt G2 mass 

@@ -7,8 +7,8 @@
 \usepackage{hyperref}
 \usepackage[authoryear,round]{natbib}
 
-%% \SweaveOpts{echo=T,eval=T,fig=F,results=verbatim,cache=F,tikz=T,external=F,prefix.string=sweave-cache/figs/fig}
-\SweaveOpts{echo=T,eval=T,fig=F,results=verbatim,cache=F,tikz=T,external=F}
+%% \SweaveOpts{echo=TRUE,eval=TRUE,fig=FALSE,results=verbatim,cache=FALSE,tikz=TRUE,external=FALSE,prefix.string=sweave-cache/figs/fig}
+\SweaveOpts{echo=TRUE,eval=TRUE,fig=FALSE,results=verbatim,cache=FALSE,tikz=TRUE,external=FALSE}
 
 \newcommand{\R}{\texttt{R} }
 \newcommand{\code}[1]{{\texttt{#1}}}
@@ -65,8 +65,9 @@ ion mobility, Synapt, label free, data independent acquisition.
 
 \newpage
 
-<<setup,echo=F>>=
+<<setup,echo=FALSE>>=
 library(xtable)
+library(synapter)
 library(synapterdata)
 library(pgfSweave)
 setCacheDir("sweave-cache")
@@ -113,8 +114,8 @@ The rationale underlying \Rpackage{synapter}'s functionality are described in tw
   Shliaha, P.V., Bond N.J., Gatto L. and Lilley K.S. 
   \emph{The Effects of Ion Mobility Separation on Data Independent Acquisition in Proteomics Studies.}, in prep.   
 \item 
-  Shliaha P.V.,  Gatto L., Bond N.J. and Lilley K.S.  
-  \emph{Synapter: Improving qualitative and quantitative performance for label free proteomics}, in prep.
+  Shliaha P.V., Bond N.J., Lilley K.S. and Gatto L. 
+  \emph{Improving qualitative and quantitative performance for label free proteomics}, in prep.
 \end{itemize}
 
 The first one describes the benefits of ion mobility separation on identification and the effects on quantitation, that led to the development of \Rpackage{synapter}, which in described and illustrated in the second reference.
@@ -128,29 +129,20 @@ The first one describes the benefits of ion mobility separation on identificatio
 
 \subsection{Installation}\label{sec:install} 
 
-\Rpackage{synapter} is not yet available on public servers and thus, does not benefit from automatic installation, including dependencies. Depending packages it relies on, have to be installed manually, which is however easy to do. \Rpackage{synapter} requires \R version 2.15 or later (current stable version). Once the \R is installed on your system, all dependencies can be installed as described below. 
+\Rpackage{synapter} is available through the Bioconductor project. Details about the package and the installation procedure can be found on its page\footnote{\url{http://bioconductor.org/packages/devel/bioc/html/synapter.html}}. Briefly, installation of the package and all its dependencies should be done using the dedicated Bioconductor infrastructure as shown below:
 
 <<install, echo=TRUE, eval=FALSE>>= 
-packagesToInstall <- c("hwriter", "tcltk2", "RColorBrewer",
-                       "Cairo", "qvalue", "multtest", "Biobase",
-                       "MSnbase")
-## proceed with installation
-source("http://www.bioconductor.org/biocLite.R")
-biocLite(packagesToInstall) 
+source("http://bioconductor.org/biocLite.R")
+biocLite("synapter")
 @ 
 
-Once this is done, \Rpackage{synapter} can be installed with 
+After installation, \Rpackage{synapter} will have to be explicitly loaded with  
 
-<<installcmd2, echo=TRUE, eval=FALSE>>=
-## replace x.y.z with appropriate version
-install.packages("synapter_x.y.z.zip", repos = NULL)
+<<library, echo=TRUE, eval=FALSE>>=
+library(synapter)
 @ 
 
-on Windows\footnote{The Mac OS binary package has extension \texttt{.tgz} and Linux systems use the source package with extension \texttt{.tar.gz}.} or the menus in the \R installation menus if relevant (for instance if you use RStudio\footnote{\url{http://rstudio.org/}} or the R graphical environment on Windows).
-
-
-After installation, \Rpackage{synapter} will have to be explicitly loaded with the \Rfunction{library(synapter)}, so that all the package's functionality is available to the user. 
-
+so that all the package's functionality is available to the user. 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% Section
@@ -201,7 +193,7 @@ Prior to the database search, randomised entries are added to the database to al
   \end{center}
 \end{figure}
 
-The user is also expected to use a minimum of 1 fragment per peptide, 3 fragments per protein and 1 peptide per protein identification thresholds and 100\% \textit{False Positive Rate}\footnote{This is erroneously termed false postive rate in the software and manuscript and should be considered a false discovery rate.} for protein identification during database search for all of the acquisitions in the analysis as demonstrated in figure \ref{fig:plgs3}. This allows to maximise the number of identified peptides from the randomised part of the database, needed to estimate peptide identifications statistics. The total list of identified peptides is given in \texttt{final\_peptide.csv} files. A single \texttt{final\_peptide.csv} file has to be supplied to \Rpackage{synapter} for every run in the analysis (for both identification and quantitation runs).
+The user is also expected to use a minimum of 1 fragment per peptide, 3 fragments per protein and 1 peptide per protein identification thresholds and 100\% \textit{False Positive Rate}\footnote{This is erroneously termed false positive rate in the software and manuscript and should be considered a false discovery rate.} for protein identification during database search for all of the acquisitions in the analysis as demonstrated in figure \ref{fig:plgs3}. This allows to maximise the number of identified peptides from the randomised part of the database, needed to estimate peptide identifications statistics. The total list of identified peptides is given in \texttt{final\_peptide.csv} files. A single \texttt{final\_peptide.csv} file has to be supplied to \Rpackage{synapter} for every run in the analysis (for both identification and quantitation runs).
 
 
 \subsection{HDMSe/MSe data analysis}\label{sec:synapter}
@@ -245,7 +237,7 @@ The \texttt{Master} box needs to be checked if the identification inputs are \em
   \item[Filtering and modelling] The second tab allows to specify peptide filtering and retention time modelling parameters. Modelling accounts for systematic deviation in retention time for peptides between mass spectrometry runs (figure \ref{fig:rtmodel}) by fitting a curve through deviation of retention time vs retention time plot.
 
 \begin{figure}[!hbt]
-<<plotRt,fig=T,echo=F,tikz=T,width=4,height=4>>=
+<<plotRt,fig=TRUE,echo=FALSE,tikz=TRUE,width=4,height=4>>=
 plotRt(ups25b, what = "model", nsd = 1)
 @
 \caption{Figure illustrating retention time modelling between two runs in \Rpackage{synapter}, as generated by the \Rfunction{plotRt} function.}
@@ -296,6 +288,7 @@ output
 res <- synergise(filenames = input, outputdir = output)
 @ 
 
+%% res is loaded in the 
 <<performance,echo=TRUE>>=
 performance(res)
 @ 
@@ -351,7 +344,7 @@ cmb
 
 \begin{figure}[!hbt]
 \begin{center}
-<<estimateFdrPlot,fig=T,echo=F,tikz=T,width=4,height=4>>=
+<<estimateFdrPlot,fig=TRUE,echo=FALSE,tikz=TRUE,width=4,height=4>>=
 plot(cmb)
 @ 
 \caption{Figure illustrating the relation between the number of unique peptides in the combined HDMSe file and the resulting false discovery rate. The symbols on the figure represent the number of files for that particular combination. The dotted line is the user defined threshold for the combined FDR (\Robject{masterFdr} parameter). The best combination, i.e the one that maximises the number of unique peptides while keeping the FDR below \Robject{masterFdr} is highlighted in red.}
@@ -371,7 +364,7 @@ See \Rfunction{?estimateMasterFdr} and references therein for more details about
 \label{sec:makeMaster}
 
 Now that we have identified which files should be used to create the master file, we can directly pass the relevant identification files to the \Rfunction{makeMaster} function to generate the \emph{master} file.
-The function has one mandatory input parameter, \Robject{pepfiles}, a list oh identification file names to be merged. The output is an object of class \Robject{MasterPeptides} that stores the relevant peptides from the original input files. The result can be saved to disk using \Rfunction{saveRDS} for further analysis, as descibed in section \ref{sec:synapter}.
+The function has one mandatory input parameter, \Robject{pepfiles}, a list oh identification file names to be merged. The output is an object of class \Robject{MasterPeptides} that stores the relevant peptides from the original input files. The result can be saved to disk using \Rfunction{saveRDS} for further analysis, as described in section \ref{sec:synapter}.
 
 
 <<master, echo=TRUE, eval=TRUE>>=
@@ -388,11 +381,11 @@ More details can be found in the function documentation accessible with \Rfuncti
 \section{Analysing complete experiments}\label{sec:msnbase}
 
 
-The functionality described in this section relies on the \Rpackage{MSnbase} package \citep{Gatto2012}, which is installed by default with \Rpackage{synapter}. Please refer to the \Rpackage{MSnbase} Bioconductor webpage\footnote{\url{http://bioconductor.org/packages/release/bioc/html/MSnbase.html}}, the associated vignettes and the respective manual pages for more details.
+The functionality described in this section relies on the \Rpackage{MSnbase} package \citep{Gatto2012}, which is installed by default with \Rpackage{synapter}. Please refer to the \Rpackage{MSnbase} Bioconductor web page\footnote{\url{http://bioconductor.org/packages/release/bioc/html/MSnbase.html}}, the associated vignettes and the respective manual pages for more details.
 
 The \Rpackage{synapterdata} already provides preprocessed PLGS data. Six \Robject{Synapter} instances are available: 3 replicates (labelled \texttt{a}, \texttt{b} and \texttt{c}) of the Universal Proteomics Standard (UPS1) 48 protein mix at 25 fmol and 3 replicates at 50 fmol, in a constant \textit{E. coli} background. The 6 files can be loaded in your working space with 
 
-<<loadups, eval=T, echo=T>>=
+<<loadups, eval=TRUE, echo=TRUE>>=
 data(ups25a, ups25b, ups25c, ups50a, ups50b, ups50c)
 @ 
 
@@ -546,7 +539,7 @@ In the above example, quantitation values and statistics data are saved in a sum
 
 \begin{figure}[!hbt]
 \begin{center}
-<<volcano,fig=T,echo=T,tikz=T,width=4,height=4>>=
+<<volcano,fig=TRUE,echo=TRUE,tikz=TRUE,width=4,height=4>>=
 plot(res$lfc, -log10(res$qv),
      col = ifelse(grepl("ups$", rownames(res)),
        "#4582B3AA",
@@ -570,7 +563,7 @@ legend("topright", c("UPS", "E. coli"),
 
 \begin{figure}[!hbt]
 \begin{center}
-<<hmap,fig=T,echo=T,tikz=T,width=4,height=4>>=
+<<hmap,fig=TRUE,echo=TRUE,tikz=TRUE,width=4,height=4>>=
 heatmap(exprs(msUps)[grep("ups",featureNames(msUps)),])
 @
 \caption{A heatmap of all UPS1 proteins present in the final data set.}
@@ -579,7 +572,7 @@ heatmap(exprs(msUps)[grep("ups",featureNames(msUps)),])
 \end{figure}
 
 
-<<pustab, echo=F,results=tex>>=
+<<pustab, echo=FALSE,results=tex>>=
 k <- grep("ups", rownames(res))
 print(xtable(round(res[k, ], 3),
              caption = "UPS1 proteins",
@@ -588,7 +581,7 @@ print(xtable(round(res[k, ], 3),
       size = "scriptsize")
 @ 
 
-<<outtab, echo=F,results=tex>>=
+<<outtab, echo=FALSE,results=tex>>=
 i <- which(res$lfc > 0 & res$qv < 0.05)
 j <- which(res$lfc > 4)
 print(xtable(round(res[c(i,j), ], 3),

@@ -105,14 +105,14 @@
 ##'         the run in \code{outputdir}.
 ##' @aliases synergize
 ##' @author Laurent Gatto
+##' @references Shliaha P.V., Bond N. J., Lilley K.S. and Gatto L., in prep.
 ##' @examples
-##' \dontrun{
 ##' output <- tempdir() ## a temporary directory
 ##' synapterTinyData()
 ##' synergise(object = synapterTiny, outputdir = output, grid.subset = 0.2)
-##' htmlReport <- paste0(output, "/index.html") ## the result report
-##' browseURL(htmlReport) ## open the report with default browser
-##' }
+##' htmlReport <- paste0("file:///", file.path(output, "index.html")) ## the result report
+##' if (interactive())
+##'   browseURL(htmlReport) ## open the report with default browser
 synergise <- function(filenames,
                       master = FALSE,
                       object,
@@ -168,8 +168,8 @@ synergise <- function(filenames,
 
   hwrite("Input", p, heading = 2)
   txt <- rbind(c("Identification peptide:", basename(obj$IdentPeptideFile), nrow(obj$IdentPeptideData)),
-               c("Quantitation peptide:",   basename(obj$QuantPeptideFile),   nrow(obj$QuantPeptideData)),
-               c("Quantitation Pep3D:",     basename(obj$QuantPep3DFile), nrow(obj$QuantPep3DData)),
+               c("Quantitation peptide:",   basename(obj$QuantPeptideFile), nrow(obj$QuantPeptideData)),
+               c("Quantitation Pep3D:",     basename(obj$QuantPep3DFile),   nrow(obj$QuantPep3DData)),
                c("Fasta file:",    basename(obj$DbFastaFile), ""))
   colnames(txt) <- c("", "File name", "Number of features")
   hwrite(txt, p, br = TRUE, row.bgcolor = '#ffdc98')
@@ -331,7 +331,7 @@ synergise <- function(filenames,
   
   hwrite("Grid optimisation", p, heading = 2)
   if (verbose)
-    message("Running grid seach...")
+    message("Running grid search...")
   
   ## (5) Grid search to optimise EMRT matching parameters
   if (grid.n == 0) {

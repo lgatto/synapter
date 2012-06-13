@@ -37,6 +37,10 @@
   }
 }
 
+\references{
+  Shliaha P.V., Bond N. J., Lilley K.S. and Gatto L., in prep.
+}
+
 \author{
   Laurent Gatto
 }

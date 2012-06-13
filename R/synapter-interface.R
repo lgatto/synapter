@@ -6,10 +6,11 @@ Synapter <- function(filenames, master = FALSE) {
     xx$loadFiles()
   } else {
     if (!all(names(filenames) %in% c("identpeptide", "quantpeptide", "quantpep3d", "fasta")))
-      stop("File names must be provided as a named list with names 'identpeptide', 'quantpeptide', 'quantpep3d' and 'fasta'.")    
+      stop("File names must be provided as a named list with names 'identpeptide','quantpeptide', 'quantpep3d' and 'fasta'.")    
     ftest <- sapply(filenames, file.exists)
     if (any(!ftest))
-      stop(paste(filenames[!ftest], collapse = " "), " do(es) not exists.")
+      stop(paste(filenames[!ftest], collapse = " "),
+           " do(es) not exists.")
     xx$IdentPeptideFile <- filenames$identpeptide
     xx$QuantPeptideFile <- filenames$quantpeptide
     xx$QuantPep3DFile <- filenames$quantpep3d
@@ -27,10 +28,14 @@ setMethod(show, "Synapter",
             cat("Object of class", classLabel(class(object)), "\n")
             cat("Package version", object$Version, "\n")
             cat("Data files:\n")
-            cat(" + Quantitation pep file:", basename(object$QuantPeptideFile), "\n")
-            cat(" + Identification pep file:", basename(object$IdentPeptideFile), "\n")
-            cat(" + Quantitation Pep3DAMRT file:", basename(object$QuantPep3DFile), "\n")
-            cat(" + Fasta file:", basename(object$DbFastaFile), "\n")
+            cat(" + Quantitation pep file:",
+                basename(object$QuantPeptideFile), "\n")
+            cat(" + Identification pep file:",
+                basename(object$IdentPeptideFile), "\n")
+            cat(" + Quantitation Pep3DAMRT file:",
+                basename(object$QuantPep3DFile), "\n")
+            cat(" + Fasta file:",
+                basename(object$DbFastaFile), "\n")
             cat("Log:\n")
             print(object$SynapterLog)
             ## for (x in object$SynapterLog)
@@ -174,7 +179,7 @@ setMethod(getPpmErrorQs, "Synapter",
                    digits = 3) {
             ## mass error quantile table.
             t <- rbind(round(getQs(object$IdentPeptideData$errorppm, qs)$y, digits),
-                       round(getQs(object$QuantPeptideData$errorppm,   qs)$y, digits))
+                       round(getQs(object$QuantPeptideData$errorppm, qs)$y, digits))
             rownames(t) <- c("Ident", "Quant")
             return(t)
           })
@@ -234,19 +239,22 @@ setMethod(showFdrStats, "Synapter",
 setMethod(filterUniqueDbPeptides, "Synapter",
           function(object, verbose = TRUE) {
             object$filterUniqueSeq() 
-            object$filterUniqueDbPeptides(object$DbFastaFile, verbose = verbose)
+            object$filterUniqueDbPeptides(object$DbFastaFile,
+                                          verbose = verbose)
           })
 
 setMethod(filterUniqueQuantDbPeptides, "Synapter",
           function(object, verbose = TRUE) {
             object$filterUniqueQuantSeq()
-            object$filterUniqueQuantDbPeptides(object$DbFastaFile, verbose = verbose)
+            object$filterUniqueQuantDbPeptides(object$DbFastaFile,
+                                               verbose = verbose)
           })
 
 setMethod(filterUniqueIdentDbPeptides, "Synapter",
           function(object, verbose = TRUE) {
             object$filterUniqueIdentSeq() 
-            object$filterUniqueIdentDbPeptides(object$DbFastaFile, verbose = verbose)
+            object$filterUniqueIdentDbPeptides(object$DbFastaFile,
+                                               verbose = verbose)
           })
 
 setMethod(filterQuantPepScore, "Synapter",
@@ -454,7 +462,8 @@ setMethod(performance, "Synapter",
             if (nrow(object$MatchedEMRTs) == 0)
               stop("Matching required before estimating performance.")
             ## synapter results
-            S <- object$MatchedEMRTs[object$MatchedEMRTs$Function == 1, "spectrumID"]
+            S <- object$MatchedEMRTs[object$MatchedEMRTs$Function == 1,
+                                     "spectrumID"]
             nS <- length(S)
             uS <- unique(S)
             ## Ident peptides
@@ -540,7 +549,8 @@ setMethod(writeMergedPeptides, "Synapter",
             what <- match.arg(what)
             switch(what,
                    full = write.csv(object$MergedFeatures, file = file, ...),
-                   light = write.csv(lightMergedFeatures(object$MergedFeatures), file = file, ...))
+                   light = write.csv(lightMergedFeatures(object$MergedFeatures),
+                     file = file, ...))
           })
 
 
@@ -553,13 +563,12 @@ setMethod(writeMatchedEMRTs, "Synapter",
             what <- match.arg(what)
             switch(what,
                    full = write.csv(object$MatchedEMRTs, file = file, ...),
-                   light = write.csv(lightMatchedEMRTs(object$MatchedEMRTs), file = file, ...))
+                   light = write.csv(lightMatchedEMRTs(object$MatchedEMRTs),
+                     file = file, ...))
           })
 
 setAs("Synapter", "MSnSet",
       function (from) {
-        if (!require(MSnbase))
-          stop("Please install 'MSnbase' to coerce to an 'MSnSet' instance.")
         cols <- c("peptide.seq",
                   "protein.Accession",
                   "protein.Description",

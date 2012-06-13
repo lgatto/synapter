@@ -1,14 +1,13 @@
-import(qvalue)
-import(multtest)
 import(hwriter)
 import(tcltk)
 import(tcltk2)
-import(Cairo)
-import(lattice)
-import(RColorBrewer)
 import(utils)
+
+importFrom(qvalue, qvalue)
+importFrom(multtest, mt.rawp2adjp)
+importFrom(lattice, levelplot, densityplot, barchart)
+importFrom(RColorBrewer, brewer.pal)
 importFrom(Biobase, addVigs2WinMenu)
-import(MSnbase)
 
 export(Synapter, ## constructor
        as.MSnSet.Synapter,

@@ -162,15 +162,17 @@
   here.
 }
 \examples{
-\dontrun{
 output <- tempdir() ## a temporary directory
 synapterTinyData()
 synergise(object = synapterTiny, outputdir = output, grid.subset = 0.2)
-htmlReport <- paste0(output, "/index.html") ## the result report
+htmlReport <- paste0("file:///", file.path(output, "index.html")) ## the result report
 browseURL(htmlReport) ## open the report with default browser
-}
 }
 \author{
   Laurent Gatto
+}
+\references{
+  Shliaha P.V., Bond N. J., Lilley K.S. and Gatto L., in
+  prep.
 }
 

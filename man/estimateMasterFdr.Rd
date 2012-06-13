@@ -53,9 +53,17 @@
 \author{
   Laurent Gatto
 }
+\references{
+  Shliaha P.V., Bond N. J., Lilley K.S. and Gatto L., in
+  prep.
+}
 \seealso{
   The \code{\link{makeMaster}} function to combine the
   peptide data as suggested by \code{estimateMasterFdr}
   into one single \emph{master} peptide file.
+
+  The vignette, accessible with \code{synapterGuide()}
+  illustrates a complete pipeline using
+  \code{estimateMasterFdr} and \code{makeMaster}.
 }
 

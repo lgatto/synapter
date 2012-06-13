@@ -704,8 +704,8 @@ Synapter(filenames, master) ## creates an instance of class 'Synapter'
   spectrometry using decoy databases. 
   J Proteome Res. 2008b Jan; 7:(1)29-34 
 
-  Shliaha P.V.,  Gatto L., Bond N.J. and Lilley K.S.
-  Synapter: Improving qualitative and quantitative performance for label free
+  Shliaha P.V., Bond N.J., Lilley K.S. and Gatto L.
+  Improving qualitative and quantitative performance for label free
   proteomics, in prep. 
 
   Shliaha, P.V., Bond N.J., Gatto L. and Lilley K.S.
@@ -715,8 +715,9 @@ Synapter(filenames, master) ## creates an instance of class 'Synapter'
 
 
 \examples{
-\dontrun{
 library(synapter) ## always needed
+
+\dontrun{
 ## (1) Construction - to create your own data objects
 synapterTiny <- Synapter()
 }
@@ -803,7 +804,6 @@ plotEMRTtable(synapterTiny)
 getEMRTtable(synapterTiny)
 performance(synapterTiny)
 
-\dontrun{
 ## (7) Exporting data to csv spreadsheets
 writeMergedPeptides(synapterTiny, what = "light") ## or what="full"
 writeMergedPeptides(synapterTiny, file = "myresults.csv", what="light") 
@@ -813,7 +813,7 @@ writeMatchedEMRTs(synapterTiny, file = "myresults2.csv", what="light")
 writeIdentPeptides(synapterTiny, file = "myIdentPeptides.csv") 
 writeQuantPeptides(synapterTiny, file = "myQuantPeptides.csv")
 ## If used right after loading, the non-filted data will be exported
-}}
+}
 
 \author{Laurent Gatto \email{lg390@cam.ac.uk}}
 

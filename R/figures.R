@@ -68,8 +68,6 @@ plotLowess2 <- function(xx, model, nsd, ...) {
   
   sdlim1 <- sapply(nsd, function(i) pp$fit[o] - i * sd[o])
   sdlim2 <- sapply(nsd, function(i) pp$fit[o] + i * sd[o])
-  ## sdlim1 <- pp$fit[o] - nsd * sd[o]
-  ## sdlim2 <- pp$fit[o] + nsd * sd[o]
   ylim <- range(c(sdlim1, sdlim2))
   
   plot(xx$precursor.retT.ident, xx$deltaRt,
