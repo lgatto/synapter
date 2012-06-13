@@ -2,6 +2,7 @@ CHANGES IN VERSION 0.99.2
 -------------------------
  o changed merged to total FDR in MasterFdrResults 
    plot x label, as in manuscript <2012-06-13 Wed>
+ o mention multtest in vignette <2012-06-13 Wed>
 
 CHANGES IN VERSION 0.99.1
 -------------------------
