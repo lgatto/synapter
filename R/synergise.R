@@ -111,7 +111,9 @@
 ##' synapterTinyData()
 ##' synergise(object = synapterTiny, outputdir = output, grid.subset = 0.2)
 ##' htmlReport <- paste0("file:///", file.path(output, "index.html")) ## the result report
-##' ## browseURL(htmlReport) ## open the report with default browser
+##' \dontrun{
+##' browseURL(htmlReport) ## open the report with default browser
+##' }
 synergise <- function(filenames,
                       master = FALSE,
                       object,
