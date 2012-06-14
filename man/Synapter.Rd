@@ -215,8 +215,9 @@ Synapter(filenames, master) ## creates an instance of class 'Synapter'
     Empirical p-values are adjusted using \cite{Bonferroni}
     and \cite{Benjamini and Hochberg, 1995} (\code{multtest} package)
     and q-values are computed using the \code{qvalue} package
-    (\cite{\enc{Käll}{Kall} et al. 2008b}). Only \code{Regular} entries
-    are stored in the resulting data for subsequent analysis.
+    (\cite{Storey JD and Tibshirani R., 2003 and \enc{Käll}{Kall} et
+      al., 2008b}). Only \code{Regular} entries are stored in the
+    resulting data for subsequent analysis. 
 
     The data tables can be exported as \code{csv} spreadsheets with the 
     \code{writeIdentPeptides} and \code{writeQuantPeptides} methods. 
@@ -699,6 +700,10 @@ Synapter(filenames, master) ## creates an instance of class 'Synapter'
   approach to multiple testing.
   J. R. Statist. Soc. B., 1995, Vol. 57: 289-300.
 
+  Storey JD and Tibshirani R.
+  Statistical significance for genome-wide experiments.
+  Proceedings of the National Academy of Sciences, 2003, 100: 9440-9445.
+  
   \enc{Käll}{Kall}, Storey JD, MacCoss MJ, Noble WS
   Assigning significance to peptides identified by tandem mass
   spectrometry using decoy databases. 
