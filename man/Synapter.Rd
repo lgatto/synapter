@@ -282,7 +282,7 @@ Synapter(filenames, master) ## creates an instance of class 'Synapter'
     Mention \code{plotFeatures} here.
   }
 
-  \subsection{Grid search to optimise EMRT matching parameters}{
+  \subsection{Grid search to optimise matching tolerances}{
     Matching of identification peptides and quantitation EMRTs is done
     within a mass tolerance in parts per million (ppm) and the modelled
     retention time +/- a certain number of standard deviations.
@@ -320,10 +320,10 @@ Synapter(filenames, master) ## creates an instance of class 'Synapter'
     the grid search. See example and method documentation for details.
   }
 
-  \subsection{Matching identification peptides and quantitation EMRTs}{
-    The identification peptide - quantitation EMRT matching is performed
-    using the best parameters, as defined above with a grid search, or
-    using user-defined parameters.
+  \subsection{Identification transfer: matching identification peptides and quantitation EMRTs}{
+    The identification peptide - quantitation EMRT matching, termed
+    identification transfer, is performed using the best parameters, as
+    defined above with a grid search, or using user-defined parameters.
 
     Matching is considered successful when one and only one EMRT is
     found in the mass tolerance/retention time window defined by the
