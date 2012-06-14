@@ -6,6 +6,8 @@ CHANGES IN VERSION 0.99.2
  o qvalue refs <2012-06-14 Thu>
  o Synapter.Rd updates, to match manuscript 
    nomenclature <2012-06-14 Thu>
+ o Added 'Getting help' section in vignette and 
+   package man page <2012-06-14 Thu>
 
 CHANGES IN VERSION 0.99.1
 -------------------------

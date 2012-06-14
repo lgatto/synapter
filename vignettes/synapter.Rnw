@@ -34,8 +34,8 @@
 }
 
 \author{Laurent Gatto\footnote{\email{lg390@cam.ac.uk}}\\ 
-  Nick J. Bond\footnote{\email{njb70cam@gmail.com}}\\ 
-  Pavel V. Shliaha\footnote{\email{pvs22@cam.ac.uk}}\\
+  Nick J. Bond\\
+  Pavel V. Shliaha\footnote{\email{pvs22@cam.ac.uk}}\\ 
   Cambridge Center for Proteomics\\
   University of Cambridge
 }
@@ -82,7 +82,7 @@ res <- ups25b ## for synergise and plotRt
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Introduction}\label{sec:intro} 
 
-\subsection{Background}
+\subsection{Background}\label{sec:bkg}
 
 The main functionality of \Rpackage{synapter} is to combine proteomics data acquired under different mass spectrometry settings or with different samples to (i) optimise the respective qualities of the two data sets or (ii) increase the number of identifications, thereby decreasing missing values. Besides synapter offers other functionality inaccessible in the default pipeline, like peptide FDR estimation and filtering on peptide match type and peptide uniqueness. 
 
@@ -143,6 +143,12 @@ library(synapter)
 @ 
 
 so that all the package's functionality is available to the user. 
+
+\subsection{Getting help}\label{sec:help}
+
+There is a general mailing list\footnote{\url{https://stat.ethz.ch/mailman/listinfo/bioconductor}} for Bioconductor packages. There is also a on-line form\footnote{\url{http://bioconductor.org/help/mailing-list/mailform/}} if you do not wich to subscribe to the list. You are also welcome to contact the package author\footnote{Laurent Gatto, (\url{lg390@cam.ac.uk}} for general questions, bugs, comments and suggestions.
+
+\Rpackage{synapter} is an open source initiative and contributions, whether new code, documentation bug fixes and new use cases are much appreciated. The official source code is available on the Bioconductor svn server\footnote(\url{http://bioconductor.org/developers/source-control/}). A testing version and easily fork-able source tree is available on github\footnote{\url{https://github.com/lgatto/synapter/}}, which also allows to report issues (bugs, feature requests, \ldots). 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% Section
