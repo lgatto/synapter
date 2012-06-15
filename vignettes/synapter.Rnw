@@ -146,7 +146,7 @@ so that all the package's functionality is available to the user.
 
 \subsection{Getting help}\label{sec:help}
 
-There is a general mailing list\footnote{\url{https://stat.ethz.ch/mailman/listinfo/bioconductor}} for Bioconductor packages. There is also a on-line form\footnote{\url{http://bioconductor.org/help/mailing-list/mailform/}} if you do not wich to subscribe to the list. You are also welcome to contact Laurent Gatto (\url{lg390@cam.ac.uk}) for general questions, bugs, comments and suggestions.
+There is a general mailing list\footnote{\url{https://stat.ethz.ch/mailman/listinfo/bioconductor}} for Bioconductor packages. There is also a on-line form\footnote{\url{http://bioconductor.org/help/mailing-list/mailform/}} if you do not wish to subscribe to the list. You are also welcome to contact Laurent Gatto (\url{lg390@cam.ac.uk}) for general questions, bugs, comments and suggestions.
 
 \Rpackage{synapter} is an open source initiative and contributions, whether new code, documentation bug fixes and new use cases are much appreciated. The official source code is available on the Bioconductor svn server\footnote{\url{http://bioconductor.org/developers/source-control/}}. A testing version and easily fork-able source tree is available on github\footnote{\url{https://github.com/lgatto/synapter/}}, which also allows to report issues (bugs, feature requests, \ldots). 
 
