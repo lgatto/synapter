@@ -505,7 +505,7 @@ head(exprs(msUps))
 table(apply(exprs(msUps), 1, function(.x) sum(!is.na(.x))))
 @ 
 
-We obtain a final data set containing \Sexpr{ncol(msUps)} proteins. Finally, we normalise protein intensities in each sample to correct for experimental loading biases and pipetting errors. To do so, we compute 6 sample medians using all constant \textit{E. coli} background proteins and divide each protein by its respective sample mean. 
+We obtain a final data set containing \Sexpr{nrow(msUps)} proteins. Finally, we normalise protein intensities in each sample to correct for experimental loading biases and pipetting errors. To do so, we compute 6 sample medians using all constant \textit{E. coli} background proteins and divide each protein by its respective sample mean. 
 
 <<scale>>=
 ecoli <- -grep("ups$", featureNames(msUps)) 
