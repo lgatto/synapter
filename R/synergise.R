@@ -198,10 +198,7 @@ synergise <- function(filenames,
   
   colnames(grd) <- c("Grid parameter", "Value")
   hwrite(grd, p, br = TRUE, row.bgcolor = '#ffdc98')
-  
-  writeIdentPeptides(obj, file = paste0(outputdir, "/IdentPeptides_nonFiltered.csv"))
-  writeQuantPeptides(obj, file = paste0(outputdir, "/QuantPeptides_nonFiltered.csv"))
-  
+    
   hwrite("Filtering", p, heading = 2)
   
   hwrite("Peptide false discovery rate", p, heading = 3)
