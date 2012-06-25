@@ -8,6 +8,8 @@ CHANGES IN VERSION 0.99.2
    nomenclature <2012-06-14 Thu>
  o Added 'Getting help' section in vignette and 
    package man page <2012-06-14 Thu>
+ o Changed HDMSe to ident in plotGrid plot 
+   legend <2012-06-25 Mon>
 
 CHANGES IN VERSION 0.99.1
 -------------------------
