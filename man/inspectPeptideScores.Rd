@@ -1,0 +1,28 @@
+\name{inspectPeptideScores}
+\alias{inspectPeptideScores}
+\title{Inspect peptide scores.}
+\usage{
+  inspectPeptideScores(filename)
+}
+\arguments{
+  \item{filename}{The name of a final peptide file.}
+}
+\value{
+  A table of peptide counts in each peptide matchType *
+  protein dataBasteType category. Also plots the
+  distribution of respective peptide scores.
+}
+\description{
+  This function takes a final peptide file and returns
+  information about the \emph{unique} peptide scores and
+  their number in each peptide matchType (PepFrag1 and
+  PepFrag2) by protein dataBaseType (Random and Regular)
+  category. The function is a lightweight verion of
+  \code{\link{getPepNumbers}} and
+  \code{\link{plotPepScores}} (to be used with
+  \code{Synapter} instances) for individual files.
+}
+\author{
+  Laurent Gatto
+}
+
