@@ -28,7 +28,11 @@
   found in the vignette, accessinble with
   \code{synapterGuide()}. Detailed information about the data processing 
   can be found in the respective function and class manual pages
-  appropriately referenced in the vignette. 
+  appropriately referenced in the vignette.
+
+  For questions, use the Biocondcutor mailing list or contact the
+  author. The vignette has a section with details on where/how to get
+  help. 
 }
 
 \author{

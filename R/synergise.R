@@ -111,7 +111,9 @@
 ##' synapterTinyData()
 ##' synergise(object = synapterTiny, outputdir = output, grid.subset = 0.2)
 ##' htmlReport <- paste0("file:///", file.path(output, "index.html")) ## the result report
-##' ## browseURL(htmlReport) ## open the report with default browser
+##' \dontrun{
+##' browseURL(htmlReport) ## open the report with default browser
+##' }
 synergise <- function(filenames,
                       master = FALSE,
                       object,
@@ -196,10 +198,7 @@ synergise <- function(filenames,
   
   colnames(grd) <- c("Grid parameter", "Value")
   hwrite(grd, p, br = TRUE, row.bgcolor = '#ffdc98')
-  
-  writeIdentPeptides(obj, file = paste0(outputdir, "/IdentPeptides_nonFiltered.csv"))
-  writeQuantPeptides(obj, file = paste0(outputdir, "/QuantPeptides_nonFiltered.csv"))
-  
+    
   hwrite("Filtering", p, heading = 2)
   
   hwrite("Peptide false discovery rate", p, heading = 3)

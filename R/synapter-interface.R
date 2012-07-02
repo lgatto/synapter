@@ -510,7 +510,7 @@ setMethod(plotGrid, "Synapter",
             what <- match.arg(what)
             if (what == "total") {
               grd <- object$Grid[[1]]
-              main <- "Percentage of total HMDSe peptides uniquely matched."
+              main <- "Percentage of total ident peptides uniquely matched."
             } else if (what == "model") {
               grd <- object$Grid[[2]]
               main <- "Percentage of modelled peptides matched."

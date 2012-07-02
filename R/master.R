@@ -165,7 +165,7 @@ setMethod("plot", c("MasterFdrResults", "missing"),
                    { .y <- x@all[, "proteotypic"]; .ylab <- "Number of unique proteotypic peptides"},
                    { .y <- x@all[, "unique"]; .ylab <- "Number of unique peptides"})
             plot(.y ~ .x, type = "n",
-                 xlab = "Merged FDR", ylab = .ylab)
+                 xlab = "Total FDR", ylab = .ylab)
             text(.x, .y, 
                  as.character(x@all$nbSample),
                  cex = .6,
