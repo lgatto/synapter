@@ -34,8 +34,8 @@
 }
 
 \author{Laurent Gatto\footnote{\email{lg390@cam.ac.uk}}\\ 
-  Nick J. Bond\footnote{\email{njb70cam@gmail.com}}\\ 
-  Pavel V. Shliaha\footnote{\email{pvs22@cam.ac.uk}}\\
+  Nick J. Bond\\
+  Pavel V. Shliaha\footnote{\email{pvs22@cam.ac.uk}}\\ 
   Cambridge Center for Proteomics\\
   University of Cambridge
 }
@@ -50,7 +50,7 @@
 \vskip 0.3in minus 0.1in
 \hrule
 \begin{abstract}
-  This vignette describes the functionality implemented in the \Rpackage{synapter} package. It allows to re-analyse label-free quantitative proteomics data obtained on a Synapt G2 instrument to optimise quantitation and identification. Several combination strategies are possible and described. Typically, a user can combine identification-optimised data (HDMSe data using ion mobility separation) and quantitation-optimised data (MSe data). Additionally, a method to combine several data files into a \emph{master} set while controlling the false discovery rate, is presented.
+  This vignette describes the functionality implemented in the \Rpackage{synapter} package. It allows to re-analyse label-free quantitative proteomics data obtained on a Synapt G2 instrument to optimise quantitation and identification. Several combination strategies are possible and described. Typically, a user can combine identification-optimised data (HDMS$^E$ data using ion mobility separation) and quantitation-optimised data (MS$^E$ data). Additionally, a method to combine several data files into a \emph{master} set while controlling the false discovery rate, is presented.
 \end{abstract}
 \textit{Keywords}: Mass Spectrometry (MS), proteomics, bioinformatics, IMS, ion mobility separation
 ion mobility, Synapt, label free, data independent acquisition.
@@ -82,20 +82,20 @@ res <- ups25b ## for synergise and plotRt
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Introduction}\label{sec:intro} 
 
-\subsection{Background}
+\subsection{Background}\label{sec:bkg}
 
 The main functionality of \Rpackage{synapter} is to combine proteomics data acquired under different mass spectrometry settings or with different samples to (i) optimise the respective qualities of the two data sets or (ii) increase the number of identifications, thereby decreasing missing values. Besides synapter offers other functionality inaccessible in the default pipeline, like peptide FDR estimation and filtering on peptide match type and peptide uniqueness. 
 
 The example that motivated the development of this package was to combine data obtained on a Synapt G2 instrument:
 
 \begin{enumerate}
-\item HDMSe data, acquired with additional peptide separation using an ion mobility cell, thus leading to better (both in number and in quality) identification and 
-\item standard MSe data (acquired without ion mobility separation), providing better data quantitation. 
+\item HDMS$^E$ data, acquired with additional peptide separation using an ion mobility cell, thus leading to better (both in number and in quality) identification and 
+\item standard MS$^E$ data (acquired without ion mobility separation), providing better data quantitation. 
 \end{enumerate}
 
-The former is data is called \emph{identification peptides} and the latter \emph{quantitation peptides}, irrespective of the acquisition mode (HDMSe or MSe). This HDMSe/MSe design is used in this document to illustrate the \Rpackage{synapter} package.
+The former is data is called \emph{identification peptides} and the latter \emph{quantitation peptides}, irrespective of the acquisition mode (HDMS$^E$ or MS$^E$). This HDMS$^E$/MS$^E$ design is used in this document to illustrate the \Rpackage{synapter} package.
 
-However, although HDMSe mode possesses superior identification and MSe mode superior quantitation capabilities and transferring identifications from HDMSe to MSe is a priori the most efficient setup, identifications can be transferred between any runs, independently of the acquisition mode. This allows to reduce the number of missing values, one of the primary limitation of label-free proteomics. Thus users will benefit from \Rpackage{synapter}'s functionality even if they run their instruments in a single mode (HDMSe or MSe only). 
+However, although HDMS$^E$ mode possesses superior identification and MS$^E$ mode superior quantitation capabilities and transferring identifications from HDMS$^E$ to MS$^E$ is a priori the most efficient setup, identifications can be transferred between any runs, independently of the acquisition mode. This allows to reduce the number of missing values, one of the primary limitation of label-free proteomics. Thus users will benefit from \Rpackage{synapter}'s functionality even if they run their instruments in a single mode (HDMS$^E$ or MS$^E$ only). 
 
 However, as will be shown in section \ref{sec:analysis}, transferring identifications from multiple runs to each other increases analysis time and peptide FDR within the analysis. \Rpackage{synapter} allows to minimise these effects to acceptable degree by choosing runs to transfer identifications from and merging them in the master HDMSE file.  
 
@@ -144,6 +144,12 @@ library(synapter)
 
 so that all the package's functionality is available to the user. 
 
+\subsection{Getting help}\label{sec:help}
+
+There is a general mailing list\footnote{\url{https://stat.ethz.ch/mailman/listinfo/bioconductor}} for Bioconductor packages. There is also a on-line form\footnote{\url{http://bioconductor.org/help/mailing-list/mailform/}} if you do not wish to subscribe to the list. You are also welcome to contact Laurent Gatto (\url{lg390@cam.ac.uk}) for general questions, bugs, comments and suggestions.
+
+\Rpackage{synapter} is an open source initiative and contributions, whether new code, documentation bug fixes and new use cases are much appreciated. The official source code is available on the Bioconductor svn server\footnote{\url{http://bioconductor.org/developers/source-control/}}. A testing version and easily fork-able source tree is available on github\footnote{\url{https://github.com/lgatto/synapter/}}, which also allows to report issues (bugs, feature requests, \ldots). 
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% Section
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -170,9 +176,9 @@ First the user has to specify the output folders for files to be used in synapte
   \end{center}
 \end{figure}
 
-At the first stage PLGS performs noise reduction and centroiding, based on user specified preferences called \textit{processing parameters}. These preferences determine thresholds in intensity for discriminating between noise peaks and peptide and fragment ion peaks in high and low energy functions of an acquisition. The optimal value of these parameters is sample dependant and different between MSe and HDMSe modes. For \Rpackage{synapter} to function properly all acquisitions in the analysis have to be processed with the same thresholds, optimal for the mode identifications are transferred from (typically HDMSe mode). The user is expected to identify optimal parameters himself for every new sample type by repeatedly analysing a representative acquisition with different thresholds.  
+At the first stage PLGS performs noise reduction and centroiding, based on user specified preferences called \textit{processing parameters}. These preferences determine thresholds in intensity for discriminating between noise peaks and peptide and fragment ion peaks in high and low energy functions of an acquisition. The optimal value of these parameters is sample dependant and different between MS$^E$ and HDMS$^E$ modes. For \Rpackage{synapter} to function properly all acquisitions in the analysis have to be processed with the same thresholds, optimal for the mode identifications are transferred from (typically HDMS$^E$ mode). The user is expected to identify optimal parameters himself for every new sample type by repeatedly analysing a representative acquisition with different thresholds.  
 
-After the ions peaks have been determined and centroided, the ions representing charge states and isotopes of a peptide are collapsed into a single entity called EMRT (exact mass retention time pair). The EMRTs in low energy function represent unidentified peptides and are assigned peptides sequences during database search. The total list of EMRTs can be found in the \texttt{pep3DAMRT.csv} file and it is one of the \Rpackage{synapter} input files for the runs used for quantitation (typically MSe mode)
+After the ions peaks have been determined and centroided, the ions representing charge states and isotopes of a peptide are collapsed into a single entity called EMRT (exact mass retention time pair). The EMRTs in low energy function represent unidentified peptides and are assigned peptides sequences during database search. The total list of EMRTs can be found in the \texttt{pep3DAMRT.csv} file and it is one of the \Rpackage{synapter} input files for the runs used for quantitation (typically MS$^E$ mode)
 
 Prior to the database search, randomised entries are added to the database to allow PLGS to compute \textit{protein false positive rate}. The randomised entries can either be added automatically or manually, using the \textit{Randomise Databank} function in the \textit{Databank admin tool}. To properly prepare the files for \Rpackage{synapter}, the user has to add randomised entries manually via \textit{Databank admin tool}, since only then randomised entries identified in the database search will be displayed in the \textit{csv} output. Figure \ref{fig:plgs2} demonstrates how to create a randomised databank manually using one randomised entry per regular entry.
 
@@ -196,15 +202,15 @@ Prior to the database search, randomised entries are added to the database to al
 The user is also expected to use a minimum of 1 fragment per peptide, 3 fragments per protein and 1 peptide per protein identification thresholds and 100\% \textit{False Positive Rate}\footnote{This is erroneously termed false positive rate in the software and manuscript and should be considered a false discovery rate.} for protein identification during database search for all of the acquisitions in the analysis as demonstrated in figure \ref{fig:plgs3}. This allows to maximise the number of identified peptides from the randomised part of the database, needed to estimate peptide identifications statistics. The total list of identified peptides is given in \texttt{final\_peptide.csv} files. A single \texttt{final\_peptide.csv} file has to be supplied to \Rpackage{synapter} for every run in the analysis (for both identification and quantitation runs).
 
 
-\subsection{HDMSe/MSe data analysis}\label{sec:synapter}
+\subsection{HDMS$^E$/MS$^E$ data analysis}\label{sec:synapter}
 
-The analysis of pairs of HDMSe and MSe data files is based on the following rationale -- combine strengths or each approach by matching high quality HDMSe identifications to quantified MSe EMRTs applying the following algorithm:
+The analysis of pairs of HDMS$^E$ and MS$^E$ data files is based on the following rationale -- combine strengths or each approach by matching high quality HDMS$^E$ identifications to quantified MS$^E$ EMRTs applying the following algorithm:
 
 \begin{enumerate}
-\item Apply various peptide filters to HDMSe and MSe peptides to obtain two sets of reliably identified unique proteotypic peptides. 
-\item Use shared HDMSe and MSe peptides to model the deviations in retention time between the two mass spectrometer runs.
-\item Optimise the parameters that will be used to optimally match all HDMSe peptides and quantified MSe EMRTs using a grid search.
-\item Using the best parameters, match identified HDMSe peptides to quantified MSe EMRTs.
+\item Apply various peptide filters to HDMS$^E$ and MS$^E$ peptides to obtain two sets of reliably identified unique proteotypic peptides. 
+\item Use shared HDMS$^E$ and MS$^E$ peptides to model the deviations in retention time between the two mass spectrometer runs.
+\item Optimise the parameters that will be used to optimally match all HDMS$^E$ peptides and quantified MS$^E$ EMRTs using a grid search.
+\item Using the best parameters, match identified HDMS$^E$ peptides to quantified MS$^E$ EMRTs.
 \end{enumerate}
 
 \subsection{Different pipelines}\label{sec:pipelines}
@@ -227,7 +233,7 @@ The GUI is a graphical layer between the user and the \Rfunction{synergise} func
   \end{center}
 \end{figure}
 
-The graphical interface is shown on figure \ref{fig:gui} and is started by calling the \Rfunction{synapterGUI()} function. The interface is composed of three tabs, that allow data input and analyses parameters customisation. The \Rfunction{synapterGUI} function itself takes one input parameter, \Robject{n}, that defines the number of identification/quantitation sets of files that the user wants to analyse. Each set is composed of one identification final peptide file (typically HDMSe), one quantitation final peptide file (typically MSe), one quantitation Pep3D file (also MSe) and one output directory. In addition, the user also needs to specify one single fasta file that will be used to filter proteotypic peptide. To perform 3 analysis, as illustrated on figure \ref{fig:gui}, the function would be executed like \Rfunction{synapterGUI(n = 3)} or simply \Rfunction{synapterGUI(3)}.
+The graphical interface is shown on figure \ref{fig:gui} and is started by calling the \Rfunction{synapterGUI()} function. The interface is composed of three tabs, that allow data input and analyses parameters customisation. The \Rfunction{synapterGUI} function itself takes one input parameter, \Robject{n}, that defines the number of identification/quantitation sets of files that the user wants to analyse. Each set is composed of one identification final peptide file (typically HDMS$^E$), one quantitation final peptide file (typically MS$^E$), one quantitation Pep3D file (also MS$^E$) and one output directory. In addition, the user also needs to specify one single fasta file that will be used to filter proteotypic peptide. To perform 3 analysis, as illustrated on figure \ref{fig:gui}, the function would be executed like \Rfunction{synapterGUI(n = 3)} or simply \Rfunction{synapterGUI(3)}.
 
 \begin{description}
   \item[Data input] The first tab uses a tree structure to represent the input sets to be analysed. The unique fasta file is located at the very top of the hierarchy and each subsequent node (file set) can be opened and populated. Files are added by selecting the respective node, clicking the \texttt{Add} button and selecting the corresponding file using the file selection dialogue that opens. The file names then appear as new nodes (see for example the identification file in set 1) and can be removed with the \texttt{Remove} button. 
@@ -300,17 +306,17 @@ The user can have detailed control on each step of the analysis by executing eac
 
 \subsection{Using \emph{master} peptide files}\label{sec:master}
 
-While analysing one MSe file against one single HDMSe file increased the total number of reliably identified and quantified features compared to each single MSe analysis, a better procedure can be applied when replicates are available. Consider the following design with two pairs of files: HDMSe$_1$, MSe$_1$, HDMSe$_2$ and MSe$_2$. The classical approach would lead to combining for example, HDMSe$_1$ and MSe$_1$ and HDMSe$_2$ and MSe$_2$. However, HDMSe$_1$ -- MSe$_2$ and HDMSe$_2$ -- MSe$_1$ would also be suitable, possibly leading to new identified and quantified features. Instead of repeating all possible combinations, which could hardly be applied for more replicates, we allow to merge HDMSe$_1$ and HDMSe$_2$ into a new \emph{master} HDMSe$_{12}$ and then using it to transfer identification to both MSe runs. In addition to leading to a simpler set of analyses, this approach also allows to control the false positive rate during the HDMSe merging (see section \ref{sec:whichhdmse}). Such \emph{master} HDMSe files can be readily created with the \Rfunction{makeMaster} function, as described in section \ref{sec:makeMaster}.
+While analysing one MS$^E$ file against one single HDMS$^E$ file increased the total number of reliably identified and quantified features compared to each single MS$^E$ analysis, a better procedure can be applied when replicates are available. Consider the following design with two pairs of files: HDMS$^E_1$, MS$^E_1$, HDMS$^E_2$ and MS$^E_2$. The classical approach would lead to combining for example, HDMS$^E_1$ and MS$^E_1$ and HDMS$^E_2$ and MS$^E_2$. However, HDMS$^E_1$ -- MS$^E_2$ and HDMS$^E_2$ -- MS$^E_1$ would also be suitable, possibly leading to new identified and quantified features. Instead of repeating all possible combinations, which could hardly be applied for more replicates, we allow to merge HDMS$^E_1$ and HDMS$^E_2$ into a new \emph{master} HDMS$^E_{12}$ and then using it to transfer identification to both MS$^E$ runs. In addition to leading to a simpler set of analyses, this approach also allows to control the false positive rate during the HDMS$^E$ merging (see section \ref{sec:whichhdmse}). Such \emph{master} HDMS$^E$ files can be readily created with the \Rfunction{makeMaster} function, as described in section \ref{sec:makeMaster}.
 
 We will use data from the \Rpackage{synapterdata} to illustrate how to create \emph{master} files.
 
 
-\subsubsection{Choosing which HDMSe files to combine}
+\subsubsection{Choosing which HDMS$^E$ files to combine}
 \label{sec:whichhdmse}
 
-In a more complex design, a greater number of HDMSe files might need to be combined. When combining files, one also accumulates false peptides assignments. The extent to which combining files increases new reliable identification at the cost of accumulating false assignments can be estimated with the \Rfunction{estimateMasterFdr} function. 
+In a more complex design, a greater number of HDMS$^E$ files might need to be combined. When combining files, one also accumulates false peptides assignments. The extent to which combining files increases new reliable identification at the cost of accumulating false assignments can be estimated with the \Rfunction{estimateMasterFdr} function. 
 
-To illustrate how FDR is estimated for \emph{master} HDMSe files, let's consider two extreme cases. 
+To illustrate how FDR is estimated for \emph{master} HDMS$^E$ files, let's consider two extreme cases. 
 
 \begin{itemize}
 
@@ -321,11 +327,11 @@ To illustrate how FDR is estimated for \emph{master} HDMSe files, let's consider
 \end{itemize}
 
 In general, the final false discovery for two files will be
-$$FDR_{master} = \frac{nfd_{1} + nfd_{2}}{union(peptides~HDMSe_{1}, peptides~HDMSe_{2})}$$ 
+$$FDR_{master} = \frac{nfd_{1} + nfd_{2}}{union(peptides~HDMS^E_{1}, peptides~HDMS^E_{2})}$$ 
 
-where $nfd_{i}$ is the number of false discoveries in HDMSe file $i$. Note that we do not make any assumptions about repeated identification in multiple files here.
+where $nfd_{i}$ is the number of false discoveries in HDMS$^E$ file $i$. Note that we do not make any assumptions about repeated identification in multiple files here.
 
-\Rfunction{estimateMasterFdr} generalised this for any number of HDMSe files and indicates the best combination at a fixed user-specified \Robject{masterFdr} level. Mandatory input is a list of HDMSe file names and a fasta database file name to filter non-unique proteotypic peptides. 
+\Rfunction{estimateMasterFdr} generalised this for any number of HDMS$^E$ files and indicates the best combination at a fixed user-specified \Robject{masterFdr} level. Mandatory input is a list of HDMS$^E$ file names and a fasta database file name to filter non-unique proteotypic peptides. 
 
 <<inputfiles, echo=FALSE, eval=TRUE>>=
 inputfiles <- getHDMSeFinalPeptide()
@@ -347,7 +353,7 @@ cmb
 <<estimateFdrPlot,fig=TRUE,echo=FALSE,tikz=TRUE,width=4,height=4>>=
 plot(cmb)
 @ 
-\caption{Figure illustrating the relation between the number of unique peptides in the combined HDMSe file and the resulting false discovery rate. The symbols on the figure represent the number of files for that particular combination. The dotted line is the user defined threshold for the combined FDR (\Robject{masterFdr} parameter). The best combination, i.e the one that maximises the number of unique peptides while keeping the FDR below \Robject{masterFdr} is highlighted in red.}
+\caption{Figure illustrating the relation between the number of unique peptides in the combined HDMS$^E$ file and the resulting false discovery rate. The symbols on the figure represent the number of files for that particular combination. The dotted line is the user defined threshold for the combined FDR (\Robject{masterFdr} parameter). The best combination, i.e the one that maximises the number of unique peptides while keeping the FDR below \Robject{masterFdr} is highlighted in red.}
 \label{fig:master}
 \end{center}
 \end{figure}
@@ -499,7 +505,7 @@ head(exprs(msUps))
 table(apply(exprs(msUps), 1, function(.x) sum(!is.na(.x))))
 @ 
 
-We obtain a final data set containing \Sexpr{ncol(msUps)} proteins. Finally, we normalise protein intensities in each sample to correct for experimental loading biases and pipetting errors. To do so, we compute 6 sample medians using all constant \textit{E. coli} background proteins and divide each protein by its respective sample mean. 
+We obtain a final data set containing \Sexpr{nrow(msUps)} proteins. Finally, we normalise protein intensities in each sample to correct for experimental loading biases and pipetting errors. To do so, we compute 6 sample medians using all constant \textit{E. coli} background proteins and divide each protein by its respective sample mean. 
 
 <<scale>>=
 ecoli <- -grep("ups$", featureNames(msUps)) 
@@ -513,9 +519,9 @@ This same procedure could be applied with a set of constant spikes to estimate a
 
 \subsection{Statistical analysis of differentially expressed proteins}
 
-The UPS1 spiked-in protein mix is composed of 48 proteins, \Sexpr{length(grep("ups", featureNames(msUps)))} of which have been observed and quantified in our final data object. In this section, we will now analyse the \Sexpr{ncol(msUps)} proteins to extract those that show differences between the two groups and show that these candidates represent the UPS1 spikes.
+The UPS1 spiked-in protein mix is composed of 48 proteins, \Sexpr{length(grep("ups", featureNames(msUps)))} of which have been observed and quantified in our final data object. In this section, we will illustrate how to analyse the \Sexpr{nrow(msUps)} proteins to extract those that show differences between the two groups and show that these candidates represent the UPS1 spikes.
 
-The \R environment and many of the available packages allow extremely powerful statistical analysis\footnote{For best performance with small number of samples and more complex designs, we however recommend the Bioconductor \Rpackage{limma} package \citep{limma} available at \url{http://www.bioconductor.org/packages/release/bioc/html/limma.html}}. In this document, we will apply a standard t-test for convenience, using the \Rfunction{t.test} function, to calculate p-value for individual proteins (\Robject{pv} variable below). We then perform multiple comparison adjustment using the \Rfunction{qvalue} from the \Rpackage{qvalue} package, that implements the method from \citep{Storey2003} (\Robject{qv} variable below). We will also compute $log_2$ fold-changes and illustrate the results on a volcano plot (figure \ref{fig:volcano}). Figure \ref{fig:hmap} illustrates the UPS1 proteins and samples on a classical heatmap.
+The \R environment and many of the available packages allow extremely powerful statistical analysis\footnote{For best performance with small number of samples and more complex designs, we however recommend the Bioconductor \Rpackage{limma} package \citep{limma} available at \url{http://www.bioconductor.org/packages/release/bioc/html/limma.html}}. In this document, we will apply a standard t-test for convenience, using the \Rfunction{t.test} function, to calculate p-value for individual proteins (\Robject{pv} variable below). We then perform multiple comparison adjustment using the \Rfunction{qvalue} from the \Rpackage{qvalue} package, that implements the method from \citep{Storey2003} (\Robject{qv} variable below). The \Rpackage{multtest} package provides several other p-value adjustment methods. We will also compute $log_2$ fold-changes and illustrate the results on a volcano plot (figure \ref{fig:volcano}). Figure \ref{fig:hmap} illustrates the UPS1 proteins and samples on a classical heatmap.
 
 
 <<stats>>=
