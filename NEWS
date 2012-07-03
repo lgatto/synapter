@@ -1,4 +1,8 @@
-CHANGES IN VERSION 0.99.2
+CHANGES IN VERSION 0.99.3
+-------------------------
+ o git/svn integration messing up and testing <2012-07-03 Tue>
+
+Changes IN VERSION 0.99.2
 -------------------------
  o changed merged to total FDR in MasterFdrResults 
    plot x label, as in manuscript <2012-06-13 Wed>
