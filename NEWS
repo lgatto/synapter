@@ -1,3 +1,8 @@
+CHANGES IN VERSION 0.99.3
+-------------------------
+ o git/svn integration messing up and testing <2012-07-03 Tue>
+ o late night testing <2012-07-03 Tue>
+
 CHANGES IN VERSION 0.99.2
 -------------------------
  o changed merged to total FDR in MasterFdrResults 
