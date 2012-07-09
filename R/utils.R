@@ -239,7 +239,7 @@ lightMergedFeatures <- function(x) {
             "Bonferroni.ident",
             "BH.ident",
             "qval.ident",
-            "precursor.Mobility", 
+            ## "precursor.Mobility", ## not present in MSe master
             "peptide.matchType.quant", 
             "peptide.score.quant", 
             "precursor.retT.quant",
@@ -266,7 +266,7 @@ lightMatchedEMRTs <- function(x) {
             "precursor.mhp", 
             "precursor.retT", 
             "precursor.inten", 
-            "precursor.Mobility",
+            ## "precursor.Mobility", ## not present in MSe master
             "spectrumID",
             "Intensity",
             "Counts",

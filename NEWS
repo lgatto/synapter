@@ -1,3 +1,9 @@
+CHANGES IN VERSION 0.99.5
+-------------------------
+ o removed 'precursor.Mobility' columns from light 
+   merged and matched csv output, as these are not 
+   available when a MSe master is used <2012-07-09 Mon>
+
 CHANGES IN VERSION 0.99.4
 -------------------------
  o use log2 for t.test <2012-07-05 Thu>
