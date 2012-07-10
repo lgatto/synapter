@@ -160,7 +160,7 @@ doHDMSePredictions <- function(identpep, model, nsd) {
 }
 
 
-findMSeEMRTs <- function(identpep,                         
+findMSeEMRTs <- function(identpep, 
                          pep3d,
                          mergedpep,
                          nsd,
@@ -185,7 +185,10 @@ findMSeEMRTs <- function(identpep,
   
   n <- length(k)
   m <- ncol(pep3d)
-  pep3d2 <- pep3d[1:length(k),] ## all cols of type numeric
+  ## to initialise the new pep3d2 with with n rows 
+  ## and same nb of columns than pep3d
+  pep3d2 <- pep3d[1:n, ] ## all cols are of type numeric
+  
   for (i in 1:n) {
     if (k[i] == 1) {
       pep3d2[i, ] <- pep3d[res[[i]], ]
@@ -202,6 +205,7 @@ findMSeEMRTs <- function(identpep,
   
   ans$precursor.leID.quant <- NA  
   idx <- match(mergedpep$precursor.leID.ident, ans$precursor.leID)
+      
   ans$precursor.leID.quant[idx] <- mergedpep$precursor.leID.quant
   i <- grep("precursor.leID$", names(ans))
   names(ans)[i] <- "precursor.leID.ident" ## to avoid any confusion
