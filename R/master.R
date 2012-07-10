@@ -251,6 +251,8 @@ setMethod("allComb", "MasterFdrResults",
 ##' to be merged.
 ##' @param fdr A \code{numeric} indicating the preptide false
 ##' discovery  rate limit.
+##' @param method A \code{character} indicating the p-value adjustment to
+##' be used. One of \code{BH} (default), \code{Bonferroni} or \code{qval}.
 ##' @param span A \code{numeric} with the loess span parameter value
 ##' to be used for retention time modelling.
 ##' @param verbose A \code{logical} indicating information should be
@@ -272,57 +274,64 @@ setMethod("allComb", "MasterFdrResults",
 ##' illustrates a complete pipeline using \code{estimateMasterFdr} and
 ##' \code{makeMaster}.
 makeMaster <- function(pepfiles, 
-                       fdr = 0.01, span = 0.05,
+                       fdr = 0.01,
+                       ## fpr
+                       method = c("BH", "Bonferroni", "qval"),
+                       span = 0.05,
                        verbose = TRUE) {
-   n <- length(pepfiles)
-   hdmseList <- lapply(pepfiles, loadIdentOnly,
-                       fdr = fdr)
-   npeps <- sapply(hdmseList, function(.x) nrow(.x$IdentPeptideData))
-   o1 <- order(npeps, decreasing = TRUE)
-   o2 <- c(o1[-1], o1[1])
-   orders <- list(o1, o2)
-   mergedList <- 
-     lapply(orders, function(o) {
-       ._hdmseList <- hdmseList[o]
-       master <- ._hdmseList[[1]]
-       merged <- master$IdentPeptideData
-       if (verbose) {
-         message("Master: ", basename(master$IdentPeptideFile),
-                 " (", nrow(master$IdentPeptideData), " peptides)")
-         message(" |--- (1) Merged: ", nrow(merged), " features.")
-       }
-       for (i in 2:n) {
-         slave <- ._hdmseList[[i]]
-         if (verbose)                  
-           message(" +- Merging master and ", basename(slave$IdentPeptideFile),
-                   " (", nrow(slave$IdentPeptideData), " peptides)")
-         mergedPeptideData <- merge(master$IdentPeptideData,
-                                    slave$IdentPeptideData,
-                                    by.x = "peptide.seq",
-                                    by.y = "peptide.seq",
-                                    suffixes = c(".master", ".slave"))
-         RtModel <- loess(precursor.retT.master ~ precursor.retT.slave, data = mergedPeptideData, span = span)
-         predictedslaveRtime <- predict(RtModel,
-                                        newdata = data.frame(precursor.retT.slave = slave$IdentPeptideData$precursor.retT))
-         slave$IdentPeptideData$precursor.retT <- predictedslaveRtime
-         selPepsToAdd <- !(slave$IdentPeptideData$peptide.seq %in% merged$peptide.seq)
-         merged <- rbind(merged, slave$IdentPeptideData[selPepsToAdd, ])
-         if (verbose) {
-           if (i == n) {
-             message(" \\--- (", i, ") Merged: ", nrow(merged), " features.")
-           } else {
-             message(" |--- (", i, ") Merged: ", nrow(merged), " features.")
-           }
-         }
-       }
-       sel <- is.na(merged$precursor.retT)
-       merged <- merged[!sel, ]    
-       return(merged)
-     })
-   master <- new("MasterPeptides",
-                 masters = mergedList,
-                 pepfiles = pepfiles,
-                 orders = orders)
-   return(master)
+  method <- match.arg(method)
+  n <- length(pepfiles)
+  hdmseList <- lapply(pepfiles, loadIdentOnly,
+                      fdr = fdr,
+                      method = method)
+  npeps <- sapply(hdmseList, function(.x) nrow(.x$IdentPeptideData))
+  o1 <- order(npeps, decreasing = TRUE)
+  o2 <- c(o1[-1], o1[1])
+  orders <- list(o1, o2)
+  mergedList <- 
+    lapply(orders, function(o) {
+      ._hdmseList <- hdmseList[o]
+      master <- ._hdmseList[[1]]
+      merged <- master$IdentPeptideData
+      if (verbose) {
+        message("Master: ", basename(master$IdentPeptideFile),
+                " (", nrow(master$IdentPeptideData), " peptides)")
+        message(" |--- (1) Merged: ", nrow(merged), " features.")
+      }
+      for (i in 2:n) {
+        slave <- ._hdmseList[[i]]
+        if (verbose)                  
+          message(" +- Merging master and ", basename(slave$IdentPeptideFile),
+                  " (", nrow(slave$IdentPeptideData), " peptides)")
+        mergedPeptideData <- merge(master$IdentPeptideData,
+                                   slave$IdentPeptideData,
+                                   by.x = "peptide.seq",
+                                   by.y = "peptide.seq",
+                                   suffixes = c(".master", ".slave"))
+        RtModel <- loess(precursor.retT.master ~ precursor.retT.slave, data = mergedPeptideData, span = span)
+        predictedslaveRtime <- predict(RtModel,
+                                       newdata = data.frame(precursor.retT.slave = slave$IdentPeptideData$precursor.retT))
+        slave$IdentPeptideData$precursor.retT <- predictedslaveRtime
+        selPepsToAdd <- !(slave$IdentPeptideData$peptide.seq %in% merged$peptide.seq)
+        merged <- rbind(merged, slave$IdentPeptideData[selPepsToAdd, ])
+        if (verbose) {
+          if (i == n) {
+            message(" \\--- (", i, ") Merged: ", nrow(merged), " features.")
+          } else {
+            message(" |--- (", i, ") Merged: ", nrow(merged), " features.")
+          }
+        }
+      }
+      sel <- is.na(merged$precursor.retT)
+      merged <- merged[!sel, ]    
+      return(merged)
+    })
+  master <- new("MasterPeptides",
+                masters = mergedList,
+                pepfiles = pepfiles,
+                fdr = fdr,
+                method = method,
+                orders = orders)
+  return(master)
 }
-         
+

@@ -3,7 +3,8 @@
 \alias{writeMasterPeptides}
 \title{Merges final peptide files}
 \usage{
-  makeMaster(pepfiles, fdr = 0.01, span = 0.05,
+  makeMaster(pepfiles, fdr = 0.01,
+    method = c("BH", "Bonferroni", "qval"), span = 0.05,
     verbose = TRUE)
 }
 \arguments{
@@ -12,6 +13,10 @@
 
   \item{fdr}{A \code{numeric} indicating the preptide false
   discovery rate limit.}
+
+  \item{method}{A \code{character} indicating the p-value
+  adjustment to be used. One of \code{BH} (default),
+  \code{Bonferroni} or \code{qval}.}
 
   \item{span}{A \code{numeric} with the loess span
   parameter value to be used for retention time modelling.}

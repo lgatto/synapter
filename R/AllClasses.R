@@ -1,5 +1,8 @@
 setClass("MasterPeptides",
          representation = representation(
+           fdr = "numeric",
+           method = "character",
+           ## fpr = "numeric",
            masters = "list",
            pepfiles = "character",
            orders = "list"),

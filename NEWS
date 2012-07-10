@@ -1,3 +1,9 @@
+CHANGES IN VERSION 0.99.6
+-------------------------
+ o Masterpeptides has new fdr and method slots  <2012-07-10 Tue> 
+ o added method arg to makeMaster <2012-07-10 Tue>
+ o fixed non-match precuror.leIDs when using master <2012-07-11 Wed>
+
 CHANGES IN VERSION 0.99.5
 -------------------------
  o removed 'precursor.Mobility' columns from light 
