@@ -23,6 +23,11 @@
       master \code{data.frame} obejcts. }
     \item{\code{pepfiles}:}{Object of class \code{"character"} with the
       list of final peptide iinput files. }
+    \item{\code{fdr}:}{Object of class \code{"numeric"} with the
+      peptide false discovery applied when creating the filter. }
+    \item{\code{method}:}{Object of class \code{"character"} with the
+      peptide p-value adjustment method. One of \code{BH} (default),
+      \code{qval} or \code{Bonferroni}. }
     \item{\code{orders}:}{Object of class \code{"list"} with the
       \code{numeric} vectors specifying the order of \code{pepfiles}
       used to generate the respective \code{masters}
