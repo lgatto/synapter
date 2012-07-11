@@ -1,5 +1,7 @@
 #+TITLE: synpater README/TODO           -*- mode: org; -*-
 
+See https://github.com/lgatto/synapter/ and issue tracker for 
+open/close issues and to report new ones.
 
 * TODO [34/36]
  - [ ] return corresonding pep score for a given fdr.
