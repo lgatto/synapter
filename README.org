@@ -1,11 +1,10 @@
 #+TITLE: synpater README/TODO           -*- mode: org; -*-
 
-Look at EMRT matching (NA are an issue) - why does this happen 
-in the LOPMIS data (see sandbox/master.R)
 
-* TODO [33/35]
+* TODO [34/36]
  - [ ] return corresonding pep score for a given fdr.
  - [ ] calculate PEPs
+ - [X] Look at EMRT matching (NA are an issue)
  - [X] filenames$hdmsefile should point to an 'MasterPeptides' rds file,
        that will be load'ed if master=TRUE (instead of read.csv'ed). 
        Will have to create a new field in .Synapter to store the second 
