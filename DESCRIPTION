@@ -2,7 +2,7 @@ Package: synapter
 Type: Package
 Title: Label-free data analysis pipeline for optimal identification and
         quantitation
-Version: 0.99.6
+Version: 0.99.7
 Author: Laurent Gatto, Pavel V. Shliaha and Nick J. Bond
 Maintainer: Laurent Gatto <lg390@cam.ac.uk>
 Depends: R (>= 2.15), methods, MSnbase
@@ -16,5 +16,6 @@ Description: The synapter package provides functionality to reanalyse
 	     accuracy can be combined to other quantitation files to 
 	     maximise identification and quantitation accuracy.  
 License: GPL-2
+URL: http://lgatto.github.com/synapter/
 biocViews: Bioinformatics, MassSpectrometry, Proteomics, GUI
 Packaged: 2012-06-08 00:29:26 UTC; lgatto
