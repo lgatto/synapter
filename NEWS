@@ -1,3 +1,9 @@
+CHANGES IN VERSION 0.99.7
+-------------------------
+ o updated vignette <2012-07-12 Thu>
+ o removed README.org file <2012-07-12 Thu>
+ o added github page in DESCRIPTION <2012-07-12 Thu>
+
 CHANGES IN VERSION 0.99.6
 -------------------------
  o Masterpeptides has new fdr and method slots  <2012-07-10 Tue> 

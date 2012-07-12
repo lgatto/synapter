@@ -560,13 +560,12 @@ plot(res$lfc, -log10(res$qv),
      main = "Volcano plot")
 grid()
 abline(v = -1, lty = "dotted")
-abline(h = -log10(0.05), lty = "dotted")
 abline(h = -log10(0.1), lty = "dotted")
 legend("topright", c("UPS", "E. coli"),
        col = c("#4582B3AA", "#A1A1A1AA"),
        pch = 19, bty = "n")
 @
-\caption{On the volcano plot, each protein is represented by a dot and positioned according to its $log_2$ fold-change along the x axis and $-log_{10}$ of its q-value along the y axis. Proteins with large fold-changes are positioned on the sides of the plot, while proteins with low q-values are at the top of the figure. The most promising candidates are this located on the top corners. In our case, the UPS proteins (in blue) have $log2$ fold-changes around -1 (vertical dotted line), as expected. The horizontal dotted line represents a q-value threshold of 0.10 and 0.05 respectively.}
+\caption{On the volcano plot, each protein is represented by a dot and positioned according to its $log_2$ fold-change along the x axis and $-log_{10}$ of its q-value along the y axis. Proteins with large fold-changes are positioned on the sides of the plot, while proteins with low q-values are at the top of the figure. The most promising candidates are this located on the top corners. In our case, the UPS proteins (in blue) have $log2$ fold-changes around -1 (vertical dotted line), as expected. The horizontal dotted line represents a q-value threshold of 0.10.}
 \label{fig:volcano}
 \end{center}
 \end{figure}
@@ -595,13 +594,6 @@ n1 <- length(i)
 n2 <- length(signms) - n1
 @ 
 
-<<falsepostab, echo=FALSE,results=tex>>=
-print(xtable(round(res[signms[-i], ], 3),
-             caption = "False positives at a FDR of 0.10.",
-             table.placement = "thb",
-             label = "tab:fp"),
-      size = "scriptsize")
-@ 
 
 <<upstab, echo=FALSE,results=tex>>=
 k <- grep("ups", rownames(res))
@@ -613,10 +605,8 @@ print(xtable(round(res[k, ], 3),
 @ 
 
 
-A total \Sexpr{n1} proteins show a statistically different pattern between the two groups, at a false discovery rate of 10\%, 
-of which \Sexpr{n2} are not UPS1 proteins (table \ref{tab:fp}).
+A total \Sexpr{n1} proteins show a statistically different pattern between the two groups, at a false discovery rate of 10\%.
 Table \ref{tab:ups} summarises the results for all UPS1 proteins.  
-
 
 \clearpage
 
