@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset='utf-8' />
+    <meta http-equiv="X-UA-Compatible" content="chrome=1" />
+    <meta name="description" content="synapter : Label-free data analysis pipeline for optimal identification and quantitation" />
+
+    <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
+
+    <title>synapter</title>
+  </head>
+
+  <body>
+
+    <!-- HEADER -->
+    <div id="header_wrap" class="outer">
+        <header class="inner">
+          <a id="forkme_banner" href="https://github.com/lgatto/synapter">View on GitHub</a>
+
+          <h1 id="project_title">synapter</h1>
+          <h2 id="project_tagline">Label-free data analysis pipeline for optimal identification and quantitation</h2>
+
+            <section id="downloads">
+              <a class="zip_download_link" href="https://github.com/lgatto/synapter/zipball/master">Download this project as a .zip file</a>
+              <a class="tar_download_link" href="https://github.com/lgatto/synapter/tarball/master">Download this project as a tar.gz file</a>
+            </section>
+        </header>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div id="main_content_wrap" class="outer">
+      <section id="main_content" class="inner">
+        <h3>Introduction</h3>
+
+<p>The <code>synapter</code> package provides functionality to re-analyse MSe label-free proteomics data acquired on a Synapt G2 mass spectrometer. It allows to combine acquisitions that have been optimised for better identification (typically using ion mobility separation - HDMSe) and quantitation accuracy. It also allows to transfer identifications across multiple runs to reduce missing data across an experiment. </p>
+
+<p>The analysis pipeline can be executed using a simple graphical user interface (started with <code>synapterGUI()</code>) or a high-level function <code>synergise</code> to produce a <a href="http://proteome.sysbiol.cam.ac.uk/lgatto/synapter/Report/index.html">html report</a>. Alternatively, or low-level interface is available (see <code>?Synapter</code>).</p>
+
+<h3>Help</h3>
+
+<p><code>synapter</code> comes with plenty of documentation. Have a start with the package documentation page <code>?synapter</code> and the vignette </p>
+
+<pre><code> vignette("synapter", package="synapter")
+</code></pre>
+
+<p>Do not hesitate to contact me for questions/comments/suggestions.</p>
+
+<h3>PLGS processing</h3>
+
+<p>The raw data files produced must first be processed by Water's PLGS software to produce <code>synapter</code> input files. This is described in details in the vignette. Additional information with lots of screenshots can be found in <a href="http://proteome.sysbiol.cam.ac.uk/lgatto/synapter/PLGS_Data_Processing.pdf">these slides</a>.</p>
+
+<h3>Installation</h3>
+
+<p><code>synapter</code> is available from the <a href="http://www.bioconductor.org">Bioconductor</a> repository. The package and its dependencies can be installed</p>
+
+<pre><code> source("http://www.bioconductor.org/biocLite.R")
+ biocLite("rols")
+</code></pre>
+
+<p>See also the <code>synapter</code> <a href="http://bioconductor.org/packages/devel/bioc/html/synapter.html">Bioconductor page</a> for on-line access to the vignette and the reference manual.</p>
+
+<p>The code on <a href="https://github.com/lgatto/synapter/">github</a> is for sharing, testing, issue tracking and forking/pulling purposes. Although it should be in sync with the code on the <a href="https://hedgehog.fhcrc.org/bioconductor/trunk/madman/Rpacks/">Bioconductor svn server</a>, the latter is the official repository for the working source code. Get is with</p>
+
+<pre><code>svn co https://hedgehog.fhcrc.org/bioconductor/trunk/madman/Rpacks/rols
+</code></pre>
+
+<p>(user name: <code>readonly</code>, password: <code>readonly</code>)</p>
+      </section>
+    </div>
+
+    <!-- FOOTER  -->
+    <div id="footer_wrap" class="outer">
+      <footer class="inner">
+        <p class="copyright">synapter maintained by <a href="https://github.com/lgatto">lgatto</a></p>
+        <p>Published with <a href="http://pages.github.com">GitHub Pages</a></p>
+      </footer>
+    </div>
+
+    
+
+  </body>
+</html>
