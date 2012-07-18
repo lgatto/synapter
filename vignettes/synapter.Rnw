@@ -159,10 +159,7 @@ There is a general mailing list\footnote{\url{https://stat.ethz.ch/mailman/listi
 
 Preparation of the data for \Rpackage{synapter} requires the \texttt{.raw} data first to be processed with Waters' ProteinLynx Global Serve (PLGS) software. The PLGS result is then exported as \texttt{csv} spreadsheet files in user specified folders. These \texttt{csv} files can then be used as input for \Rpackage{synapter}. 
 
-%% A detailed overview of the PLGS operation is given in an accompanying document 'PLGS Data Processing for \Rpackage{synapter}', accessible with the \Rfunction{plgsGuide()} function. A brief overview is given here.
-
 We also highly recommend users to acquaint themselves with the PLGS search algorithm for data independent acquisitions \citep{PLGS2009}.
-
 
 First the user has to specify the output folders for files to be used in synapter analysis as demonstrated in figure \ref{fig:plgs1}. After the folders are specified ignore the message that appears requiring restarting PLGS.
 
@@ -201,6 +198,7 @@ Prior to the database search, randomised entries are added to the database to al
 
 The user is also expected to use a minimum of 1 fragment per peptide, 3 fragments per protein and 1 peptide per protein identification thresholds and 100\% \textit{False Positive Rate}\footnote{This is erroneously termed false positive rate in the software and manuscript and should be considered a false discovery rate.} for protein identification during database search for all of the acquisitions in the analysis as demonstrated in figure \ref{fig:plgs3}. This allows to maximise the number of identified peptides from the randomised part of the database, needed to estimate peptide identifications statistics. The total list of identified peptides is given in \texttt{final\_peptide.csv} files. A single \texttt{final\_peptide.csv} file has to be supplied to \Rpackage{synapter} for every run in the analysis (for both identification and quantitation runs).
 
+More details and screenshots are available in a separate document available at \url{http://lgatto.github.com/synapter/}.
 
 \subsection{HDMS$^E$/MS$^E$ data analysis}\label{sec:synapter}
 
@@ -259,7 +257,7 @@ For a detailed description of the parameters, see the documentation of the \Rfun
 Once all the input has been specified, pressing the \texttt{Run} button in the lower left corner of the GUI starts the \Rpackage{synapter} run: all \Robject{n} analyses are executed one after each other and a complete report in \texttt{html} as well as several result files are created in the respective output folders.
 
 \subsubsection{Wrapper function} 
-The \Rfunction{synergise} function is a high level wrapper that implements a suggested analysis to combine two files (see next paragraph for details). A set of parameters can be passed, although sensible defaults are provided. While the analysis is executed, a html report is created, including all result files in text spreadsheet (\texttt{csv} format) and binary \R output. This level allows easy scripting for automated batch analysis. Using data from the \Rpackage{synapterdata} package, the following code chunk illustrates the \Rfunction{synergise} usage.
+The \Rfunction{synergise} function is a high level wrapper that implements a suggested analysis to combine two files (see next paragraph for details). A set of parameters can be passed, although sensible defaults are provided. While the analysis is executed, a html report is created, including all result files in text spreadsheet (\texttt{csv} format) and binary \R output. This level allows easy scripting for automated batch analysis. Using data from the \Rpackage{synapterdata} package, the following code chunk illustrates the \Rfunction{synergise} usage. An example report can be found online at \url{http://lgatto.github.com/synapter/}.
 
 %% <<rndseed,echo=FALSE,eval=TRUE>>=
 %%   set.seed(123)
@@ -379,6 +377,26 @@ master
 @ 
 
 More details can be found in the function documentation accessible with \Rfunction{?makeMaster}.
+
+\subsection{Summary}
+
+Two functions are needed to choose a set of IR files and create the \emph{master} IR. One function enables to perform a complete identification transfer, eiter through a command line or graphical interface. Table \ref{tab:summary} summarises all there is to know to utilise \Rpackage{synapter}'s functionality.
+
+\begin{table}[!h]
+\centering
+\begin{tabular}{|l|l|}
+  \hline
+  Function                      & Description \\ \hline
+  \Rfunction{synapterGUI()}     & Opens the graphical user interface \\
+  \Rfunction{synergise}         & Runs the complete identification transfer \\
+  \Rfunction{estimateMasterFdr} & Chooses which files to be used to create the \emph{master} IR \\
+  \Rfunction{makeMaster}        & Creates the \emph{master} IR \\ \hline
+  
+\end{tabular}
+\caption{The \Rpackage{synapter} functions.}
+\label{tab:summary}
+\end{table}
+
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -556,8 +574,7 @@ plot(res$lfc, -log10(res$qv),
        "#A1A1A180"),
      pch = 19, 
      xlab = expression(log[2]~fold-change),
-     ylab = expression(-log[10]~q-value),
-     main = "Volcano plot")
+     ylab = expression(-log[10]~q-value))
 grid()
 abline(v = -1, lty = "dotted")
 abline(h = -log10(0.1), lty = "dotted")
