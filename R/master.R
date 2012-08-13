@@ -1,7 +1,9 @@
 loadIdentOnly <- function(pepfile, 
                           fdr = 0.01,
-                          method = "BH") {
-  message("Processing ", basename(pepfile))
+                          method = "BH",
+                          verbose = TRUE) {
+  if (verbose)
+    message("Processing ", basename(pepfile))
   x1 <- synapter:::.Synapter$new()
   x1$IdentPeptideFile <- pepfile
   x1$IdentPeptideData <- read.csv(x1$IdentPeptideFile, stringsAsFactors = FALSE)
@@ -103,7 +105,8 @@ estimateMasterFdr <- function(pepfiles,
   }
   hdmseList <- lapply(pepfiles,
                       loadIdentOnly,
-                      fdr = fdr)
+                      fdr = fdr,
+                      verbose = verbose)
   if (verbose)
     message("Generating unique proteotypic peptides...")
   proteotyptic <- synapter:::dbUniquePeptideSet(fastafile, verbose = FALSE)      
@@ -283,7 +286,8 @@ makeMaster <- function(pepfiles,
   n <- length(pepfiles)
   hdmseList <- lapply(pepfiles, loadIdentOnly,
                       fdr = fdr,
-                      method = method)
+                      method = method,
+                      verbose = verbose)
   npeps <- sapply(hdmseList, function(.x) nrow(.x$IdentPeptideData))
   o1 <- order(npeps, decreasing = TRUE)
   o2 <- c(o1[-1], o1[1])
