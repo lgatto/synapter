@@ -1,3 +1,11 @@
+CHANGES IN VERSION 0.99.11
+-------------------------
+ o explicit loading tikzDevice in vignette <2012-08-16 Thu>
+
+CHANGES IN VERSION 0.99.10
+-------------------------
+ o added tikzDevice suggestion for vignette <2012-08-15 Wed>
+
 CHANGES IN VERSION 0.99.9
 -------------------------
  o using knitr instead of pgfSweave <2012-08-13 Mon>
