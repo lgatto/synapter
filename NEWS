@@ -1,6 +1,8 @@
 CHANGES IN VERSION 0.99.11
 -------------------------
- o explicit loading tikzDevice in vignette <2012-08-16 Thu>
+ o using dev='pdf' in vignette and removing 
+   tikzDevice (not on CRAN anymore) from 
+   Suggests<2012-08-16 Thu>
 
 CHANGES IN VERSION 0.99.10
 -------------------------
