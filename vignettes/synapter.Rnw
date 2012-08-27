@@ -658,6 +658,10 @@ print(xtable(round(res[k, ], 3),
 A total \Sexpr{n1} proteins show a statistically different pattern between the two groups, at a false discovery rate of 10\%.
 Table \ref{tab:ups} summarises the results for all UPS1 proteins.  
 
+<<echo=FALSE>>=
+  dev.off()
+@ 
+
 \clearpage
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
