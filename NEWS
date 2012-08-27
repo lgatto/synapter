@@ -1,3 +1,7 @@
+CHANGES IN VERSION 0.99.12
+-------------------------
+ o fixed build problem on windows <2012-08-27 Mon>
+
 CHANGES IN VERSION 0.99.11
 -------------------------
  o using dev='pdf' in vignette and removing 
