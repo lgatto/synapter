@@ -143,9 +143,9 @@ The rationale underlying \Rpackage{synapter}'s functionality are described in tw
 \begin{itemize}
 \item 
   Shliaha, P.V., Bond N.J., Gatto L. and Lilley K.S. 
-  \emph{The Effects of Ion Mobility Separation on Data Independent Acquisition in Proteomics Studies.}, in prep.   
+  \emph{The Effects of Ion Mobility Separation on Data Independent Acquisition in Proteomics Studies.}, in prep. 
 \item 
-  Shliaha P.V., Bond N.J., Lilley K.S. and Gatto L. 
+  Bond N.J., Shliaha P.V., Lilley K.S. and Gatto L. 
   \emph{Improving qualitative and quantitative performance for label free proteomics}, in prep.
 \end{itemize}
 
