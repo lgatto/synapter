@@ -1,6 +1,7 @@
 CHANGES IN VERSION 0.99.12
 -------------------------
  o fixed build problem on windows <2012-08-27 Mon>
+ o updated refs in vignette <2012-08-28 Tue>
 
 CHANGES IN VERSION 0.99.11
 -------------------------
