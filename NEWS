@@ -1,16 +1,21 @@
+CHANGES IN VERSION 0.99.13
+--------------------------
+ o bumping version number to take all previous changes 
+   into account <2012-08-29 Wed>
+
 CHANGES IN VERSION 0.99.12
--------------------------
+--------------------------
  o fixed build problem on windows <2012-08-27 Mon>
  o updated refs in vignette <2012-08-28 Tue>
 
 CHANGES IN VERSION 0.99.11
--------------------------
+--------------------------
  o using dev='pdf' in vignette and removing 
    tikzDevice (not on CRAN anymore) from 
    Suggests<2012-08-16 Thu>
 
 CHANGES IN VERSION 0.99.10
--------------------------
+--------------------------
  o added tikzDevice suggestion for vignette <2012-08-15 Wed>
 
 CHANGES IN VERSION 0.99.9
