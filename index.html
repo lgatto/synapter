@@ -44,7 +44,7 @@
 <pre><code> vignette("synapter", package="synapter")
 </code></pre>
 
-<p>Do not hesitate to contact me for questions/comments/suggestions.</p>
+<p>Do not hesitate to contact <a href="http://proteome.sysbiol.cam.ac.uk/lgatto/">me</a> for questions/comments/suggestions.</p>
 
 <h3>PLGS processing</h3>
 
@@ -55,10 +55,21 @@
 <p><code>synapter</code> is available from the <a href="http://www.bioconductor.org">Bioconductor</a> repository. The package and its dependencies can be installed</p>
 
 <pre><code> source("http://www.bioconductor.org/biocLite.R")
- biocLite("rols")
+ biocLite("synapter")
 </code></pre>
 
 <p>See also the <code>synapter</code> <a href="http://bioconductor.org/packages/devel/bioc/html/synapter.html">Bioconductor page</a> for on-line access to the vignette and the reference manual.</p>
+
+<p><strong>NB:</strong> Installation of the package requires <code>R</code> version 2.15.1 (the latest stable release). It is currently in the Bioconductor development branch (next release is scheduled for the 2nd of October 2012). On a clean <code>R</code> installation, type the following:</p>
+
+<pre><code> source("http://www.bioconductor.org/biocLite.R") ## to get up-to-speed with Bioc
+ useDevel(TRUE) ## to use devel branch
+ biocLite("synapter") ## to install synapter
+</code></pre>
+
+<p>Next time a package needs to be installed, first <code>load("BiocInstaller")</code> and then install the package with <code>biocLite("packageName")</code>.</p>
+
+<h3>Source code</h3>
 
 <p>The code on <a href="https://github.com/lgatto/synapter/">github</a> is for sharing, testing, issue tracking and forking/pulling purposes. Although it should be in sync with the code on the <a href="https://hedgehog.fhcrc.org/bioconductor/trunk/madman/Rpacks/">Bioconductor svn server</a>, the latter is the official repository for the working source code. Get is with</p>
 
