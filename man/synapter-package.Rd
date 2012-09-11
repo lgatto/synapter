@@ -42,7 +42,7 @@ Maintainer: Laurent Gatto <lg390@cam.ac.uk>
 }
 
 \references{
-  Shliaha P.V., Bond N.J., Lilley K.S. and Gatto L.
+  Bond N.J., Shliaha P.V., Lilley K.S. and Gatto L.
   \emph{Synapter: Improving qualitative and quantitative performance for
     label free proteomics}, in prep.
 
