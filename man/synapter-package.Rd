@@ -43,8 +43,8 @@ Maintainer: Laurent Gatto <lg390@cam.ac.uk>
 
 \references{
   Bond N.J., Shliaha P.V., Lilley K.S. and Gatto L.
-  \emph{Synapter: Improving qualitative and quantitative performance for
-    label free proteomics}, in prep.
+  \emph{Improving qualitative and quantitative performance for label
+    free proteomics}, in prep. 
 
   Shliaha, P.V., Bond N.J., Gatto L. and Lilley K.S.
   \emph{The Effects of Ion Mobility Separation on Data Independent
