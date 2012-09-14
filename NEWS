@@ -1,6 +1,8 @@
 CHANGES IN VERSION 0.99.15
 --------------------------
  o updated ref in package man (2) <2012-09-14 Fri>
+ o updated Synapter show method to display short 
+   log <2012-09-14 Fri>
 
 CHANGES IN VERSION 0.99.14
 --------------------------
