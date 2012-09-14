@@ -37,9 +37,16 @@ setMethod(show, "Synapter",
             cat(" + Fasta file:",
                 basename(object$DbFastaFile), "\n")
             cat("Log:\n")
-            print(object$SynapterLog)
-            ## for (x in object$SynapterLog)
-            ##   cat(" + ", x, "\n")
+            l <- length(object$SynapterLog)
+            if (l > 4) {
+              msg <- getLog(object)
+              print(msg[1:2])
+              cat("[", l-4 ,"lines ]\n")
+              cat("[", l-1, "] \"",  msg[l-1], "\"\n", sep = "")
+              cat("[", l, "] \"",  msg[l], "\"\n", sep = "")
+            } else {
+              print(object$SynapterLog)
+            }
             invisible(NULL)
           })
 
