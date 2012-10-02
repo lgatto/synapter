@@ -17,20 +17,13 @@ Do not hesitate to contact [me](http://proteome.sysbiol.cam.ac.uk/lgatto/) for q
 The raw data files produced must first be processed by Water's PLGS software to produce `synapter` input files. This is described in details in the vignette. Additional information with lots of screenshots can be found in [these slides](http://proteome.sysbiol.cam.ac.uk/lgatto/synapter/PLGS_Data_Processing.pdf).
 
 ### Installation
-`synapter` is available from the [Bioconductor](http://www.bioconductor.org) repository. The package and its dependencies can be installed
+`synapter` is available from the [Bioconductor](http://www.bioconductor.org) repository. Installation of the package requires `R` version 2.15.1 (the latest stable release). The package and its dependencies can be installed
 
      source("http://www.bioconductor.org/biocLite.R")
      biocLite("synapter")
 
 See also the `synapter` [Bioconductor page](http://bioconductor.org/packages/devel/bioc/html/synapter.html) for on-line access to the vignette and the reference manual.
 
-**NB:** Installation of the package requires `R` version 2.15.1 (the latest stable release). It is currently in the Bioconductor development branch (next release is scheduled for the 2nd of October 2012). To do so, on a clean `R` installation, type the following:
-
-     source("http://www.bioconductor.org/biocLite.R") ## to get up-to-speed with Bioc
-     useDevel(TRUE) ## to use devel branch
-     biocLite("synapter") ## to install synapter
-
-Next time a package needs to be installed, first `load("BiocInstaller")` and then install the package with `biocLite("packageName")`.
 
 ### Source code
 
