@@ -23,6 +23,15 @@
   \code{\link{synergize}} for a description of the
   parameters and data processing.
 }
+\details{
+  The GUI code requires the Tcl package 'BWidget' to
+  display the tree drill-down file selection menu. The
+  package is available on Windows (in case of issues,
+  please read
+  \url{http://www.stat.berkeley.edu/users/spector/s133/Bwidget.html}).
+  On GNU/Linux, the package needs to be installed
+  separately; on Ubuntu, the package is called 'bwidget'.
+}
 \author{
   Laurent Gatto
 }
