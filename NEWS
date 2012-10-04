@@ -1,3 +1,7 @@
+CHANGES IN VERSION 1.1.2
+------------------------
+ o added note about tcl BWidget package in synapterGUI man <2012-10-04 Thu>
+
 CHANGES IN VERSION 1.1.1
 ------------------------
  o fixing vignette <2012-10-02 Tue>
