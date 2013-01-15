@@ -1,3 +1,8 @@
+CHANGES IN VERSION 1.1.3
+------------------------
+ o knitr 1.0 compatibility, based on Dan's 
+   updates <2013-01-15 Tue>
+
 CHANGES IN VERSION 1.1.2
 ------------------------
  o added note about tcl BWidget package in synapterGUI man <2012-10-04 Thu>
