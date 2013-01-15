@@ -320,7 +320,7 @@ res <- synergise(filenames = input, outputdir = output)
 @ 
 
 %% res is loaded in the 
-<<performance,echo=TRUE>>=
+<<performance, echo=TRUE>>=
 performance(res)
 @ 
 
@@ -637,7 +637,7 @@ n2 <- length(signms) - n1
 @ 
 
 
-<<upstab, echo=FALSE, results=tex>>=
+<<upstab, echo=FALSE, results='asis'>>=
 k <- grep("ups", rownames(res))
 print(xtable(round(res[k, ], 3),
              caption = "UPS1 proteins.",
