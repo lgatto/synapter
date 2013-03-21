@@ -2,13 +2,13 @@ Package: synapter
 Type: Package
 Title: Label-free data analysis pipeline for optimal 
        identification and quantitation
-Version: 1.1.3
-Author: Laurent Gatto, Pavel V. Shliaha and Nick J. Bond
+Version: 1.1.4
+Author: Laurent Gatto, Nick J. Bond and Pavel V. Shliaha 
 Maintainer: Laurent Gatto <lg390@cam.ac.uk>
 Depends: R (>= 2.15), methods, MSnbase
 Imports: hwriter, tcltk, tcltk2, RColorBrewer, lattice, qvalue, 
-	 multtest, utils, Biobase 
-Suggests: synapterdata, knitr, xtable
+	 multtest, utils, Biobase, knitr
+Suggests: synapterdata, xtable
 Description: The synapter package provides functionality to reanalyse 
 	     label-free proteomics data acquired on a Synapt G2 mass 
 	     spectrometer. One or several runs, possibly processed with 
@@ -18,4 +18,4 @@ Description: The synapter package provides functionality to reanalyse
 License: GPL-2
 URL: http://lgatto.github.com/synapter/
 biocViews: Bioinformatics, MassSpectrometry, Proteomics, GUI
-Packaged: 2012-06-08 00:29:26 UTC; lgatto
+VignetteBuilder: knitr

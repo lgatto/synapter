@@ -1,3 +1,8 @@
+CHANGES IN VERSION 1.1.4
+------------------------
+ o added citation <2013-03-21 Thu>
+ o vignette uses knitr engine and scrartcl class <2013-03-21 Thu>
+
 CHANGES IN VERSION 1.1.3
 ------------------------
  o knitr 1.0 compatibility, based on Dan's 

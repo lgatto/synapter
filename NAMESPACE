@@ -1,3 +1,4 @@
+import(knitr)
 import(hwriter)
 import(tcltk)
 import(tcltk2)
