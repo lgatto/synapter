@@ -1,0 +1,25 @@
+citEntry(entry = "Article",
+         author = "Nicholas J. Bond, Pavel V. Shliaha, Kathryn S. Lilley and Laurent Gatto",
+         title  = "Improving qualitative and quantitative performance for MSE-based label free proteomics",
+         journal = "Journal of Proteome Research",
+         volume = "in press",
+         year   = "2013", 
+         url    =  "http://pubs.acs.org/doi/abs/10.1021/pr300776t",
+         textVersion = paste(
+           "Improving qualitative and quantitative performance for MSE-based label free proteomics",
+           "N.J. Bond, P.V. Shliaha, K.S. Lilley and L. Gatto",
+           "Journal of Proteome Research, 2013, in press")
+)
+
+citEntry(entry = "Article",
+         author = "Pavel V. Shliaha, Nicholas J. Bond, Laurent Gatto and Kathryn S. Lilley",
+         title  = "The Effects of Travelling Wave Ion Mobility Separation on Data Independent Acquisition in Proteomics Studies",
+         journal = "Journal of Proteome Research",
+         volume = "in press",
+         year   = "2013", 
+         url    =  "http://pubs.acs.org/doi/abs/10.1021/pr300775k",
+         textVersion = paste(
+           "The Effects of Travelling Wave Ion Mobility Separation on Data Independent Acquisition in Proteomics Studies",
+           "P.V. Shliaha, N.J. Bond, L. Gatto and K.S. Lilley",
+           "Journal of Proteome Research, 2013, in press")
+)
