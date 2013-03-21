@@ -101,6 +101,7 @@ ion mobility, Synapt, label free, data independent acquisition.
 library(knitr)
 opts_chunk$set(fig.align = 'center', 
                fig.show = 'hold', 
+               stop_on_error = 1L,
                par = TRUE,
                prompt = TRUE,
                comment = NA)
@@ -495,6 +496,10 @@ head(exprs(ms25a))
 \subsection{Batch processing}\label{sec:batchprocessing}
 
 The code chunk below repeats the above processing for the other 5 UPS1/\textit{E. coli} runs.
+
+<<loaddata, echo=FALSE>>=
+data(ups25a, ups25b, ups25c, ups50a, ups50b, ups50c)
+@ 
 
 <<batch, echo=TRUE>>=
 nms <- ls(pattern = "^ups")[2:6]
