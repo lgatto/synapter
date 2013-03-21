@@ -300,7 +300,7 @@ The \Rfunction{synergise} function is a high level wrapper that implements a sug
 %%   set.seed(123)
 %% @ 
 
-<<prepare-synergise, echo=TRUE, eval=TRUE>>=
+<<prepare-synergise, echo=TRUE, eval=TRUE, tidy = FALSE>>=
 library(synapterdata)
 hdmsefile <- getHDMSeFinalPeptide()[2]
 basename(hdmsefile)
@@ -497,13 +497,9 @@ head(exprs(ms25a))
 
 The code chunk below repeats the above processing for the other 5 UPS1/\textit{E. coli} runs.
 
-<<loaddata, echo=FALSE>>=
-data(ups25a, ups25b, ups25c, ups50a, ups50b, ups50c)
-@ 
-
-<<batch, echo=TRUE>>=
-nms <- ls(pattern = "^ups")[2:6]
-nms
+<<batch, echo=TRUE, tidy = FALSE>>=
+nms <- c(paste0("ups", 25, c("b", "c")),
+         paste0("ups", 50, c("a", "b", "c")))
 tmp <- sapply(nms, function(.ups) {
   cat("Processing", .ups, "... ")
   ## get the object from workspace and convert to MSnSet
@@ -584,7 +580,7 @@ The \R environment and many of the available packages allow extremely powerful s
 %% inspect p-value histogram
 %% non-specific filtering
 
-<<stats>>=
+<<stats, tidy = FALSE>>=
 ## use log2 data for t-test
 exprs(msUps) <- log2(exprs(msUps))
 ## apply a t-test and extract the p-value
