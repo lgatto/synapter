@@ -39,7 +39,13 @@ synapterTinyData()
 }
 
 \source{
-  Bond, Shliaha, Gatto and Lilley, \emph{in prep.}
+  Improving qualitative and quantitative performance for MSE-based label
+  free proteomics, N.J. Bond, P.V. Shliaha, K.S. Lilley and L. Gatto,
+  Journal of Proteome Research, 2013, in press.
+  
+  The Effects of Travelling Wave Ion Mobility Separation on Data
+  Independent Acquisition in Proteomics Studies, P.V. Shliaha, N.J. Bond,
+  L. Gatto and K.S. Lilley, Journal of Proteome Research, 2013, in press. 
 }
 
 \author{
