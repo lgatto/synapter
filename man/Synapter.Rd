@@ -709,13 +709,13 @@ Synapter(filenames, master) ## creates an instance of class 'Synapter'
   spectrometry using decoy databases. 
   J Proteome Res. 2008b Jan; 7:(1)29-34 
 
-  Shliaha P.V., Bond N.J., Lilley K.S. and Gatto L.
-  Improving qualitative and quantitative performance for label free
-  proteomics, in prep. 
+  Improving qualitative and quantitative performance for MSE-based label
+  free proteomics, N.J. Bond, P.V. Shliaha, K.S. Lilley and L. Gatto,
+  Journal of Proteome Research, 2013, in press.
 
-  Shliaha, P.V., Bond N.J., Gatto L. and Lilley K.S.
-  The Effects of Ion Mobility Separation on Data Independent Acquisition
-  in Proteomics Studies., in prep. 
+  The Effects of Travelling Wave Ion Mobility Separation on Data
+  Independent Acquisition in Proteomics Studies, P.V. Shliaha, N.J. Bond,
+  L. Gatto and K.S. Lilley, Journal of Proteome Research, 2013, in press. 
 }
 
 
