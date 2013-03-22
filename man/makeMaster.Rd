@@ -91,9 +91,15 @@
   Laurent Gatto
 }
 \references{
-  Shliaha P.V., Bond N. J., Lilley K.S. and Gatto L., in
-  prep.
+Improving qualitative and quantitative performance for MSE-based label
+free proteomics, N.J. Bond, P.V. Shliaha, K.S. Lilley and L. Gatto,
+Journal of Proteome Research, 2013, in press.
+
+The Effects of Travelling Wave Ion Mobility Separation on Data
+Independent Acquisition in Proteomics Studies, P.V. Shliaha, N.J. Bond,
+L. Gatto and K.S. Lilley, Journal of Proteome Research, 2013, in press. 
 }
+
 \seealso{
   See the \code{\link{Synapter}} class manual page for
   detailed information on filtering and modelling and the
