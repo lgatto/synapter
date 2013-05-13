@@ -165,7 +165,8 @@ findMSeEMRTs <- function(identpep,
                          mergedpep,
                          nsd,
                          ppmthreshold, 
-                         model) {
+                         model,
+                         mergedEMRTs) {
   hdmseData <- doHDMSePredictions(identpep, model, nsd)
   ## sanity checking - v 0.4.6
   stopifnot(all(hdmseData$lower <= hdmseData$upper))
@@ -179,10 +180,17 @@ findMSeEMRTs <- function(identpep,
     .k <- selRt & selPpm
     ## res[[x]] <<- which(.k)
     ## sum(.k)
-    which(.k)
+    which(.k) ## which pep3D$spectrumIDs match this identpep$precursor.leID
   })
   k <- sapply(res, length)
   
+  ## Those that match *1* spectumIDs will be transferred
+  ## BUT there is no guarantee that with *1* unique match,
+  ##     we get the correct one, even for those that were
+  ##     part of the matched high confidence ident+quant
+  ##     identified subset! 
+
+  ## #############################################################
   n <- length(k)
   m <- ncol(pep3d)
   ## to initialise the new pep3d2 with with n rows 
@@ -196,8 +204,9 @@ findMSeEMRTs <- function(identpep,
       ## pep3d2[i, ] <- rep(k[i], m) ## change in v 0.7.7      
       pep3d2[i, ] <- c(k[i], rep(NA, m-1))
     }
-  }
-
+  }  
+  ## #############################################################
+  
   ans <- cbind(identpep, pep3d2)
   
   matched.quant.spectrumIDs <- sapply(res, paste, collapse = ",")
@@ -205,11 +214,27 @@ findMSeEMRTs <- function(identpep,
   
   ans$precursor.leID.quant <- NA  
   idx <- match(mergedpep$precursor.leID.ident, ans$precursor.leID)
-      
+  
   ans$precursor.leID.quant[idx] <- mergedpep$precursor.leID.quant
   i <- grep("precursor.leID$", names(ans))
   names(ans)[i] <- "precursor.leID.ident" ## to avoid any confusion
 
+  if (mergedEMRTs == "rescue") {
+    ## these are those that were in the merged data set but that
+    ## did NOT get transferred because they did NOT uniquely matched
+    ## a pep3D EMRT
+    lost <- ans$Function != 1 & ans$precursor.leID.ident %in% mergedpep$precursor.leID.ident
+    ## rescue these by adding their quant straight from QuantPeptideData
+    lostids <- ans$precursor.leID.ident[lost]    
+    ans[lost, "Counts"] <-
+      mergedpep[match(lostids, mergedpep$precursor.leID.ident), "precursor.inten.quant"]
+  } else if (mergedEMRTs == "copy") {    
+    allmerged <- ans$precursor.leID.ident %in% mergedpep$precursor.leID.ident
+    allmergedids <- ans$precursor.leID.ident[allmerged]
+    ans[allmerged, "Counts"] <-
+      mergedpep[match(allmergedids, mergedpep$precursor.leID.ident), "precursor.inten.quant"]      
+  } ## else if (fromQuant == "transfer") keep as is
+  
   ## since v 0.5.0 - removing multiply matched EMRTs
   ## dupIDs <- ans$spectrumID[ans$Function == 1 & duplicated(ans$spectrumID)]
   ## dupRows <- ans$spectrumID %in% dupIDs
@@ -288,6 +313,7 @@ gridSearch2 <- function(model,
                         ## fdr,
                         ppms,
                         nsds,
+                        mergedEMRTs,
                         verbose = TRUE) {
   ## As initial gridSearch, but now returns a list
   ## with two grids; first one as before, percent of
@@ -313,7 +339,8 @@ gridSearch2 <- function(model,
                                    pep3d,
                                    mergedPeptides,
                                    nsd, ppm,
-                                   model)
+                                   model,
+                                   mergedEMRTs)
       k <- matchedEMRTs$Function
       ## grd1: number of unique matches divided divided by total number of matches
       grd1[i, j] <- table(k)["1"]/length(k) ##  grd1[i, j] <- table(k)[2]/length(k)

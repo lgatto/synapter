@@ -278,7 +278,7 @@
                   .self$IdentPeptideData$predictedRt <- newIdentData$predicted
                   .self$IdentPeptideData$sdRt <- newIdentData$sd
                 },
-                findEMRTs = function() {
+                findEMRTs = function(mergedEMRTs) {
                   if (length(.self$RtModel) == 0)
                     stop("First build a retention time model using 'modelRt'.")                               
                   if (length(.self$PpmError) == 0) {
@@ -294,11 +294,13 @@
                                                      .self$MergedFeatures,
                                                      .self$RtNsd,
                                                      .self$PpmError,
-                                                     .self$RtModel)
+                                                     .self$RtModel,
+                                                     mergedEMRTs)
                   .self$SynapterLog <- c(.self$SynapterLog,
                                          paste("Matched identification peptides and quantitation EMRTs [",
-                                               paste(dim(.self$MatchedEMRTs), collapse=","),
-                                               "]", sep=""))
+                                               paste(dim(.self$MatchedEMRTs), collapse = ","),
+                                               "] (", mergedEMRTs, ")",
+                                               sep = ""))
                 }))
 
 ## Synapter$lock("Version") ## this blocks $copy
@@ -306,7 +308,8 @@
 ## Grid search
 .Synapter$methods(
                   list(
-                       searchGrid = function(ppms, nsds, subset, n, verbose = TRUE) {
+                       searchGrid = function(ppms, nsds, subset, n,
+                         mergedEMRTs, verbose = TRUE) {
                          'Performs a grid search in ppm x nsd space.'
                          .IdentPeptideData <- .self$IdentPeptideData
                          if (!missing(subset)) {
@@ -340,6 +343,7 @@
                                               .self$MergedFeatures[midx, ],
                                               ppms,
                                               nsds,
+                                              mergedEMRTs,
                                               verbose = verbose)
                          .self$Grid <- .grid[1:2]
                          .self$GridDetails <- .grid[[3]]
