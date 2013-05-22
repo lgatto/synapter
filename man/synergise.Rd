@@ -11,6 +11,7 @@
     grid.nsd.to = 5, grid.nsd.by = 0.5, grid.subset = 1,
     grid.n = 0,
     grid.param.sel = c("auto", "model", "total", "details"),
+    mergedEMRTs = c("rescue", "copy", "transfer"),
     css = NULL, verbose = TRUE)
 }
 \arguments{
@@ -94,6 +95,11 @@
   \code{model} or \code{total}. See \code{\link{Synapter}}
   for details on these selection methods.}
 
+  \item{mergedEMRTs}{One of \code{"rescue"} (default),
+  \code{"copy"} or \code{"transfer"}. See the documentation
+  for the \code{findEMRTs} function in
+  \code{\link{Synapter}} for details.}
+
   \item{css}{An optional path to a custom css file. If
   \code{NULL} (default), uses \code{synapter.css}.}
 
@@ -174,13 +180,7 @@ browseURL(htmlReport) ## open the report with default browser
   Laurent Gatto
 }
 \references{
-  Improving qualitative and quantitative performance for MSE-based label
-  free proteomics, N.J. Bond, P.V. Shliaha, K.S. Lilley and L. Gatto,
-  Journal of Proteome Research, 2013, in press.
-  
-  The Effects of Travelling Wave Ion Mobility Separation on Data
-  Independent Acquisition in Proteomics Studies, P.V. Shliaha, N.J. Bond,
-  L. Gatto and K.S. Lilley, Journal of Proteome Research, 2013, in
-  press. 
+  Shliaha P.V., Bond N. J., Lilley K.S. and Gatto L., in
+  prep.
 }
 

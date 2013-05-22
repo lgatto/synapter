@@ -96,6 +96,9 @@
 ##' \code{auto} (default), \code{details}, \code{model} or
 ##' \code{total}. See \code{\link{Synapter}} for details on these
 ##' selection methods.
+##' @param mergedEMRTs One of \code{"rescue"} (default), \code{"copy"}
+##' or \code{"transfer"}. See the documentation for the \code{findEMRTs}
+##' function in \code{\link{Synapter}} for details.
 ##' @param css An optional path to a custom css file. If \code{NULL}
 ##' (default), uses \code{synapter.css}.
 ##' @param verbose A \code{logical} indicating if progress output
@@ -137,6 +140,7 @@ synergise <- function(filenames,
                       grid.subset = 1,
                       grid.n = 0,
                       grid.param.sel = c("auto", "model", "total", "details"),
+                      mergedEMRTs = c("rescue", "copy", "transfer"),
                       css = NULL,
                       verbose = TRUE) {
   fdrMethod <- match.arg(fdrMethod)
@@ -411,7 +415,8 @@ synergise <- function(filenames,
     message("Matching EMRTs...")
   
   ## (6) Matching ident peptides and quant EMRTs
-  findEMRTs(obj)
+  mergedEMRTs <- match.arg(mergedEMRTs)
+  findEMRTs(obj, mergedEMRTs)
   
   fig.jpg <- makeFigurePath(outputdir, "Fig-emrt-matching.jpg")
   jpeg(fig.jpg$full)    
