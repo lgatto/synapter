@@ -159,7 +159,7 @@ Synapter(filenames, master) ## creates an instance of class 'Synapter'
 \arguments{
   \item{filenames}{A named \code{list} of file names to be load. The
     names must be 'identpeptide', 'quantpeptide', 'quantpep3d' and 'fasta'.
-    If missing, dialog boxes pop up to select the the four files
+    If missing, dialog boxes pop up to select the four files
     manually.
     \code{identpeptide} can be a \code{csv} final peptide file (from
     PLGS) or a saved \code{"\linkS4class{MasterPeptides}"} data object as
