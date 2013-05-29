@@ -118,7 +118,7 @@ modelRetTime <- function(xx, span) {
   o <- order(xx$precursor.retT.ident)
   pp <- predict(lo, data.frame(precursor.retT.ident = xx$precursor.retT.ident), se=TRUE)
   sd <- pp$se.fit * sqrt(lo$n) ## get sd from se
-  stopifnot(all.equal(pp$fit, fitted(lo)))
+  stopifnot(all.equal(pp$fit, fitted(lo), check.attributes = FALSE))
   return(list(lo = lo,
               o = o,
               preds = pp,
