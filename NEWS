@@ -4,6 +4,9 @@ CHANGES IN VERSION 1.3.1
    Fixes issue #41. <2013-05-13 Mon>
  o New mergedEMRTs arg in findEMRTs. 
    Closes issue #38. <2013-05-13 Mon> 
+ o fixed synapterTiny$QuantPep3DData, which had the rownames 
+   as first column synapterTiny$QuantPep3DData$X. Detected 
+   thanks to new mergedEMRTs arg. <2013-05-13 Mon>
 
 CHANGES IN VERSION 1.3.0
 ------------------------
