@@ -510,6 +510,16 @@ setMethod(performance, "Synapter",
             invisible(ans)
           })
 
+setMethod(performance2, "Synapter",
+          function(object, verbose = TRUE) {
+              id.source <- object$MatchedEMRTs$idSource
+              counts <- object$MatchedEMRTs$Counts
+              na.counts <- is.na(counts)             
+              ans <- table(id.source, na.counts)
+              print(ans)
+              invisible(list(id.source = id.source, counts = counts))
+          })
+
 setMethod(plotRtDiffs, "Synapter",
           function(object, ...) {
             diffs <- plotRetTimeDiffs(object, plot=TRUE, ...)
