@@ -416,7 +416,7 @@ synergise <- function(filenames,
   
   ## (6) Matching ident peptides and quant EMRTs
   mergedEMRTs <- match.arg(mergedEMRTs)
-  findEMRTs(obj, mergedEMRTs)
+  findEMRTs(obj, mergedEMRTs = mergedEMRTs)
   
   fig.jpg <- makeFigurePath(outputdir, "Fig-emrt-matching.jpg")
   jpeg(fig.jpg$full)    
