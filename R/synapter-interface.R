@@ -87,12 +87,14 @@ setMethod(modelRt, "Synapter",
           })
 
 setMethod(findEMRTs, "Synapter",
-          function(object, ppm, nsd) {
+          function(object, ppm, nsd,
+                   mergedEMRTs = c("rescue", "copy", "transfer")) {
+            mergedEMRTs <- match.arg(mergedEMRTs)
             if (!missing(ppm))
               object$setPpmError(ppm)
             if (!missing(nsd))
               object$setRtNsd(nsd)
-            object$findEMRTs()
+            object$findEMRTs(mergedEMRTs)
           })
 
 
@@ -102,7 +104,9 @@ setMethod(searchGrid, "Synapter",
                    nsds,
                    subset,
                    n,
+                   mergedEMRTs = c("rescue", "copy", "transfer"), 
                    verbose = TRUE) {
+            mergedEMRTs <- match.arg(mergedEMRTs)
             if (missing(ppms)) 
               ppms <- seq(5, 20, 2)
             names(ppms) <- ppms
@@ -115,7 +119,7 @@ setMethod(searchGrid, "Synapter",
               subset <- 1
             if (!missing(subset) && (subset > 1 | subset <= 0))
               subset <- 1
-            object$searchGrid(ppms, nsds, subset, n, verbose)
+            object$searchGrid(ppms, nsds, subset, n, mergedEMRTs, verbose)
           })
 
 setMethod(getGrid, "Synapter",

@@ -369,21 +369,39 @@ Synapter(filenames, master) ## creates an instance of class 'Synapter'
     \describe{
       \item{mergePeptides}{\code{signature(object = "Synapter")}: Merges 
 	quantitation and identification final peptide data, used to
-	perform retention time modelling (see \code{modelRt} below). }
+	perform retention time modelling (see \code{modelRt} below).
+      }
       \item{modelRt}{\code{signature(object = "Synapter",
 	  span = "numeric")}: Performs local polynomial regression
 	fitting (see \code{\link{loess}}) retention time alignment using
-	\code{span} parameter value to control the degree of smoothing. }
+	\code{span} parameter value to control the degree of smoothing.
+      }
       \item{findEMRTs}{\code{signature(object = "Synapter", ppm = 
-	  "numeric", nsd = "numeric")}: Finds EMRTs matching
-	identification peptides using \code{ppm} mass tolerance and
-	\code{nsd} number of retention time standard deviations. The
-	last two parameters are optional if previously set with
-	\code{setPpmError} and \code{setRtNsd} or, better,
-	\code{setBestGridParams} (see below). }  
+	  "numeric", nsd = "numeric", mergedEMRTs = c("rescue", "copy",
+	  "transfer"))}:
+	Finds EMRTs matching identification peptides using \code{ppm}
+	mass tolerance and \code{nsd} number of retention time standard
+	deviations. The last two parameters are optional if previously
+	set with \code{setPpmError} and \code{setRtNsd} or, better,
+	\code{setBestGridParams} (see below). The \code{mergedEMRTs}
+	parameter defined the behaviour for those high confidence
+	features that where identified in both identification and
+	quantitation acquisitions and used for the retention time model
+	(see \code{mergePeptides}). Prior to version 1.1.1, these
+	features were transferred from the quantitation pep3d file if
+	unique matches were found, as any feature (\code{"transfer"}).
+	As a result, those matching 0 or > 1 EMRTs were
+	quantified as \code{NA}. The default is now to \code{"rescue"} 
+	the quantitation values of these by directly retrieving the data 
+	from the quantification peptide data. Alternatively, the
+	quantitation values for these features can be directly taken
+	from the quantitation peptide data using \code{"copy"}, thus
+	effectively bypassing identification transfer.
+      }   
       \item{searchGrid}{\code{signature(object="Synapter",
 	  ppms="character", nsds="character", subset="numeric", n =
-	  "numeric", verbose="logical")}: Performs a grid search. The grid
+	  "numeric", mergedEMRTs = c("rescue", "copy", "transfer"), 
+	  verbose="logical")}: Performs a grid search. The grid
 	is defined by the \code{ppm} and \code{nsd} numerical vectors,
 	representing the sequence of values to be tested. Default are
 	\code{seq(5, 20, 2)} and \code{seq(0.5, 5, 0.5)}
@@ -393,7 +411,9 @@ Synapter(filenames, master) ## creates an instance of class 'Synapter'
 	percentage of data to be used; \code{n} specifies the absolute
 	number of feature to use. The default is to use all
 	data. \code{verbose} controls whether textual output should be
-	printed to the console. }
+	printed to the console. See \code{findEMRTs} for an explanation
+	of \code{mergedEMRTs}. 
+      }
     }
   }
   
