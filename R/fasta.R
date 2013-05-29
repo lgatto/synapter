@@ -74,7 +74,7 @@ dbUniquePeptideSet <- function(fastafile, verbose = TRUE) {
     message(paste("Fasta file: ", length(seq), " proteins\n", 
                   "            ", length(upeptides),
                   " out of ", length(unique(peptides)),
-                  " tryptic peptides are proteoptypic.",
+                  " tryptic peptides are proteotypic.",
                   sep = ""))
   return(upeptides)
 }
