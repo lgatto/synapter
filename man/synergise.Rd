@@ -5,7 +5,7 @@
 \usage{
   synergise(filenames, master = FALSE, object, outputdir,
     fdr = 0.01, fdrMethod = c("BH", "Bonferroni", "qval"),
-    fpr = 0.01, identppm = 20, quantppm = 20,
+    fpr = 0.01, peplen = 7, identppm = 20, quantppm = 20,
     uniquepep = TRUE, span = 0.05, grid.ppm.from = 5,
     grid.ppm.to = 20, grid.ppm.by = 2, grid.nsd.from = 0.5,
     grid.nsd.to = 5, grid.nsd.by = 0.5, grid.subset = 1,
@@ -52,6 +52,8 @@
   \code{\link{Synapter}} for references.}
 
   \item{fpr}{Protein false positive rate. Default is 0.01.}
+
+  \item{peplen}{Minimum peptide length. Default is 7.}
 
   \item{identppm}{Identification mass tolerance (in ppm).
   Default is 20.}

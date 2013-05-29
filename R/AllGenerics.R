@@ -30,6 +30,7 @@ setGeneric("getPpmErrorQs", function(object, ...) standardGeneric("getPpmErrorQs
 setGeneric("getRtQs", function(object, ...) standardGeneric("getRtQs"))
 setGeneric("getPepNumbers", function(object, ...) standardGeneric("getPepNumbers"))
 setGeneric("showFdrStats", function(object, ...) standardGeneric("showFdrStats"))
+setGeneric("filterPeptideLength", function(object, ...) standardGeneric("filterPeptideLength"))
 setGeneric("filterUniqueDbPeptides", function(object, ...) standardGeneric("filterUniqueDbPeptides"))
 setGeneric("filterUniqueQuantDbPeptides", function(object, ...) standardGeneric("filterUniqueQuantDbPeptides"))
 setGeneric("filterUniqueIdentDbPeptides", function(object, ...) standardGeneric("filterUniqueIdentDbPeptides"))

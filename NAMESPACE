@@ -58,6 +58,7 @@ exportMethods(show,
               performance,
               performance2,
               ## filtering prior to merging
+              filterPeptideLength,
               filterQuantPepScore,
               filterIdentPepScore,
               filterIdentPpmError,

@@ -69,6 +69,7 @@
 ##' of the FWER and \code{"qval"} from the \code{qvalue} package. See
 ##' \code{\link{Synapter}} for references.
 ##' @param fpr Protein false positive rate. Default is 0.01.
+##' @param peplen Minimum peptide length. Default is 7.
 ##' @param identppm Identification mass tolerance (in ppm). Default is 20.
 ##' @param quantppm Quantitation mass tolerance (in ppm). Default is 20.
 ##' @param uniquepep A \code{logical} is length 1 indicating if only
@@ -125,6 +126,7 @@ synergise <- function(filenames,
                       fdr = 0.01,
                       fdrMethod = c("BH", "Bonferroni", "qval" ),
                       fpr = 0.01,
+                      peplen = 7,
                       identppm = 20,
                       quantppm = 20,
                       uniquepep = TRUE,
@@ -227,6 +229,9 @@ synergise <- function(filenames,
       message("Keeping unique peptides...")
     filterUniqueDbPeptides(obj, verbose) 
   }
+  
+  filterPeptideLength(obj, l = peplen)
+  
   setPepScoreFdr(obj, fdr = fdr)
   filterQuantPepScore(obj, method = fdrMethod) 
   if (!master)
