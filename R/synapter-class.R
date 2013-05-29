@@ -1,307 +1,306 @@
 .Synapter <-
-  setRefClass("Synapter",
-              fields = list(
-                ## introspection
-                Version = "character",
-                SynapterLog = "character",
-                Master = "logical",
-                used2 = "logical",
-                ## input data
-                QuantPeptideFile = "character",
-                QuantPeptideData = "data.frame",
-                IdentPeptideFile = "character",
-                IdentPeptideData = "data.frame",
-                QuantPep3DFile = "character",
-                QuantPep3DData = "data.frame",
-                ## fasta db
-                DbFastaFile = "character",
-                ## peptide score data - retained for ploting
-                .QuantPeptideScores = "data.frame",
-                .IdentPeptideScores = "data.frame",
-                ## filtering thresholds
-                PepScoreFdr = "numeric",
-                ProtFpr = "numeric",
-                IdentPpmError = "numeric",
-                QuantPpmError = "numeric",
-                ## merging
-                MergedFeatures = "data.frame",
-                ## rt model
-                LowessSpan = "numeric",
-                RtModel = "list",
-                ## grid search
-                Grid = "list", ## was a "matrix",
-                GridDetails = "list",
-                ## matching EMRTs
-                PpmError = "numeric",
-                RtNsd = "numeric",
-                MatchedEMRTs = "data.frame"),
-              methods = list(
-                initialize = function() {
-                  .self$Version <- as.character(packageVersion("synapter"))
-                  .self$SynapterLog <- c(.self$SynapterLog,
-                                         paste("Instance created on ", date(), sep=""))
-                  .self$used2 <- FALSE
-                }, 
-                loadFiles = function() {
-                  'Read input data files.'
-                  .self$IdentPeptideFile <-
-                    tk_choose.files("",
-                                    caption = "Select identification final peptide file",
-                                    multi = FALSE)
-                  .self$QuantPeptideFile <-
-                    tk_choose.files("",
-                                    caption = "Select quantitation final peptide file",
-                                    multi = FALSE)
-                  .self$QuantPep3DFile <-
-                    tk_choose.files("",
-                                    caption = "Select quantitation Pep3D file",
-                                    multi = FALSE)
-                  .self$DbFastaFile <-
-                    tk_choose.files("",
-                                    caption = "Select fasta file",
-                                    multi = FALSE)
-                },
-                loadMasterData = function() {
-                  message("Reading quantitation final peptide file...")
-                  .self$QuantPeptideData <- read.csv(.self$QuantPeptideFile, stringsAsFactors = FALSE)
-                  .self$QuantPeptideData$errorppm <-
-                    error.ppm(obs = .self$QuantPeptideData$precursor.mhp,
-                              theo = .self$QuantPeptideData$peptide.mhp)
-                  .self$SynapterLog <- c(.self$SynapterLog,
-                                         paste("Read quantitation peptide data [",
-                                               paste(dim(.self$QuantPeptideData), collapse = ","),
-                                               "]", sep=""))
-                  if (!.self$Master)
-                    stop("Identification final peptide is not a master file")
-                  message("Reading master identification peptide file...")
-                  ext <- getExtension(.self$IdentPeptideFile)
-                  if (tolower(ext) == "csv") {
-                    .self$IdentPeptideData <- read.csv(.self$IdentPeptideFile,
-                                                       stringsAsFactors = FALSE)
-                    .self$SynapterLog <- c(.self$SynapterLog,
-                                           paste("Read master identification peptide (csv) data [",
-                                                 paste(dim(.self$IdentPeptideData), collapse = ","),
-                                                 "]", sep=""))
-
-                  } else if (tolower(ext) == "rds") {
-                    masterpeps <- readRDS(.self$IdentPeptideFile)
-                    ## testing if masterpeps@masters[[1]] or [[2]] to be used
-                    .self$IdentPeptideData <- masterpeps@masters[[1]]
-                    .self$PepScoreFdr <- masterpeps@fdr
-                    .QuantPeptideData <- .self$QuantPeptideData
-                    .self$addQuantIdStats(log = FALSE) ## Quant only
-                    .self$filterQuantPepScore(fdrMethod = masterpeps@method, log = FALSE)
-                    ## Prot FPR filtering - depending on loadIdentOnly and makeMaster
-                    ## PPM error filtering - depending on loadIdentOnly and makeMaster
-                    .MergedFeatures <- merge(.self$IdentPeptideData,
-                                             .self$QuantPeptideData, 
-                                             by.x = "peptide.seq",
-                                             by.y = "peptide.seq",
-                                             suffixes = c(".ident", ".quant"))
-                    .deltaRt <-
-                      .MergedFeatures$precursor.retT.ident -
-                        .MergedFeatures$precursor.retT.quant
-                    if (all(.deltaRt == 0)) {
-                      .self$IdentPeptideData <- masterpeps@masters[[2]]
-                      .self$used2 <- TRUE
-                    }
-                    .self$SynapterLog <- c(.self$SynapterLog,
-                                           paste0("Read master (", ifelse(.self$used2, 2, 1) ,
-                                                  ") identification peptide (", ext, ") data [",
-                                                 paste(dim(.self$IdentPeptideData), collapse = ","), "]"))
-                    .self$PepScoreFdr <- numeric() ## re-initialise
-                    .self$QuantPeptideData <- .QuantPeptideData
-                  } else {
-                    stop("Master peptide file extention not recognised. Must be 'csv' or 'rds'.")
-                  }
-
-                  message("Reading quantitation Pep3D file...")
-                  .self$QuantPep3DData <- read.csv(.self$QuantPep3DFile, stringsAsFactors = FALSE)
-                  .self$SynapterLog <- c(.self$SynapterLog,
-                                         paste("Read quantitation Pep3D data [",
-                                               paste(dim(.self$QuantPep3DData), collapse = ","),
-                                               "]", sep=""))
-                  ## getting peptide scores
-                  .self$.QuantPeptideScores <-
-                    filterPeptideMatchType(.self$QuantPeptideData[, c("peptide.seq",
-                                                                      "peptide.score",
-                                                                      "peptide.matchType",
-                                                                      "protein.dataBaseType")])
-                  .self$.QuantPeptideScores <- 
-                    .self$.QuantPeptideScores[!duplicated(.self$.QuantPeptideScores$peptide.seq), ]
-                  .self$.IdentPeptideScores <- ## aleady filtered for matchType 
-                    .self$IdentPeptideData[, c("peptide.seq",
-                                               "peptide.score",
-                                               "peptide.matchType",
-                                               "protein.dataBaseType")]
-                  .self$.IdentPeptideScores <- 
-                    .self$.IdentPeptideScores[!duplicated(.self$.IdentPeptideScores$peptide.seq), ]                             
-                  ## Housekeeping - Quant only
-                  .self$QuantPeptideData$protein.falsePositiveRate <- 
-                    .self$QuantPeptideData$protein.falsePositiveRate / 100
-                  message("Filtering...")
-                  .self$filterQuantMatchType() ## Quant only
-                  .self$filterQuantFunction()
-                  .self$filterDuplicatedQuantSpectrumIds()
-                  message("Computing quantitation identification statistics...")
-                  .self$addQuantIdStats() ## Quant only
-                },                           
-                loadData = function() {
-                  if (.self$Master)
-                    stop("Identification final peptide is a master file")
-                  message("Reading identification final peptide file...")
-                  .self$IdentPeptideData <- read.csv(.self$IdentPeptideFile, stringsAsFactors = FALSE)
-                  .self$IdentPeptideData$errorppm <-
-                    error.ppm(obs = .self$IdentPeptideData$precursor.mhp,
-                              theo = .self$IdentPeptideData$peptide.mhp)
-                  .self$SynapterLog <- c(.self$SynapterLog,
-                                         paste("Read identification peptide data [",
-                                               paste(dim(.self$IdentPeptideData), collapse = ","),
-                                               "]", sep=""))
-                  message("Reading quantitation final peptide file...")
-                  .self$QuantPeptideData <- read.csv(.self$QuantPeptideFile, stringsAsFactors = FALSE)
-                  .self$QuantPeptideData$errorppm <-
-                    error.ppm(obs = .self$QuantPeptideData$precursor.mhp,
-                              theo = .self$QuantPeptideData$peptide.mhp)
-                  .self$SynapterLog <- c(.self$SynapterLog,
-                                         paste("Read quantitation peptide data [",
-                                               paste(dim(.self$QuantPeptideData), collapse = ","),
-                                               "]", sep=""))
-                  message("Reading quantitation Pep3D file...")
-                  .self$QuantPep3DData <- read.csv(.self$QuantPep3DFile, stringsAsFactors = FALSE)
-                  .self$SynapterLog <- c(.self$SynapterLog,
-                                         paste("Read quantitation Pep3D data [",
-                                               paste(dim(.self$QuantPep3DData), collapse = ","),
-                                               "]", sep=""))
-                  ## getting peptide scores
-                  .self$.IdentPeptideScores <-
-                    filterPeptideMatchType(.self$IdentPeptideData[,c("peptide.seq",
-                                                                     "peptide.score",
-                                                                     "peptide.matchType",
-                                                                     "protein.dataBaseType")])
-                  .self$.IdentPeptideScores <- 
-                    .self$.IdentPeptideScores[!duplicated(.self$.IdentPeptideScores$peptide.seq), ]                             
-                  .self$.QuantPeptideScores <-
-                    filterPeptideMatchType(.self$QuantPeptideData[,c("peptide.seq",
-                                                                     "peptide.score",
-                                                                     "peptide.matchType",
-                                                                     "protein.dataBaseType")])
-                  .self$.QuantPeptideScores <- 
-                    .self$.QuantPeptideScores[!duplicated(.self$.QuantPeptideScores$peptide.seq), ]                             
-                  ## Housekeeping
-                  .self$QuantPeptideData$protein.falsePositiveRate <- 
-                    .self$QuantPeptideData$protein.falsePositiveRate / 100
-                  .self$IdentPeptideData$protein.falsePositiveRate <- 
-                    .self$IdentPeptideData$protein.falsePositiveRate / 100 
-                  message("Filtering...")
-                  .self$filterMatchType()
-                  .self$filterQuantFunction()
-                  .self$filterDuplicatedQuantSpectrumIds()
-                  message("Computing identification statistics...")
-                  .self$addIdStats()
-                },
-                getMaster = function() {
-                  ' Gets Master field.'
-                  return(.self$Master)
-                },
-                setMaster = function(master) {
-                  ' Sets Master field.'
-                  .self$Master <- master
-                  if (master)
-                    .self$SynapterLog <- c(.self$SynapterLog,
-                                           "Identification final peptide is a _master_ file.")
-                }, 
-                addIdStats = function() {
-                  'Add p-values and q-values to final peptide data sets.'
-                  .self$addQuantIdStats()
-                  .self$addIdentIdStats()
-                },
-                addQuantIdStats = function(log = TRUE) {
-                  'Add p-values and q-values to final quantitation peptide data sets.'
-                  quantStats <- try(getIdStats(.self$QuantPeptideData), silent=TRUE)
-                  if (inherits(quantStats, "try-error")) {
-                    warning("No Regular and Random protein database types in quantitation peptide data.")
-                  } else {
-                    .self$QuantPeptideData <- cbind(.self$QuantPeptideData, quantStats)
-                    if (log)
-                      .self$SynapterLog <- c(.self$SynapterLog,
-                                             "Added identification statistics to quantitation data")
-                    .self$filterQuantRandomEntries()
-                  }
-                },
-                addIdentIdStats = function() {
-                  'Add p-values and q-values to identification final peptide data sets.'
-                  identStats <- try(getIdStats(.self$IdentPeptideData), silent=TRUE)
-                  if (inherits(identStats, "try-error")) {
-                    warning("No Regular and Random protein database types in identification peptide data.")
-                  } else {
-                    .self$IdentPeptideData <- cbind(.self$IdentPeptideData, identStats)
-                    .self$SynapterLog <- c(.self$SynapterLog,
-                                           "Added identification statistics to identification data")
-                    .self$filterIdentRandomEntries()
-                  }
-                },
-                mergePeptides = function () {
-                  'Merge quantitation and identification final peptide data'
-                  .self$MergedFeatures <- merge(.self$IdentPeptideData,
-                                                .self$QuantPeptideData,
-                                                by.x = "peptide.seq",
-                                                by.y = "peptide.seq",
-                                                suffixes = c(".ident", ".quant"))
-                  .self$MergedFeatures$deltaRt <-
-                    .self$MergedFeatures$precursor.retT.ident -
-                      .self$MergedFeatures$precursor.retT.quant
-                  if (all(.self$MergedFeatures$deltaRt == 0)) {
-                    stop("Merged identification and quantitation data have identical retention times. Modelling not possible")
-                  }                             
-                  if (any(.self$MergedFeatures$peptide.mhp.quant !=
-                          .self$MergedFeatures$peptide.mhp.ident)) {
-                    .self$MergedFeatures <- data.frame()
-                    stop("Identification and quantitation theoretical peptide masses do not match.")
-                  }
-                  .self$SynapterLog <- c(.self$SynapterLog,
-                                         paste0("Merged identification and quantitation data [",
-                                               paste(dim(.self$MergedFeatures), collapse=","), "]"))
-                },
-                modelRetentionTime = function(span) {
-                  'Models retention time'
-                  if (missing(span))
-                    span <- .self$LowessSpan
-                  .self$RtModel <- modelRetTime(.self$MergedFeatures, span = span)
-                  .self$SynapterLog <- c(.self$SynapterLog,
-                                         paste("Modelled retention time using lowess and span ",
-                                               .self$LowessSpan, sep=""))
-                  ## new 0.4.6 - use model to ad precited rt and sd 
-                  ##             to original IdentPeptideData
-                  newIdentData <- doHDMSePredictions(.self$IdentPeptideData,
-                                                     .self$RtModel) ## nsd missing
-                  .self$IdentPeptideData$predictedRt <- newIdentData$predicted
-                  .self$IdentPeptideData$sdRt <- newIdentData$sd
-                },
-                findEMRTs = function(mergedEMRTs) {
-                  if (length(.self$RtModel) == 0)
-                    stop("First build a retention time model using 'modelRt'.")                               
-                  if (length(.self$PpmError) == 0) {
-                    warning("Mass error tolerance for EMRT matching undefined. Setting to default value.")
-                    .self$setPpmError()
-                  }
-                  if (length(.self$RtNsd) == 0) {
-                    warning("Retention time tolerance for EMRT matching undefined. Setting to default value.")
-                    .self$setRtNsd()
-                  }
-                  .self$MatchedEMRTs <- findMSeEMRTs(.self$IdentPeptideData,
-                                                     .self$QuantPep3DData,
-                                                     .self$MergedFeatures,
-                                                     .self$RtNsd,
-                                                     .self$PpmError,
-                                                     .self$RtModel,
-                                                     mergedEMRTs)
-                  .self$SynapterLog <- c(.self$SynapterLog,
-                                         paste("Matched identification peptides and quantitation EMRTs [",
-                                               paste(dim(.self$MatchedEMRTs), collapse = ","),
-                                               "] (", mergedEMRTs, ")",
-                                               sep = ""))
-                }))
+    setRefClass("Synapter",
+                fields = list(
+                    ## introspection
+                    Version = "character",
+                    SynapterLog = "character",
+                    Master = "logical",
+                    used2 = "logical",
+                    ## input data
+                    QuantPeptideFile = "character",
+                    QuantPeptideData = "data.frame",
+                    IdentPeptideFile = "character",
+                    IdentPeptideData = "data.frame",
+                    QuantPep3DFile = "character",
+                    QuantPep3DData = "data.frame",
+                    ## fasta db
+                    DbFastaFile = "character",
+                    ## peptide score data - retained for ploting
+                    .QuantPeptideScores = "data.frame",
+                    .IdentPeptideScores = "data.frame",
+                    ## filtering thresholds
+                    PepScoreFdr = "numeric",
+                    ProtFpr = "numeric",
+                    IdentPpmError = "numeric",
+                    QuantPpmError = "numeric",
+                    ## merging
+                    MergedFeatures = "data.frame",
+                    ## rt model
+                    LowessSpan = "numeric",
+                    RtModel = "list",
+                    ## grid search
+                    Grid = "list", ## was a "matrix",
+                    GridDetails = "list",
+                    ## matching EMRTs
+                    PpmError = "numeric",
+                    RtNsd = "numeric",
+                    MatchedEMRTs = "data.frame"),
+                methods = list(
+                    initialize = function() {
+                        .self$Version <- as.character(packageVersion("synapter"))
+                        .self$SynapterLog <- c(.self$SynapterLog,
+                                               paste("Instance created on ", date(), sep=""))
+                        .self$used2 <- FALSE
+                    }, 
+                    loadFiles = function() {
+                        'Read input data files.'
+                        .self$IdentPeptideFile <-
+                            tk_choose.files("",
+                                            caption = "Select identification final peptide file",
+                                            multi = FALSE)
+                        .self$QuantPeptideFile <-
+                            tk_choose.files("",
+                                            caption = "Select quantitation final peptide file",
+                                            multi = FALSE)
+                        .self$QuantPep3DFile <-
+                            tk_choose.files("",
+                                            caption = "Select quantitation Pep3D file",
+                                            multi = FALSE)
+                        .self$DbFastaFile <-
+                            tk_choose.files("",
+                                            caption = "Select fasta file",
+                                            multi = FALSE)
+                    },
+                    loadMasterData = function() {
+                        message("Reading quantitation final peptide file...")
+                        .self$QuantPeptideData <- read.csv(.self$QuantPeptideFile, stringsAsFactors = FALSE)
+                        .self$QuantPeptideData$errorppm <-
+                            error.ppm(obs = .self$QuantPeptideData$precursor.mhp,
+                                      theo = .self$QuantPeptideData$peptide.mhp)
+                        .self$SynapterLog <- c(.self$SynapterLog,
+                                               paste("Read quantitation peptide data [",
+                                                     paste(dim(.self$QuantPeptideData), collapse = ","),
+                                                     "]", sep=""))
+                        if (!.self$Master)
+                            stop("Identification final peptide is not a master file")
+                        message("Reading master identification peptide file...")
+                        ext <- getExtension(.self$IdentPeptideFile)
+                        if (tolower(ext) == "csv") {
+                            .self$IdentPeptideData <- read.csv(.self$IdentPeptideFile,
+                                                               stringsAsFactors = FALSE)
+                            .self$SynapterLog <- c(.self$SynapterLog,
+                                                   paste("Read master identification peptide (csv) data [",
+                                                         paste(dim(.self$IdentPeptideData), collapse = ","),
+                                                         "]", sep=""))
+                        } else if (tolower(ext) == "rds") {
+                            masterpeps <- readRDS(.self$IdentPeptideFile)
+                            ## testing if masterpeps@masters[[1]] or [[2]] to be used
+                            .self$IdentPeptideData <- masterpeps@masters[[1]]
+                            .self$PepScoreFdr <- masterpeps@fdr
+                            .QuantPeptideData <- .self$QuantPeptideData
+                            .self$addQuantIdStats(log = FALSE) ## Quant only
+                            .self$filterQuantPepScore(fdrMethod = masterpeps@method, log = FALSE)
+                            ## Prot FPR filtering - depending on loadIdentOnly and makeMaster
+                            ## PPM error filtering - depending on loadIdentOnly and makeMaster
+                            .MergedFeatures <- merge(.self$IdentPeptideData,
+                                                     .self$QuantPeptideData, 
+                                                     by.x = "peptide.seq",
+                                                     by.y = "peptide.seq",
+                                                     suffixes = c(".ident", ".quant"))
+                            .deltaRt <-
+                                .MergedFeatures$precursor.retT.ident -
+                                    .MergedFeatures$precursor.retT.quant
+                            if (all(.deltaRt == 0)) {
+                                .self$IdentPeptideData <- masterpeps@masters[[2]]
+                                .self$used2 <- TRUE
+                            }
+                            .self$SynapterLog <- c(.self$SynapterLog,
+                                                   paste0("Read master (", ifelse(.self$used2, 2, 1) ,
+                                                          ") identification peptide (", ext, ") data [",
+                                                          paste(dim(.self$IdentPeptideData), collapse = ","), "]"))
+                            .self$PepScoreFdr <- numeric() ## re-initialise
+                            .self$QuantPeptideData <- .QuantPeptideData
+                        } else {
+                            stop("Master peptide file extention not recognised. Must be 'csv' or 'rds'.")
+                        }
+                        message("Reading quantitation Pep3D file...")
+                        .self$QuantPep3DData <- read.csv(.self$QuantPep3DFile, stringsAsFactors = FALSE)
+                        .self$SynapterLog <- c(.self$SynapterLog,
+                                               paste("Read quantitation Pep3D data [",
+                                                     paste(dim(.self$QuantPep3DData), collapse = ","),
+                                                     "]", sep=""))
+                        ## getting peptide scores
+                        .self$.QuantPeptideScores <-
+                            filterPeptideMatchType(.self$QuantPeptideData[, c("peptide.seq",
+                                                                              "peptide.score",
+                                                                              "peptide.matchType",
+                                                                              "protein.dataBaseType")])
+                        .self$.QuantPeptideScores <- 
+                            .self$.QuantPeptideScores[!duplicated(.self$.QuantPeptideScores$peptide.seq), ]
+                        .self$.IdentPeptideScores <- ## aleady filtered for matchType 
+                            .self$IdentPeptideData[, c("peptide.seq",
+                                                       "peptide.score",
+                                                       "peptide.matchType",
+                                                       "protein.dataBaseType")]
+                        .self$.IdentPeptideScores <- 
+                            .self$.IdentPeptideScores[!duplicated(.self$.IdentPeptideScores$peptide.seq), ]                             
+                        ## Housekeeping - Quant only
+                        .self$QuantPeptideData$protein.falsePositiveRate <- 
+                            .self$QuantPeptideData$protein.falsePositiveRate / 100
+                        message("Filtering...")
+                        .self$filterQuantMatchType() ## Quant only
+                        .self$filterQuantFunction()
+                        .self$filterDuplicatedQuantSpectrumIds()
+                        message("Computing quantitation identification statistics...")
+                        .self$addQuantIdStats() ## Quant only
+                    },                           
+                    loadData = function() {
+                        if (.self$Master)
+                            stop("Identification final peptide is a master file")
+                        message("Reading identification final peptide file...")
+                        .self$IdentPeptideData <- read.csv(.self$IdentPeptideFile, stringsAsFactors = FALSE)
+                        .self$IdentPeptideData$errorppm <-
+                            error.ppm(obs = .self$IdentPeptideData$precursor.mhp,
+                                      theo = .self$IdentPeptideData$peptide.mhp)
+                        .self$SynapterLog <- c(.self$SynapterLog,
+                                               paste("Read identification peptide data [",
+                                                     paste(dim(.self$IdentPeptideData), collapse = ","),
+                                                     "]", sep=""))
+                        message("Reading quantitation final peptide file...")
+                        .self$QuantPeptideData <- read.csv(.self$QuantPeptideFile, stringsAsFactors = FALSE)
+                        .self$QuantPeptideData$errorppm <-
+                            error.ppm(obs = .self$QuantPeptideData$precursor.mhp,
+                                      theo = .self$QuantPeptideData$peptide.mhp)
+                        .self$SynapterLog <- c(.self$SynapterLog,
+                                               paste("Read quantitation peptide data [",
+                                                     paste(dim(.self$QuantPeptideData), collapse = ","),
+                                                     "]", sep=""))
+                        message("Reading quantitation Pep3D file...")
+                        .self$QuantPep3DData <- read.csv(.self$QuantPep3DFile, stringsAsFactors = FALSE)
+                        .self$SynapterLog <- c(.self$SynapterLog,
+                                               paste("Read quantitation Pep3D data [",
+                                                     paste(dim(.self$QuantPep3DData), collapse = ","),
+                                                     "]", sep=""))
+                        ## getting peptide scores
+                        .self$.IdentPeptideScores <-
+                            filterPeptideMatchType(.self$IdentPeptideData[,c("peptide.seq",
+                                                                             "peptide.score",
+                                                                             "peptide.matchType",
+                                                                             "protein.dataBaseType")])
+                        .self$.IdentPeptideScores <- 
+                            .self$.IdentPeptideScores[!duplicated(.self$.IdentPeptideScores$peptide.seq), ]                             
+                        .self$.QuantPeptideScores <-
+                            filterPeptideMatchType(.self$QuantPeptideData[,c("peptide.seq",
+                                                                             "peptide.score",
+                                                                             "peptide.matchType",
+                                                                             "protein.dataBaseType")])
+                        .self$.QuantPeptideScores <- 
+                            .self$.QuantPeptideScores[!duplicated(.self$.QuantPeptideScores$peptide.seq), ]                             
+                        ## Housekeeping
+                        .self$QuantPeptideData$protein.falsePositiveRate <- 
+                            .self$QuantPeptideData$protein.falsePositiveRate / 100
+                        .self$IdentPeptideData$protein.falsePositiveRate <- 
+                            .self$IdentPeptideData$protein.falsePositiveRate / 100 
+                        message("Filtering...")
+                        .self$filterMatchType()
+                        .self$filterQuantFunction()
+                        .self$filterDuplicatedQuantSpectrumIds()
+                        message("Computing identification statistics...")
+                        .self$addIdStats()
+                    },
+                    getMaster = function() {
+                        ' Gets Master field.'
+                        return(.self$Master)
+                    },
+                    setMaster = function(master) {
+                        ' Sets Master field.'
+                        .self$Master <- master
+                        if (master)
+                            .self$SynapterLog <- c(.self$SynapterLog,
+                                                   "Identification final peptide is a _master_ file.")
+                    }, 
+                    addIdStats = function() {
+                        'Add p-values and q-values to final peptide data sets.'
+                        .self$addQuantIdStats()
+                        .self$addIdentIdStats()
+                    },
+                    addQuantIdStats = function(log = TRUE) {
+                        'Add p-values and q-values to final quantitation peptide data sets.'
+                        quantStats <- try(getIdStats(.self$QuantPeptideData), silent=TRUE)
+                        if (inherits(quantStats, "try-error")) {
+                            warning("No Regular and Random protein database types in quantitation peptide data.")
+                        } else {
+                            .self$QuantPeptideData <- cbind(.self$QuantPeptideData, quantStats)
+                            if (log)
+                                .self$SynapterLog <- c(.self$SynapterLog,
+                                                       "Added identification statistics to quantitation data")
+                            .self$filterQuantRandomEntries()
+                        }
+                    },
+                    addIdentIdStats = function() {
+                        'Add p-values and q-values to identification final peptide data sets.'
+                        identStats <- try(getIdStats(.self$IdentPeptideData), silent=TRUE)
+                        if (inherits(identStats, "try-error")) {
+                            warning("No Regular and Random protein database types in identification peptide data.")
+                        } else {
+                            .self$IdentPeptideData <- cbind(.self$IdentPeptideData, identStats)
+                            .self$SynapterLog <- c(.self$SynapterLog,
+                                                   "Added identification statistics to identification data")
+                            .self$filterIdentRandomEntries()
+                        }
+                    },
+                    mergePeptides = function () {
+                        'Merge quantitation and identification final peptide data'
+                        .self$MergedFeatures <- merge(.self$IdentPeptideData,
+                                                      .self$QuantPeptideData,
+                                                      by.x = "peptide.seq",
+                                                      by.y = "peptide.seq",
+                                                      suffixes = c(".ident", ".quant"))
+                        .self$MergedFeatures$deltaRt <-
+                            .self$MergedFeatures$precursor.retT.ident -
+                                .self$MergedFeatures$precursor.retT.quant
+                        if (all(.self$MergedFeatures$deltaRt == 0)) {
+                            stop("Merged identification and quantitation data have identical retention times. Modelling not possible")
+                        }                             
+                        if (any(.self$MergedFeatures$peptide.mhp.quant !=
+                                .self$MergedFeatures$peptide.mhp.ident)) {
+                            .self$MergedFeatures <- data.frame()
+                            stop("Identification and quantitation theoretical peptide masses do not match.")
+                        }
+                        .self$SynapterLog <- c(.self$SynapterLog,
+                                               paste0("Merged identification and quantitation data [",
+                                                      paste(dim(.self$MergedFeatures), collapse=","), "]"))
+                    },
+                    modelRetentionTime = function(span) {
+                        'Models retention time'
+                        if (missing(span))
+                            span <- .self$LowessSpan
+                        .self$RtModel <- modelRetTime(.self$MergedFeatures, span = span)
+                        .self$SynapterLog <- c(.self$SynapterLog,
+                                               paste("Modelled retention time using lowess and span ",
+                                                     .self$LowessSpan, sep=""))
+                        ## new 0.4.6 - use model to ad precited rt and sd 
+                        ##             to original IdentPeptideData
+                        newIdentData <- doHDMSePredictions(.self$IdentPeptideData,
+                                                           .self$RtModel) ## nsd missing
+                        .self$IdentPeptideData$predictedRt <- newIdentData$predicted
+                        .self$IdentPeptideData$sdRt <- newIdentData$sd
+                    },
+                    findEMRTs = function(mergedEMRTs) {
+                        if (length(.self$RtModel) == 0)
+                            stop("First build a retention time model using 'modelRt'.")                               
+                        if (length(.self$PpmError) == 0) {
+                            warning("Mass error tolerance for EMRT matching undefined. Setting to default value.")
+                            .self$setPpmError()
+                        }
+                        if (length(.self$RtNsd) == 0) {
+                            warning("Retention time tolerance for EMRT matching undefined. Setting to default value.")
+                            .self$setRtNsd()
+                        }
+                        .self$MatchedEMRTs <- findMSeEMRTs(.self$IdentPeptideData,
+                                                           .self$QuantPep3DData,
+                                                           .self$MergedFeatures,
+                                                           .self$RtNsd,
+                                                           .self$PpmError,
+                                                           .self$RtModel,
+                                                           mergedEMRTs)
+                        .self$SynapterLog <- c(.self$SynapterLog,
+                                               paste("Matched identification peptides and quantitation EMRTs [",
+                                                     paste(dim(.self$MatchedEMRTs), collapse = ","),
+                                                     "] (", mergedEMRTs, ")",
+                                                     sep = ""))
+                    }))
+                  
 
 ## Synapter$lock("Version") ## this blocks $copy
 
@@ -496,6 +495,23 @@
                          .self$filterUniqueQuantSeq() 
                          .self$filterUniqueIdentSeq()
                        },
+                       filterPeptideLength = function(l) {
+                           'Filters quantitation and identificatio run peptides of length < l out.'
+                           .filterPeptideLength <- function(seq, l)
+                               nchar(seq) >= l
+                           selQt <- .filterPeptideLength(.self$QuantPeptideData$peptide.seq, l)
+                           selId <- .filterPeptideLength(.self$IdentPeptideData$peptide.seq, l)
+                           .self$QuantPeptideData <- .self$QuantPeptideData[selQt, ]
+                           .self$IdentPeptideData   <- .self$IdentPeptideData[selId, ]
+                           .self$SynapterLog <- c(.self$SynapterLog,
+                                                  paste("Keeping quant peptides of length >= ", l,
+                                                        " [", paste(dim(.self$QuantPeptideData), collapse=","),
+                                                        "]", sep = ""))
+                           .self$SynapterLog <- c(.self$SynapterLog,
+                                                  paste("Keeping ident peptides of length >= ", l,
+                                                        " [", paste(dim(.self$IdentPeptideData), collapse=","),
+                                                        "]", sep = ""))
+                       },                       
                        filterUniqueQuantSeq = function() {
                          'Keep unique (non duplicated) quantitation peptide sequences.'
                          quant2keep <- names(which(table(.self$QuantPeptideData$peptide.seq) == 1))

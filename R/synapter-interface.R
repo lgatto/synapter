@@ -250,6 +250,12 @@ setMethod(showFdrStats, "Synapter",
 
 ## filter prior to merging
 
+setMethod(filterPeptideLength, "Synapter",
+          function(object, l = 7) {
+              object$filterPeptideLength(l)
+          })
+
+
 setMethod(filterUniqueDbPeptides, "Synapter",
           function(object, verbose = TRUE) {
             object$filterUniqueSeq() 

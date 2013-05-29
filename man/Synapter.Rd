@@ -75,6 +75,8 @@
 \alias{performance2}
 
 % filters
+\alias{filterPeptideLength,Synapter-method}
+\alias{filterPeptideLength}
 \alias{filterUniqueDbPeptides,Synapter-method}
 \alias{filterUniqueDbPeptides}
 \alias{filterUniqueQuantDbPeptides,Synapter-method}
@@ -237,7 +239,8 @@ Synapter(filenames, master) ## creates an instance of class 'Synapter'
 
     Peptides matching to multiple proteins in the fasta file (non-unique
     tryptic identification and quantitation peptides) can be
-    discarded with the \code{filterUniqueDbPeptides} method. 
+    discarded with the \code{filterUniqueDbPeptides} method. One can
+    also filter on the peptide length using \code{filterPeptideLenght}. 
     
     Another filtering criterion is mass accuracy. Error tolerance
     quantiles (in ppm, parts per million) can be visulaised with the
@@ -767,6 +770,7 @@ getPepNumbers(synapterTiny)
 
 ## filter data
 filterUniqueDbPeptides(synapterTiny) ## keeps unique proteotypic peptides
+filterPeptideLength(synapterTiny, l = 7) ## default length is 7
 
 ## visualise before FDR filtering
 plotFdr(synapterTiny)
