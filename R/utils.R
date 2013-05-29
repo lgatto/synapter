@@ -191,7 +191,7 @@ findMSeEMRTs <- function(identpep,
   ##     identified subset! 
 
   ## #############################################################
-  n <- length(k)
+  ## n <- length(k) ## already have n
   m <- ncol(pep3d)
   ## to initialise the new pep3d2 with with n rows 
   ## and same nb of columns than pep3d
@@ -219,6 +219,9 @@ findMSeEMRTs <- function(identpep,
   i <- grep("precursor.leID$", names(ans))
   names(ans)[i] <- "precursor.leID.ident" ## to avoid any confusion
 
+  ans$idSource <- "transfer"
+  
+
   if (mergedEMRTs == "rescue") {
     ## these are those that were in the merged data set but that
     ## did NOT get transferred because they did NOT uniquely matched
@@ -228,11 +231,15 @@ findMSeEMRTs <- function(identpep,
     lostids <- ans$precursor.leID.ident[lost]    
     ans[lost, "Counts"] <-
       mergedpep[match(lostids, mergedpep$precursor.leID.ident), "precursor.inten.quant"]
+    ans[lost, "idSource"] <-
+        "rescue"
   } else if (mergedEMRTs == "copy") {    
     allmerged <- ans$precursor.leID.ident %in% mergedpep$precursor.leID.ident
     allmergedids <- ans$precursor.leID.ident[allmerged]
     ans[allmerged, "Counts"] <-
-      mergedpep[match(allmergedids, mergedpep$precursor.leID.ident), "precursor.inten.quant"]      
+      mergedpep[match(allmergedids, mergedpep$precursor.leID.ident), "precursor.inten.quant"]
+    ans[lost, "idSource"] <-
+        "copy"
   } ## else if (fromQuant == "transfer") keep as is
   
   ## since v 0.5.0 - removing multiply matched EMRTs

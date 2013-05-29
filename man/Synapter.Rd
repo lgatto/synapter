@@ -70,7 +70,9 @@
 \alias{getEMRTtable,Synapter-method}
 \alias{getEMRTtable}
 \alias{performance,Synapter-method}
+\alias{performance2,Synapter-method}
 \alias{performance}
+\alias{performance2}
 
 % filters
 \alias{filterUniqueDbPeptides,Synapter-method}
@@ -542,6 +544,11 @@ Synapter(filenames, master) ## creates an instance of class 'Synapter'
 	  TRUE)}: Returns (and displays, if \code{verbose}) the
 	performance of the synapter analysis. 
       }
+      \item{performance2}{\code{signatute(object="Synapter", verbose =
+	  TRUE)}: Returns (and displays, if \code{verbose}) information
+	about number of missing values and identification source of
+	transfered EMRTs.
+      }
     }
   }
 
@@ -828,6 +835,7 @@ findEMRTs(synapterTiny)
 plotEMRTtable(synapterTiny)
 getEMRTtable(synapterTiny)
 performance(synapterTiny)
+performance2(synapterTiny)
 
 ## (7) Exporting data to csv spreadsheets
 writeMergedPeptides(synapterTiny, what = "light") ## or what="full"

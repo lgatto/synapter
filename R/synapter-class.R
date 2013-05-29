@@ -343,7 +343,7 @@
                                               .self$MergedFeatures[midx, ],
                                               ppms,
                                               nsds,
-                                              mergedEMRTs,
+                                              mergedEMRTs, ## always passed as "transfer" from interface
                                               verbose = verbose)
                          .self$Grid <- .grid[1:2]
                          .self$GridDetails <- .grid[[3]]
