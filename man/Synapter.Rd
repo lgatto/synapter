@@ -400,19 +400,19 @@ Synapter(filenames, master) ## creates an instance of class 'Synapter'
       }   
       \item{searchGrid}{\code{signature(object="Synapter",
 	  ppms="character", nsds="character", subset="numeric", n =
-	  "numeric", mergedEMRTs = c("rescue", "copy", "transfer"), 
-	  verbose="logical")}: Performs a grid search. The grid
-	is defined by the \code{ppm} and \code{nsd} numerical vectors,
-	representing the sequence of values to be tested. Default are
-	\code{seq(5, 20, 2)} and \code{seq(0.5, 5, 0.5)}
-	respectively. \code{subset} and \code{n} allow to use a randomly 
-	chosen subset of the data for the grid search to reduce search
-	time. \code{subset} is a numeric, between 0 and 1, describing the
-	percentage of data to be used; \code{n} specifies the absolute
-	number of feature to use. The default is to use all
+	  "numeric", verbose="logical")}: Performs a grid search. The
+	grid is defined by the \code{ppm} and \code{nsd} numerical
+	vectors, representing the sequence of values to be
+	tested. Default are \code{seq(5, 20, 2)} and \code{seq(0.5, 5,
+	  0.5)} respectively. \code{subset} and \code{n} allow to use a
+	randomly  chosen subset of the data for the grid search to
+	reduce search time. \code{subset} is a numeric, between 0 and 1,
+	describing the percentage of data to be used; \code{n} specifies
+	the absolute number of feature to use. The default is to use all 
 	data. \code{verbose} controls whether textual output should be
-	printed to the console. See \code{findEMRTs} for an explanation
-	of \code{mergedEMRTs}. 
+	printed to the console. (Note, the \code{mergedEMRTs} value used
+	in internat calls to \code{findEMRTs} is \code{"transfer"} - see
+	\code{findEMRTs} for details).
       }
     }
   }

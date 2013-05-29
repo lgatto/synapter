@@ -309,7 +309,7 @@
 .Synapter$methods(
                   list(
                        searchGrid = function(ppms, nsds, subset, n,
-                         mergedEMRTs, verbose = TRUE) {
+                         mergedEMRTs, verbose = TRUE) {                           
                          'Performs a grid search in ppm x nsd space.'
                          .IdentPeptideData <- .self$IdentPeptideData
                          if (!missing(subset)) {
