@@ -231,15 +231,13 @@ findMSeEMRTs <- function(identpep,
     lostids <- ans$precursor.leID.ident[lost]    
     ans[lost, "Counts"] <-
       mergedpep[match(lostids, mergedpep$precursor.leID.ident), "precursor.inten.quant"]
-    ans[lost, "idSource"] <-
-        "rescue"
+    ans[lost, "idSource"] <- "rescue"
   } else if (mergedEMRTs == "copy") {    
     allmerged <- ans$precursor.leID.ident %in% mergedpep$precursor.leID.ident
     allmergedids <- ans$precursor.leID.ident[allmerged]
     ans[allmerged, "Counts"] <-
       mergedpep[match(allmergedids, mergedpep$precursor.leID.ident), "precursor.inten.quant"]
-    ans[lost, "idSource"] <-
-        "copy"
+    ans[allmerged, "idSource"] <- "copy"
   } ## else if (fromQuant == "transfer") keep as is
   
   ## since v 0.5.0 - removing multiply matched EMRTs
