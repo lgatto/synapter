@@ -1,3 +1,7 @@
+CHANGES IN VERSION 1.3.3
+------------------------
+ o Updated references. <2013-07-05 Fri>
+
 CHANGES IN VERSION 1.3.2
 ------------------------
  o fixed bug when using findEMRTs = "copy" <2013-05-30 Thu>
