@@ -70,7 +70,7 @@ writeMasterPeptides <- function(x, file, ...) {
 ##' \code{"\linkS4class{MasterFdrResults}"}.
 ##' 
 ##' @title Computes FDR for all possible final peptide combinations
-##' @param pepfiles A \code{list} of final peptide filenames.
+##' @param pepfiles A \code{list} of \code{vector} of final peptide filenames.
 ##' @param fastafile A \code{character} with the fasta filename.
 ##' @param masterFdr A \code{numeric} indicating the maximum merged
 ##' false discovery to be allowed.
@@ -96,59 +96,60 @@ estimateMasterFdr <- function(pepfiles,
                               fdr = 0.01,
                               proteotypic = TRUE,
                               verbose = TRUE) {
-  m <- length(pepfiles)
-  cmbs <- lapply(2:m, function(.k) combn(m, .k, simplify = FALSE))
-  cmbs <- Reduce(c, cmbs)
-  k <- length(cmbs)
-  if (verbose) {
-    message(m, " Peptide files available - ", k, " combinations")
-  }
-  hdmseList <- lapply(pepfiles,
-                      loadIdentOnly,
-                      fdr = fdr,
-                      verbose = verbose)
-  if (verbose)
-    message("Generating unique proteotypic peptides...")
-  proteotyptic <- synapter:::dbUniquePeptideSet(fastafile, verbose = FALSE)      
-  if (verbose)
-    message("Calculating...")  
-  uniquePepList <- lapply(hdmseList, function(.x) .x$IdentPeptideData$peptide.seq)
-  uniquePeps <- unique(unlist(uniquePepList))  
-  n <- length(uniquePeps)  
-  contMat <- matrix(0L, nrow = n, ncol = m)
-  rownames(contMat) <- uniquePeps
-  colnames(contMat) <- 1:m 
-  for (i in 1:ncol(contMat)) {
-    x <- uniquePeps[uniquePeps %in% uniquePepList[[i]]]
-    contMat[x, i] <- 1L
-  }
-  nbIncorrect <- round(colSums(contMat) * fdr, 0)
-  ans <- sapply(cmbs, function(.cmb) {
-    x <- unique(unlist(uniquePepList[.cmb]))
-    .nbProteotypic <- sum(x %in% proteotyptic)
-    mat <- contMat[, .cmb]
-    .nbIncorrect <- sum(nbIncorrect[.cmb])
-    .nbUnique <- sum(rowSums(contMat[, .cmb]) != 0)
-    .fdr <- .nbIncorrect/.nbUnique
-    c(incorrect = .nbIncorrect,
-      unique = .nbUnique,
-      proteotypic = .nbProteotypic,
-      fdr = .fdr)
-  })  
-  ans <- data.frame(t(ans))
-  ans$combinationAsText <- sapply(cmbs, paste, collapse = ".")
-  ans$combination <- cmbs
-  ans$nbSample <- sapply(cmbs, length)
-  ifelse(proteotypic,
-         b <- which.max(ans[ans$fdr < masterFdr, "proteotypic"]),
-         b <- which.max(ans[ans$fdr < masterFdr, "unique"]))
-  best <- ans[which(ans$fdr < masterFdr)[b], ]
-  ret <- new("MasterFdrResults",
-             all = ans,
-             best = best,
-             files = pepfiles,
-             masterFdr = masterFdr)
-  return(ret)
+    pepfile <- unlist(pepfiles)
+    m <- length(pepfiles)
+    cmbs <- lapply(2:m, function(.k) combn(m, .k, simplify = FALSE))
+    cmbs <- Reduce(c, cmbs)
+    k <- length(cmbs)
+    if (verbose) {
+        message(m, " Peptide files available - ", k, " combinations")
+    }
+    hdmseList <- lapply(pepfiles,
+                        loadIdentOnly,
+                        fdr = fdr,
+                        verbose = verbose)
+    if (verbose)
+        message("Generating unique proteotypic peptides...")
+    proteotyptic <- synapter:::dbUniquePeptideSet(fastafile, verbose = FALSE)      
+    if (verbose)
+        message("Calculating...")  
+    uniquePepList <- lapply(hdmseList, function(.x) .x$IdentPeptideData$peptide.seq)
+    uniquePeps <- unique(unlist(uniquePepList))  
+    n <- length(uniquePeps)  
+    contMat <- matrix(0L, nrow = n, ncol = m)
+    rownames(contMat) <- uniquePeps
+    colnames(contMat) <- 1:m 
+    for (i in 1:ncol(contMat)) {
+        x <- uniquePeps[uniquePeps %in% uniquePepList[[i]]]
+        contMat[x, i] <- 1L
+    }
+    nbIncorrect <- round(colSums(contMat) * fdr, 0)
+    ans <- sapply(cmbs, function(.cmb) {
+        x <- unique(unlist(uniquePepList[.cmb]))
+        .nbProteotypic <- sum(x %in% proteotyptic)
+        mat <- contMat[, .cmb]
+        .nbIncorrect <- sum(nbIncorrect[.cmb])
+        .nbUnique <- sum(rowSums(contMat[, .cmb]) != 0)
+        .fdr <- .nbIncorrect/.nbUnique
+        c(incorrect = .nbIncorrect,
+          unique = .nbUnique,
+          proteotypic = .nbProteotypic,
+          fdr = .fdr)
+    })  
+    ans <- data.frame(t(ans))
+    ans$combinationAsText <- sapply(cmbs, paste, collapse = ".")
+    ans$combination <- cmbs
+    ans$nbSample <- sapply(cmbs, length)
+    ifelse(proteotypic,
+           b <- which.max(ans[ans$fdr < masterFdr, "proteotypic"]),
+           b <- which.max(ans[ans$fdr < masterFdr, "unique"]))
+    best <- ans[which(ans$fdr < masterFdr)[b], ]
+    ret <- new("MasterFdrResults",
+               all = ans,
+               best = best,
+               files = pepfiles,
+               masterFdr = masterFdr)
+    return(ret)
 }
 
 

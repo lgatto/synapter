@@ -6,8 +6,8 @@
     fdr = 0.01, proteotypic = TRUE, verbose = TRUE)
 }
 \arguments{
-  \item{pepfiles}{A \code{list} of final peptide
-  filenames.}
+  \item{pepfiles}{A \code{list} of \code{vector} of final
+  peptide filenames.}
 
   \item{fastafile}{A \code{character} with the fasta
   filename.}
