@@ -140,7 +140,7 @@ The former is data is called \emph{identification peptides} and the latter \emph
 
 However, although HDMS$^E$ mode possesses superior identification and MS$^E$ mode superior quantitation capabilities and transferring identifications from HDMS$^E$ to MS$^E$ is a priori the most efficient setup, identifications can be transferred between any runs, independently of the acquisition mode. This allows to reduce the number of missing values, one of the primary limitation of label-free proteomics. Thus users will benefit from \Rpackage{synapter}'s functionality even if they run their instruments in a single mode (HDMS$^E$ or MS$^E$ only). 
 
-However, as will be shown in section \ref{sec:analysis}, transferring identifications from multiple runs to each other increases analysis time and peptide FDR within the analysis. \Rpackage{synapter} allows to minimise these effects to acceptable degree by choosing runs to transfer identifications from and merging them in the master HDMSE file.  
+However, as will be shown in section \ref{sec:analysis}, transferring identifications from multiple runs to each other increases analysis time and peptide FDR within the analysis. \Rpackage{synapter} allows to minimise these effects to acceptable degree by choosing runs to transfer identifications from and merging them in the master HDMS$^E$ file.  
 
 This data processing methodology is described in section \ref{sec:synapter} and the analysis pipeline is described in section \ref{sec:pipelines}.
 
