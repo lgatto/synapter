@@ -2,12 +2,12 @@ Package: synapter
 Type: Package
 Title: Label-free data analysis pipeline for optimal 
        identification and quantitation
-Version: 1.5.1
+Version: 1.5.2
 Author: Laurent Gatto, Nick J. Bond and Pavel V. Shliaha 
 Maintainer: Laurent Gatto <lg390@cam.ac.uk>
 Depends: R (>= 2.15), methods, MSnbase
 Imports: hwriter, tcltk, tcltk2, RColorBrewer, lattice, qvalue, 
-	 multtest, utils, Biobase, knitr
+	 multtest, utils, Biobase, knitr, Biostrings, cleaver
 Suggests: synapterdata, xtable
 Description: The synapter package provides functionality to reanalyse 
 	     label-free proteomics data acquired on a Synapt G2 mass 
