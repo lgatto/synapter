@@ -240,10 +240,10 @@ Synapter(filenames, master) ## creates an instance of class 'Synapter'
     Peptides matching to multiple proteins in the fasta file (non-unique
     tryptic identification and quantitation peptides) can be
     discarded with the \code{filterUniqueDbPeptides} method. One can
-    also filter on the peptide length using \code{filterPeptideLenght}. 
+    also filter on the peptide length using \code{filterPeptideLength}. 
     
     Another filtering criterion is mass accuracy. Error tolerance
-    quantiles (in ppm, parts per million) can be visulaised with the
+    quantiles (in ppm, parts per million) can be visualised with the
     \code{plotPpmError} method. The values can be retrieved with
     \code{getPpmErrorQs}. Filtering is then done separately for
     identification and quantitation peptide data using
@@ -259,11 +259,11 @@ Synapter(filenames, master) ## creates an instance of class 'Synapter'
     \code{filterIdentProtFpr} and \code{filterQuantProtFpr} methods.
     Note that this field is erroneously called a false positive rate in
     the PLGS software and the associated manuscript; it is a false
-    discivery rate. 
+    discovery rate. 
   }
 
   \subsection{Merging identification and quantitation peptides}{
-    Common and reliable identificaiton and quantitation peptides are
+    Common and reliable identification and quantitation peptides are
     then matched based on their sequences and merged using the
     \code{mergePeptides} method. 
   }
@@ -277,11 +277,11 @@ Synapter(filenames, master) ## creates an instance of class 'Synapter'
     controlled by the \code{span} parameter that can be set in the above
     method.
 
-    The effect of this paramter can be observed with the \code{plotRt}
+    The effect of this parameter can be observed with the \code{plotRt}
     method, specifying \code{what = "data"} as parameters. The resulting
     model can then be visualised with the above method specifying
-    \code{what = "model"}, specifiying up to 3 number of standard
-    deviations to plot. A histogram of rentention time differences can
+    \code{what = "model"}, specifying up to 3 number of standard
+    deviations to plot. A histogram of retention time differences can
     be produced with the \code{plotRtDiffs} method.
 
     Mention \code{plotFeatures} here.
@@ -338,7 +338,7 @@ Synapter(filenames, master) ## creates an instance of class 'Synapter'
     however, none or more than one EMRTs are matched, 0 or the number of
     matches are reported. 
     
-    As identificaiton peptides are serially individually matched to 'close'
+    As identification peptides are serially individually matched to 'close'
     EMRTs, it is possible for peptides to be matched the same EMRT
     independently. Such cases are reported as -1 in the results
     dataframes. 
@@ -356,7 +356,7 @@ Synapter(filenames, master) ## creates an instance of class 'Synapter'
 
   \subsection{Exporting and saving data}{
     The merged identification and quantitation peptides can be exported
-    to csv using the  \code{writeMergedPeptides} method. Similarely, the
+    to csv using the  \code{writeMergedPeptides} method. Similarly, the
     matched identification peptides and quantitation EMRTs are exported
     with \code{writeMatchedEMRTs}. 
 
@@ -416,7 +416,7 @@ Synapter(filenames, master) ## creates an instance of class 'Synapter'
 	the absolute number of feature to use. The default is to use all 
 	data. \code{verbose} controls whether textual output should be
 	printed to the console. (Note, the \code{mergedEMRTs} value used
-	in internat calls to \code{findEMRTs} is \code{"transfer"} - see
+	in internal calls to \code{findEMRTs} is \code{"transfer"} - see
 	\code{findEMRTs} for details).
       }
     }
@@ -438,7 +438,7 @@ Synapter(filenames, master) ## creates an instance of class 'Synapter'
 	\code{quantpep3d} and \code{fasta}.
       }
       \item{getLog}{\code{signature(object="Synapter")}: Returns a
-	\code{character} of variable lenght with a summary of processing
+	\code{character} of variable length with a summary of processing
 	undergone by \code{object}.
       }
       \item{getGrid}{\code{signature(object="Synapter", digits =
@@ -649,7 +649,7 @@ Synapter(filenames, master) ## creates an instance of class 'Synapter'
 	tests. PepFrag 1 and 2 peptides are illustrated on the same
 	figures. These figures are adapted from \link[qvalue]{qplot}.
 	\code{method}, one of \code{"BH"}, \code{"Bonferroni"} or
-	\code{"qval"}, defines what identifiation statistics to use.
+	\code{"qval"}, defines what identification statistics to use.
       }
       \item{plotEMRTtable}{\code{signature(object="Synapter")}: Plots
 	the barchart of number or 0, 1, 2, ... assigned EMRTs (see
@@ -669,7 +669,7 @@ Synapter(filenames, master) ## creates an instance of class 'Synapter'
 	quantitation Pep3D data. If \code{what} is \code{"some"}, a
 	subset of the rt/mass space can be defined with \code{xlim}
 	(default is \code{c(40, 60)}) and \code{ylim} (default is
-	\code{c(1160, 1165)}) and identificaton peptide, quantitation
+	\code{c(1160, 1165)}) and identification peptide, quantitation
 	peptides and EMRTs are presented on the same graph as grey
 	dots, blue dots and red crosses respectively. In addition,
 	rectangles based on the ppm and nsd defined tolerances (see
@@ -684,7 +684,7 @@ Synapter(filenames, master) ## creates an instance of class 'Synapter'
   
     \describe{
       \item{writeMergedPeptides}{\code{signature(object="Synapter", file
-	  = "character", what = "character", ...)}: Exportes the merged
+	  = "character", what = "character", ...)}: Exports the merged
 	peptide data to a comma-separated \code{file} (default name is
 	\code{"Res-MergedPeptides.csv"}). \code{what} can be
 	\code{"light"} (default) or \code{"full"} and specifies if the
