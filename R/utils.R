@@ -201,20 +201,16 @@ findMSeEMRTs <- function(identpep,
   ##     identified subset! 
 
   ## #############################################################
+
   ## n <- length(k) ## already have n
   m <- ncol(pep3d)
   ## to initialise the new pep3d2 with with n rows 
   ## and same nb of columns than pep3d
-  pep3d2 <- pep3d[1:n, ] ## all cols are of type numeric
-  
-  for (i in 1:n) {
-    if (k[i] == 1) {
-      pep3d2[i, ] <- pep3d[res[[i]], ]
-    } else {
-      ## pep3d2[i, ] <- rep(k[i], m) ## change in v 0.7.7      
-      pep3d2[i, ] <- c(k[i], rep(NA, m-1))
-    }
-  }  
+  pep3d2 <- matrix(NA, nrow=n, ncol=m, dimnames=list(c(), colnames(pep3d)))
+  pep3d2[, 1] <- k
+  k1 <- which(k == 1)
+  pep3d2[k1, ] <- unlist(pep3d[unlist(res[k1]), ])
+
   ## #############################################################
   
   ans <- cbind(identpep, pep3d2)
