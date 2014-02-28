@@ -172,18 +172,28 @@ findMSeEMRTs <- function(identpep,
   stopifnot(all(hdmseData$lower <= hdmseData$upper))
   stopifnot(length(hdmseData$lower) == length(hdmseData$upper))
   n <- length(hdmseData$lower)
-  res <- lapply(1:n, function(x) {
-    ## matching on rt
-    selRt <- (pep3d$rt_min > hdmseData$lower[x] & pep3d$rt_min < hdmseData$upper[x]) 
-    ## matching on mass error ppm
-    selPpm <- abs(error.ppm(obs = pep3d$mwHPlus , theo = hdmseData$mass[x])) < ppmthreshold
-    .k <- selRt & selPpm
-    ## res[[x]] <<- which(.k)
-    ## sum(.k)
-    which(.k) ## which pep3D$spectrumIDs match this identpep$precursor.leID
+  
+  sortedPep3d <- pep3d
+  ## add additional index row to avoid ugly calculation for subindices in the
+  ## apply call
+  sortedPep3d$idx <- 1:nrow(pep3d)
+  sortedPep3d <- sortedPep3d[order(pep3d$rt_min),]
+  lowerIdx <- findInterval(hdmseData$lower, sortedPep3d$rt_min)+1
+  upperIdx <- findInterval(hdmseData$upper, sortedPep3d$rt_min)
+
+  ## just to be sure
+  lowerIdx <- pmin(lowerIdx, upperIdx)
+
+  ## create matrix with boundaries (col 1 and 2) and the rownumbers
+  idxs <- cbind(lower=lowerIdx, upper=upperIdx, r=1:n)
+
+  res <- apply(idxs, 1, function(i) {
+    selPpm <- which((abs(error.ppm(obs = sortedPep3d$mwHPlus[i[1]:i[2]] ,
+                                   theo = hdmseData$mass[i[3]])) < ppmthreshold))
+    sortedPep3d$idx[i[1]:i[2]][selPpm]
   })
   k <- sapply(res, length)
-  
+ 
   ## Those that match *1* spectumIDs will be transferred
   ## BUT there is no guarantee that with *1* unique match,
   ##     we get the correct one, even for those that were
