@@ -4,7 +4,7 @@ loadIdentOnly <- function(pepfile,
                           verbose = TRUE) {
   if (verbose)
     message("Processing ", basename(pepfile))
-  x1 <- synapter:::.Synapter$new()
+  x1 <- .Synapter$new()
   x1$IdentPeptideFile <- pepfile
   x1$IdentPeptideData <- read.csv(x1$IdentPeptideFile, stringsAsFactors = FALSE)
   ## x1$DbFastaFile <- fastafile
@@ -110,7 +110,7 @@ estimateMasterFdr <- function(pepfiles,
                         verbose = verbose)
     if (verbose)
         message("Generating unique proteotypic peptides...")
-    proteotyptic <- synapter:::dbUniquePeptideSet(fastafile, verbose = FALSE)      
+    proteotyptic <- dbUniquePeptideSet(fastafile, verbose = FALSE)      
     if (verbose)
         message("Calculating...")  
     uniquePepList <- lapply(hdmseList, function(.x) .x$IdentPeptideData$peptide.seq)

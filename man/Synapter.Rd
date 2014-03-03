@@ -559,55 +559,48 @@ Synapter(filenames, master) ## creates an instance of class 'Synapter'
   
     \describe{
       \item{filterUniqueDbPeptides}{\code{signature(object="Synapter")}:
-	This method first digests the fasta database file and keeps
-	unique tryptic peptides. Those peptide sequences are then used
-	as a filter against the identification and quantitation
-	peptides, where only unique proteotyptic instances (no
-	miscleavage allowed) are eventually kept in the \code{object}
-	instance. 
-	This method also removes any additional duplicated
-	peptides, that would not match any peptides identified in the
-	fasta database.
-      }
+      This method first digests the fasta database file and keeps unique
+      tryptic peptides. (NOTE: since version 1.5.3, the tryptic
+      digestion uses the \code{cleaver} package, replacing the more
+      simplistic inbuild function. The effect of this change is
+      documented in https://github.com/lgatto/synapter/pull/47). Those
+      peptide sequences are then used as a filter against the
+      identification and quantitation peptides, where only unique
+      proteotyptic instances (no miscleavage allowed) are eventually
+      kept in the \code{object} instance.  This method also removes any
+      additional duplicated peptides, that would not match any peptides
+      identified in the fasta database.  }
       \item{filterUniqueQuantDbPeptides}{\code{signature(object="Synapter")}:
-	As \code{filterUniqueDbPeptides} for quantitation peptides only. 
+      As \code{filterUniqueDbPeptides} for quantitation peptides only.
       }
       \item{filterUniqueIdentDbPeptides}{\code{signature(object="Synapter")}:
-	As \code{filterUniqueDbPeptides} for identification peptides only. 
-      }
-      \item{filterQuantPepScore}{\code{signature(object="Synapter", fdr
-	  = "numeric", method = "character")}: Filters the quantitation
-	peptides using \code{fdr} false discovery rate. \code{fdr} is
-	missing by default and is retrieved with \code{getPepScoreFdr}
-	automatically. If not set, default value of 0.01 is
-	used. \code{method} defines how to performe p-value adjustment;
-	one of \code{BH}, \code{Bonferrone} or \code{qval}. See details
-	section for more information.
-      }
+      As \code{filterUniqueDbPeptides} for identification peptides only.
+      } \item{filterQuantPepScore}{\code{signature(object="Synapter",
+      fdr = "numeric", method = "character")}: Filters the quantitation
+      peptides using \code{fdr} false discovery rate. \code{fdr} is
+      missing by default and is retrieved with \code{getPepScoreFdr}
+      automatically. If not set, default value of 0.01 is
+      used. \code{method} defines how to performe p-value adjustment;
+      one of \code{BH}, \code{Bonferrone} or \code{qval}. See details
+      section for more information.  }
       \item{filterIdentPepScore}{\code{signature(object="Synapter", fdr
-	  = "numeric",  method = "charactet")}: As
-	\code{filterQuantPepScore}, but for identification peptides.
-      }
+      = "numeric", method = "charactet")}: As
+      \code{filterQuantPepScore}, but for identification peptides.  }
       \item{filterQuantProtFpr}{\code{signature(object="Synapter", fpr =
-	  "numeric")}: Filters quantitation peptides using the protein
-	false positive rate (erroneously defined as a FPR, should be
-	FDR), as reported by PLGS, using threshold set by \code{fpr}
-	(missing by default) or retrieved by \code{getProtFpr}. 
-      }
+      "numeric")}: Filters quantitation peptides using the protein false
+      positive rate (erroneously defined as a FPR, should be FDR), as
+      reported by PLGS, using threshold set by \code{fpr} (missing by
+      default) or retrieved by \code{getProtFpr}.  }
       \item{filterIdentProtFpr}{\code{signature(object="Synapter", fpr =
-	  "numeric")}: as \code{filterQuantProtFpr}, but for
-	identification peptides. 
-      }
+      "numeric")}: as \code{filterQuantProtFpr}, but for identification
+      peptides.  }
       \item{filterQuantPpmError}{\code{signature(object="Synapter", ppm
-	  = "numeric")}: Filters the quantitation peptides based on the mass
-	tolerance \code{ppm} (default missing) provided or retrieved
-	automatically using \code{getPpmError}. 
-      }
+      = "numeric")}: Filters the quantitation peptides based on the mass
+      tolerance \code{ppm} (default missing) provided or retrieved
+      automatically using \code{getPpmError}.  }
       \item{filterIdentPpmError}{\code{signature(object="Synapter")}: as
-	\code{filterQuantPpmError}, but for identification peptides.
+      \code{filterQuantPpmError}, but for identification peptides.  } }
       }
-    }
-  }
 
   \subsection{Plotting}{
   
