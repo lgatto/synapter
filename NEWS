@@ -2,10 +2,9 @@ CHANGES IN VERSION 1.5.3
 ------------------------
  o modified findMSeEMRTs (part of searchGrid) for faster grid 
    calculation [2014-02-28 Fri]
-
-CHANGES IN VERSION 1.5.2
-------------------------
  o typos in manual [2014-02-25 Tue]
+ o replace readFasta by Biostrings::readAAStringSet [2014-02-25 Tue]
+ o replace digest by cleaver::cleave [2014-02-25 Tue]
 
 CHANGES IN VERSION 1.5.1
 ------------------------
