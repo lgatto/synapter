@@ -1,6 +1,7 @@
 CHANGES IN VERSION 1.5.4
 ------------------------
- o 
+ o partial rewrite of gridSearch2 (part of searchGrid) for faster grid
+   calculation [2014-03-04 Tue]
 
 CHANGES IN VERSION 1.5.3
 ------------------------

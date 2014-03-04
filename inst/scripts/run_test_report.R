@@ -32,7 +32,7 @@ browseURL(htmlReport)
 
 load("Report_1.5.2/SynapterObject.rda", verbose = TRUE)
 obj2 <- obj$copy()
-load("Report_1.5.3/SynapterObject.rda", verbose = TRUE)
+load("Report_1.5.4/SynapterObject.rda", verbose = TRUE)
 obj3 <- obj$copy()
 
 xx <- ls(obj2@.xData)
