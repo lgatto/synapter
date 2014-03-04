@@ -159,6 +159,85 @@ doHDMSePredictions <- function(identpep, model, nsd) {
   return(ans)
 }
 
+findRtIndices <- function(sortedPep3d, lowerHDMSeRt, upperHDMSeRt) {
+  stopifnot(all(lowerHDMSeRt <= upperHDMSeRt))
+  stopifnot(length(lowerHDMSeRt) == length(upperHDMSeRt))
+
+  lowerIdx <- findInterval(lowerHDMSeRt, sortedPep3d$rt_min)+1
+  upperIdx <- findInterval(upperHDMSeRt, sortedPep3d$rt_min)
+
+  ## just to be sure
+  lowerIdx <- pmin(lowerIdx, upperIdx)
+
+  ## create matrix with boundaries (col 1 and 2) 
+  return(cbind(lower=lowerIdx, upper=upperIdx))
+}
+
+findMSeEMRTMatches <- function(observedMass,
+                               hdmseMass,
+                               rtIndices,
+                               ppmthreshold) {
+  n <- length(hdmseMass)
+  stopifnot(nrow(rtIndices) == n)
+
+  res <- apply(cbind(rtIndices, hdmseMass), 1, function(x) {
+    selPpm <- which((abs(error.ppm(obs = observedMass[x[1]:x[2]] ,
+                                   theo = x[3])) < ppmthreshold))
+    (x[1]:x[2])[selPpm]
+  })
+}
+
+calculateGridPerformance <- function(identpep, sortedPep3d, mergedpep, matches) {
+  ## Those that match *1* spectumIDs will be transferred
+  ## BUT there is no guarantee that with *1* unique match,
+  ##     we get the correct one, even for those that were
+  ##     part of the matched high confidence ident+quant
+  ##     identified subset! 
+
+  ## #############################################################
+
+  n <- length(matches)
+  k <- sapply(matches, length)
+  k1 <- which(k == 1)
+
+  idx <- match(mergedpep$precursor.leID.ident, identpep$precursor.leID)
+  precursor.leID.quant <- rep(NA, n)
+  precursor.leID.quant[idx] <- mergedpep$precursor.leID.quant
+
+  matched.quant.spectrumIDs <- vector(mode="list", length=n)
+  matched.quant.spectrumIDs[idx] <- matches[idx]
+
+  spectrumID <- rep(NA, n)
+  spectrumID[k1] <- sortedPep3d$spectrumID[unlist(matches[k1])]
+
+  ## grd1: number of unique matches divided by total number of matches
+  ## => sum(k==1)/length(k) == mean(k==1)
+  grd1 <- mean(k == 1)
+
+  ## grd2: number of correct matched 
+  ## (MSe peptide's leID == MSe Pep3D's spectrumID)
+  ## divided by number of features used in model
+  grd2 <- mean(precursor.leID.quant == spectrumID, na.rm=TRUE)
+
+  notNA <- which(!is.na(precursor.leID.quant))
+  precursor.leID.quant <- precursor.leID.quant[notNA]
+  spectrumID <- spectrumID[notNA]
+  matches <- matches[notNA]
+  k <- k[notNA]
+  k1 <- which(k == 1)
+  k2 <- which(k > 1)
+
+  details <- integer(length(k))
+  details[k1] <- ifelse(spectrumID[k1] == precursor.leID.quant[k1], 1, -1)
+  details[k2] <- unlist(lapply(k2, function(i) {
+    if(precursor.leID.quant[i] %in% matches[[i]]) { 2 } else { -2 }}))
+
+  ## tabulate needs positive integer values
+  details <- setNames(tabulate(1-min(details)+details), sort(unique(details)))
+  #details <- table(unname(details))
+
+  return(list(grd1=grd1, grd2=grd2, details=details))
+}
 
 findMSeEMRTs <- function(identpep, 
                          pep3d,
@@ -320,10 +399,8 @@ gridSearch2 <- function(model,
                         identpep,
                         pep3d,
                         mergedPeptides,
-                        ## fdr,
                         ppms,
                         nsds,
-                        mergedEMRTs,
                         verbose = TRUE) {
   ## As initial gridSearch, but now returns a list
   ## with two grids; first one as before, percent of
@@ -334,36 +411,38 @@ gridSearch2 <- function(model,
   n <- length(nsds)
   m <- length(ppms)  
   grd1 <- grd2 <- outer(nsds, ppms)
-  details <- vector("list", length = n*m)
+  N <- n*m
+  details <- vector("list", length=N)
+
   ._k <- 0
-  if (verbose)
-    pb <- txtProgressBar(min=0, max=n*m, style=3)
+  if (verbose) {
+    pb <- txtProgressBar(min=0, max=N, style=3)
+  }
+
+  sortedPep3d <- pep3d[order(pep3d$rt_min),]
+
   for (i in 1:n) {
+    hdmseData <- doHDMSePredictions(identpep, model, nsds[i])
+    rtIdx <- findRtIndices(sortedPep3d, hdmseData$lower, hdmseData$upper)
+
     for (j in 1:m) {
-      if (verbose)
-        setTxtProgressBar(pb, ._k)
       ._k <- ._k + 1
-      nsd <- nsds[i]
-      ppm <- ppms[j]
-      matchedEMRTs <- findMSeEMRTs(identpep, 
-                                   pep3d,
-                                   mergedPeptides,
-                                   nsd, ppm,
-                                   model,
-                                   mergedEMRTs)
-      k <- matchedEMRTs$Function
-      ## grd1: number of unique matches divided divided by total number of matches
-      grd1[i, j] <- table(k)["1"]/length(k) ##  grd1[i, j] <- table(k)[2]/length(k)
-      ## grd2: number of correct matched (MSe peptide's leID == MSe Pep3D's spectrumID)
-      ##       divided by number of features used in model
-      grd2[i, j] <- sum(matchedEMRTs$precursor.leID.quant == matchedEMRTs$spectrumID,
-                        na.rm = TRUE) /
-                          sum(!is.na(matchedEMRTs$precursor.leID.quant)) ## non-NAs are those used for modelling
-      details[[._k]] <- getAssignmentDetails(matchedEMRTs)
+      matches <- findMSeEMRTMatches(sortedPep3d$mwHPlus,
+                                    hdmseData$mass,
+                                    rtIdx,
+                                    ppms[j])
+      
+      gridDetails <- calculateGridPerformance(identpep, sortedPep3d, mergedPeptides, matches)
+      grd1[i, j] <- gridDetails$grd1
+      grd2[i, j] <- gridDetails$grd2
+      details[[._k]] <- gridDetails$details
+
+      if (verbose) {
+        setTxtProgressBar(pb, ._k)
+      }
     }
   }
   if (verbose) {
-    setTxtProgressBar(pb, ._k)
     close(pb)
   }
   nms <- paste(rep(nsds, each = m) ,
@@ -374,27 +453,6 @@ gridSearch2 <- function(model,
               prcntModel = grd2,
               details = details))
 }
-
-getAssignmentDetails <- function(matchedEmrts) {
-  x <- matchedEmrts[!is.na(matchedEmrts$precursor.leID.quant),
-                    c("precursor.leID.quant",
-                      "spectrumID",
-                      "matched.quant.spectrumIDs")]   
-  table(apply(x, 1,
-              function(x) {
-                k <- unlist(strsplit(x["matched.quant.spectrumIDs"], ","))
-                lk <- length(k)
-                if (lk == 0) {
-                  return(0)
-                } else if (lk == 1) {
-                  ifelse(x["spectrumID"] == x["precursor.leID.quant"], 1, -1)
-                } else {
-                  .x <- as.numeric(unlist(strsplit(x["matched.quant.spectrumIDs"], ",")))
-                  ifelse(x["precursor.leID.quant"] %in% .x, 2, -2)
-                }
-              }))
-}
- 
 
 makeFigurePath <- function(dirname, filename) {
   full <- paste(dirname, "/", filename, sep="")
@@ -477,3 +535,4 @@ getExtension <- function (filename) {
   ext <- x[length(x)]
   return(ext)
 }
+
