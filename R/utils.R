@@ -214,11 +214,6 @@ calculateGridPerformance <- function(identpep, sortedPep3d, mergedpep, matches) 
   ## => sum(k==1)/length(k) == mean(k==1)
   grd1 <- mean(k == 1)
 
-  ## grd2: number of correct matched 
-  ## (MSe peptide's leID == MSe Pep3D's spectrumID)
-  ## divided by number of features used in model
-  grd2 <- mean(precursor.leID.quant == spectrumID, na.rm=TRUE)
-
   notNA <- which(!is.na(precursor.leID.quant))
   precursor.leID.quant <- precursor.leID.quant[notNA]
   spectrumID <- spectrumID[notNA]
@@ -226,8 +221,15 @@ calculateGridPerformance <- function(identpep, sortedPep3d, mergedpep, matches) 
   k <- k[notNA]
   k1 <- which(k == 1)
   k2 <- which(k > 1)
+  nk <- length(k)
 
-  details <- integer(length(k))
+  ## grd2: number of correct matched 
+  ## (MSe peptide's leID == MSe Pep3D's spectrumID)
+  ## divided by number of features used in model
+  ## non-NAs are those used for modelling
+  grd2 <- sum(precursor.leID.quant == spectrumID, na.rm=TRUE)/nk
+
+  details <- integer(nk)
   details[k1] <- ifelse(spectrumID[k1] == precursor.leID.quant[k1], 1, -1)
   details[k2] <- unlist(lapply(k2, function(i) {
     if(precursor.leID.quant[i] %in% matches[[i]]) { 2 } else { -2 }}))
@@ -269,7 +271,7 @@ findMSeEMRTs <- function(identpep,
   pep3d2 <- matrix(NA, nrow=n, ncol=m, dimnames=list(c(), colnames(pep3d)))
   pep3d2[, 1] <- k
   k1 <- which(k == 1)
-  pep3d2[k1, ] <- unlist(pep3d[unlist(res[k1]), ])
+  pep3d2[k1, ] <- unlist(sortedPep3d[unlist(res[k1]), ])
 
   ## #############################################################
   
