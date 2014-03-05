@@ -199,40 +199,37 @@ calculateGridPerformance <- function(identpep, sortedPep3d, mergedpep, matches) 
   n <- length(matches)
   k <- sapply(matches, length)
   k1 <- which(k == 1)
+  k2 <- which(k > 1)
 
   idx <- match(mergedpep$precursor.leID.ident, identpep$precursor.leID)
   precursor.leID.quant <- rep(NA, n)
   precursor.leID.quant[idx] <- mergedpep$precursor.leID.quant
 
-  matched.quant.spectrumIDs <- vector(mode="list", length=n)
-  matched.quant.spectrumIDs[idx] <- matches[idx]
-
   spectrumID <- rep(NA, n)
   spectrumID[k1] <- sortedPep3d$spectrumID[unlist(matches[k1])]
+  
+  multipleMatchedSpectrumIDs <- vector(mode="list", length=n)
+  multipleMatchedSpectrumIDs[k2] <- matches[k2]
 
   ## grd1: number of unique matches divided by total number of matches
   ## => sum(k==1)/length(k) == mean(k==1)
   grd1 <- mean(k == 1)
 
-  notNA <- which(!is.na(precursor.leID.quant))
-  precursor.leID.quant <- precursor.leID.quant[notNA]
-  spectrumID <- spectrumID[notNA]
-  matches <- matches[notNA]
-  k <- k[notNA]
-  k1 <- which(k == 1)
-  k2 <- which(k > 1)
-  nk <- length(k)
+  notNaIdx <- which(!is.na(precursor.leID.quant))
 
   ## grd2: number of correct matched 
   ## (MSe peptide's leID == MSe Pep3D's spectrumID)
   ## divided by number of features used in model
   ## non-NAs are those used for modelling
-  grd2 <- sum(precursor.leID.quant == spectrumID, na.rm=TRUE)/nk
+  grd2 <- sum(precursor.leID.quant == spectrumID, na.rm=TRUE)/length(notNaIdx)
 
-  details <- integer(nk)
+  details <- integer(n)
   details[k1] <- ifelse(spectrumID[k1] == precursor.leID.quant[k1], 1, -1)
-  details[k2] <- unlist(lapply(k2, function(i) {
-    if(precursor.leID.quant[i] %in% matches[[i]]) { 2 } else { -2 }}))
+  details[k2] <- ifelse(unlist(lapply(k2, function(i) { 
+    precursor.leID.quant[i] %in% multipleMatchedSpectrumIDs[[i]]})), 2, -2)
+
+  ## exclude all values where precursor.leID.quant == NA
+  details <- details[notNaIdx]
 
   ## tabulate needs positive integer values
   details <- setNames(tabulate(1-min(details)+details), sort(unique(details)))
