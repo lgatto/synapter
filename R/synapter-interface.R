@@ -120,9 +120,7 @@ setMethod(searchGrid, "Synapter",
               subset <- 1
             if (!missing(subset) && (subset > 1 | subset <= 0))
               subset <- 1
-            object$searchGrid(ppms, nsds, subset, n,
-                              mergedEMRTs = "transfer", ## default when gridSearch'ing
-                              verbose)
+            object$searchGrid(ppms, nsds, subset, n, verbose)
           })
 
 setMethod(getGrid, "Synapter",
