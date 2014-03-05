@@ -1,3 +1,16 @@
+CHANGES IN VERSION 1.5.5
+------------------------
+ o fix a bug in the calculation of non unique matches in gridSearch2 
+   (part of searchGrid); results in a higher number of non unique matches 
+   (some of the reported -2 will now be reported as 2 in the grid details)
+   [2014-03-05 Wed] 
+ o partial rewrite of gridSearch2 (part of searchGrid) for faster grid
+   calculation [2014-03-04 Tue]
+
+CHANGES IN VERSION 1.5.4
+------------------------
+ o biocViews update
+
 CHANGES IN VERSION 1.5.3
 ------------------------
  o modified findMSeEMRTs (part of searchGrid) for faster grid 
