@@ -109,7 +109,7 @@ setMethod(searchGrid, "Synapter",
                    n,
                    verbose = TRUE) {
             if (missing(ppms)) 
-              ppms <- seq(5, 20, 2)
+              ppms <- seq(2, 20, 2)
             names(ppms) <- ppms
             if (missing(nsds)) 
               nsds <- seq(0.5, 5, 0.5)

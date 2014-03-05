@@ -6,7 +6,7 @@
   synergise(filenames, master = FALSE, object, outputdir,
     fdr = 0.01, fdrMethod = c("BH", "Bonferroni", "qval"),
     fpr = 0.01, peplen = 7, identppm = 20, quantppm = 20,
-    uniquepep = TRUE, span = 0.05, grid.ppm.from = 5,
+    uniquepep = TRUE, span = 0.05, grid.ppm.from = 2,
     grid.ppm.to = 20, grid.ppm.by = 2, grid.nsd.from = 0.5,
     grid.nsd.to = 5, grid.nsd.by = 0.5, grid.subset = 1,
     grid.n = 0,
@@ -69,7 +69,7 @@
   \item{span}{The loess span parameter. Default is 0.05.}
 
   \item{grid.ppm.from}{Mass tolerance (ppm) grid starting
-  value. Default is 5.}
+  value. Default is 2.}
 
   \item{grid.ppm.to}{Mass tolerance (ppm) grid ending
   value. Default is 20.}
@@ -154,7 +154,7 @@
   space is from 0.5 to 5 by 0.5 retention time model
   standard deviations (see \code{grid.nsd.from},
   \code{grid.nsd.to} and \code{grid.nsd.by} parameters) and
-  from 5 to 20 by 2 parts per million (ppm) for mass
+  from 2 to 20 by 2 parts per million (ppm) for mass
   tolerance (see \code{grid.ppm.from}, \code{grid.ppm.to}
   and \code{grid.ppm.by} parameters).  The data can be
   subset using using an absolute number of features (see
