@@ -450,7 +450,7 @@ Synapter(filenames, master) ## creates an instance of class 'Synapter'
 	(+1 and -1). Values are rounded to 3 \code{digits} by default. 
       }
       \item{getGridDetails}{\code{signature(object="Synapter")}: Returns
-	a \code{list} of number of ..., -2, -1, 0, 0, 2, ... results
+	a \code{list} of number of ..., -2, -1, 0, +1, +2, ... results
 	found for each of the \code{ppm}/\code{nsd} pairs tested during
 	the grid search.
       }
