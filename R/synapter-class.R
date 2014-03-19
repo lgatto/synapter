@@ -119,6 +119,14 @@
                                                paste("Read quantitation Pep3D data [",
                                                      paste(dim(.self$QuantPep3DData), collapse = ","),
                                                      "]", sep=""))
+
+                        ## test for correct Pep3D file (closes #42)
+                        if (!isCorrespondingPep3DataFile(.self$QuantPeptideData, .self$QuantPep3DData)) {
+                          stop("The Pep3D file ", sQuote(.self$QuantPep3DFile), 
+                               " does not correspond to the given Quantitation Final Peptide file ",
+                               sQuote(.self$QuantPeptideFile), "!")
+                        }
+
                         ## getting peptide scores
                         .self$.QuantPeptideScores <-
                             filterPeptideMatchType(.self$QuantPeptideData[, c("peptide.seq",
@@ -171,6 +179,14 @@
                                                paste("Read quantitation Pep3D data [",
                                                      paste(dim(.self$QuantPep3DData), collapse = ","),
                                                      "]", sep=""))
+
+                        ## test for correct Pep3D file (closes #42)
+                        if (!isCorrespondingPep3DataFile(.self$QuantPeptideData, .self$QuantPep3DData)) {
+                          stop("The Pep3D file ", sQuote(.self$QuantPep3DFile), 
+                               " does not correspond to the given Quantitation Final Peptide file ",
+                               sQuote(.self$QuantPeptideFile), "!")
+                        }
+ 
                         ## getting peptide scores
                         .self$.IdentPeptideScores <-
                             filterPeptideMatchType(.self$IdentPeptideData[,c("peptide.seq",
