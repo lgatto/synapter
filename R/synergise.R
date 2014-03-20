@@ -31,7 +31,7 @@
 ##'        tolerance for EMRTs matching is performed. The default grid
 ##'        search space is from 0.5 to 5 by 0.5 retention time model standard
 ##'        deviations (see \code{grid.nsd.from}, \code{grid.nsd.to} and
-##'        \code{grid.nsd.by} parameters) and from 5 to 20 by 2 parts per
+##'        \code{grid.nsd.by} parameters) and from 2 to 20 by 2 parts per
 ##'        million (ppm) for mass tolerance (see \code{grid.ppm.from},
 ##'        \code{grid.ppm.to} and \code{grid.ppm.by} parameters).
 ##'        The data can be subset using using an absolute number of features
@@ -78,7 +78,7 @@
 ##' \code{TRUE}.
 ##' @param span The loess span parameter. Default is 0.05.
 ##' @param grid.ppm.from Mass tolerance (ppm) grid starting
-##' value. Default is 5.
+##' value. Default is 2.
 ##' @param grid.ppm.to Mass tolerance (ppm) grid ending value. Default
 ##' is 20.
 ##' @param grid.ppm.by Mass tolerance (ppm) grid step value. Default
@@ -133,7 +133,7 @@ synergise <- function(filenames,
                       ## modelling
                       span = 0.05,
                       ## grid
-                      grid.ppm.from = 5,
+                      grid.ppm.from = 2,
                       grid.ppm.to = 20,
                       grid.ppm.by = 2,
                       grid.nsd.from = 0.5,
