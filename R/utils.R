@@ -426,7 +426,7 @@ gridSearch2 <- function(model,
   }
   nms <- paste(rep(nsds, each = m) ,
                rep(ppms, n),
-               sep=".")
+               sep=":")
   names(details) <- nms
   return(list(prcntTotal = grd1,
               prcntModel = grd2,
