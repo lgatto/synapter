@@ -508,6 +508,11 @@ getIdStats <- function(pepdata) {
   return(ans)                             
 }
 
+## closes #42
+isCorrespondingPep3DataFile <- function(quant, pep3d) {
+  idx <- match(quant$precursor.leID, pep3d$spectrumID)
+  return(all(!is.na(idx)) && all(quant$precursor.inten == pep3d$Counts[idx]))
+}
 
 getExtension <- function (filename) {
   x <- strsplit(filename, "\\.")[[1]]
