@@ -70,7 +70,8 @@ writeMasterPeptides <- function(x, file, ...) {
 ##' \code{"\linkS4class{MasterFdrResults}"}.
 ##' 
 ##' @title Computes FDR for all possible final peptide combinations
-##' @param pepfiles A \code{list} of \code{vector} of final peptide filenames.
+##' @param pepfiles A \code{list} of \code{vector} of final peptide
+##' filenames.
 ##' @param fastafile A \code{character} with the fasta filename.
 ##' @param masterFdr A \code{numeric} indicating the maximum merged
 ##' false discovery to be allowed.
@@ -78,23 +79,26 @@ writeMasterPeptides <- function(x, file, ...) {
 ##' @param proteotypic Logical. Should number proteotypic peptides be
 ##' used to choose best combination and plot results or total number
 ##' of unique peptides.
+##' @param missedCleavages Number of missed cleavage sites. Default is 0.
 ##' @param verbose Should progress messages be printed?
 ##' @return An instance of class \code{"\linkS4class{MasterFdrResults}"}.
 ##' See details above.
 ##' @author Laurent Gatto
-##' @references Shliaha P.V., Bond N. J., Lilley K.S. and Gatto L., in prep.
+##' @references Bond N. J., Shliaha P.V., Lilley K.S. and Gatto L.,
+##' (2013) J. Prot. Research.
 ##' @seealso The \code{\link{makeMaster}} function to combine
 ##' the peptide data as suggested by \code{estimateMasterFdr} into
 ##' one single \emph{master} peptide file.
 ##' 
-##' The vignette, accessible with \code{synapterGuide()}
-##' illustrates a complete pipeline using \code{estimateMasterFdr} and
+##' The vignette, accessible with \code{synapterGuide()} illustrates a
+##' complete pipeline using \code{estimateMasterFdr} and
 ##' \code{makeMaster}.
 estimateMasterFdr <- function(pepfiles,
                               fastafile,
                               masterFdr = 0.025,
                               fdr = 0.01,
                               proteotypic = TRUE,
+                              missedCleavages = 0,
                               verbose = TRUE) {
     pepfile <- unlist(pepfiles)
     m <- length(pepfiles)
@@ -110,7 +114,7 @@ estimateMasterFdr <- function(pepfiles,
                         verbose = verbose)
     if (verbose)
         message("Generating unique proteotypic peptides...")
-    proteotyptic <- dbUniquePeptideSet(fastafile, verbose = FALSE)      
+    proteotyptic <- dbUniquePeptideSet(fastafile, missedCleavages, verbose = FALSE)      
     if (verbose)
         message("Calculating...")  
     uniquePepList <- lapply(hdmseList, function(.x) .x$IdentPeptideData$peptide.seq)

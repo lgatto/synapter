@@ -700,33 +700,35 @@
                                                       "]", sep=""))
                        },
 
-                       filterUniqueQuantDbPeptides = function(filename, verbose = TRUE) {
+                       filterUniqueQuantDbPeptides = function(filename, missedCleavages = 0, verbose = TRUE) {
                          'Filters quantitation tryptic peptides that match one and only one protein in the fasta database.'
-                         upepset <- dbUniquePeptideSet(filename, verbose)
+                         upepset <- dbUniquePeptideSet(filename, missedCleavages, verbose)
                          .self$DbFastaFile <- filename
                          sel2 <- .self$QuantPeptideData$peptide.seq %in% upepset
                          .self$QuantPeptideData <- .self$QuantPeptideData[sel2, ]
                          .self$SynapterLog <- c(.self$SynapterLog,
-                                                paste("Kept quantitation peptides that match unique protein [",  
-                                                      paste(dim(.self$QuantPeptideData), collapse=","),
+                                                paste("Kept quantitation peptides that match unique protein (",
+                                                      missedCleavages, " missed cleavages) " ,
+                                                      "[", paste(dim(.self$QuantPeptideData), collapse=","),
                                                       "]", sep=""))
                        },
                        
-                       filterUniqueIdentDbPeptides = function(filename, verbose = TRUE) {
+                       filterUniqueIdentDbPeptides = function(filename, missedCleavages, verbose = TRUE) {
                          'Filters identification tryptic peptides that match one and only one protein in the fasta database.'
-                         upepset <- dbUniquePeptideSet(filename, verbose)
+                         upepset <- dbUniquePeptideSet(filename, missedCleavages, verbose)
                          .self$DbFastaFile <- filename
                          sel1 <- .self$IdentPeptideData$peptide.seq %in% upepset
                          .self$IdentPeptideData <- .self$IdentPeptideData[sel1, ]
                          .self$SynapterLog <- c(.self$SynapterLog,
-                                                paste("Kept identification peptides that match unique protein [",  
-                                                      paste(dim(.self$IdentPeptideData), collapse=","),
+                                                paste("Kept identification peptides that match unique protein (",
+                                                      missedCleavages, " missed cleavages) " ,
+                                                      "[", paste(dim(.self$IdentPeptideData), collapse=","),
                                                       "]", sep=""))
                        },
 
-                       filterUniqueDbPeptides = function(filename, verbose = TRUE) {
+                       filterUniqueDbPeptides = function(filename, missedCleavages, verbose = TRUE) {
                          'Filters tryptic peptides that match one and only one protein in the fasta database.'
-                         .self$filterUniqueIdentDbPeptides(filename, verbose = verbose)
-                         .self$filterUniqueQuantDbPeptides(filename, verbose = FALSE)
+                         .self$filterUniqueIdentDbPeptides(filename, missedCleavages, verbose = verbose)
+                         .self$filterUniqueQuantDbPeptides(filename, missedCleavages, verbose = FALSE)
                        }))
                        
