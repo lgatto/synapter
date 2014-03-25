@@ -1,6 +1,7 @@
 CHANGES IN VERSION 1.5.7
 ------------------------
- o Enable setting nnumber of missed cleavages (closes #53) [2014-03-24 Mon]
+ o Enable setting number of missed cleavages (closes #53) [2014-03-24 Mon]
+ o parallel support in estimateMasterFdr (closes #54) [2014-03-25 Tue]
 
 CHANGES IN VERSION 1.5.6
 ------------------------

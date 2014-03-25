@@ -99,10 +99,14 @@ estimateMasterFdr <- function(pepfiles,
                               fdr = 0.01,
                               proteotypic = TRUE,
                               missedCleavages = 0,
+                              BPPARAM,
                               verbose = TRUE) {
+    if (missing(BPPARAM))
+        BPPARAM <- bpparam()
     pepfile <- unlist(pepfiles)
     m <- length(pepfiles)
-    cmbs <- lapply(2:m, function(.k) combn(m, .k, simplify = FALSE))
+    cmbs <- bplapply(2:m, function(.k) combn(m, .k, simplify = FALSE),
+                     BPPARAM = BPPARAM)
     cmbs <- Reduce(c, cmbs)
     k <- length(cmbs)
     if (verbose) {
@@ -116,8 +120,11 @@ estimateMasterFdr <- function(pepfiles,
         message("Generating unique proteotypic peptides...")
     proteotyptic <- dbUniquePeptideSet(fastafile, missedCleavages, verbose = FALSE)      
     if (verbose)
-        message("Calculating...")  
-    uniquePepList <- lapply(hdmseList, function(.x) .x$IdentPeptideData$peptide.seq)
+        message("Calculating...")
+    uniquePepList <-
+        bplapply(hdmseList,
+                 function(.x) .x$IdentPeptideData$peptide.seq,
+                 BPPARAM = BPPARAM)
     uniquePeps <- unique(unlist(uniquePepList))  
     n <- length(uniquePeps)  
     contMat <- matrix(0L, nrow = n, ncol = m)
