@@ -80,6 +80,9 @@ writeMasterPeptides <- function(x, file, ...) {
 ##' used to choose best combination and plot results or total number
 ##' of unique peptides.
 ##' @param missedCleavages Number of missed cleavage sites. Default is 0.
+##' @param BPPARAM A parallelisation parameter object from the
+##' \code{BiocParallel} package. If missing, the default back-end will
+##' be chosen via \code{bpparam(). }
 ##' @param verbose Should progress messages be printed?
 ##' @return An instance of class \code{"\linkS4class{MasterFdrResults}"}.
 ##' See details above.
