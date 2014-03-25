@@ -3,7 +3,7 @@
 \title{Computes FDR for all possible final peptide combinations}
 \usage{
 estimateMasterFdr(pepfiles, fastafile, masterFdr = 0.025, fdr = 0.01,
-  proteotypic = TRUE, missedCleavages = 0, BPPARAM, verbose = TRUE)
+  proteotypic = TRUE, missedCleavages = 0, verbose = TRUE)
 }
 \arguments{
   \item{pepfiles}{A \code{list} of \code{vector} of final
@@ -24,10 +24,6 @@ estimateMasterFdr(pepfiles, fastafile, masterFdr = 0.025, fdr = 0.01,
 
   \item{missedCleavages}{Number of missed cleavage sites.
   Default is 0.}
-
-  \item{BPPARAM}{A parallelisation parameter object from
-  the \code{BiocParallel} package. If missing, the default
-  back-end will be chosen via \code{bpparam(). }}
 
   \item{verbose}{Should progress messages be printed?}
 }
