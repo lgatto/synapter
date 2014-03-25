@@ -62,7 +62,6 @@
 ##' checked for equality. 
 ##' @param outputdir A \code{character} with the full path to an
 ##' existing directory.
-##' @param fdr Peptide false discovery rate. Default is 0.01.
 ##' @param fdrMethod P-value adjustment method. One of \code{"BH"}
 ##' (default) for Benjamini and HochBerg (1995), \code{"Bonferroni"}
 ##' for Bonferroni's single-step adjusted p-values for strong control
@@ -70,12 +69,26 @@
 ##' \code{\link{Synapter}} for references.
 ##' @param fpr Protein false positive rate. Default is 0.01.
 ##' @param peplen Minimum peptide length. Default is 7.
+##' @param missedCleavages Number of allowed missed cleavages. Default
+##' is 0.
 ##' @param identppm Identification mass tolerance (in ppm). Default is 20.
 ##' @param quantppm Quantitation mass tolerance (in ppm). Default is 20.
 ##' @param uniquepep A \code{logical} is length 1 indicating if only
-##' unique peptides in the identification and quantitation peptides as well as unique
-##' tryptic peptides as defined in the fasta file. Default is
-##' \code{TRUE}.
+##' unique peptides in the identification and quantitation peptides as
+##' well as unique tryptic peptides as defined in the fasta
+##' file. Default is \code{TRUE}.
+##' @param grid.param.sel Grid parameter selection method. One of
+##' \code{auto} (default), \code{details}, \code{model} or
+##' \code{total}. See \code{\link{Synapter}} for details on these
+##' selection methods.
+##' @param mergedEMRTs One of \code{"rescue"} (default), \code{"copy"}
+##' or \code{"transfer"}. See the documentation for the
+##' \code{findEMRTs} function in \code{\link{Synapter}} for details.
+##' @param css An optional path to a custom css file. If \code{NULL}
+##' (default), uses \code{synapter.css}.
+##' @param verbose A \code{logical} indicating if progress output
+##' should be printed to the console. Default is \code{TRUE}.
+##' @param fdr Peptide false discovery rate. Default is 0.01.
 ##' @param span The loess span parameter. Default is 0.05.
 ##' @param grid.ppm.from Mass tolerance (ppm) grid starting
 ##' value. Default is 2.
@@ -93,23 +106,13 @@
 ##' search. Default is 1.
 ##' @param grid.n Absolute number of features to be used for the grid
 ##' search. Default is 0, i.e ignored.
-##' @param grid.param.sel Grid parameter selection method. One of
-##' \code{auto} (default), \code{details}, \code{model} or
-##' \code{total}. See \code{\link{Synapter}} for details on these
-##' selection methods.
-##' @param mergedEMRTs One of \code{"rescue"} (default), \code{"copy"}
-##' or \code{"transfer"}. See the documentation for the \code{findEMRTs}
-##' function in \code{\link{Synapter}} for details.
-##' @param css An optional path to a custom css file. If \code{NULL}
-##' (default), uses \code{synapter.css}.
-##' @param verbose A \code{logical} indicating if progress output
-##' should be printed to the console. Default is \code{TRUE}.
 ##' @return Invisibly returns an object of class \code{Synapter}.
 ##'         Used for its side effect of creating an html report of
 ##'         the run in \code{outputdir}.
 ##' @aliases synergize
 ##' @author Laurent Gatto
-##' @references Shliaha P.V., Bond N. J., Lilley K.S. and Gatto L., in prep.
+##' @references Bond N. J., Shliaha P.V., Lilley K.S. and Gatto
+##' L. (2013) J. Prot. Research.
 ##' @examples
 ##' output <- tempdir() ## a temporary directory
 ##' synapterTinyData()
@@ -127,6 +130,7 @@ synergise <- function(filenames,
                       fdrMethod = c("BH", "Bonferroni", "qval" ),
                       fpr = 0.01,
                       peplen = 7,
+                      missedCleavages = 0,
                       identppm = 20,
                       quantppm = 20,
                       uniquepep = TRUE,
@@ -227,7 +231,7 @@ synergise <- function(filenames,
   if (uniquepep) {
     if (verbose)
       message("Keeping unique peptides...")
-    filterUniqueDbPeptides(obj, verbose) 
+    filterUniqueDbPeptides(obj, missedCleavages, verbose) 
   }
   
   filterPeptideLength(obj, l = peplen)
