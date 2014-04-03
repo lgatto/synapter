@@ -169,12 +169,47 @@
 
   ## find left interval
   lIdx <- findInterval(my, mx, rightmost.closed=FALSE, all.inside=TRUE)
+  ## find right interval
   rIdx <- lIdx+1L
 
-  ## calculate differences for left and right nearest point
+  ## calculate relative differences for left and right nearest point
   lDiff <- abs(mx[lIdx]-my)/mx[lIdx]
   rDiff <- abs(mx[rIdx]-my)/mx[rIdx]
 
   return(sum(pmin(lDiff, rDiff) < tolerance))
+}
+
+#' common peaks
+#' @param ident matrix, spectrum 1
+#' @param ident.metadata named character vector (is plotted as legend)
+#' @param quant matrix, spectrum 2
+#' @param quant.named character vector (is plotted as legend)
+#' @param main title
+#' @param xlab label for x-axis
+#' @param ylab label for y-axis
+#' @param legend.cex cex for legend text
+#' @return double, number of common peaks
+.plotIdentVsQuantSpectra <- function(ident, ident.metadata,
+                                     quant, quant.metadata,
+                                     main="", xlab="mhp", ylab="intensity",
+                                     legend.cex=1) {
+
+    xlim <- c(min(ident[, 1], quant[, 1]), max(ident[, 1], quant[, 1]))
+    ylim <- c(-max(ident[, 2], quant[, 2]), max(ident[, 2], quant[, 2]))
+
+    plot(ident[,1], ident[,2], type="h", col=1,
+         main=main, xlab=xlab, ylab=ylab,
+         xlim=xlim, ylim=ylim)
+    lines(quant[,1], -quant[,2], type="h", col=2)
+    abline(h=0, col="#808080")
+
+    ident.legend <- paste(names(ident.metadata), ident.metadata, sep=": ",
+                          collapse=", ")
+    quant.legend <- paste(names(quant.metadata), quant.metadata, sep=": ",
+                          collapse=", ")
+    legend("topleft",
+           legend=paste("ident:", ident.legend), bty="n", cex=legend.cex)
+    legend("bottomleft",
+           legend=paste("quant:", quant.legend), bty="n", cex=legend.cex)
 }
 
