@@ -156,3 +156,25 @@
   return(cbind(mass=mass[o], intensity=intensity[o]))
 }
 
+#' common peaks
+#' @param x matrix, spectrum 1
+#' @param y matrix, spectrum 2
+#' @param tolerance double, allowed deviation
+#' @return double, number of common peaks
+.commonPeaks <- function(x, y, tolerance=25e-6) {
+  mx <- x[, 1]
+  my <- y[, 1]
+
+  ## adopted from MALDIquant:::.which.closest
+
+  ## find left interval
+  lIdx <- findInterval(my, mx, rightmost.closed=FALSE, all.inside=TRUE)
+  rIdx <- lIdx+1L
+
+  ## calculate differences for left and right nearest point
+  lDiff <- abs(mx[lIdx]-my)/mx[lIdx]
+  rDiff <- abs(mx[rIdx]-my)/mx[rIdx]
+
+  return(sum(pmin(lDiff, rDiff) < tolerance))
+}
+
