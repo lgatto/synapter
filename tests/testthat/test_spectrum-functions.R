@@ -34,6 +34,7 @@ test_that(".createSpectrum", {
 test_that(".commonPeaks", {
   m1 <- cbind(1:5, 1:5)
   m2 <- cbind(c(1, 2.1, 2.9, 4.5, 4.8), 1:5)
+  m3 <- cbind(3, 1)
 
   expect_true(synapter:::.commonPeaks(m1, m1) == 5)
   expect_true(synapter:::.commonPeaks(m2, m2) == 5)
@@ -42,6 +43,7 @@ test_that(".commonPeaks", {
   expect_true(synapter:::.commonPeaks(m1, m2, tolerance=0.05) == 3)
   expect_true(synapter:::.commonPeaks(m1, m2, tolerance=0.06) == 4)
   expect_true(synapter:::.commonPeaks(m1, m2, tolerance=0.2) == 5)
+  expect_true(synapter:::.commonPeaks(m3, m1) == 1)
 })
 
 

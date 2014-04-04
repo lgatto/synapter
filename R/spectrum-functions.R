@@ -167,6 +167,10 @@
   mx <- x[, 1]
   my <- y[, 1]
 
+  if (length(mx) <= 1) {
+    return(sum( abs(mx-my)/my < tolerance))
+  }
+
   ## adopted from MALDIquant:::.which.closest
 
   ## find left interval
