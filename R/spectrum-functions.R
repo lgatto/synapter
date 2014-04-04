@@ -15,6 +15,8 @@
 .readSynapterSpectrumXml <- function(file, ms1=FALSE,
                                      encoding="Windows-1252",
                                      verbose=TRUE) {
+  stopifnot(file.exists(file))
+
   ## helper functions
   .extractName <- function(x) {
     gsub("^.*NAME=\\\"([[:alpha:]_]+)\\\".*$", "\\1", x)
@@ -213,3 +215,28 @@
            legend=paste("quant:", quant.legend), bty="n", cex=legend.cex)
 }
 
+#' readSpectraAndFragments
+#' @param filenames named list of filenames list(identspectrum, quantspectrum,
+#' @param removeNeutralLoss remove rows with neutral loss != "none"?
+#' @param verbose verbose output?
+readSpectraAndFragments <- function(filenames, removeNeutralLoss=TRUE,
+                                    verbose=TRUE) {
+  stopifnot(all(names(filenames) %in% c("identspectrum", "quantspectrum",
+                                        "identfragments", "quantfragments")))
+  spectra <- list()
+  spectra$ident <- .readSynapterSpectrumXml(filenames$identspectrum,
+                                            verbose=verbose)
+  spectra$quant <- .readSynapterSpectrumXml(filenames$quantspectrum,
+                                            verbose=verbose)
+
+  fragments <- list()
+  fragments$ident <- .readFragements(filenames$identfragments,
+                                     removeNeutralLoss=removeNeutralLoss)
+  fragments$quant <- .readFragements(filenames$quantfragments,
+                                     removeNeutralLoss=removeNeutralLoss)
+  return(list(spectra, fragments))
+}
+
+#' crossmatching
+#' compares ident fragments vs quant product spectrum and
+#' quant fragments vs ident product spectrum

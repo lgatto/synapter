@@ -10,6 +10,8 @@
 #' @param removeNeutralLoss remove rows with neutral loss != "none"?
 #' @return a data.frame
 .readFragements <- function(file, removeNeutralLoss=FALSE) {
+  stopifnot(file.exists(file))
+
   df <- read.csv(file, stringsAsFactors=FALSE)
 
   if (removeNeutralLoss) {
