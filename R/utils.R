@@ -528,11 +528,13 @@ flatMatchedEMRTs <- function(emrts, na.rm=TRUE) {
     emrts <- emrts[!is.na(emrts$precursor.leID.quant), ]
   }
 
+  emrts$matchType <- NA
+
   ## unique matches
   k1 <- which(emrts$Function == 1)
   isCorrectMatch <- as.numeric(emrts$spectrumID[k1]) ==
                       as.numeric(emrts$precursor.leID.quant[k1])
-  emrts$matchType <- ifelse(isCorrectMatch, "unique-true", "unique-false")
+  emrts$matchType[k1] <- ifelse(isCorrectMatch, "unique-true", "unique-false")
   emrts$matched.quant.spectrumIDs[k1] <- emrts$spectrumID[k1]
 
   ## non-unique matches
