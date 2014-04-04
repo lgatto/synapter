@@ -325,7 +325,7 @@ readSpectraAndFragments <- function(obj, filenames, removeNeutralLoss=TRUE,
   }
 
   if (verbose) {
-    pb <- setTxtProgressBar(0, length(unlist(ids)))
+    setTxtProgressBar(pb, length(unlist(ids)))
     close(pb)
   }
 
