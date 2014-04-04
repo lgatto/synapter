@@ -179,7 +179,7 @@
   return(sum(pmin(lDiff, rDiff) < tolerance))
 }
 
-#' common peaks
+#' plot identification vs quantitation spectra/fragments
 #' @param ident matrix, spectrum 1
 #' @param ident.metadata named character vector (is plotted as legend)
 #' @param quant matrix, spectrum 2
