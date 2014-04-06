@@ -222,14 +222,27 @@
   new("Spectrum2")
 }
 
+#' same functinality like "get" but returns an empty spectrum if the key could
+#' not found
+#' @param key character, key
+#' @param envir env
+#' @return Spectrum2 object
+.getSpectrum <- function(key, envir) {
+  if (exists(key, envir=envir)) {
+    return(get(key, envir=envir))
+  } else {
+    return(.createEmptyMsnbaseSpectrum2())
+  }
+}
+
 #' common peaks
-#' @param x matrix, spectrum 1
-#' @param y matrix, spectrum 2
+#' @param x spectrum1 (MSnbase::Spectrum2)
+#' @param y spectrum2 (MSnbase::Spectrum2)
 #' @param tolerance double, allowed deviation
 #' @return double, number of common peaks
 .commonPeaks <- function(x, y, tolerance=25e-6) {
-  mx <- x[, 1]
-  my <- y[, 1]
+  mx <- mz(x)
+  my <- mz(y)
 
   if (length(mx) == 0 || length(my) == 0) {
     return(0)
@@ -238,7 +251,6 @@
   }
 
   ## adopted from MALDIquant:::.which.closest
-
   ## find left interval
   lIdx <- findInterval(my, mx, rightmost.closed=FALSE, all.inside=TRUE)
   ## find right interval
@@ -337,7 +349,7 @@ readSpectraAndFragments <- function(obj, filenames, removeNeutralLoss=TRUE,
                                       fileId=3,
                                       removeNeutralLoss=removeNeutralLoss,
                                       verbose=verbose)
-  ## TODO: fragmentstr
+  ## TODO: store fragmentstr somewhere
   assaydata <- .finalFragment2spectra(df=obj$QuantPeptideData,
                                       file=filenames$quantfragments,
                                       prefix="fragments.quant",
@@ -352,56 +364,53 @@ readSpectraAndFragments <- function(obj, filenames, removeNeutralLoss=TRUE,
 #' compares ident fragments vs quant product spectrum and
 #' quant fragments vs ident product spectrum
 #' @param obj synapter object
-#' @param spectra product spectra readSpectraAndFragments(...)$spectra
-#' @param fragments fragments readSpectraAndFragments(...)$fragments
+#' @param assaydata env containing the spectra and fragment spectra
 #' @param tolerance double, allowed deviation to consider a m/z as equal
 #' @param verbose verbose output?
 #' @return data.frame, extend/flatted matchedEmrts df with additional columns:
-#' cxIdentSxQuantF, cxIdentFxQuantS, matchType
-crossmatching <- function(obj, spectra, fragments, tolerance=25e-6, verbose=TRUE) {
+#' matchType,
+#' spectra.identXfragments.ident, spectra.quantXfragments.quant,
+#' spectra.identXfragments.quant, spectra.quantXfragments.ident
+#' sorry for the names
+crossmatching <- function(obj, assaydata, tolerance=25e-6, verbose=TRUE) {
+  if (verbose) {
+    message("create flat EMRTs data.frame")
+  }
   emrts <- flatMatchedEMRTs(obj$MatchedEMRTs)
 
-  emrts$cxIdentSxIdentF <- NA
-  emrts$cxQuantSxQuantF <- NA
-  emrts$cxIdentSxQuantF <- NA
-  emrts$cxIdentFxQuantS <- NA
+  prefixes <- paste(rep(c("spectra", "fragments"), each=2),
+                    rep(c("ident", "quant"), times=2), sep=".")
+  # "spectra.ident"   "spectra.quant"   "fragments.ident" "fragments.quant"
 
-  ident.id <- as.character(emrts$precursor.leID.ident)
-  quant.id <- as.character(emrts$precursor.leID.quant)
+  keys <- paste(rep(prefixes, each=nrow(emrts)),
+                rep(unlist(emrts[, c("precursor.leID.ident",
+                                     "precursor.leID.quant")]), times=2),
+                sep=":")
+  keysm <- matrix(keys, ncol=4)
 
-  if (verbose) {
-    pb <- txtProgressBar(0, nrow(emrts), style=3)
-  }
+  cmb <- list(c(1, 3), c(2, 4),
+              c(1, 4), c(2, 3))
 
-  for (i in 1:nrow(emrts)) {
-
-    emrts$cxIdentSxIdentF[i] <- .commonPeaks(
-      get(ident.id[i], envir=spectra$ident),
-      get(ident.id[i], envir=fragments$ident),
-      tolerance=tolerance)
-
-    emrts$cxQuantSxQuantF[i] <- .commonPeaks(
-      get(quant.id[i], envir=spectra$quant),
-      get(quant.id[i], envir=fragments$quant),
-      tolerance=tolerance)
-
-    emrts$cxIdentSxQuantF[i] <- .commonPeaks(
-      get(ident.id[i], envir=spectra$ident),
-      get(quant.id[i], envir=fragments$quant),
-      tolerance=tolerance)
-
-    emrts$cxIdentFxQuantS[i] <- .commonPeaks(
-      get(ident.id[i], envir=fragments$ident),
-      get(quant.id[i], envir=spectra$quant),
-      tolerance=tolerance)
-
-    if (verbose) {
-      setTxtProgressBar(pb, i)
-    }
-  }
+  cols <- sapply(cmb, function(x)paste0(prefixes[x], collapse="X"))
+  # "spectra.identXfragments.ident" ...
 
   if (verbose) {
-    setTxtProgressBar(pb, length(unlist(ids)))
+    message("Look for common peaks")
+    pb <- txtProgressBar(0, 4*nrow(emrts), style=3)
+  }
+
+  emrts[, cols] <- lapply(cmb, function(i) {
+    apply(keysm[, i], 1, function(k) {
+      if (verbose) {
+        setTxtProgressBar(pb, pb$getVal()+1)
+      }
+      .commonPeaks(.getSpectrum(k[1], envir=assaydata),
+                   .getSpectrum(k[2], envir=assaydata),
+                   tolerance=tolerance)
+    })
+  })
+
+  if (verbose) {
     close(pb)
   }
 
