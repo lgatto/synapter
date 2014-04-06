@@ -564,7 +564,49 @@ flatMatchedEMRTs <- function(emrts, na.rm=TRUE) {
   return(flatEmrts)
 }
 
+#' same functionality like "get" but doesn't throw an error if the key is
+#' not found
+#' @param key character, key
+#' @param envir env
+#' @param ifmissing returned if the key is missing
+#' @return value/ifmissing
+.getKeyValue <- function(key, envir, ifmissing) {
+  if (exists(key, envir=envir)) {
+    return(get(key, envir=envir))
+  } else {
+    return(ifmissing)
+  }
+}
+
+.getSpectrum <- function(key, envir) {
+  .getKeyValue(key, envir, {
+     s <- .createEmptyMsnbaseSpectrum2()
+     s@precScanNum <- as.integer(tail(strsplit(key, ":")[[1]], 1))
+     s})
+}
+
+.getSpectra <- function(keys, envir) {
+  lapply(keys, .getSpectrum, envir=envir)
+}
+
+.getFragment <- function(key, envir) {
+  .getKeyValue(paste("fragment.str", key, sep=":"), envir, character())
+}
+
+.getFragments <- function(keys, envir) {
+  lapply(keys, .getFragment, envir=envir)
+}
+
+.getSequence <- function(key, envir) {
+  .getKeyValue(paste("peptide.seq", key, sep=":"), envir, character())
+}
+
+.getSequences <- function(keys, envir) {
+  lapply(keys, .getSequence, envir=envir)
+}
+
+## we could use MSnbase:::.ssv2list but it has no "sep" argument ...
 matched.quant.spectrumIDs2numeric <- function(x) {
-  lapply(x, function(y)as.numeric(unlist(strsplit(as.character(y), ","))))
+  lapply(MSnbase:::utils.ssv2list(x, sep=","), as.numeric)
 }
 

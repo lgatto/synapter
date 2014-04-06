@@ -70,7 +70,6 @@
   linesMs2 <- c(grep("<HE_DATA", content, fixed=TRUE)+1,
                 grep("</HE_DATA", content, fixed=TRUE)-1)
 
-
   if (ms1) {
     if (verbose) {
       message("Read MS1 Data (", paste(linesMs1, collapse=":"), ")")
@@ -99,7 +98,8 @@
   range <- seq(linesAssignment[1], linesAssignment[2])
 
   le_ids <- .extractLEID(content[range])
-  he_ids <- lapply(utils.ssv2list(.extractHEID(content[range]), sep=","), as.numeric)
+  he_ids <- lapply(MSnbase:::utils.ssv2list(
+                     .extractHEID(content[range]), sep=","), as.numeric)
 
   assignments <- new.env(hash=TRUE, parent=emptyenv(), size=length(le_ids))
   for (i in seq(along=le_ids)) {
@@ -126,6 +126,7 @@
 
   peptideinfo <- df[!duplicated(df$precursor.leID), ]
   keys <- paste(prefix, df$precursor.leID, sep=":")
+  sequence_keys <- paste("peptide.seq", prefix, df$precursor.leID, sep=":")
 
   if (verbose) {
     message("Convert spectra data.frames to MSnbase::Spectrum2 objects")
@@ -137,6 +138,7 @@
            .createMs2SpectrumFromSpectrumXml(peptideinfo[i, ], xml$ms2,
                                              xml$assignments, fileId=fileId),
            envir=assaydata)
+    assign(sequence_keys[i], peptideinfo$peptide.seq[i], envir=assaydata)
 
     if (verbose) {
       setTxtProgressBar(pb, i)
@@ -222,32 +224,19 @@
   new("Spectrum2")
 }
 
-#' same functinality like "get" but returns an empty spectrum if the key could
-#' not found
-#' @param key character, key
-#' @param envir env
-#' @return Spectrum2 object
-.getSpectrum <- function(key, envir) {
-  if (exists(key, envir=envir)) {
-    return(get(key, envir=envir))
-  } else {
-    return(.createEmptyMsnbaseSpectrum2())
-  }
-}
-
 #' common peaks
 #' @param x spectrum1 (MSnbase::Spectrum2)
 #' @param y spectrum2 (MSnbase::Spectrum2)
 #' @param tolerance double, allowed deviation
-#' @return double, number of common peaks
+#' @return logical, common peaks in y
 .commonPeaks <- function(x, y, tolerance=25e-6) {
   mx <- mz(x)
   my <- mz(y)
 
   if (length(mx) == 0 || length(my) == 0) {
-    return(0)
+    return(logical(length(my)))
   } else if (length(mx) == 1) {
-    return(sum(abs(mx-my)/my < tolerance))
+    return(abs(mx-my)/my < tolerance)
   }
 
   ## adopted from MALDIquant:::.which.closest
@@ -260,62 +249,135 @@
   lDiff <- abs(mx[lIdx]-my)/mx[lIdx]
   rDiff <- abs(mx[rIdx]-my)/mx[rIdx]
 
-  return(sum(pmin(lDiff, rDiff) < tolerance))
+  return(pmin(lDiff, rDiff) < tolerance)
 }
 
-#' plot identification vs quantitation spectra/fragments
-#' @param ident matrix, spectrum 1
-#' @param ident.metadata named character vector (is plotted as legend)
-#' @param quant matrix, spectrum 2
-#' @param quant.named character vector (is plotted as legend)
-#' @param ident.norm double, normalisation factor
-#' @param quant.norm double, normalisation factor
-#' @param main title
+#' number of common peaks
+#' @param x spectrum1 (MSnbase::Spectrum2)
+#' @param y spectrum2 (MSnbase::Spectrum2)
+#' @param tolerance double, allowed deviation
+#' @return double, number of common peaks
+.nCommonPeaks <- function(x, y, tolerance=25e-6) {
+  return(sum(.commonPeaks(x, y, tolerance=tolerance)))
+}
+
+#' @param spectra list, 4 MSnbase::Spectrum2 objects
+#' @param norm normalise spectra?
+#' @param fragments list, 2 character vectors containing the fragment.str
+#' @param tolerance double, allowed deviation
+#' @param ... passed to .plotIdentVsQuantSpectra
+.plotSpectraVsFragments <- function(spectra, norm=TRUE, fragments,
+                                    tolerance=25e-6, ...) {
+  if (norm) {
+    spectra <- lapply(spectra, normalize, method="precursor")
+  }
+
+  mass <- unlist(lapply(spectra, mz))
+  xlim <- c(min(mass), max(mass))
+
+  inten <- unlist(lapply(spectra, intensity))
+  maxInten <- max(inten)
+  ylim <- c(-maxInten, maxInten)
+
+  oldPar <- par(no.readonly=TRUE)
+  on.exit(par(oldPar))
+  par(mfrow=c(1, 2))
+
+  par(mar=c(2, 2, 2, 0.5)) #c(bottom, left, top, right)
+  .plotIdentVsQuantSpectra(spectra[1:2], main="spectra",
+                           common=list(.commonPeaks(spectra[[4]],
+                                                    spectra[[1]],
+                                                    tolerance),
+                                       .commonPeaks(spectra[[3]],
+                                                    spectra[[2]],
+                                                    tolerance)),
+                           xlim=xlim, ylim=ylim, ...)
+  par(mar=c(2, 0.5, 2, 2)) #c(bottom, left, top, right)
+  .plotIdentVsQuantSpectra(spectra[3:4], main="fragments", fragments=fragments,
+                           common=list(.commonPeaks(spectra[[4]],
+                                                    spectra[[3]],
+                                                    tolerance),
+                                       .commonPeaks(spectra[[3]],
+                                                    spectra[[4]],
+                                                    tolerance)),
+                           xlim=xlim, ylim=ylim, yaxt="n", ...)
+  axis(4)
+}
+
+#' plot ident vs quant spectra
+#' @param spectra list, 2 MSnbase::Spectrum2 objects
+#' @param sequences list, 2 character vectors containing the peptide.seq
+#' @param fragments list, 2 character vectors containing the fragment.str
+#' @param common list, 2 logical vectors
 #' @param xlab label for x-axis
 #' @param ylab label for y-axis
-#' @param legend.cex cex for legend text
-#' @return double, number of common peaks
-.plotIdentVsQuantSpectra <- function(ident, ident.metadata,
-                                     quant, quant.metadata,
-                                     ident.norm=1, quant.norm=1,
-                                     ident.fragment.str, quant.fragment.str,
-                                     main="", xlab="mhp", ylab="intensity",
-                                     legend.cex=1, fragment.str.cex=0.5) {
-
-  ident[, 2] <- ident[, 2]/ident.norm
-  quant[, 2] <- quant[, 2]/quant.norm
-
-  xlim <- c(min(c(ident[ident[, 2] > 0, 1],
-                  quant[quant[, 2] > 0, 1], 0), na.rm=TRUE),
-            max(c(ident[ident[, 2] > 0, 1],
-                  quant[quant[, 2] > 0, 1],
-                  0), na.rm=TRUE))
-
-  ylim <- c(-max(c(ident[, 2], quant[, 2], 0), na.rm=TRUE),
-             max(c(ident[, 2], quant[, 2], 0), na.rm=TRUE))
-
-  plot(ident[,1], ident[,2], type="h", col=1,
-       main=main, xlab=xlab, ylab=ylab,
-       xlim=xlim, ylim=ylim)
-  if (!missing(ident.fragment.str) && length(ident.fragment.str)) {
-    text(ident[, 1], ident[, 2], ident.fragment.str, adj=c(0.5, 0),
-         cex=fragment.str.cex, col=1)
+#' @param xlim limits for x-axis
+#' @param ylim limits for y-axis
+#' @param fragments.cex cex for fragments
+#' @param legend.cex cex for legend
+.plotIdentVsQuantSpectra <- function(spectra,
+                                     sequences,
+                                     fragments=list(character(), character()),
+                                     common,
+                                     main=character(),
+                                     xlab="mhp", ylab="intensity",
+                                     xlim, ylim,
+                                     fragments.cex=0.5,
+                                     legend.cex=0.5, ...) {
+  if (missing(xlim)) {
+    mass <- unlist(lapply(spectra, mz))
+    xlim <- c(min(c(mass, 0)), max(c(mass, 0)))
   }
-  lines(quant[,1], -quant[,2], type="h", col=2)
-  if (!missing(quant.fragment.str) && length(quant.fragment.str)) {
-    text(quant[, 1], -quant[, 2], quant.fragment.str, adj=c(0.5, 1),
-         cex=fragment.str.cex, col=2)
+
+  if (missing(ylim)) {
+    inten <- unlist(lapply(spectra, intensity))
+    maxInten <- max(c(inten, 0))
+    ylim <- c(-maxInten, maxInten)
   }
+
+  if (missing(common)) {
+    common <- lapply(spectra, function(x)logical(peaksCount(x)))
+  }
+
+  plot(NA, type="h", col=1,
+       main=main,
+       xlab=xlab, ylab=ylab,
+       xlim=xlim, ylim=ylim,
+       ...)
   abline(h=0, col="#808080")
 
-  ident.legend <- paste(names(ident.metadata), ident.metadata, sep=":",
-                        collapse=", ")
-  quant.legend <- paste(names(quant.metadata), quant.metadata, sep=":",
-                        collapse=", ")
-  legend("topleft",
-         legend=paste("ident:", ident.legend), bty="n", cex=legend.cex)
-  legend("bottomleft",
-             legend=paste("quant:", quant.legend), bty="n", cex=legend.cex)
+  orientation <- c(1, -1)
+  text.pos <- c(3, 1)
+  legend.pos <- c("topleft", "bottomleft")
+  legend.prefix <- c("ident", "quant")
+  pal <- brewer.pal(11, "RdYlBu")
+  cols <- c(pal[c(9, 11)], pal[c(3, 1)])
+  pch <- c(NA, 19)
+
+  for (i in seq(along=spectra)) {
+    lines(mz(spectra[[i]]), orientation[i]*intensity(spectra[[i]]),
+          type="h", col=cols[(i-1)*2+common[[i]]+1L], lwd=1.5)
+    points(mz(spectra[[i]]), orientation[i]*intensity(spectra[[i]]),
+           col=cols[(i-1)*2+common[[i]]+1L], pch=pch[common[[i]]+1L],
+           cex=0.5)
+
+    if (length(fragments[[i]])) {
+      text(mz(spectra[[i]]), orientation[i]*intensity(spectra[[i]]),
+           fragments[[i]], pos=text.pos[i], offset=0.25,
+           cex=fragments.cex, col="#808080")
+    }
+
+    label <- paste0(legend.prefix[i], ".leID: ", precScanNum(spectra[[i]]))
+
+    if (peaksCount(spectra[[i]])) {
+      label <- paste0(label, ", mhp: ", precursorMz(spectra[[i]]),
+                             ", z: ", precursorCharge(spectra[[i]]),
+                             ", seq: ", sequences[[i]],
+                             ", cx: ", sum(common[[i]]))
+    }
+
+    legend(legend.pos[i], legend=label, bty="n", cex=legend.cex)
+  }
 }
 
 #' readSpectraAndFragments
@@ -349,7 +411,6 @@ readSpectraAndFragments <- function(obj, filenames, removeNeutralLoss=TRUE,
                                       fileId=3,
                                       removeNeutralLoss=removeNeutralLoss,
                                       verbose=verbose)
-  ## TODO: store fragmentstr somewhere
   assaydata <- .finalFragment2spectra(df=obj$QuantPeptideData,
                                       file=filenames$quantfragments,
                                       prefix="fragments.quant",
@@ -404,9 +465,9 @@ crossmatching <- function(obj, assaydata, tolerance=25e-6, verbose=TRUE) {
       if (verbose) {
         setTxtProgressBar(pb, pb$getVal()+1)
       }
-      .commonPeaks(.getSpectrum(k[1], envir=assaydata),
-                   .getSpectrum(k[2], envir=assaydata),
-                   tolerance=tolerance)
+      .nCommonPeaks(.getSpectrum(k[1], envir=assaydata),
+                    .getSpectrum(k[2], envir=assaydata),
+                    tolerance=tolerance)
     })
   })
 
@@ -418,88 +479,34 @@ crossmatching <- function(obj, assaydata, tolerance=25e-6, verbose=TRUE) {
 }
 
 #' plot crossmatching
-#' @param file name of pdf file
-#' @param obj synapter object
 #' @param cx crossmatching df, result of crossmatching
-#' @param spectra product spectra readSpectraAndFragments(...)$spectra
-#' @param fragments fragments readSpectraAndFragments(...)$fragments
-#' @param fragmentsdf fragments df readSpectraAndFragments(...)$fragmentsdf
-#' @param what which subset
+#' @param assaydata env, spectra
 #' @param legend.cex cex for legend text
+#' @param tolerance double, allowed deviation
 #' @param verbose verbose output?
 #' @return data.frame, extend/flatted matchedEmrts df with additional columns:
 #' cxIdentSxQuantF, cxIdentFxQuantS, matchType
-plotCrossmatching <- function(file, obj, cx, spectra, fragments, fragmentsdf,
-                              what=c("all", "unique-true", "unique-false",
-                                     "non-unique-true", "non-unique-false"),
-                              legend.cex=0.75, verbose=TRUE) {
-  what <- match.arg(what)
-
-  if (what != "all") {
-    cx <- cx[cx$matchType == what, ]
-  }
-
-  ident.id <- as.character(cx$precursor.leID.ident)
-  quant.id <- as.character(cx$precursor.leID.quant)
-
-  identIdx <- match(ident.id, obj$IdentPeptideData$precursor.leID)
-  quantIdx <- match(quant.id, obj$QuantPeptideData$precursor.leID)
-
-  identFragmentIdx <- lapply(ident.id, function(x) {
-    which(x == fragmentsdf$ident$precursor.leID)
-  })
-  quantFragmentIdx <- lapply(quant.id, function(x) {
-    which(x == fragmentsdf$quant$precursor.leID)
-  })
-
-  metaCols <- c("peptide.seq", "precursor.mhp", "precursor.z")
-  metaColsFrx <- c("precursor.leID", metaCols)
+plotCrossmatching <- function(cx, assaydata,
+                              legend.cex=0.75, tolerance=25e-6,
+                              verbose=TRUE) {
+  prefixes <- paste(rep(c("spectra", "fragments"), each=2),
+                    rep(c("ident", "quant"), times=2), sep=".")
+  keys <- paste(rep(prefixes, each=nrow(cx)),
+                rep(unlist(cx[, c("precursor.leID.ident",
+                                  "matched.quant.spectrumIDs")]), times=2),
+                sep=":")
+  keysm <- matrix(keys, ncol=4)
 
   if (verbose) {
-    message("plot ", what, " to ", file)
     pb <- txtProgressBar(0, nrow(cx), style=3)
   }
-
-  pdf(file=file, width=12, height=7)
-  oldPar <- par(no.readonly=TRUE)
-  on.exit(par(oldPar))
-  on.exit(dev.off(), add=TRUE)
-  par(mar=rep(2, 4), mfrow=c(1, 2))
-
   for (i in 1:nrow(cx)) {
-    identMeta <- cx[i, c("precursor.leID.ident", metaCols)]
-    quantMeta <- cx[i, c("precursor.leID.ident", metaCols)]
-    names(identMeta) <- c("leID", "seq", "mhp", "z")
-    names(quantMeta) <- c("leID", "seq", "mhp", "z")
-    .plotIdentVsQuantSpectra(ident=get(ident.id[i], envir=spectra$ident),
-                             ident.metadata=identMeta,
-                             quant=get(quant.id[i], envir=spectra$quant),
-                             quant.metadata=quantMeta,
-                             ident.norm=obj$IdentPeptideData$precursor.inten[identIdx[i]],
-                             quant.norm=obj$QuantPeptideData$precursor.inten[quantIdx[i]],
-                             main="spectra", legend.cex=legend.cex)
-
-    identMeta <- fragmentsdf$ident[identFragmentIdx[[i]][1], metaColsFrx]
-    quantMeta <- fragmentsdf$quant[quantFragmentIdx[[i]][1], metaColsFrx]
-    names(identMeta) <- c("leID", "seq", "mhp", "z")
-    names(quantMeta) <- c("leID", "seq", "mhp", "z")
-
-    identFragmentStr <- fragmentsdf$ident$fragment.str[identFragmentIdx[[i]]]
-    quantFragmentStr <- fragmentsdf$quant$fragment.str[quantFragmentIdx[[i]]]
-    identFragmentStr <-
-      identFragmentStr[order(fragmentsdf$ident$fragment.mhp[identFragmentIdx[[i]]])]
-    quantFragmentStr <-
-      quantFragmentStr[order(fragmentsdf$quant$fragment.mhp[quantFragmentIdx[[i]]])]
-
-    .plotIdentVsQuantSpectra(ident=get(ident.id[i], envir=fragments$ident),
-                             ident.metadata=identMeta,
-                             quant=get(quant.id[i], envir=fragments$quant),
-                             quant.metadata=quantMeta,
-                             ident.norm=obj$IdentPeptideData$precursor.inten[identIdx[i]],
-                             quant.norm=obj$QuantPeptideData$precursor.inten[quantIdx[i]],
-                             ident.fragment.str=identFragmentStr,
-                             quant.fragment.str=quantFragmentStr,
-                             main="fragments", legend.cex=legend.cex)
+    .plotSpectraVsFragments(spectra=.getSpectra(keysm[i, ], envir=assaydata),
+                            sequences=.getSequences(keysm[i, ],
+                                                    envir=assaydata),
+                            fragments=.getFragments(keysm[i, 3:4],
+                                                    envir=assaydata),
+                            tolerance=tolerance, legend.cex=legend.cex)
     if (verbose) {
       setTxtProgressBar(pb, i)
     }
