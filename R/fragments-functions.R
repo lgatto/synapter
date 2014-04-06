@@ -8,9 +8,14 @@
 #' read final_fragments.csv
 #' @param file file path
 #' @param removeNeutralLoss remove rows with neutral loss != "none"?
+#' @param verbose verbose output?
 #' @return a data.frame
-.readFragements <- function(file, removeNeutralLoss=FALSE) {
+.readFragements <- function(file, removeNeutralLoss=FALSE, verbose=TRUE) {
   stopifnot(file.exists(file))
+
+  if (verbose) {
+    message("Reading ", file)
+  }
 
   df <- read.csv(file, stringsAsFactors=FALSE)
 
@@ -20,4 +25,56 @@
     return(df)
   }
 }
+
+#' read final_fragment.csv and turn data into MSnbase::Spectrum2 objects
+#' @param df corresponding df from the synapter object ({Ident,Quant}PeptideData)
+#' @param file filename
+#' @param prefix character, prefix for the keyvalue in assaydata
+#' (e.g.,"ident.spectra")
+#' @param assaydata environment
+#' @param fileId integer, optional
+#' @param removeNeutralLoss remove rows with neutral loss != "none"?
+#' @param verbose verbose output
+#' @return modified assaydata
+.finalFragment2spectra <- function(df, file, prefix, assaydata, fileId=0,
+                                   removeNeutralLoss=TRUE, verbose=TRUE) {
+  stopifnot(!missing(prefix))
+
+  fragments <- .readFragements(file, removeNeutralLoss=removeNeutralLoss,
+                               verbose=verbose)
+
+  peptideinfo <- df[!duplicated(df$precursor.leID), ]
+  keys <- paste(prefix, df$precursor.leID, sep=":")
+
+  if (verbose) {
+    message("Convert spectra data.frames to MSnbase::Spectrum2 objects")
+    pb <- txtProgressBar(0, nrow(peptideinfo), style=3)
+  }
+
+  assignments <- new.env(hash=TRUE, parent=emptyenv())
+  idx <- split(1:nrow(fragments), f=fragments$precursor.leID)
+  idx_keys <- names(idx)
+
+  for (i in seq(along=idx)) {
+    assign(idx_keys[i], idx[[i]], envir=assignments)
+  }
+
+  for (i in 1:nrow(peptideinfo)) {
+    assign(keys[i],
+           .createMs2SpectrumFromFragments(peptideinfo=peptideinfo[i, ],
+                                           fragments=fragments,
+                                           assignments=assignments,
+                                           fileId=fileId),
+           envir=assaydata)
+
+    if (verbose) {
+      setTxtProgressBar(pb, i)
+    }
+  }
+  if (verbose) {
+    close(pb)
+  }
+  return(assaydata)
+}
+
 
