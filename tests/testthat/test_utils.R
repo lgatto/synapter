@@ -17,9 +17,9 @@ test_that("flatMatchedEMRTs", {
   expect_equal(synapter:::flatMatchedEMRTs(df), rdf)
 })
 
-test_that("matched.quant.spectrumIDs", {
+test_that("matched.quant.spectrumIDs2numeric", {
   ids <- c("1", "1,2,3,4", "")
-  expect_equal(synapter:::matched.quant.spectrumIDs(ids),
+  expect_equal(synapter:::matched.quant.spectrumIDs2numeric(ids),
                list(1, 1:4, numeric(0)))
 })
 
