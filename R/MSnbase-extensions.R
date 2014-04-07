@@ -7,7 +7,7 @@ setMethod("normalize", "Spectrum2",
     object@intensity <- object@intensity/object@precursorIntensity
     return(object)
   } else {
-    callNextMethod()
+    callNextMethod(object, method, ...)
   }
 })
 
