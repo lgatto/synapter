@@ -95,9 +95,7 @@
   if (exists(key, envir=assignments)) {
     i <- get(key, envir=assignments)
 
-    fragment.str <- fragments$fragment.str[i]
-    fragment.str[order(fragments$product.mhp[i])] <- fragment.str
-    return(fragment.str)
+    return(fragments$fragment.str[i][order(fragments$product.mhp[i])])
   } else {
     return(character())
   }
