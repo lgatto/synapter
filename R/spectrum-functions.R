@@ -164,8 +164,8 @@
   }
 
   process <- new("MSnProcess",
-                 processing = paste("Data loaded:", date()),
-                 files = file)
+                 processing=paste("Data loaded:", date()),
+                 files=file)
 
   nm <- ls(assaydata)
   pdata <- new("NAnnotatedDataFrame", data=data.frame(sampleNames=1L,
@@ -173,10 +173,10 @@
   fdata <- data.frame(spectrum=1:length(nm),
                       leID=uleID,
                       peptide.seq=sequences,
+                      row.names=keys,
                       stringsAsFactors=FALSE)
   ## reorder according to assaydata
-  fdata <- fdata[order(nm), ]
-  rownames(fdata) <- nm
+  fdata <- fdata[nm, ]
 
   fdata <- new("AnnotatedDataFrame", data=fdata)
 
