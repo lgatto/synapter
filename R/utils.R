@@ -579,10 +579,7 @@ flatMatchedEMRTs <- function(emrts, na.rm=TRUE) {
 }
 
 .getSpectrum <- function(key, envir) {
-  .getKeyValue(key, envir, {
-     s <- .createEmptyMsnbaseSpectrum2()
-     s@precScanNum <- as.integer(tail(strsplit(key, ":")[[1]], 1))
-     s})
+  .getKeyValue(key, envir, .createEmptyMsnbaseSpectrum2(key=key))
 }
 
 .getSpectra <- function(keys, envir) {

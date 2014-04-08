@@ -31,15 +31,12 @@
 #' @param file filename
 #' @param prefix character, prefix for the keyvalue in assaydata
 #' (e.g.,"ident.spectra")
-#' @param assaydata environment
 #' @param storeAll should all spectra stored? or only the needed ones?
-#' @param fileId integer, optional
 #' @param removeNeutralLoss remove rows with neutral loss != "none"?
 #' @param verbose verbose output
 #' @return modified assaydata
-.finalFragment2spectra <- function(df, file, prefix, assaydata, storeAll=TRUE,
-                                   fileId=0, removeNeutralLoss=TRUE,
-                                   verbose=TRUE) {
+.finalFragment2spectra <- function(df, file, prefix, storeAll=TRUE,
+                                   removeNeutralLoss=TRUE, verbose=TRUE) {
   stopifnot(!missing(prefix))
 
   fragments <- .readFragements(file, removeNeutralLoss=removeNeutralLoss,
@@ -65,32 +62,56 @@
   }
 
   keys <- paste(prefix, uleID , sep=":")
-  fragment_keys <- paste("fragment.str", prefix, uleID, sep=":")
-  sequence_keys <- paste("peptide.seq", prefix, uleID, sep=":")
+  fragment.str <- rep(NA, length(uleID))
+  sequences <- rep(NA, length(uleID))
+
+  assaydata <- new.env(hash=TRUE, parent=emptyenv(), size=length(uleID))
 
   for (i in seq(along=uleID)) {
     assign(keys[i],
            .createMs2SpectrumFromFragments(uleID[i],
                                            fragments=fragments,
-                                           assignments=assignments,
-                                           fileId=fileId),
+                                           assignments=assignments),
            envir=assaydata)
-    assign(fragment_keys[i],
-           .getFragmentStrFromFragments(uleID[i], fragments=fragments,
-                                        assignments=assignments),
-           envir=assaydata)
-    assign(sequence_keys[i],
-           .getPeptideSeqFromFragments(uleID[i], fragments=fragments,
-                                       assignments=assignments),
-           envir=assaydata)
+    fragment.str[i] <- .getFragmentStrFromFragments(uleID[i],
+                                                    fragments=fragments,
+                                                    assignments=assignments)
+    sequences[i] <- .getPeptideSeqFromFragments(uleID[i],
+                                                fragments=fragments,
+                                                assignments=assignments)
     if (verbose) {
       setTxtProgressBar(pb, i)
     }
   }
+
   if (verbose) {
     close(pb)
+    message("Create MSnExp object")
   }
-  return(assaydata)
+
+  process <- new("MSnProcess",
+                 processing = paste("Data loaded:", date()),
+                 files = file)
+
+  nm <- ls(assaydata)
+  pdata <- new("NAnnotatedDataFrame", data=data.frame(sampleNames=1L,
+                                                      type="fragment"))
+  fdata <- data.frame(spectrum=1:length(nm),
+                      leID=uleID,
+                      fragment.str=fragment.str,
+                      peptide.seq=sequences,
+                      stringsAsFactors=FALSE)
+  ## reorder according to assaydata
+  fdata <- fdata[order(nm), ]
+  rownames(fdata) <- nm
+
+  fdata <- new("AnnotatedDataFrame", data=fdata)
+
+  msnexp <- new("MSnExp", assayData=assaydata,
+                          phenoData=pdata,
+                          featureData=fdata,
+                          processingData=process)
+  return(msnexp)
 }
 
 #' fetch fragment.str in correct order
@@ -104,10 +125,14 @@
   if (exists(key, envir=assignments)) {
     i <- get(key, envir=assignments)
 
-    return(fragments$fragment.str[i][order(fragments$product.mhp[i])])
-  } else {
-    return(character())
+    fragment.str <- MSnbase:::utils.vec2ssv(
+      fragments$fragment.str[i][order(fragments$product.mhp[i])])
+
+    if (nchar(fragment.str)) {
+      return(fragment.str)
+    }
   }
+  return(NA)
 }
 
 #' fetch peptide.seq
@@ -121,10 +146,12 @@
   if (exists(key, envir=assignments)) {
     i <- get(key, envir=assignments)
 
-    return(fragments$peptide.str[i[1]])
-  } else {
-    return(character())
+    peptide.seq <- fragments$peptide.seq[i[1]]
+    if (!is.null(peptide.seq)) {
+      return(peptide.seq)
+    }
   }
+  return(NA)
 }
 
 
