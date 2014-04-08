@@ -1,14 +1,5 @@
 context("MSnbase-extensions")
 
-test_that("normalize,Spectrum2", {
-  s1 <- new("Spectrum2", mz=1:5, intensity=1:5, precursorIntensity=10)
-
-  ## max is default
-  expect_equal(intensity(normalize(s1)), (1:5)/5)
-  expect_equal(intensity(normalize(s1, method="sum")), (1:5)/15)
-  expect_equal(intensity(normalize(s1, method="precursor")), (1:5)/10)
-})
-
 test_that(".commonPeaks", {
   m1 <- new("Spectrum2", mz=1:5, intensity=1:5)
   m2 <- new("Spectrum2", mz=c(1, 2.1, 2.9, 4.5, 4.8), intensity=1:5)

@@ -1,16 +1,5 @@
 ## maybe these functions should become part of MSnbase
 
-setMethod("normalize", "Spectrum2",
-          function(object, method=c("max","sum", "precursor"), ...) {
-  method <- match.arg(method)
-  if (method == "precursor") {
-    object@intensity <- object@intensity/object@precursorIntensity
-    return(object)
-  } else {
-    callNextMethod(object, method, ...)
-  }
-})
-
 #' common peaks
 #' @param x spectrum1 (MSnbase::Spectrum2)
 #' @param y spectrum2 (MSnbase::Spectrum2)
