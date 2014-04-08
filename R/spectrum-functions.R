@@ -438,11 +438,9 @@ readSpectraAndFragments <- function(obj, filenames, removeNeutralLoss=TRUE,
   return(spectra)
 }
 
-#' crossmatching
-#' compares ident fragments vs quant product spectrum and
-#' quant fragments vs ident product spectrum
+#' crossmatching, wrapper function
 #' @param obj synapter object
-#' @param assaydata env containing the spectra and fragment spectra
+#' @param spectra list of 4 MSnExp containing the spectra and fragment spectra
 #' @param tolerance double, allowed deviation to consider a m/z as equal
 #' @param verbose verbose output?
 #' @return data.frame, extend/flatted matchedEmrts df with additional columns:
@@ -450,19 +448,36 @@ readSpectraAndFragments <- function(obj, filenames, removeNeutralLoss=TRUE,
 #' spectra.identXfragments.ident, spectra.quantXfragments.quant,
 #' spectra.identXfragments.quant, spectra.quantXfragments.ident
 #' sorry for the names
-crossmatching <- function(obj, assaydata, tolerance=25e-6, verbose=TRUE) {
+crossmatching <- function(obj, spectra, tolerance=25e-6, verbose=TRUE) {
   if (verbose) {
     message("create flat EMRTs data.frame")
   }
   emrts <- flatMatchedEMRTs(obj$MatchedEMRTs)
 
+  return(.cossmatching(flatEmrtsemrts=emrts, spectra=spectra,
+                       tolerance=tolerance, verbose=verbose))
+}
+
+#' .crossmatching, workhorse function
+#' compares ident fragments vs quant product spectrum and
+#' quant fragments vs ident product spectrum
+#' @param flatEmrts flattened EMRTs (see flatMatchedEMRTs)
+#' @param spectra list of 4 MSnExp containing the spectra and fragment spectra
+#' @param tolerance double, allowed deviation to consider a m/z as equal
+#' @param verbose verbose output?
+#' @return data.frame, extend/flatted matchedEmrts df with additional columns:
+#' matchType,
+#' spectra.identXfragments.ident, spectra.quantXfragments.quant,
+#' spectra.identXfragments.quant, spectra.quantXfragments.ident
+#' sorry for the names
+.crossmatching <- function(flatEmrts, spectra, tolerance=25e-6, verbose=TRUE) {
   prefixes <- paste(rep(c("spectra", "fragments"), each=2),
                     rep(c("ident", "quant"), times=2), sep=".")
   # "spectra.ident"   "spectra.quant"   "fragments.ident" "fragments.quant"
 
-  keys <- paste(rep(prefixes, each=nrow(emrts)),
-                rep(unlist(emrts[, c("precursor.leID.ident",
-                                     "precursor.leID.quant")]), times=2),
+  keys <- paste(rep(prefixes, each=nrow(flatEmrts)),
+                rep(unlist(flatEmrts[, c("precursor.leID.ident",
+                                         "precursor.leID.quant")]), times=2),
                 sep=":")
   keysm <- matrix(keys, ncol=4)
 
@@ -474,16 +489,16 @@ crossmatching <- function(obj, assaydata, tolerance=25e-6, verbose=TRUE) {
 
   if (verbose) {
     message("Look for common peaks")
-    pb <- txtProgressBar(0, 4*nrow(emrts), style=3)
+    pb <- txtProgressBar(0, 4*nrow(flatEmrts), style=3)
   }
 
-  emrts[, cols] <- lapply(cmb, function(i) {
+  flatEmrts[, cols] <- lapply(cmb, function(i) {
     apply(keysm[, i], 1, function(k) {
       if (verbose) {
         setTxtProgressBar(pb, pb$getVal()+1)
       }
-      .nCommonPeaks(.getSpectrum(k[1], envir=assaydata),
-                    .getSpectrum(k[2], envir=assaydata),
+      .nCommonPeaks(.getSpectrum(k[1], spectra[[i[1]]]),
+                    .getSpectrum(k[2], spectra[[i[2]]]),
                     tolerance=tolerance)
     })
   })
@@ -492,7 +507,7 @@ crossmatching <- function(obj, assaydata, tolerance=25e-6, verbose=TRUE) {
     close(pb)
   }
 
-  return(emrts)
+  return(flatEmrts)
 }
 
 #' plot crossmatching

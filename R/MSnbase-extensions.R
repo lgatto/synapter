@@ -6,12 +6,15 @@
 #' @param tolerance double, allowed deviation
 #' @return logical, common peaks in y
 .commonPeaks <- function(x, y, tolerance=25e-6) {
+
+  if (peaksCount(x) == 0 || peaksCount(y) == 0) {
+    return(logical())
+  }
+
   mx <- mz(x)
   my <- mz(y)
 
-  if (length(mx) == 0 || length(my) == 0) {
-    return(logical(length(my)))
-  } else if (length(mx) == 1) {
+  if (length(mx) == 1) {
     return(abs(mx-my)/my < tolerance)
   }
 

@@ -564,26 +564,22 @@ flatMatchedEMRTs <- function(emrts, na.rm=TRUE) {
   return(flatEmrts)
 }
 
+#' get spectra from MSnExp objects
 #' same functionality like "get" but doesn't throw an error if the key is
 #' not found
 #' @param key character, key
-#' @param envir env
-#' @param ifmissing returned if the key is missing
-#' @return value/ifmissing
-.getKeyValue <- function(key, envir, ifmissing) {
-  if (exists(key, envir=envir)) {
-    return(get(key, envir=envir))
+#' @param msnexp MSnExp object
+#' @return Spectrum2
+.getSpectrum <- function(key, msnexp) {
+  if (exists(key, envir=assayData(msnexp))) {
+    return(msnexp[[key]])
   } else {
-    return(ifmissing)
+    return(.createEmptyMsnbaseSpectrum2(key=key))
   }
 }
 
-.getSpectrum <- function(key, envir) {
-  .getKeyValue(key, envir, .createEmptyMsnbaseSpectrum2(key=key))
-}
-
-.getSpectra <- function(keys, envir) {
-  lapply(keys, .getSpectrum, envir=envir)
+.getSpectra <- function(keys, spectralist) {
+  mapply(.getSpectrum, keys, spectralist)
 }
 
 .getFragment <- function(key, envir) {
