@@ -605,7 +605,6 @@ flatMatchedEMRTs <- function(emrts, na.rm=TRUE) {
   lapply(keys, .getSequence, envir=envir)
 }
 
-## we could use MSnbase:::.ssv2list but it has no "sep" argument ...
 matched.quant.spectrumIDs2numeric <- function(x) {
   lapply(MSnbase:::utils.ssv2list(x, sep=","), as.numeric)
 }
