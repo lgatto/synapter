@@ -7,8 +7,10 @@
 #' @return logical, common peaks in y
 .commonPeaks <- function(x, y, tolerance=25e-6) {
 
-  if (peaksCount(x) == 0 || peaksCount(y) == 0) {
-    return(logical())
+  if (peaksCount(x) == 0) {
+    return(logical(peaksCount(y)))
+  } else if (peaksCount(y) == 0) {
+    return(logical(peaksCount(x)))
   }
 
   mx <- mz(x)
@@ -61,3 +63,5 @@
 .getSpectra <- function(keys, spectralist) {
   mapply(.getSpectrum, keys, spectralist)
 }
+
+
