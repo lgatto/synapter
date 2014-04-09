@@ -373,7 +373,7 @@
            col=cols[(i-1)*2+common[[i]]+1L], pch=pch[common[[i]]+1L],
            cex=0.5)
 
-    if (length(fragments[[i]])) {
+    if (length(fragments[[i]]) && !anyNA(fragments[[i]])) {
       text(mz(spectra[[i]]), orientation[i]*intensity(spectra[[i]]),
            fragments[[i]], pos=text.pos[i], offset=0.25,
            cex=fragments.cex, col="#808080")
@@ -512,13 +512,13 @@ crossmatching <- function(obj, spectra, tolerance=25e-6, verbose=TRUE) {
 
 #' plot crossmatching
 #' @param cx crossmatching df, result of crossmatching
-#' @param assaydata env, spectra
+#' @param spectra list of 4 MSnExp containing the spectra and fragment spectra
 #' @param legend.cex cex for legend text
 #' @param tolerance double, allowed deviation
 #' @param verbose verbose output?
 #' @return data.frame, extend/flatted matchedEmrts df with additional columns:
 #' cxIdentSxQuantF, cxIdentFxQuantS, matchType
-plotCrossmatching <- function(cx, assaydata,
+plotCrossmatching <- function(cx, spectra,
                               legend.cex=0.75, tolerance=25e-6,
                               verbose=TRUE) {
   prefixes <- paste(rep(c("spectra", "fragments"), each=2),
@@ -532,12 +532,24 @@ plotCrossmatching <- function(cx, assaydata,
   if (verbose) {
     pb <- txtProgressBar(0, nrow(cx), style=3)
   }
+
   for (i in 1:nrow(cx)) {
-    .plotSpectraVsFragments(spectra=.getSpectra(keysm[i, ], envir=assaydata),
-                            sequences=.getSequences(keysm[i, ],
-                                                    envir=assaydata),
-                            fragments=.getFragments(keysm[i, 3:4],
-                                                    envir=assaydata),
+
+    sequences <- mapply(function(x, k) {
+      ## avoid partial matching of rows 
+      ## ( [.data.frame always use partial match for rows; exact=TRUE works only
+      ## for column names)
+      return(fData(x)[match(k, rownames(fData(x))), "peptide.seq"])
+    }, x=spectra, k=keysm[i, ], SIMPLIFY=FALSE, USE.NAMES=FALSE)
+
+    fragments <- mapply(function(x, k) {
+      ## avoid partial matching (see above)
+      fragment.str <- fData(x)[match(k, rownames(fData(x))), "fragment.str"]
+      return(MSnbase:::utils.ssv2vec(fragment.str))
+    }, x=spectra[3:4], k=keysm[i, 3:4], SIMPLIFY=FALSE, USE.NAMES=FALSE)
+
+    .plotSpectraVsFragments(spectra=.getSpectra(keysm[i, ], spectralist=spectra),
+                            sequences=sequences, fragments=fragments,
                             tolerance=tolerance, legend.cex=legend.cex)
     if (verbose) {
       setTxtProgressBar(pb, i)
