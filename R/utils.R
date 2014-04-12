@@ -563,3 +563,7 @@ flatMatchedEMRTs <- function(emrts, na.rm=TRUE) {
   rownames(flatEmrts) <- NULL
   return(flatEmrts)
 }
+
+matched.quant.spectrumIDs2numeric <- function(x) {
+  lapply(MSnbase:::utils.ssv2list(x, sep=","), as.numeric)
+}
