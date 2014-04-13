@@ -295,14 +295,22 @@
   par(mar=c(2, 2, 2, 0.5)) #c(bottom, left, top, right)
   MSnbase:::.plotSpectrumVsSpectrum(
     spectra[1:2], norm=FALSE,
-    common=list(.commonPeaks(spectra[[4]], spectra[[1]], tolerance),
-                .commonPeaks(spectra[[3]], spectra[[2]], tolerance)),
+    common=list(MSnbase:::commonPeaks(spectra[[4]],
+                                      spectra[[1]],
+                                      tolerance=tolerance),
+                MSnbase:::commonPeaks(spectra[[3]],
+                                      spectra[[2]],
+                                      tolerance=tolerance)),
     main="spectra", xlim=xlim, ylim=ylim, ...)
   par(mar=c(2, 0.5, 2, 2)) #c(bottom, left, top, right)
   MSnbase:::.plotSpectrumVsSpectrum(
     spectra[3:4], norm=FALSE,
-    common=list(.commonPeaks(spectra[[4]], spectra[[3]], tolerance),
-                .commonPeaks(spectra[[3]], spectra[[4]], tolerance)),
+    common=list(MSnbase:::commonPeaks(spectra[[4]],
+                                      spectra[[3]],
+                                      tolerance=tolerance),
+                MSnbase:::commonPeaks(spectra[[3]],
+                                      spectra[[4]],
+                                      tolerance=tolerance)),
     main="fragments", xlim=xlim, ylim=ylim, yaxt="n", ...)
   axis(4)
 }
@@ -412,9 +420,10 @@ crossmatching <- function(obj, spectra, tolerance=25e-6, verbose=TRUE) {
       if (verbose) {
         setTxtProgressBar(pb, pb$getVal()+1)
       }
-      .nCommonPeaks(.getSpectrum(k[1], spectra[[i[1]]]),
-                    .getSpectrum(k[2], spectra[[i[2]]]),
-                    tolerance=tolerance)
+      MSnbase:::numberOfCommonPeaks(
+        .getSpectrum(k[1], spectra[[i[1]]]),
+        .getSpectrum(k[2], spectra[[i[2]]]),
+        tolerance=tolerance)
     })
   })
 
