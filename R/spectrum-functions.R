@@ -434,10 +434,7 @@ readSpectraAndFragments <- function(obj, filenames, removeNeutralLoss=TRUE,
 #' spectra.identXfragments.quant, spectra.quantXfragments.ident
 #' sorry for the names
 crossmatching <- function(obj, spectra, tolerance=25e-6, verbose=TRUE) {
-  if (verbose) {
-    message("create flat EMRTs data.frame")
-  }
-  emrts <- flatMatchedEMRTs(obj$MatchedEMRTs)
+  emrts <- flatMatchedEMRTs(obj$MatchedEMRTs, verbose=verbose)
 
   return(.crossmatching(flatEmrts=emrts, spectra=spectra,
                         tolerance=tolerance, verbose=verbose))
@@ -466,15 +463,16 @@ crossmatching <- function(obj, spectra, tolerance=25e-6, verbose=TRUE) {
                     times=2), sep=":")
   keysm <- matrix(keys, ncol=4)
 
-  cmb <- list(c(1, 3), c(2, 4),
-              c(1, 4), c(2, 3))
+  #cmb <- list(c(1, 3), c(2, 4),
+  #            c(1, 4), c(2, 3))
+  cmb <- list(c(1, 4), c(2, 3), c(3, 4))
 
   cols <- sapply(cmb, function(x)paste0(prefixes[x], collapse="X"))
   # "spectra.identXfragments.ident" ...
 
   if (verbose) {
     message("Look for common peaks")
-    pb <- txtProgressBar(0, 4*nrow(flatEmrts), style=3)
+    pb <- txtProgressBar(0, length(cmb)*nrow(flatEmrts), style=3)
   }
 
   flatEmrts[, cols] <- lapply(cmb, function(i) {
