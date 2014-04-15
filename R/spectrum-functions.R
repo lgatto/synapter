@@ -462,8 +462,8 @@ crossmatching <- function(obj, spectra, tolerance=25e-6, verbose=TRUE) {
 
   keys <- paste(rep(prefixes, each=nrow(flatEmrts)),
                 rep(unlist(flatEmrts[, c("precursor.leID.ident",
-                                         "precursor.leID.quant")]), times=2),
-                sep=":")
+                                         "matched.quant.spectrumIDs")]),
+                    times=2), sep=":")
   keysm <- matrix(keys, ncol=4)
 
   cmb <- list(c(1, 3), c(2, 4),
