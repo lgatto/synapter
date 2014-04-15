@@ -551,3 +551,55 @@ plotCrossmatching <- function(cx, spectra,
   }
 }
 
+#' plot crossmatching FDR
+#' @param cx crossmatching df, result of crossmatching
+#' @param spectra list of 4 MSnExp containing the spectra and fragment spectra
+#' @param tolerance double, allowed deviation
+#' @param verbose verbose output?
+#' @return invisible matrix with columns TP, FP, TN, FN, FDR
+plotCrossmatchingFDR <- function(cx, tolerance=25e-6, verbose=TRUE) {
+
+  ## select "ground-truth"
+  trueIdx <- grep("true", cx$matchType)
+  falseIdx <- grep("false", cx$matchType)
+
+  n <- min(c(length(trueIdx), length(falseIdx)))
+
+  if (length(trueIdx) > n) {
+    trueIdx <- sample(trueIdx, n)
+  }
+
+  if (length(falseIdx) > n) {
+    falseIdx <- sample(falseIdx, n)
+  }
+
+
+  ytrain <- rep(c(TRUE, FALSE), each=n)
+  xtrain <- c(cx$fragments.identXfragments.quant[trueIdx],
+              cx$fragments.identXfragments.quant[falseIdx])
+  thresholds <- 0:max(xtrain, na.rm=TRUE)
+
+  contingencies <- sapply(thresholds, function(th) {
+    tp <- sum(xtrain > th & ytrain)
+    fp <- sum(xtrain > th & !ytrain)
+    tn <- sum(xtrain < th & !ytrain)
+    fn <- sum(xtrain < th & ytrain)
+    fdr <- fp/(tp+fp)
+    return(c(tp=tp, fp=fp, tn=tn, fn=fn, fdr=fdr))
+  })
+  colnames(contingencies) <- thresholds
+
+  par(mfcol=c(1, 2))
+  plot(thresholds, contingencies[5, ], type="b",
+       xlab="# of common peaks", ylab="FDR",
+       main="crossmatching FDR", pch=19)
+  matplot(t(contingencies[1:4, ]), type="l", lty=1,
+          xlab="# of common peaks", ylab="# of peptides",
+          main="crossmatching details")
+  legend("bottomright", legend=c("TP", "FP", "TN", "FN"),
+         col=1:4, lwd=1, bty="n", inset=0.05)
+  par(mfcol=c(1, 1))
+
+  invisible(contingencies)
+}
+
