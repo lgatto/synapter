@@ -274,18 +274,17 @@
 }
 
 #' @param spectra list, 4 MSnbase::Spectrum2 objects
-#' @param norm normalise spectra?
 #' @param fragments list, 2 character vectors containing the fragment.str
 #' @param tolerance double, allowed deviation
-#' @param ... passed to MSnbase:::.plotSpectrumVsSpectrum
-.plotSpectraVsFragments <- function(spectra, tolerance=25e-6, ...) {
+#' @param ... passed to MSnbase:::.plotSingleSpectrum
+.plotSpectraVsFragments <- function(spectra, fragments, tolerance=25e-6, ...) {
   spectra <- lapply(spectra, normalize, method="precursor")
 
   mass <- unlist(lapply(spectra, mz))
-  xlim <- c(min(mass), max(mass))
+  xlim <- c(min(mass, na.rm=TRUE), max(mass, na.rm=TRUE))
 
   inten <- unlist(lapply(spectra, intensity))
-  maxInten <- max(c(0, inten))
+  maxInten <- max(c(0, inten), na.rm=TRUE)
   ylim <- c(-maxInten, maxInten)
 
   oldPar <- par(no.readonly=TRUE)
@@ -293,26 +292,89 @@
   par(mfrow=c(1, 2))
 
   par(mar=c(2, 2, 2, 0.5)) #c(bottom, left, top, right)
-  MSnbase:::.plotSpectrumVsSpectrum(
-    spectra[1:2], norm=FALSE,
-    common=list(MSnbase:::commonPeaks(spectra[[4]],
-                                      spectra[[1]],
+  .plotSpectrumVsSpectrum(
+    spectra[1:2],
+    common=list(MSnbase:::commonPeaks(spectra[[1]],
+                                      spectra[[4]],
                                       tolerance=tolerance),
-                MSnbase:::commonPeaks(spectra[[3]],
-                                      spectra[[2]],
+                MSnbase:::commonPeaks(spectra[[2]],
+                                      spectra[[3]],
                                       tolerance=tolerance)),
+    fragments=list(data.frame(), data.frame()),
     main="spectra", xlim=xlim, ylim=ylim, ...)
   par(mar=c(2, 0.5, 2, 2)) #c(bottom, left, top, right)
-  MSnbase:::.plotSpectrumVsSpectrum(
-    spectra[3:4], norm=FALSE,
-    common=list(MSnbase:::commonPeaks(spectra[[4]],
-                                      spectra[[3]],
-                                      tolerance=tolerance),
-                MSnbase:::commonPeaks(spectra[[3]],
+  .plotSpectrumVsSpectrum(
+    spectra[3:4],
+    common=list(MSnbase:::commonPeaks(spectra[[3]],
                                       spectra[[4]],
+                                      tolerance=tolerance),
+                MSnbase:::commonPeaks(spectra[[4]],
+                                      spectra[[3]],
                                       tolerance=tolerance)),
+    fragments=list(data.frame(mz=mz(spectra[[3]]), ion=fragments[[1]],
+                              stringsAsFactors=FALSE),
+                   data.frame(mz=mz(spectra[[4]]), ion=fragments[[2]],
+                              stringsAsFactors=FALSE)),
     main="fragments", xlim=xlim, ylim=ylim, yaxt="n", ...)
   axis(4)
+}
+
+#' plot spectrum1 vs spectrum2
+#' @param spectra list, 2 MSnbase::Spectrum2 objects
+#' @param sequences character vector (length==2) containing the peptide
+#' sequences for both spectra
+#' @param common list (length==2), containing logical vector for common peaks
+#' @param fragments list (length==2), containing fragments data.frames
+#' @param matchType character
+#' @param fragments.cex cex for fragments
+#' @param legend.cex cex for legend
+#' @param ... passed to MSnbase:::.plotSingleSpectrum
+.plotSpectrumVsSpectrum <- function(spectra,
+                                    sequences,
+                                    common,
+                                    fragments=vector(mode="list", length=2),
+                                    matchType,
+                                    xlim, ylim,
+                                    legend.cex=1, ...) {
+  if (missing(sequences)) {
+    sequences <- character(2)
+  }
+
+  orientation <- c(1, -1)
+  add <- c(FALSE, TRUE)
+  legend.pos <- c("topleft", "bottomleft")
+  legend.prefix <- c("ident", "quant")
+  ## colors: ColorBrewer RdYlBu c(9, 11, 3, 1)
+  cols <- c("#74ADD1", "#313695", "#F46D43", "#A50026")
+  pch <- c(NA, 19)
+
+  for (i in seq(along=spectra)) {
+    if (!length(common[[i]])) {
+      common[[i]] <- logical(peaksCount(spectra[[i]]))
+    }
+    MSnbase:::.plotSingleSpectrum(spectra[[i]],
+                                  sequence=sequences[[i]],
+                                  fragments=fragments[[i]],
+                                  orientation=orientation[i],
+                                  add=add[i], xlim=xlim, ylim=ylim,
+                                  col=cols[(i-1)*2+common[[i]]+1],
+                                  pch=pch[common[[i]]+1], ...)
+
+    label <- paste0(legend.prefix[i], " prec leID: ",
+                    precScanNum(spectra[[i]]))
+
+    if (peaksCount(spectra[[i]])) {
+      label <- paste0(label, ", prec mass: ", round(precursorMz(spectra[[i]]), 3),
+                             ", prec z: ", precursorCharge(spectra[[i]]),
+                             ", # common: ", sum(common[[i]]),
+                             ", match: ", matchType)
+      if (nchar(sequences[[i]])) {
+        label <- paste0(label, ",\nseq: ", sequences[[i]])
+      }
+    }
+
+    legend(legend.pos[i], legend=label, bty="n", cex=legend.cex)
+  }
 }
 
 #' readSpectraAndFragments
@@ -471,11 +533,14 @@ plotCrossmatching <- function(cx, spectra,
     fragments <- mapply(function(x, k) {
       ## avoid partial matching (see above)
       fragment.str <- fData(x)[match(k, rownames(fData(x))), "fragment.str"]
-      return(MSnbase:::utils.ssv2vec(fragment.str))
+      return(na.omit(MSnbase:::utils.ssv2vec(fragment.str)))
     }, x=spectra[3:4], k=keysm[i, 3:4], SIMPLIFY=FALSE, USE.NAMES=FALSE)
 
     .plotSpectraVsFragments(spectra=.getSpectra(keysm[i, ], spectralist=spectra),
-                            sequences=sequences, tolerance=tolerance,
+                            sequences=sequences,
+                            fragments=fragments,
+                            matchType=cx$matchType[i],
+                            tolerance=tolerance,
                             legend.cex=legend.cex,
                             fragments.cex=fragments.cex)
     if (verbose) {
