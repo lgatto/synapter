@@ -553,10 +553,9 @@ plotCrossmatching <- function(cx, spectra,
 
 #' plot crossmatching FDR
 #' @param cx crossmatching df, result of crossmatching
-#' @param spectra list of 4 MSnExp containing the spectra and fragment spectra
 #' @param tolerance double, allowed deviation
 #' @param verbose verbose output?
-#' @return invisible matrix with columns TP, FP, TN, FN, FDR
+#' @return invisible matrix with rows TP, FP, TN, FN, FDR
 plotCrossmatchingFDR <- function(cx, tolerance=25e-6, verbose=TRUE) {
 
   ## select "ground-truth"
@@ -601,5 +600,35 @@ plotCrossmatchingFDR <- function(cx, tolerance=25e-6, verbose=TRUE) {
   par(mfcol=c(1, 1))
 
   invisible(contingencies)
+}
+
+#' calculate and plot the difference of the first and the second highest
+#' number of peaks in a non-unique-match group
+#' @param cx crossmatching df, result of crossmatching
+#' @param tolerance double, allowed deviation
+#' @param verbose verbose output?
+#' @return invisible data.frame, columns: diff, true
+plotCrossmatchingNonuniqueDiff <- function(cx, breaks=50) {
+  cx <- cx[grep("non-unique", cx$matchType), ]
+  cx$true <- grepl("true", cx$matchType)
+
+  d <- tapply(1:nrow(cx), cx$precursor.leID.ident, function(i) {
+    s <- cx[i, ]
+    com <- sort(s$fragments.identXfragments.quant,
+                decreasing=TRUE, index.return=TRUE)
+    return(c(diff=com$x[1]-com$x[2], true=isTRUE(s$true[com$ix[1]])))
+  })
+  d <- as.data.frame(do.call(rbind, d))
+  d$true <- as.logical(d$true)
+  d$precursor.leID.ident <- as.numeric(rownames(d))
+
+  hist(d$diff[d$true], col=3,
+       main="Common Peak Number Differences for Non-Unique Matches",
+       xlab="# of common peaks", ylab="# peptides", breaks=breaks)
+  hist(d$diff[!d$true], col=2, add=TRUE, breaks=breaks)
+  legend("topright", legend=c("true match", "false match"),
+         col=3:2, pch=15, bty="n")
+
+  invisible(d)
 }
 
