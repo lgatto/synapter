@@ -523,7 +523,11 @@ getExtension <- function (filename) {
 ## adds a columns "matchType" that could be "unique-true", "unique-false",
 ## "non-unique-true", "non-unique-false"
 ## please note that it would change the order of the data.frame
-flatMatchedEMRTs <- function(emrts, na.rm=TRUE) {
+flatMatchedEMRTs <- function(emrts, na.rm=TRUE, verbose=TRUE) {
+  if (verbose) {
+    message("create flat EMRTs data.frame")
+  }
+
   if (na.rm) {
     emrts <- emrts[!is.na(emrts$precursor.leID.quant), ]
   }
