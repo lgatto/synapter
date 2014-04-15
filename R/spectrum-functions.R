@@ -468,12 +468,11 @@ plotCrossmatching <- function(cx, spectra,
       return(fData(x)[match(k, rownames(fData(x))), "peptide.seq"])
     }, x=spectra, k=keysm[i, ], SIMPLIFY=FALSE, USE.NAMES=FALSE)
 
-    # we calculate the fragments in MSnbase:::plotSpectrumVsSpectrum
-    #fragments <- mapply(function(x, k) {
-    #  ## avoid partial matching (see above)
-    #  fragment.str <- fData(x)[match(k, rownames(fData(x))), "fragment.str"]
-    #  return(MSnbase:::utils.ssv2vec(fragment.str))
-    #}, x=spectra[3:4], k=keysm[i, 3:4], SIMPLIFY=FALSE, USE.NAMES=FALSE)
+    fragments <- mapply(function(x, k) {
+      ## avoid partial matching (see above)
+      fragment.str <- fData(x)[match(k, rownames(fData(x))), "fragment.str"]
+      return(MSnbase:::utils.ssv2vec(fragment.str))
+    }, x=spectra[3:4], k=keysm[i, 3:4], SIMPLIFY=FALSE, USE.NAMES=FALSE)
 
     .plotSpectraVsFragments(spectra=.getSpectra(keysm[i, ], spectralist=spectra),
                             sequences=sequences, tolerance=tolerance,
