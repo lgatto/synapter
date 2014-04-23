@@ -61,6 +61,8 @@ exportMethods(show,
               getPepNumbers,
               showFdrStats,
               getEMRTtable,
+              setCrossMatchingPpmTolerance,
+              getCrossMatchingPpmTolerance,
               performance,
               performance2,
               ## filtering prior to merging

@@ -371,24 +371,7 @@
   }
 }
 
-#' crossmatching, wrapper function
-#' @param obj synapter object
-#' @param spectra list of 4 MSnExp containing the spectra and fragment spectra
-#' @param tolerance double, allowed deviation to consider a m/z as equal
-#' @param verbose verbose output?
-#' @return data.frame, extend/flatted matchedEmrts df with additional columns:
-#' matchType,
-#' spectra.identXfragments.ident, spectra.quantXfragments.quant,
-#' spectra.identXfragments.quant, spectra.quantXfragments.ident
-#' sorry for the names
-crossmatching <- function(obj, spectra, tolerance=25e-6, verbose=TRUE) {
-  emrts <- flatMatchedEMRTs(obj$MatchedEMRTs, verbose=verbose)
-
-  return(.crossmatching(flatEmrts=emrts, spectra=spectra,
-                        tolerance=tolerance, verbose=verbose))
-}
-
-#' .crossmatching, workhorse function
+#' crossmatching, workhorse function
 #' compares ident fragments vs quant product spectrum and
 #' quant fragments vs ident product spectrum
 #' @param flatEmrts flattened EMRTs (see flatMatchedEMRTs)
@@ -397,18 +380,17 @@ crossmatching <- function(obj, spectra, tolerance=25e-6, verbose=TRUE) {
 #' @param verbose verbose output?
 #' @return data.frame, extend/flatted matchedEmrts df with additional columns:
 #' matchType,
-#' spectra.identXfragments.ident, spectra.quantXfragments.quant,
-#' spectra.identXfragments.quant, spectra.quantXfragments.ident
+#' spectrum.identXfragments.ident, spectrum.quantXfragments.quant,
+#' spectrum.identXfragments.quant, spectrum.quantXfragments.ident
 #' sorry for the names
-.crossmatching <- function(flatEmrts, spectra, tolerance=25e-6, verbose=TRUE) {
-  prefixes <- paste(rep(c("spectra", "fragments"), each=2),
+crossmatching <- function(flatEmrts, spectra, tolerance=25e-6, verbose=TRUE) {
+  prefixes <- paste(rep(c("spectrum", "fragments"), each=2),
                     rep(c("ident", "quant"), times=2), sep=".")
-  # "spectra.ident"   "spectra.quant"   "fragments.ident" "fragments.quant"
+  # "spectrum.ident"   "spectrum.quant"   "fragments.ident" "fragments.quant"
 
-  keys <- paste(rep(prefixes, each=nrow(flatEmrts)),
-                rep(unlist(flatEmrts[, c("precursor.leID.ident",
-                                         "matched.quant.spectrumIDs")]),
-                    times=2), sep=":")
+  keys <- as.character(rep(unlist(flatEmrts[, c("precursor.leID.ident",
+                                                "matched.quant.spectrumIDs")]),
+                           times=2))
   keysm <- matrix(keys, ncol=4)
 
   #cmb <- list(c(1, 3), c(2, 4),
@@ -416,7 +398,7 @@ crossmatching <- function(obj, spectra, tolerance=25e-6, verbose=TRUE) {
   cmb <- list(c(1, 4), c(2, 3), c(3, 4))
 
   cols <- sapply(cmb, function(x)paste0(prefixes[x], collapse="X"))
-  # "spectra.identXfragments.ident" ...
+  # "spectrum.identXfragments.ident" ...
 
   if (verbose) {
     message("Look for common peaks")

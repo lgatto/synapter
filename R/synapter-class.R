@@ -43,7 +43,9 @@
                     QuantFragmentFile = "character",
                     QuantFragmentData = "MSnExp",
                     IdentFragmentFile = "character",
-                    IdentFragmentData = "MSnExp"),
+                    IdentFragmentData = "MSnExp",
+                    CrossMatching = "data.frame",
+                    CrossMatchingPpmTolerance = "numeric"),
                 methods = list(
                     initialize = function() {
                         .self$Version <- as.character(packageVersion("synapter"))
@@ -378,6 +380,36 @@
                                                      paste(dim(.self$MatchedEMRTs), collapse = ","),
                                                      "] (", mergedEMRTs, ")",
                                                      sep = ""))
+                    },
+                    crossMatching = function(verbose=TRUE) {
+                      if (!nrow(.self$MatchedEMRTs)) {
+                        stop("You have to run ", sQuote("findEMRTs"),
+                             " first!")
+                      }
+                      emrts <- flatMatchedEMRTs(.self$MatchedEMRTs,
+                                               verbose=verbose)
+                      if (!length(.self$CrossMatchingPpmTolerance)) {
+                        warning("Crossmatching ppm tolerance undefined. ",
+                                "Setting to default value.")
+                        .self$setCrossMatchingPpmTolerance()
+                      }
+
+                      .self$CrossMatching <-
+                        crossmatching(flatEmrts=emrts,
+                                      spectra=list(.self$IdentSpectrumData,
+                                                   .self$QuantSpectrumData,
+                                                   .self$IdentFragmentData,
+                                                   .self$QuantFragmentData),
+                                      tolerance=.self$CrossMatchingPpmTolerance,
+                                      verbose=verbose)
+                      .self$SynapterLog <-
+                        c(.self$SynapterLog,
+                          paste0("Crossmatching identification and ",
+                                 "quantitation data at ",
+                                 .self$CrossMatchingPpmTolerance,
+                                 "ppm [",
+                                 paste0(dim(.self$CrossMatching), collapse=","),
+                                 "]"))
                     }))
 
 
@@ -545,6 +577,13 @@
                                                 paste("Set ppm error to ",
                                                       .self$PpmError,
                                                       sep=""))
+                       },
+                       setCrossMatchingPpmTolerance = function(ppm = 25) {
+                         'Sets crossmatching mass error tolerance threshold.'
+                         .self$CrossMatchingPpmTolerance <- ppm
+                         .self$SynapterLog <-
+                           c(.self$SynapterLog,
+                             paste0("Set crossmatching ppm error to ", ppm))
                        },
                        setLowessSpan = function(span = 0.05) {
                          'Sets lowess\' span parameter.'

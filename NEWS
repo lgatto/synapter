@@ -1,6 +1,9 @@
 CHANGES IN VERSION 1.7.1
 ------------------------
  o add updateSynapterObject function [2014-04-23 Wed]
+ o add loadSpectra and loadFragments method [2014-04-23 Wed]
+ o add crossMatching, setCrossMatchingPpmTolerance and
+   getCrossMatchingPpmTolerance method [2014-04-23 Wed]
 
 CHANGES IN VERSION 1.7.0
 ------------------------

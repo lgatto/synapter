@@ -21,6 +21,8 @@
 \alias{findEMRTs}
 \alias{searchGrid,Synapter-method}
 \alias{searchGrid}
+\alias{crossMatching,Synapter-method}
+\alias{crossMatching}
 
 % setters and getters
 \alias{getGrid,Synapter-method}
@@ -69,6 +71,10 @@
 \alias{getProtFpr}
 \alias{getEMRTtable,Synapter-method}
 \alias{getEMRTtable}
+\alias{setCrossMatchingPpmTolerance,Synapter-method}
+\alias{setCrossMatchingPpmTolerance}
+\alias{getCrossMatchingPpmTolerance,Synapter-method}
+\alias{getCrossMatchingPpmTolerance}
 \alias{performance,Synapter-method}
 \alias{performance2,Synapter-method}
 \alias{performance}
@@ -365,6 +371,15 @@ Synapter(filenames, master) ## creates an instance of class 'Synapter'
     imported via \code{loadSpectra} respective \code{loadFragments}.
   }
 
+  \subsection{Cross Matching}{
+    After importing spectra and fragment data peaks that matching between
+    identification fragments and quantitation fragments, between
+    identification spectrum and quantitation fragments, and between
+    quantitation spectrum and identification fragments using the
+    \code{crossMatching} method. Use \code{setCrossMatchingPpmTolerance} to set
+    the maximal allowed tolerance for considering a peak as identical.
+  }
+
   \subsection{Exporting and saving data}{
     The merged identification and quantitation peptides can be exported
     to csv using the  \code{writeMergedPeptides} method. Similarly, the
@@ -433,7 +448,13 @@ Synapter(filenames, master) ## creates an instance of class 'Synapter'
 	in internal calls to \code{findEMRTs} is \code{"transfer"} - see
 	\code{findEMRTs} for details).
       }
-    }
+
+      \item{crossMatching}{\code{signature(object="Synapter",
+      ppm = "numeric", verbose = "logical"}:
+      Performs a cross matching between spectra and fragment data.
+      The \code{ppm} argument controls the tolerance that is used to consider
+      two peaks (MZ values) as identical.  If \code{verbose} is \code{TRUE}
+      (default) a progress bar is shown.  }
   }
 
   \subsection{Methods to display, access and set data}{
@@ -529,6 +550,15 @@ Synapter(filenames, master) ## creates an instance of class 'Synapter'
       \item{setPpmError}{\code{signature(object="Synapter", ppm =
 	  "numeric")}: Sets the identification and quantitation mass
 	tolerance \code{ppm} (default is 10).
+      }
+
+      \item{setCrossMatchingPpmTolerance}{\code{signature(object="Synapter",
+        ppm = "numeric")}: Sets the crossmatching mass tolerance \code{ppm}
+        (default is 25).
+      }
+
+      \item{getCrossMatchingPpmTolerance}{\code{signature(object="Synapter")}:
+        Returns the crossmatching mass tolerance in ppm.
       }
 
       \item{setLowessSpan}{\code{signature(object="Synapter", span =

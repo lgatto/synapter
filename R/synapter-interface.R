@@ -235,6 +235,12 @@ setMethod(getPepNumbers, "Synapter",
             }
           })
 
+setMethod(setCrossMatchingPpmTolerance, "Synapter",
+          function(object, ppm = 25)
+            object$setCrossMatchingPpmTolerance(ppm))
+
+setMethod(getCrossMatchingPpmTolerance, "Synapter",
+          function(object) object$CrossMatchingPpmTolerance)
 
 setMethod(showFdrStats, "Synapter",
           function(object,
@@ -564,6 +570,14 @@ setMethod(plotGrid, "Synapter",
             p <- levelplot(grd, xlab = "nsd", ylab = "ppm", main = main)
             print(p)
             invisible(p)
+          })
+
+setMethod(crossMatching, "Synapter",
+          function(object, ppm, verbose=TRUE) {
+            if (!missing(ppm)) {
+              setCrossMatchingPpmTolerance(object, ppm)
+            }
+            object$crossMatching(verbose=verbose)
           })
 
 

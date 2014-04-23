@@ -9,7 +9,8 @@
 ##'     Introduce \code{updateSynapterObject} function. \cr
 ##'     Add IdentSpectrumFile, IdentSpectrumData, QuantSpectrumFile,
 ##'     QuantSpectrumData, IdentFragmentFile, IdentFragmentData,
-##'     QuantFragmentFile, and QuantFragmentData fields to synapter class.}
+##'     QuantFragmentFile, QuantFragmentData, CrossMatching,
+##'     and CrossMatchingTolerance fields to synapter class.}
 ##' }
 ##'
 ##' @param obj synapter object
@@ -26,8 +27,8 @@ updateSynapterObject <- function(obj, verbose=TRUE) {
 
   current <- as.package_version(obj$Version)
 
-  ## 1.7.1 adds {Ident,Quant}{Spectrum,Fragments}{File,Data} fields to the class
-  ## definition
+  ## 1.7.1 adds {Ident,Quant}{Spectrum,Fragments}{File,Data}, CrossMatching,
+  ## CrossMatchingPpmTolerance fields to the class definition
   minimalVersion <- as.package_version("1.7.1")
 
   isDeprecated <- current < minimalVersion
