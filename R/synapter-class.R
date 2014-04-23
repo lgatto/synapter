@@ -34,14 +34,23 @@
                     ## matching EMRTs
                     PpmError = "numeric",
                     RtNsd = "numeric",
-                    MatchedEMRTs = "data.frame"),
+                    MatchedEMRTs = "data.frame",
+                    ## cross matching stuff
+                    QuantSpectrumFile = "character",
+                    QuantSpectrumData = "MSnExp",
+                    IdentSpectrumFile = "character",
+                    IdentSpectrumData = "MSnExp",
+                    QuantFragmentFile = "character",
+                    QuantFragmentData = "MSnExp",
+                    IdentFragmentFile = "character",
+                    IdentFragmentData = "MSnExp"),
                 methods = list(
                     initialize = function() {
                         .self$Version <- as.character(packageVersion("synapter"))
                         .self$SynapterLog <- c(.self$SynapterLog,
                                                paste("Instance created on ", date(), sep=""))
                         .self$used2 <- FALSE
-                    }, 
+                    },
                     loadFiles = function() {
                         'Read input data files.'
                         .self$IdentPeptideFile <-
@@ -93,7 +102,7 @@
                             ## Prot FPR filtering - depending on loadIdentOnly and makeMaster
                             ## PPM error filtering - depending on loadIdentOnly and makeMaster
                             .MergedFeatures <- merge(.self$IdentPeptideData,
-                                                     .self$QuantPeptideData, 
+                                                     .self$QuantPeptideData,
                                                      by.x = "peptide.seq",
                                                      by.y = "peptide.seq",
                                                      suffixes = c(".ident", ".quant"))
@@ -122,7 +131,7 @@
 
                         ## test for correct Pep3D file (closes #42)
                         if (!isCorrespondingPep3DataFile(.self$QuantPeptideData, .self$QuantPep3DData)) {
-                          stop("The Pep3D file ", sQuote(.self$QuantPep3DFile), 
+                          stop("The Pep3D file ", sQuote(.self$QuantPep3DFile),
                                " does not correspond to the given Quantitation Final Peptide file ",
                                sQuote(.self$QuantPeptideFile), "!")
                         }
@@ -133,17 +142,17 @@
                                                                               "peptide.score",
                                                                               "peptide.matchType",
                                                                               "protein.dataBaseType")])
-                        .self$.QuantPeptideScores <- 
+                        .self$.QuantPeptideScores <-
                             .self$.QuantPeptideScores[!duplicated(.self$.QuantPeptideScores$peptide.seq), ]
-                        .self$.IdentPeptideScores <- ## aleady filtered for matchType 
+                        .self$.IdentPeptideScores <- ## aleady filtered for matchType
                             .self$IdentPeptideData[, c("peptide.seq",
                                                        "peptide.score",
                                                        "peptide.matchType",
                                                        "protein.dataBaseType")]
-                        .self$.IdentPeptideScores <- 
-                            .self$.IdentPeptideScores[!duplicated(.self$.IdentPeptideScores$peptide.seq), ]                             
+                        .self$.IdentPeptideScores <-
+                            .self$.IdentPeptideScores[!duplicated(.self$.IdentPeptideScores$peptide.seq), ]
                         ## Housekeeping - Quant only
-                        .self$QuantPeptideData$protein.falsePositiveRate <- 
+                        .self$QuantPeptideData$protein.falsePositiveRate <-
                             .self$QuantPeptideData$protein.falsePositiveRate / 100
                         message("Filtering...")
                         .self$filterQuantMatchType() ## Quant only
@@ -151,7 +160,7 @@
                         .self$filterDuplicatedQuantSpectrumIds()
                         message("Computing quantitation identification statistics...")
                         .self$addQuantIdStats() ## Quant only
-                    },                           
+                    },
                     loadData = function() {
                         if (.self$Master)
                             stop("Identification final peptide is a master file")
@@ -182,37 +191,91 @@
 
                         ## test for correct Pep3D file (closes #42)
                         if (!isCorrespondingPep3DataFile(.self$QuantPeptideData, .self$QuantPep3DData)) {
-                          stop("The Pep3D file ", sQuote(.self$QuantPep3DFile), 
+                          stop("The Pep3D file ", sQuote(.self$QuantPep3DFile),
                                " does not correspond to the given Quantitation Final Peptide file ",
                                sQuote(.self$QuantPeptideFile), "!")
                         }
- 
+
                         ## getting peptide scores
                         .self$.IdentPeptideScores <-
                             filterPeptideMatchType(.self$IdentPeptideData[,c("peptide.seq",
                                                                              "peptide.score",
                                                                              "peptide.matchType",
                                                                              "protein.dataBaseType")])
-                        .self$.IdentPeptideScores <- 
-                            .self$.IdentPeptideScores[!duplicated(.self$.IdentPeptideScores$peptide.seq), ]                             
+                        .self$.IdentPeptideScores <-
+                            .self$.IdentPeptideScores[!duplicated(.self$.IdentPeptideScores$peptide.seq), ]
                         .self$.QuantPeptideScores <-
                             filterPeptideMatchType(.self$QuantPeptideData[,c("peptide.seq",
                                                                              "peptide.score",
                                                                              "peptide.matchType",
                                                                              "protein.dataBaseType")])
-                        .self$.QuantPeptideScores <- 
-                            .self$.QuantPeptideScores[!duplicated(.self$.QuantPeptideScores$peptide.seq), ]                             
+                        .self$.QuantPeptideScores <-
+                            .self$.QuantPeptideScores[!duplicated(.self$.QuantPeptideScores$peptide.seq), ]
                         ## Housekeeping
-                        .self$QuantPeptideData$protein.falsePositiveRate <- 
+                        .self$QuantPeptideData$protein.falsePositiveRate <-
                             .self$QuantPeptideData$protein.falsePositiveRate / 100
-                        .self$IdentPeptideData$protein.falsePositiveRate <- 
-                            .self$IdentPeptideData$protein.falsePositiveRate / 100 
+                        .self$IdentPeptideData$protein.falsePositiveRate <-
+                            .self$IdentPeptideData$protein.falsePositiveRate / 100
                         message("Filtering...")
                         .self$filterMatchType()
                         .self$filterQuantFunction()
                         .self$filterDuplicatedQuantSpectrumIds()
                         message("Computing identification statistics...")
                         .self$addIdStats()
+                    },
+                    loadSpectra = function(filenames, verbose=TRUE) {
+                      stopifnot(all(names(filenames) %in% c("identspectrum",
+                                                            "quantspectrum")))
+                      filenames <- as.list(filenames)
+
+                      .self$IdentSpectrumFile <- filenames$identspectrum
+                      .self$IdentSpectrumData <-
+                        .spectrumXml2spectra(df=.self$IdentPeptideData,
+                                             file=.self$IdentSpectrumFile,
+                                             storeAll=FALSE, verbose=verbose)
+                      .self$SynapterLog <-
+                        c(.self$SynapterLog,
+                          paste0("Read identification spectra [",
+                                 length(.self$IdentSpectrumData), "]"))
+                      .self$QuantSpectrumFile <- filenames$quantspectrum
+                      .self$QuantSpectrumData <-
+                        .spectrumXml2spectra(df=.self$QuantPeptideData,
+                                             file=.self$QuantSpectrumFile,
+                                             storeAll=TRUE, verbose=verbose)
+                      .self$SynapterLog <-
+                        c(.self$SynapterLog,
+                          paste0("Read quantitation spectra [",
+                                 length(.self$QuantSpectrumData), "]"))
+                    },
+                    loadFragments = function(filenames, removeNeutralLoss=TRUE,
+                                             verbose=TRUE) {
+                      stopifnot(all(names(filenames) %in% c("identfragments",
+                                                            "quantfragments")))
+                      filenames <- as.list(filenames)
+
+                      .self$IdentFragmentFile <- filenames$identfragments
+                      .self$IdentFragmentData <-
+                        .finalFragment2spectra(df=.self$IdentPeptideData,
+                                               file=.self$IdentFragmentFile,
+                                               storeAll=FALSE,
+                                               removeNeutralLoss=removeNeutralLoss,
+                                               verbose=verbose)
+                      .self$SynapterLog <-
+                        c(.self$SynapterLog,
+                          paste0("Read identification fragment data [",
+                                 length(.self$IdentFragmentData), "]"))
+
+                      .self$QuantFragmentFile <- filenames$quantfragments
+                      .self$QuantFragmentData <-
+                        .finalFragment2spectra(df=.self$QuantPeptideData,
+                                               file=.self$QuantFragmentFile,
+                                               storeAll=TRUE,
+                                               removeNeutralLoss=removeNeutralLoss,
+                                               verbose=verbose)
+                      .self$SynapterLog <-
+                        c(.self$SynapterLog,
+                          paste0("Read quantitation fragment data [",
+                                 length(.self$QuantFragmentData), "]"))
                     },
                     getMaster = function() {
                         ' Gets Master field.'
@@ -224,7 +287,7 @@
                         if (master)
                             .self$SynapterLog <- c(.self$SynapterLog,
                                                    "Identification final peptide is a _master_ file.")
-                    }, 
+                    },
                     addIdStats = function() {
                         'Add p-values and q-values to final peptide data sets.'
                         .self$addQuantIdStats()
@@ -267,7 +330,7 @@
                                 .self$MergedFeatures$precursor.retT.quant
                         if (all(.self$MergedFeatures$deltaRt == 0)) {
                             stop("Merged identification and quantitation data have identical retention times. Modelling not possible")
-                        }                             
+                        }
                         if (any(.self$MergedFeatures$peptide.mhp.quant !=
                                 .self$MergedFeatures$peptide.mhp.ident)) {
                             .self$MergedFeatures <- data.frame()
@@ -285,7 +348,7 @@
                         .self$SynapterLog <- c(.self$SynapterLog,
                                                paste("Modelled retention time using lowess and span ",
                                                      .self$LowessSpan, sep=""))
-                        ## new 0.4.6 - use model to ad precited rt and sd 
+                        ## new 0.4.6 - use model to ad precited rt and sd
                         ##             to original IdentPeptideData
                         newIdentData <- doHDMSePredictions(.self$IdentPeptideData,
                                                            .self$RtModel) ## nsd missing
@@ -294,7 +357,7 @@
                     },
                     findEMRTs = function(mergedEMRTs) {
                         if (length(.self$RtModel) == 0)
-                            stop("First build a retention time model using 'modelRt'.")                               
+                            stop("First build a retention time model using 'modelRt'.")
                         if (length(.self$PpmError) == 0) {
                             warning("Mass error tolerance for EMRT matching undefined. Setting to default value.")
                             .self$setPpmError()
@@ -316,7 +379,7 @@
                                                      "] (", mergedEMRTs, ")",
                                                      sep = ""))
                     }))
-                  
+
 
 ## Synapter$lock("Version") ## this blocks $copy
 
@@ -327,7 +390,7 @@
                          'Performs a grid search in ppm x nsd space.'
                          .IdentPeptideData <- .self$IdentPeptideData
                          if (!missing(subset)) {
-                           if (subset < 1) {                           
+                           if (subset < 1) {
                              ns <- ceiling(nrow(.IdentPeptideData) * subset)
                              hidx <- sample(nrow(.IdentPeptideData), ns)
                              .IdentPeptideData <- .IdentPeptideData[hidx, ]
@@ -424,7 +487,7 @@
                              } else if (any(ppm_i)) {
                                ## (2) first nsd match
                                i <- which(nsd_i)[1]
-                             } 
+                             }
                              ## else (4) no match - taking first one
                            }
                          } else {
@@ -432,7 +495,7 @@
                                        total   = .self$getBestGridParams()[["prcntTotal"]],
                                        model   = .self$getBestGridParams()[["prcntModel"]],
                                        details = .self$getBestGridParams()[["details"]])
-                         }                         
+                         }
                          .self$RtNsd <- x[i,"nsd"]
                          .self$PpmError <- x[i,"ppm"]
                          .self$SynapterLog <- c(.self$SynapterLog,
@@ -506,7 +569,7 @@
                          ## when data is loaded, right after filtering for db unique peptides, to get rid of
                          ## pre/post-fix peptides (like ABCD and ABCDXXXXX), that are not filtered out with
                          ## filterUniqueDbPeptides
-                         .self$filterUniqueQuantSeq() 
+                         .self$filterUniqueQuantSeq()
                          .self$filterUniqueIdentSeq()
                        },
                        filterPeptideLength = function(l) {
@@ -525,7 +588,7 @@
                                                   paste("Keeping ident peptides of length >= ", l,
                                                         " [", paste(dim(.self$IdentPeptideData), collapse=","),
                                                         "]", sep = ""))
-                       },                       
+                       },
                        filterUniqueQuantSeq = function() {
                          'Keep unique (non duplicated) quantitation peptide sequences.'
                          quant2keep <- names(which(table(.self$QuantPeptideData$peptide.seq) == 1))
@@ -547,7 +610,7 @@
                                                             collapse=","), "]", sep = ""))
                        },
                        filterQuantFunction = function() {
-                         'Filters quantitation Pep3D data by Function == 1.'                            
+                         'Filters quantitation Pep3D data by Function == 1.'
                          .self$QuantPep3DData <- filterFunction(.self$QuantPep3DData)
                          .self$SynapterLog <- c(.self$SynapterLog,
                                                 paste("Filtered quantitation Pep3D by Function [",
@@ -559,18 +622,18 @@
                          keep <- !duplicated(.self$QuantPep3DData$spectrumID)
                          .self$QuantPep3DData <- .self$QuantPep3DData[keep, ]
                          .self$SynapterLog <- c(.self$SynapterLog,
-                                                paste("Kept unique spectrum ids ", 
+                                                paste("Kept unique spectrum ids ",
                                                       "quantitation Pep3D [", paste(dim(.self$QuantPep3DData), collapse=","), "] ",
                                                       sep=""))
-                       }, 
+                       },
                        filterQuantMatchType = function() {
                          'Filter quantitation peptide file for PepFrag1 and PepFrag2'
                          .self$QuantPeptideData <- filterPeptideMatchType(.self$QuantPeptideData)
                          .self$SynapterLog <- c(.self$SynapterLog,
                                                 paste("Filtered quantitation peptide by PepFrag1|2 [",
                                                       paste(dim(.self$QuantPeptideData), collapse=","),
-                                                      "]", sep=""))                            
-                       }, 
+                                                      "]", sep=""))
+                       },
                        filterIdentMatchType = function() {
                          'Filter identification peptide file for PepFrag1 and PepFrag2'
                          .self$IdentPeptideData <- filterPeptideMatchType(.self$IdentPeptideData)
@@ -620,9 +683,9 @@
                          if (log)
                            .self$SynapterLog <- c(.self$SynapterLog,
                                                   paste0("Filtered quantitation peptide data on pep score with fdr ",
-                                                        .self$PepScoreFdr, " [",  
+                                                        .self$PepScoreFdr, " [",
                                                         paste(dim(.self$QuantPeptideData), collapse=","), "]"))
-                       }, 
+                       },
                        filterIdentPepScore = function(fdrMethod, log = TRUE) {
                          'Filter identification peptide data based on peptide score fdr.'
                          if (length(.self$PepScoreFdr) == 0) {
@@ -635,10 +698,10 @@
                          if (log)
                            .self$SynapterLog <- c(.self$SynapterLog,
                                                   paste("Filtered identification peptide data on pep score with fdr ",
-                                                        .self$PepScoreFdr, " [",  
+                                                        .self$PepScoreFdr, " [",
                                                         paste(dim(.self$IdentPeptideData), collapse=","),
                                                         "]", sep=""))
-                       },                       
+                       },
                        filterIdentPpmError = function(ppm = .self$IdentPpmError) {
                          'Filter identification mass error.'
                          if (length(ppm) == 0) {
@@ -681,9 +744,9 @@
                                                                    .self$ProtFpr)
                          .self$SynapterLog <- c(.self$SynapterLog,
                                                 paste("Filtered identification peptide data using protein fpr ",
-                                                      .self$ProtFpr, " [",  
+                                                      .self$ProtFpr, " [",
                                                       paste(dim(.self$IdentPeptideData), collapse=","),
-                                                      "]", sep=""))                       
+                                                      "]", sep=""))
                        },
                        filterQuantProtFpr = function() {
                          'Filter quantitation peptide data based on protein fpr.'
@@ -695,7 +758,7 @@
                                                                  .self$ProtFpr)
                          .self$SynapterLog <- c(.self$SynapterLog,
                                                 paste("Filtered quantitation peptide data using protein fpr ",
-                                                      .self$ProtFpr, " [",  
+                                                      .self$ProtFpr, " [",
                                                       paste(dim(.self$QuantPeptideData), collapse=","),
                                                       "]", sep=""))
                        },
@@ -712,7 +775,7 @@
                                                       "[", paste(dim(.self$QuantPeptideData), collapse=","),
                                                       "]", sep=""))
                        },
-                       
+
                        filterUniqueIdentDbPeptides = function(filename, missedCleavages, verbose = TRUE) {
                          'Filters identification tryptic peptides that match one and only one protein in the fasta database.'
                          upepset <- dbUniquePeptideSet(filename, missedCleavages, verbose)
@@ -731,4 +794,4 @@
                          .self$filterUniqueIdentDbPeptides(filename, missedCleavages, verbose = verbose)
                          .self$filterUniqueQuantDbPeptides(filename, missedCleavages, verbose = FALSE)
                        }))
-                       
+

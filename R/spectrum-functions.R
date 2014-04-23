@@ -112,16 +112,11 @@
 #' read spectrum.xml and turn data into MSnbase::Spectrum2 objects
 #' @param df corresponding df from the synapter object ({Ident,Quant}PeptideData)
 #' @param file filename
-#' @param prefix character, prefix for the keyvalue in assaydata
-#' (e.g.,"ident.spectra")
 #' @param assaydata environment
 #' @param storeAll should all spectra stored? or only the needed ones?
 #' @param verbose verbose output
 #' @return modified assaydata
-.spectrumXml2spectra <- function(df, file, prefix, storeAll=TRUE,
-                                 verbose=TRUE) {
-  stopifnot(!missing(prefix))
-
+.spectrumXml2spectra <- function(df, file, storeAll=TRUE, verbose=TRUE) {
   xml <- .readSynapterSpectrumXml(file, ms1=TRUE, verbose=verbose)
 
   peptideinfo <- df[!duplicated(df$precursor.leID), ]
@@ -137,13 +132,12 @@
     pb <- txtProgressBar(0, length(uleID), style=3)
   }
 
-  keys <- paste(prefix, uleID, sep=":")
   sequences <- rep(NA, length(uleID))
 
   assaydata <- new.env(hash=TRUE, parent=emptyenv(), size=length(uleID))
 
   for (i in seq(along=uleID)) {
-    assign(keys[i],
+    assign(as.character(uleID[i]),
            .createMs2SpectrumFromSpectrumXml(uleID[i], xml$ms1, xml$ms2,
                                              xml$assignments),
            envir=assaydata)
@@ -173,7 +167,7 @@
   fdata <- data.frame(spectrum=1:length(nm),
                       leID=uleID,
                       peptide.seq=sequences,
-                      row.names=keys,
+                      row.names=uleID,
                       stringsAsFactors=FALSE)
   ## reorder according to assaydata
   fdata <- fdata[nm, ]
@@ -375,52 +369,6 @@
 
     legend(legend.pos[i], legend=label, bty="n", cex=legend.cex)
   }
-}
-
-#' readSpectraAndFragments
-#' @param obj synapter object
-#' @param filenames named list of filenames list(identspectrum, quantspectrum,
-#' @param removeNeutralLoss remove rows with neutral loss != "none"?
-#' @param verbose verbose output?
-#' @return  env with MSnbase::Spectrum2 objects
-readSpectraAndFragments <- function(obj, filenames, removeNeutralLoss=TRUE,
-                                    verbose=TRUE) {
-  stopifnot(all(names(filenames) %in% c("identspectrum", "quantspectrum",
-                                        "identfragments", "quantfragments")))
-  filenames <- as.list(filenames)
-
-  spectra <- vector(mode="list", length=length(filenames))
-  names(spectra) <- c("spectra.ident", "spectra.quant",
-                      "fragments.ident", "fragments.quant")
-
-  spectra$spectra.ident <-
-    .spectrumXml2spectra(df=obj$IdentPeptideData,
-                         file=filenames$identspectrum,
-                         prefix="spectra.ident",
-                         storeAll=FALSE,
-                         verbose=verbose)
-  spectra$spectra.quant <-
-    .spectrumXml2spectra(df=obj$QuantPeptideData,
-                         file=filenames$quantspectrum,
-                         prefix="spectra.quant",
-                         storeAll=TRUE,
-                         verbose=verbose)
-
-  spectra$fragments.ident <-
-    .finalFragment2spectra(df=obj$IdentPeptideData,
-                           file=filenames$identfragments,
-                           prefix="fragments.ident",
-                           storeAll=FALSE,
-                           removeNeutralLoss=removeNeutralLoss,
-                           verbose=verbose)
-  spectra$fragments.quant <-
-    .finalFragment2spectra(df=obj$QuantPeptideData,
-                           file=filenames$quantfragments,
-                           prefix="fragments.quant",
-                           storeAll=TRUE,
-                           removeNeutralLoss=removeNeutralLoss,
-                           verbose=verbose)
-  return(spectra)
 }
 
 #' crossmatching, wrapper function

@@ -19,7 +19,11 @@ in different versions of synapter objects.
 }
 \details{
 \describe{ \item{synapter 1.7.1}{ Introduce
-\code{updateSynapterObject} function.} }
+\code{updateSynapterObject} function. \cr Add
+IdentSpectrumFile, IdentSpectrumData, QuantSpectrumFile,
+QuantSpectrumData, IdentFragmentFile, IdentFragmentData,
+QuantFragmentFile, and QuantFragmentData fields to synapter
+class.} }
 }
 \examples{
 synapterTinyData()

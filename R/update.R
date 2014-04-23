@@ -6,7 +6,10 @@
 ##'
 ##' \describe{
 ##'   \item{synapter 1.7.1}{
-##'     Introduce \code{updateSynapterObject} function.}
+##'     Introduce \code{updateSynapterObject} function. \cr
+##'     Add IdentSpectrumFile, IdentSpectrumData, QuantSpectrumFile,
+##'     QuantSpectrumData, IdentFragmentFile, IdentFragmentData,
+##'     QuantFragmentFile, and QuantFragmentData fields to synapter class.}
 ##' }
 ##'
 ##' @param obj synapter object
@@ -23,7 +26,9 @@ updateSynapterObject <- function(obj, verbose=TRUE) {
 
   current <- as.package_version(obj$Version)
 
-  minimalVersion <- as.package_version("0.0.1")
+  ## 1.7.1 adds {Ident,Quant}{Spectrum,Fragments}{File,Data} fields to the class
+  ## definition
+  minimalVersion <- as.package_version("1.7.1")
 
   isDeprecated <- current < minimalVersion
 

@@ -83,6 +83,9 @@ exportMethods(show,
               plotEMRTtable,
               plotGrid,
               plotFeatures,
+              ## importers
+              loadSpectra,
+              loadFragments,
               ## exporters
               writeMergedPeptides,
               writeMatchedEMRTs,

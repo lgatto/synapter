@@ -29,16 +29,12 @@
 #' read final_fragment.csv and turn data into MSnbase::Spectrum2 objects
 #' @param df corresponding df from the synapter object ({Ident,Quant}PeptideData)
 #' @param file filename
-#' @param prefix character, prefix for the keyvalue in assaydata
-#' (e.g.,"ident.spectra")
 #' @param storeAll should all spectra stored? or only the needed ones?
 #' @param removeNeutralLoss remove rows with neutral loss != "none"?
 #' @param verbose verbose output
 #' @return modified assaydata
-.finalFragment2spectra <- function(df, file, prefix, storeAll=TRUE,
+.finalFragment2spectra <- function(df, file, storeAll=TRUE,
                                    removeNeutralLoss=TRUE, verbose=TRUE) {
-  stopifnot(!missing(prefix))
-
   fragments <- .readFragements(file, removeNeutralLoss=removeNeutralLoss,
                                verbose=verbose)
 
@@ -61,14 +57,13 @@
     pb <- txtProgressBar(0, length(uleID), style=3)
   }
 
-  keys <- paste(prefix, uleID , sep=":")
   fragment.str <- rep(NA, length(uleID))
   sequences <- rep(NA, length(uleID))
 
   assaydata <- new.env(hash=TRUE, parent=emptyenv(), size=length(uleID))
 
   for (i in seq(along=uleID)) {
-    assign(keys[i],
+    assign(as.character(uleID[i]),
            .createMs2SpectrumFromFragments(uleID[i],
                                            fragments=fragments,
                                            assignments=assignments),
@@ -100,7 +95,7 @@
                       leID=uleID,
                       fragment.str=fragment.str,
                       peptide.seq=sequences,
-                      row.names=keys,
+                      row.names=uleID,
                       stringsAsFactors=FALSE)
   ## reorder according to assaydata
   fdata <- fdata[nm, ]

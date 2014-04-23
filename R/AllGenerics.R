@@ -2,6 +2,8 @@
 ## synapter interface generics
 
 setGeneric("inputFiles", function(object, ...) standardGeneric("inputFiles"))
+setGeneric("loadSpectra", function(object, ...) standardGeneric("loadSpectra"))
+setGeneric("loadFragments", function(object, ...) standardGeneric("loadFragments"))
 setGeneric("getLog", function(object, ...) standardGeneric("getLog"))
 setGeneric("mergePeptides", function(object, ...) standardGeneric("mergePeptides"))
 setGeneric("modelRt", function(object, ...) standardGeneric("modelRt"))
