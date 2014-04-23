@@ -824,6 +824,7 @@ Synapter(filenames, master) ## creates an instance of class 'Synapter'
     }
   }
 }
+}
 
 
 \references{
