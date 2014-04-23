@@ -1,3 +1,7 @@
+CHANGES IN VERSION 1.7.1
+------------------------
+ o add updateSynapterObject function [2014-04-23 Wed]
+
 CHANGES IN VERSION 1.7.0
 ------------------------
  o new devel version for Bioc 3.0
@@ -20,10 +24,10 @@ CHANGES IN VERSION 1.5.6
 
 CHANGES IN VERSION 1.5.5
 ------------------------
- o fix a bug in the calculation of non unique matches in gridSearch2 
-   (part of searchGrid); results in a higher number of non unique matches 
+ o fix a bug in the calculation of non unique matches in gridSearch2
+   (part of searchGrid); results in a higher number of non unique matches
    (some of the reported -2 will now be reported as 2 in the grid details)
-   [2014-03-05 Wed] 
+   [2014-03-05 Wed]
  o partial rewrite of gridSearch2 (part of searchGrid) for faster grid
    calculation [2014-03-04 Tue]
 
@@ -33,7 +37,7 @@ CHANGES IN VERSION 1.5.4
 
 CHANGES IN VERSION 1.5.3
 ------------------------
- o modified findMSeEMRTs (part of searchGrid) for faster grid 
+ o modified findMSeEMRTs (part of searchGrid) for faster grid
    calculation [2014-02-28 Fri]
  o typos in manual [2014-02-25 Tue]
  o replace readFasta by Biostrings::readAAStringSet [2014-02-25 Tue]
@@ -64,19 +68,19 @@ CHANGES IN VERSION 1.3.1
 ------------------------
  o Reporting total number of peptides in dbUniquePeptideSet.
    Fixes issue #41. [2013-05-13 Mon]
- o New mergedEMRTs arg in findEMRTs. 
-   Closes issue #38. [2013-05-13 Mon] 
- o fixed synapterTiny$QuantPep3DData, which had the rownames 
-   as first column synapterTiny$QuantPep3DData$X. Detected 
+ o New mergedEMRTs arg in findEMRTs.
+   Closes issue #38. [2013-05-13 Mon]
+ o fixed synapterTiny$QuantPep3DData, which had the rownames
+   as first column synapterTiny$QuantPep3DData$X. Detected
    thanks to new mergedEMRTs arg. [2013-05-13 Mon]
  o added mergedEMRTs arg to synergise [2013-05-22 Wed]
  o Synapter checks that one file per list element is passed [2013-05-28 Tue]
  o minor typo/fixes [2013-05-28 Tue]
  o new idSource column when matching EMRTs [2013-05-29 Wed]
- o new performance2 method that shows identification source 
+ o new performance2 method that shows identification source
    and NA values contingency table [2013-05-29 Wed]
  o new filterPeptideLength method [2013-05-29 Wed]
- o added peplen argument to synergise to filter 
+ o added peplen argument to synergise to filter
    on peptide length [2013-05-29 Wed]
 
 CHANGES IN VERSION 1.3.0
@@ -98,7 +102,7 @@ CHANGES IN VERSION 1.1.4
 
 CHANGES IN VERSION 1.1.3
 ------------------------
- o knitr 1.0 compatibility, based on Dan's 
+ o knitr 1.0 compatibility, based on Dan's
    updates [2013-01-15 Tue]
 
 CHANGES IN VERSION 1.1.2
@@ -116,7 +120,7 @@ CHANGES IN VERSION 1.1.0
 CHANGES IN VERSION 0.99.15
 --------------------------
  o updated ref in package man (2) [2012-09-14 Fri]
- o updated Synapter show method to display short 
+ o updated Synapter show method to display short
    log [2012-09-14 Fri]
 
 CHANGES IN VERSION 0.99.14
@@ -125,7 +129,7 @@ CHANGES IN VERSION 0.99.14
 
 CHANGES IN VERSION 0.99.13
 --------------------------
- o bumping version number to take all previous changes 
+ o bumping version number to take all previous changes
    into account [2012-08-29 Wed]
 
 CHANGES IN VERSION 0.99.12
@@ -135,8 +139,8 @@ CHANGES IN VERSION 0.99.12
 
 CHANGES IN VERSION 0.99.11
 --------------------------
- o using dev='pdf' in vignette and removing 
-   tikzDevice (not on CRAN anymore) from 
+ o using dev='pdf' in vignette and removing
+   tikzDevice (not on CRAN anymore) from
    Suggests[2012-08-16 Thu]
 
 CHANGES IN VERSION 0.99.10
@@ -146,7 +150,7 @@ CHANGES IN VERSION 0.99.10
 CHANGES IN VERSION 0.99.9
 -------------------------
  o using knitr instead of pgfSweave [2012-08-13 Mon]
- o new verbose arg to loadIdentOnly taken into account 
+ o new verbose arg to loadIdentOnly taken into account
    by estimateMasterFdr and makeMaster [2012-08-13 Mon]
 
 CHANGES IN VERSION 0.99.8
@@ -162,14 +166,14 @@ CHANGES IN VERSION 0.99.7
 
 CHANGES IN VERSION 0.99.6
 -------------------------
- o Masterpeptides has new fdr and method slots  [2012-07-10 Tue] 
+ o Masterpeptides has new fdr and method slots  [2012-07-10 Tue]
  o added method arg to makeMaster [2012-07-10 Tue]
  o fixed non-match precuror.leIDs when using master [2012-07-11 Wed]
 
 CHANGES IN VERSION 0.99.5
 -------------------------
- o removed 'precursor.Mobility' columns from light 
-   merged and matched csv output, as these are not 
+ o removed 'precursor.Mobility' columns from light
+   merged and matched csv output, as these are not
    available when a MSe master is used [2012-07-09 Mon]
 
 CHANGES IN VERSION 0.99.4
@@ -184,15 +188,15 @@ CHANGES IN VERSION 0.99.3
 
 CHANGES IN VERSION 0.99.2
 -------------------------
- o changed merged to total FDR in MasterFdrResults 
+ o changed merged to total FDR in MasterFdrResults
    plot x label, as in manuscript [2012-06-13 Wed]
  o mention multtest in vignette [2012-06-13 Wed]
  o qvalue refs [2012-06-14 Thu]
- o Synapter.Rd updates, to match manuscript 
+ o Synapter.Rd updates, to match manuscript
    nomenclature [2012-06-14 Thu]
- o Added 'Getting help' section in vignette and 
+ o Added 'Getting help' section in vignette and
    package man page [2012-06-14 Thu]
- o Changed HDMSe to ident in plotGrid plot 
+ o Changed HDMSe to ident in plotGrid plot
    legend [2012-06-25 Mon]
 
 CHANGES IN VERSION 0.99.1
@@ -208,22 +212,22 @@ CHANGES IN VERSION 0.9.1
 -------------------------
  o more doc completion [2012-06-07 Thu]
  o fixed type in dim [2012-06-07 Thu]
- o added PLGS ref and screenshots to 
+ o added PLGS ref and screenshots to
    vignette [2012-06-07 Thu]
- o finished methods documentation in 
+ o finished methods documentation in
    Synapter.Rd [2012-06-07 Thu]
- o reduced screenshots sizes to get 
+ o reduced screenshots sizes to get
    below 2M [2012-06-08 Fri]
- o fixed synapterGUI bug introduced 
+ o fixed synapterGUI bug introduced
    during naming refactoring [2012-06-08 Fri]
 
 CHANGES IN VERSION 0.9.0
 -------------------------
  o moved repo to github [2012-06-06 Wed]
- o changed HDMSe/MSe naming convention 
+ o changed HDMSe/MSe naming convention
    to identification/quantitation [2012-06-06 Wed]
  o second round of naming changes (utils) [2012-06-07 Thu]
- o Description of package and methodology updated and 
+ o Description of package and methodology updated and
    references [2012-06-07 Thu]
 
 CHANGES IN VERSION 0.8.14
@@ -234,19 +238,19 @@ CHANGES IN VERSION 0.8.14
 CHANGES IN VERSION 0.8.13
 -------------------------
  o more vignette work [2012-06-01 Fri]
- o added pgfSweave and xtable to Suggests 
+ o added pgfSweave and xtable to Suggests
    and loaded in vignette [2012-06-01 Fri]
 
 CHANGES IN VERSION 0.8.12
 -------------------------
- o updated show MasterPeptides to reflect number of files 
+ o updated show MasterPeptides to reflect number of files
    effectively used [2012-05-28 Mon]
  o moved MasterFdrResults to S4 framework [2012-05-30 Wed]
  o MSnbase is now a dependency [2012-05-30 Wed]
  o vignette updates [2012-05-30 Wed]
- o synergise now calls filterUniqueDbPeptides even if master, 
+ o synergise now calls filterUniqueDbPeptides even if master,
    as opposed to filterUniqueMSeDbPeptides [2012-05-30 Wed]
- o fixes as(, "MSnSet") - peptides sequences are now 
+ o fixes as(, "MSnSet") - peptides sequences are now
    properly made unique [2012-05-30 Wed]
 
 CHANGES IN VERSION 0.8.11
@@ -254,18 +258,18 @@ CHANGES IN VERSION 0.8.11
  o Automatic handling of Masterpeptides objects [2012-05-23 Wed]
  o Various man updated to describe the above [2012-05-23 Wed]
  o Now adding vignettes to windows vignette menu [2012-05-23 Wed]
- o fixed/improved writeMasterPeptides and fixed [tk_]choose.dir 
+ o fixed/improved writeMasterPeptides and fixed [tk_]choose.dir
    in synergise [2012-05-23 Wed]
- o MasterPeptides must be save as 'rds' with saveRDS to be 
+ o MasterPeptides must be save as 'rds' with saveRDS to be
    reusable in synergise/Synapter [2012-05-23 Wed]
 
 CHANGES IN VERSION 0.8.10
 -------------------------
- o updated master-related function names by removing 
+ o updated master-related function names by removing
    explicit reference to HDMSe [2012-05-16 Wed]
  o new AllGenerics.R and AllClasses.R files [2012-05-16 Wed]
  o removed selection param to makeMaster [2012-05-16 Wed]
- o new makeMaster returns an instance of class 
+ o new makeMaster returns an instance of class
    'MasterPeptides' [2012-05-16 Wed]
 
 CHANGES IN VERSION 0.8.9
@@ -292,7 +296,7 @@ CHANGES IN VERSION 0.8.7
 ------------------------
  o added Nick's email to vignette [2012-04-30 Mon]
  o worked on gui - tree widget now expands when resizing window [2012-04-30 Mon]
- o added makeMasterHDMSe and estimateMasterFdr cross 
+ o added makeMasterHDMSe and estimateMasterFdr cross
    references [2012-05-01 Tue]
  o continued vignette [2012-05-01 Tue]
  o added synapterTiny test data [2012-05-01 Tue]
@@ -311,16 +315,16 @@ CHANGES IN VERSION 0.8.6
 
 CHANGES IN VERSION 0.8.5
 ------------------------
- o merged filterUniqueDbPeptides and filterUniquePeptides into 
-   filterUniqueDbPeptides in the Synapter class interface 
-   (same for MSe/HDMSe specific methods). Both are still distinct 
+ o merged filterUniqueDbPeptides and filterUniquePeptides into
+   filterUniqueDbPeptides in the Synapter class interface
+   (same for MSe/HDMSe specific methods). Both are still distinct
    at the RefClass level though. [2012-04-27 Fri]
  o TODO - maybe add fdr method choice in synergise - DONE v 0.8.6
 
 CHANGES IN VERSION 0.8.4
 ------------------------
  o new inspectPeptideScores function [2012-04-26 Thu]
- o finished gui code - synapterGUI exported [2012-04-27 Fri]   
+ o finished gui code - synapterGUI exported [2012-04-27 Fri]
  o tested synapterGUI until report generation [2012-04-27 Fri]
  o TODO - avoid loading fasta db twice in filterUniqueDbPeptides
 
@@ -334,12 +338,12 @@ CHANGES IN VERSION 0.8.2
 
 CHANGES IN VERSION 0.8.1
 ------------------------
- o new masterFdr function that computes merged FDR - still 
+ o new masterFdr function that computes merged FDR - still
    under construction [2012-04-06 Fri]
  o updated Synapter.Rd [2012-04-23 Mon]
- o Only considered *unique peptides* (sequences) to calculate the p-values. 
-   The .[HD]MSePeptideScores dataframes are also updated so that 
-   plotPepScores and getPepNumbers also use unique() peptides to visualise	
+ o Only considered *unique peptides* (sequences) to calculate the p-values.
+   The .[HD]MSePeptideScores dataframes are also updated so that
+   plotPepScores and getPepNumbers also use unique() peptides to visualise
    the scores. [2012-04-23 Mon]
  o estimateMasterFdr (was masterFdr) is functional [2012-04-24 Tue]
  o estimateMasterFdr output stored in MasterFdrRes S3 class [2012-04-24 Tue]
@@ -356,7 +360,7 @@ CHANGES IN VERSION 0.8.0
  o modifed plotFdr and plotPepScores if master [2012-04-06 Fri]
  o updated Synapter constructor for master [2012-04-06 Fri]
  o new setMaster method [2012-04-06 Fri]
- o renames filterUniqueDBpeptides to filterUniqueDbPeptides 
+ o renames filterUniqueDBpeptides to filterUniqueDbPeptides
    and added filterUnique[HD]MSeDbPeptides methods in interface [2012-04-06 Fri]
  o fixes getPepNumbers for master HDMSe [2012-04-06 Fri]
 
@@ -367,13 +371,13 @@ CHANGES IN VERSION 0.7.8
 
 CHANGES IN VERSION 0.7.7
 ------------------------
- o non-unique matched features now get NAs except 
+ o non-unique matched features now get NAs except
    for the first column (Function) [2012-04-04 Wed]
- o changed FDR adjustment; it is now possible to choose between 
+ o changed FDR adjustment; it is now possible to choose between
    'BH' (default), 'Bonferroni' and 'qval' - see issue #22 [2012-04-04 Wed]
  o updated plotQvalues accordingly [2012-04-04 Wed]
- o fix in setBestGridParams (== to %in%) to avoid warnings 
-   when different nrow for prctModel (x) and details (y) 
+ o fix in setBestGridParams (== to %in%) to avoid warnings
+   when different nrow for prctModel (x) and details (y)
    best grid params [2012-04-04 Wed]
 
 CHANGES IN VERSION 0.7.6
@@ -386,7 +390,7 @@ CHANGES IN VERSION 0.7.5
  o fixed bug in getBestGridParams when what != "auto"
    and mutliple solutions [2012-03-26 Mon]
  o type in Synapter.Rd [2012-03-26 Mon]
- o changed ppm and nsd defaults in searchGrid to reflect 
+ o changed ppm and nsd defaults in searchGrid to reflect
    defaults in synergise and gui [2012-03-26 Mon]
  o new 'object' parameter in synergise [2012-03-26 Mon]
  o updated inputFiles accessor (names and order) [2012-03-26 Mon]
@@ -395,18 +399,18 @@ CHANGES IN VERSION 0.7.5
 CHANGES IN VERSION 0.7.4
 ------------------------
  o using "model" as default parameter selection method [2012-03-23 Fri]
- o new "auto" parameter selection model - uses "model" and 
-   if multiple pairs, uses best "details" if any of ppm/nsd 
+ o new "auto" parameter selection model - uses "model" and
+   if multiple pairs, uses best "details" if any of ppm/nsd
    match [2012-03-23 Fri]
  o remove parameter selection method in gui - using auto [2012-03-24 Sat]
- o update html report - provide ppm and nsd values selected 
+ o update html report - provide ppm and nsd values selected
    from grid search and auto method [2012-03-24 Sat]
  o updates to Synapter.Rd [2012-03-25 Sun]
 
 CHANGES IN VERSION 0.7.3
 ------------------------
  o dropped synergize spelling; too annoying when autocompleting [2012-03-22 Thu]
- o when computing grid details, checking if x["1"] or x["-1"] are NA and 
+ o when computing grid details, checking if x["1"] or x["-1"] are NA and
    replacing by 0 [2012-03-22 Thu]
  o fixed bug in detail grid [2012-03-22 Thu]
  o now setting best params in synergize [2012-03-23 Fri]
@@ -414,10 +418,10 @@ CHANGES IN VERSION 0.7.3
 CHANGES IN VERSION 0.7.2
 ------------------------
  o synergi[s/z]e continued [2012-03-21 Wed]
- o also create a grid based on grid details. 
-   This actually fixes a bug in getBestGridParams 
+ o also create a grid based on grid details.
+   This actually fixes a bug in getBestGridParams
    'details' search [2012-03-21 Wed]
- o Removed filterUniquePeptides from loadData, forgot 
+ o Removed filterUniquePeptides from loadData, forgot
    to do that in version 0.7.1 [2012-03-21 Wed]
  o finished synergi[s|z]e [2012-03-22 Thu]
 
@@ -426,30 +430,30 @@ Changes IN VERSION 0.7.1
  o synergi[s/z]e definition [2012-03-08 Thu]
  o GUI implementation [2012-03-10 Sat]
  o cleaned performance method [2012-03-20 Tue]
- o new filterUniquePeptides method that filter peptides	that 
-   appear multiple times in the respective HDMSe/MSe input 
-   peptide files. Previously, this was done when data was 
+ o new filterUniquePeptides method that filter peptides	that
+   appear multiple times in the respective HDMSe/MSe input
+   peptide files. Previously, this was done when data was
    loaded. Also updated synergise, example and doc. [2012-03-21 Wed]
 
 CHANGES IN VERSION 0.7.0
 ------------------------
- o using filtered HDMSePeptideData (was mfHDMSePeptideData) 
-   to do the matching; mf[HD]MSePeptideData have been  
+ o using filtered HDMSePeptideData (was mfHDMSePeptideData)
+   to do the matching; mf[HD]MSePeptideData have been
    dropped for Synapter class  [2012-03-07 Wed]
  o new dims method [2012-03-07 Wed]
- o best grid parameter selection based on +1/(+1 + -1) proportion 
+ o best grid parameter selection based on +1/(+1 + -1) proportion
    of correct unique identifications (issue #18) [2012-03-07 Wed]
 
 CHANGES IN VERSION 0.6.0
 ------------------------
  o fixed bug when providing filenames to Synapter [2012-03-06 Tue]
- o added 'n' parameter to searchGrid to specify a number of  
+ o added 'n' parameter to searchGrid to specify a number of
    features to be used for the grid search [2012-03-06 Tue]
  o Test if n ] nrow(HDMSe peptides), warn and use all HDMSe peptides [2012-03-06 Tue]
- o moved some parameter initialisation from searchGrid method to 
-   searchGrid interface [2012-03-06 Tue]   
- o new filterUniqueDbPeptides method; this is NOT done anymore when 
-   the data is loaded [2012-03-06 Tue] 
+ o moved some parameter initialisation from searchGrid method to
+   searchGrid interface [2012-03-06 Tue]
+ o new filterUniqueDbPeptides method; this is NOT done anymore when
+   the data is loaded [2012-03-06 Tue]
 
 CHANGES IN VERSION 0.5.3
 ------------------------
@@ -462,7 +466,7 @@ CHANGES IN VERSION 0.5.2
 
 CHANGES IN VERSION 0.5.1
 ------------------------
- o new setAs method to coerce a Synapter instance into 
+ o new setAs method to coerce a Synapter instance into
    an MSnSet object [2012-02-14 Tue]
  o added MSe prot FPR filter when calculating performance
    [2012-02-14 Tue]
@@ -470,23 +474,23 @@ CHANGES IN VERSION 0.5.1
 CHANGES IN VERSION 0.5.0
 ------------------------
  o filtering HDMSe unique peptides [2012-02-12 Sun]
- o added explicit values to be set for setPpmError 
+ o added explicit values to be set for setPpmError
    and setRtNsd in Synapter man example [2012-02-13 Mon]
- o filtering pep score (q-val) AND prot FPR (NEW) before 
+ o filtering pep score (q-val) AND prot FPR (NEW) before
    matching EMRTs and calculating performance [2012-02-13 Mon]
  o filtering HDMSe unique peptides [2012-02-13 Mon]
  o fasta file is also asked for when creating instance [2012-02-13 Mon]
- o Filtering unique (i.e. non duplicated peptide sequences) is now done 
-   when data is loaded, after db unique peptide filtering, to get rid 
-   of pre/post-fix cases (like ABCD and ABCDXXXX) that are not removed 
+ o Filtering unique (i.e. non duplicated peptide sequences) is now done
+   when data is loaded, after db unique peptide filtering, to get rid
+   of pre/post-fix cases (like ABCD and ABCDXXXX) that are not removed
    by filterUniqueDbPeptides/dbUniquePeptideSet. [2012-02-13 Mon]
- o keeping common HDMSe/MSe peptides filter is not included in 
+ o keeping common HDMSe/MSe peptides filter is not included in
    merge Peptides (filterPepSeq removed) [2012-02-13 Mon]
  o removed (private) filter and idStats parameters [2012-02-13 Mon]
  o updated documentation [2012-02-13 Mon]
- o updated performace; removed duplicates count as there are no 
+ o updated performace; removed duplicates count as there are no
    duplicated sequences/precursor.leIDs anymore [2012-02-13 Mon]
- o removing duplicated assigned EMRTs; these rows in the matched 
+ o removing duplicated assigned EMRTs; these rows in the matched
    results dataframes are identified with a -1 [2012-02-13 Mon]
  o new getLog method [2012-02-14 Tue]
  o updaed show method [2012-02-14 Tue]
@@ -500,10 +504,10 @@ Changes IN VERSION 0.4.7
 
 CHANGES IN VERSION 0.4.6
 ------------------------
- o HDMSePeptideData is updated (predictRt and sdRt columns) when 
+ o HDMSePeptideData is updated (predictRt and sdRt columns) when
    rt is modelled. [2012-02-09 Thu]
- o Updated doHDMSePredictions to either predict rt using the model 
-   (as previously) or retrieve that data from the HDMSePeptideData 
+ o Updated doHDMSePredictions to either predict rt using the model
+   (as previously) or retrieve that data from the HDMSePeptideData
    data.frame (new). [2012-02-09 Thu]
  o doHDMSePredictions now returns a list. [2012-02-09 Thu]
  o added a subet parameter to searchGrid [2012-02-09 Thu]
@@ -512,22 +516,22 @@ CHANGES IN VERSION 0.4.6
 CHANGES IN VERSION 0.4.5
 ------------------------
  o removed extra plotRtDiff un Synapter example [2012-02-07 Tue]
- o findMSeEMRTs tidy-up, added a matched.mse.spectrumIDs column to 
-   the MatchedEMRTs data.frame; this stores the MSePep3D spectrumIDs 
+ o findMSeEMRTs tidy-up, added a matched.mse.spectrumIDs column to
+   the MatchedEMRTs data.frame; this stores the MSePep3D spectrumIDs
    that were macthed within an ErrorPpm by RtNsd window. [2012-02-07 Tue]
- o added writeMergedPeptides/writeMatchedEMRTs file argument 
+ o added writeMergedPeptides/writeMatchedEMRTs file argument
    examples. [2012-02-07 Tue]
  o PpmError and RtNsd checked/set only for plotFeatures(, what = "some")
    and not what = "all" anymore. [2012-02-07 Tue]
- o Added the recursor.leID.mse column to the MatchedEMRTs data.frame 
-   with merged MSe IDs corresponding to the HDMSe IDs used for rt 
+ o Added the recursor.leID.mse column to the MatchedEMRTs data.frame
+   with merged MSe IDs corresponding to the HDMSe IDs used for rt
    modelling [2012-02-07 Tue]
  o grd2 is now computed using new MatchedEMRTs columns [2012-02-07 Tue]
  o function to get assignment details [2012-02-08 Wed]
- o code clean-up: xx$HDMSePeptideData is now filtered for peptide score fdr 
-   explicitely by the top-level caller (in synapter-class), rather than 
-   (redundantely) inside findMSeEMRTs and in gridSearch2 (which also calls 
-   the latter). Removed fdr parameter in these functions as unused. 
+ o code clean-up: xx$HDMSePeptideData is now filtered for peptide score fdr
+   explicitely by the top-level caller (in synapter-class), rather than
+   (redundantely) inside findMSeEMRTs and in gridSearch2 (which also calls
+   the latter). Removed fdr parameter in these functions as unused.
    This is also documented now. [2012-02-09 Thu]
  o code clean-up: remove old gridSearch call and definition [2012-02-09 Thu]
 
@@ -541,14 +545,14 @@ CHANGES IN VERSION 0.4.3
  o continued documentation [2012-01-31 Tue] [2012-02-01 Wed]
  o added plotRtDiffs in example [2012-02-01 Wed]
  o added warning and nsd[1:3] selection in plotRt model [2012-02-01 Wed]
- o fixed bug in filterPepSeq; wring MSe dimensions 
+ o fixed bug in filterPepSeq; wring MSe dimensions
    where writton to log [2012-02-03 Fri]
  o new getEMRTtable method [2012-02-03 Fri]
  o added ... to plotRtDiffs to be passed to hist [2012-02-03 Fri]
 
 CHANGES IN VERSION 0.4.2
 ------------------------
- o Matched EMRTs dataframe cols class is set explicitly based 
+ o Matched EMRTs dataframe cols class is set explicitly based
    on HDMSePeptideData and MSePep3DData cols classes [2012-01-30 Mon]
  o Grid search on percentage of correct assignments [2012-01-30 Mon]
  o updated grid getters/setters accordingly [2012-01-31 Tue]
@@ -561,25 +565,25 @@ CHANGES IN VERSION 0.4.1
 CHANGES IN VERSION 0.4.0
 ------------------------
  o introducing ReferenceClasses implementation [2012-01-13 Fri]
- o filterPepScore takes medianRndScore and stdRndScore 
+ o filterPepScore takes medianRndScore and stdRndScore
    as separate parametres instead as a list (params) [2012-01-14 Sat]
  o fixed a typo in makeSynapterReport [2012-01-16 Mon]
  o changed several function parameters from input$... into ... [2012-01-17 Tue]
- o further changes to gridSearch, doHDMSePredictions and findMSeEMRTs 
+ o further changes to gridSearch, doHDMSePredictions and findMSeEMRTs
    to integrate with ref classes implementation [2012-01-17 Tue]
  o rationalised findMSeEMRTs and gridSearch 'sapply' loops [2012-01-17 Tue]
- o new keepUniqueSpectrumIds function, now called explicitely 
+ o new keepUniqueSpectrumIds function, now called explicitely
    before gridSearch and findMSeEMRTs [2012-01-18 Wed]
- o Testing that changes produce same makeSynapterReport results 
+ o Testing that changes produce same makeSynapterReport results
    than version 0.3.2 [2012-01-17 Tue]
  o added identification p/q-values calculation and qvalue and multtest
    in imports [2012-01-23 Mon]
- o global filtering is now done when data is loaded; can also be done 
+ o global filtering is now done when data is loaded; can also be done
    manually [2012-01-23 Mon]
  o removing PLGS pepscore filtering and HDMSe log input [2012-01-24 Tue]
  o added qvalue and peptide score plots [2012-01-24 Tue]
  o Synapter ref class interface using S4 methods [2012-01-25 Wed]
- o Doing mass error filtering on the individual peptide files 
+ o Doing mass error filtering on the individual peptide files
    instead of merged data. [2012-01-26 Thu]
  o mf[HD]MSePeptideData is not initialised when files are loaded [2012-01-26 Thu]
  o Documentating new interface [2012-01-26 Thu]
@@ -594,7 +598,7 @@ CHANGES IN VERSION 0.3.1
 ------------------------
  o changed figures url to relative [2011-12-22 Thu]
  o added synapter version and date to report output [2011-12-22 Thu]
- o updated filter.error.ppm to specify column name 
+ o updated filter.error.ppm to specify column name
    to use as filter [2011-12-22 Thu]
  o new mass error plot [2011-12-22 Thu]
  o added orignal nrows in filtering summary table [2011-12-22 Thu]
@@ -606,7 +610,7 @@ CHANGES IN VERSION 0.3.0
  o modified feature plot to incorporate rt and mass ranges [2011-12-20 Tue]
  o adjusted lowess plots ylims to rt modelling range [2011-12-20 Tue]
  o saving light result tables [2011-12-21 Wed]
- o added option to perform grid search over ppm and nsd 
+ o added option to perform grid search over ppm and nsd
    to maximise the number of unique matches [2011-12-21 Wed]
  o added full range feature plots [2011-12-21 Wed]
 

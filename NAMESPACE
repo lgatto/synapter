@@ -24,12 +24,13 @@ export(Synapter, ## constructor
        estimateMasterFdr,
        inspectPeptideScores,
        synapterGuide,
-       synapterTinyData)
+       synapterTinyData,
+       updateSynapterObject)
 
 exportClasses(MasterPeptides,
               MasterFdrResults)
 
-exportMethods(show, 
+exportMethods(show,
               inputFiles,
               getLog,
               mergePeptides,
@@ -86,7 +87,7 @@ exportMethods(show,
               writeMergedPeptides,
               writeMatchedEMRTs,
               writeIdentPeptides,
-              writeQuantPeptides,              
+              writeQuantPeptides,
               ## MasterFdrResults and MasterPeptides
               bestComb,
               allComb,
@@ -94,7 +95,3 @@ exportMethods(show,
               fileNames,
               plot,
               show)
-              
-              
-
-
