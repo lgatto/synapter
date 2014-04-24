@@ -502,13 +502,13 @@ setMethod(plotCrossMatchingFdr, "Synapter",
             invisible(.plotCrossMatchingFdr(object$CrossMatching))
           })
 
-setMethod(plotCrossMatchingNonUniqueDiff, "Synapter",
+setMethod(plotCrossMatchingBoxplots, "Synapter",
           function(object, ...) {
             if (!nrow(object$CrossMatching)) {
               stop("You have to run ", sQuote("crossMatching"), " first!")
             }
 
-            invisible(.plotCrossMatchingNonUniqueDiff(object$CrossMatching))
+            invisible(.plotCrossMatchingBoxplots(object$CrossMatching))
           })
 
 setMethod(getEMRTtable, "Synapter",

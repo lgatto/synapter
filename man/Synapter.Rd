@@ -120,7 +120,7 @@
 \alias{plotRtDiffs,Synapter-method}
 \alias{plotRtDiffs}
 \alias{plotCrossMatchingFdr}
-\alias{plotCrossMatchingNonUniqueDiff}
+\alias{plotCrossMatchingBoxplots}
 
 % importers
 \alias{loadSpectra,Synapter-method}
@@ -384,9 +384,8 @@ Synapter(filenames, master) ## creates an instance of class 'Synapter'
     matching procedure. \code{plotCrossMatching} plots the spectra and fragments
     for each considered cross matching pair. \code{plotCrossMatchingFdr}
     shows the FDR development for different thresholds of common peaks. The
-    \code{plotCrossMatchingNonUniqueDiff} method is used to show the
-    distribution of the difference of the highest to the second highest number
-    of common peaks for non unique matches.
+    \code{plotCrossMatchingBoxplots} method is used to produce boxplots for the
+    number of common peaks in the group of true and false matches.
   }
 
   \subsection{Exporting and saving data}{
@@ -783,10 +782,8 @@ Synapter(filenames, master) ## creates an instance of class 'Synapter'
       Plots the FDR and contengency of the cross matching procedure.
     }
 
-    \item{plotCrossMatchingNonUniqueDiff}{\code{signature(object = "Synapter")}:
-      Uses the results of the cross matching procedure to plot the
-      distribution of the differences of the highest number of common
-      peaks to the second highest number for all non unique matches.
+    \item{plotCrossMatchingBoxplots}{\code{signature(object = "Synapter")}:
+      Plots boxplots of common peaks for true and false matches.
     }
   }
 }

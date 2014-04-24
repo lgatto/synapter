@@ -574,49 +574,17 @@ crossmatching <- function(flatEmrts, spectra, tolerance=25e-6, verbose=TRUE) {
   invisible(contengency)
 }
 
-#' calculate plot the difference of the first and the second highest
-#' number of peaks in a non-unique-match group
+#' boxplots for true and false matches
 #' @param cx crossmatching df, result of crossmatching
-#' @return data.frame, columns: diff, highest
+#' @return invisible graphics::boxplot return value
 #' @noRd
-.crossMatchingNonUniqueDiff <- function(cx) {
-  cx <- cx[grep("non-unique", cx$matchType), ]
-  cx$true <- grepl("true", cx$matchType)
+.plotCrossMatchingBoxplots <- function(cx) {
 
-  d <- tapply(1:nrow(cx), cx$precursor.leID.ident, function(i) {
-    s <- cx[i, ]
-    com <- sort(s$fragments.identXfragments.quant,
-                decreasing=TRUE, index.return=TRUE)
-    d <- com$x[1]-com$x[2]
-    return(c(diff=d, highest=isTRUE(s$true[com$ix[1]] & d != 0)))
-  })
-  d <- as.data.frame(do.call(rbind, d))
-  d$highest <- as.logical(d$highest)
-  d$precursor.leID.ident <- as.numeric(rownames(d))
-
-  return(d)
-}
-
-#' calculate and plot the difference of the first and the second highest
-#' number of peaks in a non-unique-match group
-#' @param cx crossmatching df, result of crossmatching
-#' @return invisible data.frame, columns: diff, highest
-#' @noRd
-.plotCrossMatchingNonUniqueDiff <- function(cx) {
-  d <- .crossMatchingNonUniqueDiff(cx)
-
-  breaks <- max(d$diff, na.rm=TRUE)
-
-  hist(d$diff[d$highest], col=3,
-       main=paste0("distribution of highest and second highest number of ",
-                   "common peaks for non-unique matches"),
-       xlab="differences of highest and second highest number of common peaks",
-       ylab="# peptides", breaks=breaks)
-  hist(d$diff[!d$highest], col=2, add=TRUE, breaks=breaks)
-  legend("topright", legend=c("highest is true match", "highest is false match"),
-         col=3:2, pch=15, bty="n")
-
-  invisible(d)
+  true <- cx$fragments.identXfragments.quant[grep("true", cx$matchType)]
+  false <- cx$fragments.identXfragments.quant[grep("false", cx$matchType)]
+  invisible(jitteredBoxplot(list("true matches"=true, "false matches"=false),
+                            main="cross matching distribution",
+                            jitter.factor=1))
 }
 
 #' filter non-unique matches
