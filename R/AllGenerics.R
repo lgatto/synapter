@@ -50,6 +50,8 @@ setGeneric("plotPepScores", function(object, ...) standardGeneric("plotPepScores
 setGeneric("plotFdr", function(object, ...) standardGeneric("plotFdr"))
 setGeneric("plotFeatures", function(object, ...) standardGeneric("plotFeatures"))
 setGeneric("plotCrossMatching", function(object, ...) standardGeneric("plotCrossMatching"))
+setGeneric("plotCrossMatchingFdr", function(object, ...) standardGeneric("plotCrossMatchingFdr"))
+setGeneric("plotCrossMatchingNonUniqueDiff", function(object, ...) standardGeneric("plotCrossMatchingNonUniqueDiff"))
 setGeneric("getEMRTtable", function(object, ...) standardGeneric("getEMRTtable"))
 setGeneric("plotEMRTtable", function(object, ...) standardGeneric("plotEMRTtable"))
 setGeneric("performance", function(object, ...) standardGeneric("performance"))

@@ -493,6 +493,24 @@ setMethod(plotCrossMatching, "Synapter",
                                ...)
           })
 
+setMethod(plotCrossMatchingFdr, "Synapter",
+          function(object, ...) {
+            if (!nrow(object$CrossMatching)) {
+              stop("You have to run ", sQuote("crossMatching"), " first!")
+            }
+
+            invisible(.plotCrossMatchingFdr(object$CrossMatching))
+          })
+
+setMethod(plotCrossMatchingNonUniqueDiff, "Synapter",
+          function(object, ...) {
+            if (!nrow(object$CrossMatching)) {
+              stop("You have to run ", sQuote("crossMatching"), " first!")
+            }
+
+            invisible(.plotCrossMatchingNonUniqueDiff(object$CrossMatching))
+          })
+
 setMethod(getEMRTtable, "Synapter",
           function(object) table(object$MatchedEMRTs$Function))
 

@@ -29,8 +29,8 @@
 
 \section{Methods}{
   \describe{
-    \item{\code{signature(object = "Synapter", key, column = "character",
-        verbose = "logical", \dots)}}{
+    \item{\code{signature(object = "Synapter", key = "character",
+        column = "character", verbose = "logical", \dots)}}{
       Plots two spectra and fragments against each other.
       The \code{\dots} arguments are passed to the internal functions.
       Currently \code{legend.cex}, \code{fragment.cex}, and

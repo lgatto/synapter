@@ -514,14 +514,11 @@ crossmatching <- function(flatEmrts, spectra, tolerance=25e-6, verbose=TRUE) {
                           ...)
 }
 
-#' plot crossmatching FDR
-#' @param cx crossmatching df, result of crossmatching
-#' @param tolerance double, allowed deviation
-#' @param verbose verbose output?
-#' @return invisible matrix with rows TP, FP, TN, FN, FDR
+#' cross matching FDR calculation
+#' @param cx cross matching df, result of crossmatching
+#' @return matrix with cols TP, FP, TN, FN, FDR
 #' @noRd
-plotCrossmatchingFDR <- function(cx, tolerance=25e-6, verbose=TRUE) {
-
+.crossMatchingContingencyMatrix <- function(cx) {
   ## select "ground-truth"
   trueIdx <- grep("true", cx$matchType)
   falseIdx <- grep("false", cx$matchType)
@@ -536,44 +533,53 @@ plotCrossmatchingFDR <- function(cx, tolerance=25e-6, verbose=TRUE) {
     falseIdx <- sample(falseIdx, n)
   }
 
-
   ytrain <- rep(c(TRUE, FALSE), each=n)
   xtrain <- c(cx$fragments.identXfragments.quant[trueIdx],
               cx$fragments.identXfragments.quant[falseIdx])
   thresholds <- 0:max(xtrain, na.rm=TRUE)
 
-  contingencies <- sapply(thresholds, function(th) {
-    tp <- sum(xtrain > th & ytrain)
-    fp <- sum(xtrain > th & !ytrain)
+  contengency <- t(sapply(thresholds, function(th) {
+    tp <- sum(xtrain >= th & ytrain)
+    fp <- sum(xtrain >= th & !ytrain)
     tn <- sum(xtrain < th & !ytrain)
     fn <- sum(xtrain < th & ytrain)
     fdr <- fp/(tp+fp)
     return(c(tp=tp, fp=fp, tn=tn, fn=fn, fdr=fdr))
-  })
-  colnames(contingencies) <- thresholds
+  }))
+  rownames(contengency) <- thresholds
+
+  return(contengency)
+}
+
+#' plot cross matching FDR
+#' @param cx cross matching df, result of crossmatching
+#' @return invisible matrix with rows TP, FP, TN, FN, FDR
+#' @noRd
+.plotCrossMatchingFdr <- function(cx) {
+
+  contengency <- .crossMatchingContingencyMatrix(cx)
 
   par(mfcol=c(1, 2))
-  plot(thresholds, contingencies[5, ], type="b",
+  plot(0:(nrow(contengency)-1),
+       contengency[, "fdr", drop=FALSE], type="b",
        xlab="# of common peaks", ylab="FDR",
-       main="crossmatching FDR", pch=19)
-  matplot(t(contingencies[1:4, ]), type="l", lty=1,
+       main="cross matching FDR", pch=19)
+  matplot(contengency[, c("tp", "fp", "tn", "fn"), drop=FALSE], type="l", lty=1,
           xlab="# of common peaks", ylab="# of peptides",
-          main="crossmatching details")
+          main="cross matching contengency")
   legend("bottomright", legend=c("TP", "FP", "TN", "FN"),
          col=1:4, lwd=1, bty="n", inset=0.05)
   par(mfcol=c(1, 1))
 
-  invisible(contingencies)
+  invisible(contengency)
 }
 
-#' calculate and plot the difference of the first and the second highest
+#' calculate plot the difference of the first and the second highest
 #' number of peaks in a non-unique-match group
 #' @param cx crossmatching df, result of crossmatching
-#' @param tolerance double, allowed deviation
-#' @param verbose verbose output?
-#' @return invisible data.frame, columns: diff, true
+#' @return data.frame, columns: diff, highest
 #' @noRd
-plotCrossmatchingNonuniqueDiff <- function(cx, breaks=50) {
+.crossMatchingNonUniqueDiff <- function(cx) {
   cx <- cx[grep("non-unique", cx$matchType), ]
   cx$true <- grepl("true", cx$matchType)
 
@@ -581,17 +587,33 @@ plotCrossmatchingNonuniqueDiff <- function(cx, breaks=50) {
     s <- cx[i, ]
     com <- sort(s$fragments.identXfragments.quant,
                 decreasing=TRUE, index.return=TRUE)
-    return(c(diff=com$x[1]-com$x[2], true=isTRUE(s$true[com$ix[1]])))
+    d <- com$x[1]-com$x[2]
+    return(c(diff=d, highest=isTRUE(s$true[com$ix[1]] & d != 0)))
   })
   d <- as.data.frame(do.call(rbind, d))
-  d$true <- as.logical(d$true)
+  d$highest <- as.logical(d$highest)
   d$precursor.leID.ident <- as.numeric(rownames(d))
 
-  hist(d$diff[d$true], col=3,
-       main="Common Peak Number Differences for Non-Unique Matches",
-       xlab="# of common peaks", ylab="# peptides", breaks=breaks)
-  hist(d$diff[!d$true], col=2, add=TRUE, breaks=breaks)
-  legend("topright", legend=c("true match", "false match"),
+  return(d)
+}
+
+#' calculate and plot the difference of the first and the second highest
+#' number of peaks in a non-unique-match group
+#' @param cx crossmatching df, result of crossmatching
+#' @return invisible data.frame, columns: diff, highest
+#' @noRd
+.plotCrossMatchingNonUniqueDiff <- function(cx) {
+  d <- .crossMatchingNonUniqueDiff(cx)
+
+  breaks <- max(d$diff, na.rm=TRUE)
+
+  hist(d$diff[d$highest], col=3,
+       main=paste0("distribution of highest and second highest number of ",
+                   "common peaks for non-unique matches"),
+       xlab="differences of highest and second highest number of common peaks",
+       ylab="# peptides", breaks=breaks)
+  hist(d$diff[!d$highest], col=2, add=TRUE, breaks=breaks)
+  legend("topright", legend=c("highest is true match", "highest is false match"),
          col=3:2, pch=15, bty="n")
 
   invisible(d)

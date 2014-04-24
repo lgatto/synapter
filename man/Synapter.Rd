@@ -119,6 +119,8 @@
 \alias{plotRt}
 \alias{plotRtDiffs,Synapter-method}
 \alias{plotRtDiffs}
+\alias{plotCrossMatchingFdr}
+\alias{plotCrossMatchingNonUniqueDiff}
 
 % importers
 \alias{loadSpectra,Synapter-method}
@@ -378,6 +380,13 @@ Synapter(filenames, master) ## creates an instance of class 'Synapter'
     quantitation spectrum and identification fragments using the
     \code{crossMatching} method. Use \code{setCrossMatchingPpmTolerance} to set
     the maximal allowed tolerance for considering a peak as identical.
+    There are three different methods to visualise the results of the cross
+    matching procedure. \code{plotCrossMatching} plots the spectra and fragments
+    for each considered cross matching pair. \code{plotCrossMatchingFdr}
+    shows the FDR development for different thresholds of common peaks. The
+    \code{plotCrossMatchingNonUniqueDiff} method is used to show the
+    distribution of the difference of the highest to the second highest number
+    of common peaks for non unique matches.
   }
 
   \subsection{Exporting and saving data}{
@@ -761,6 +770,23 @@ Synapter(filenames, master) ## creates an instance of class 'Synapter'
       \code{setPpmError} and \code{setNsdError}) are drawn and
       centered at the expected modelled retention time. This last
       figure allows to visualise the EMRT matching.
+    }
+
+    \item{plotCrossMatching}{\code{signature(object = "Synapter",
+        key = "character", column = "character",
+        verbose = "logical", \dots)}:
+      Plots two spectra and fragments against each other. Please see
+      \code{\link{plotCrossMatching}} for details.
+    }
+
+    \item{plotCrossMatchingFdr}{\code{signature(object = "Synapter")}:
+      Plots the FDR and contengency of the cross matching procedure.
+    }
+
+    \item{plotCrossMatchingNonUniqueDiff}{\code{signature(object = "Synapter")}:
+      Uses the results of the cross matching procedure to plot the
+      distribution of the differences of the highest number of common
+      peaks to the second highest number for all non unique matches.
     }
   }
 }

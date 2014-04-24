@@ -86,6 +86,8 @@ exportMethods(show,
               plotGrid,
               plotFeatures,
               plotCrossMatching,
+              plotCrossMatchingFdr,
+              plotCrossMatchingNonUniqueDiff,
               ## importers
               loadSpectra,
               loadFragments,
