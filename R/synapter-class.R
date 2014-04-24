@@ -400,7 +400,7 @@
                                                    .self$QuantSpectrumData,
                                                    .self$IdentFragmentData,
                                                    .self$QuantFragmentData),
-                                      tolerance=.self$CrossMatchingPpmTolerance,
+                                      tolerance=.self$CrossMatchingPpmTolerance/1e6,
                                       verbose=verbose)
                       .self$SynapterLog <-
                         c(.self$SynapterLog,
