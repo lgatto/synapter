@@ -85,6 +85,7 @@ exportMethods(show,
               plotEMRTtable,
               plotGrid,
               plotFeatures,
+              plotCrossMatching,
               ## importers
               loadSpectra,
               loadFragments,

@@ -482,6 +482,16 @@ setMethod(plotFeatures, "Synapter",
                    })
           })
 
+setMethod(plotCrossMatching, "Synapter",
+          function(object, key, column="peptide.seq", verbose=TRUE, ...) {
+            if (!nrow(object$CrossMatching)) {
+              stop("You have to run ", sQuote("crossMatching"), " first!")
+            }
+
+            .plotCrossMatching(object, key, column=column, verbose=verbose,
+                               tolerance=object$CrossMatchingPpmTolerance/1e6,
+                               ...)
+          })
 
 setMethod(getEMRTtable, "Synapter",
           function(object) table(object$MatchedEMRTs$Function))

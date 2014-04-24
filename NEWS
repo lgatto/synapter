@@ -4,6 +4,7 @@ CHANGES IN VERSION 1.7.1
  o add loadSpectra and loadFragments method [2014-04-23 Wed]
  o add crossMatching, setCrossMatchingPpmTolerance and
    getCrossMatchingPpmTolerance method [2014-04-23 Wed]
+ o add plotCrossMatching [2014-04-24 Thu]
 
 CHANGES IN VERSION 1.7.0
 ------------------------

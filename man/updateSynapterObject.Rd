@@ -22,8 +22,8 @@ in different versions of synapter objects.
 \code{updateSynapterObject} function. \cr Add
 IdentSpectrumFile, IdentSpectrumData, QuantSpectrumFile,
 QuantSpectrumData, IdentFragmentFile, IdentFragmentData,
-QuantFragmentFile, and QuantFragmentData fields to synapter
-class.} }
+QuantFragmentFile, QuantFragmentData, CrossMatching, and
+CrossMatchingTolerance fields to synapter class.} }
 }
 \examples{
 synapterTinyData()

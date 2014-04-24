@@ -7,6 +7,7 @@
 #' @param key character, key
 #' @param msnexp MSnExp object
 #' @return Spectrum2
+#' @noRd
 .getSpectrum <- function(key, msnexp) {
   if (exists(key, envir=assayData(msnexp))) {
     return(msnexp[[key]])
