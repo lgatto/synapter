@@ -564,10 +564,12 @@ crossmatching <- function(flatEmrts, spectra, tolerance=25e-6, verbose=TRUE) {
        contengency[, "fdr", drop=FALSE], type="b",
        xlab="# of common peaks", ylab="FDR",
        main="cross matching FDR", pch=19)
+  grid()
   matplot(contengency[, c("tp", "fp", "tn", "fn"), drop=FALSE], type="l", lty=1,
           xlab="# of common peaks", ylab="# of peptides",
           main="cross matching contengency")
-  legend("bottomright", legend=c("TP", "FP", "TN", "FN"),
+  grid()
+  legend("right", legend=c("TP", "FP", "TN", "FN"),
          col=1:4, lwd=1, bty="n", inset=0.05)
   par(mfcol=c(1, 1))
 
