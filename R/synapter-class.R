@@ -387,7 +387,8 @@
                              " first!")
                       }
                       emrts <- flatMatchedEMRTs(.self$MatchedEMRTs,
-                                               verbose=verbose)
+                                                na.rm=FALSE,
+                                                verbose=verbose)
                       if (!length(.self$CrossMatchingPpmTolerance)) {
                         warning("Crossmatching ppm tolerance undefined. ",
                                 "Setting to default value.")
