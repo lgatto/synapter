@@ -559,7 +559,7 @@ setMethod(performance, "Synapter",
             if (verbose){
               cat("(S) Synapter: ", ans$Synapter, " EMRTs uniquely matched.\n", sep = "")
               cat("(I) Ident: ", ans$Ident, " peptides.\n", sep = "")
-              cat("(Q) Quant:   ", ans$Quant, " peptides.\n", sep = "")
+              cat("(Q) Quant: ", ans$Quant, " peptides.\n", sep = "")
               cat("Enrichment (S/Q): ", round(ans$Enrichment, 2), "%\n", sep = "")
               cat("Overlap:\n")
               print(ans$VennCounts)
