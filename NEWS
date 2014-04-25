@@ -10,6 +10,7 @@ CHANGES IN VERSION 1.7.1
  o replace plotCrossMatchingFdr and plotCrossMatchingBoxplots by
    plotCrossMatchingSummary [2014-04-25 Fri]
  o add {set,get}CrossMatchingMinimalNumberOfCommonPeaks [2014-04-25 Fri]
+ o add testthat to Suggests [2014-04-25 Fri]
 
 CHANGES IN VERSION 1.7.0
 ------------------------
