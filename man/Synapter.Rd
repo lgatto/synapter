@@ -779,7 +779,10 @@ Synapter(filenames, master) ## creates an instance of class 'Synapter'
     }
 
     \item{plotCrossMatchingFdr}{\code{signature(object = "Synapter")}:
-      Plots the FDR and contengency of the cross matching procedure.
+      Plots the FDR and contengency of the cross matching procedure. Please note
+      that not all samples but an equal sized subset of true (unique true, non
+      unique true) and false matches (unique false, non unique false)
+      is used for the calculation FDR.
     }
 
     \item{plotCrossMatchingBoxplots}{\code{signature(object = "Synapter")}:
