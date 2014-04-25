@@ -606,7 +606,7 @@
                        },
                        setCrossMatchingMinimalNumberOfCommonPeaks = function(n) {
                          'Sets minimal number of common peaks for cross matching.'
-                         .self$CrossMatchingMinimalNumberOfCommonPeaks <- n
+                         .self$CrossMatchingMinimalNumberOfCommonPeaks <- as.integer(n)
                          .self$SynapterLog <-
                            c(.self$SynapterLog,
                              paste0("Set minimal number of common peaks for ",
@@ -849,7 +849,7 @@
                        filterMatchedEMRTsByCommonPeaks = function() {
                          'Filters non unique matches using cross matching results.'
 
-                         if (!nrow(.self$Crossmatching)) {
+                         if (!nrow(.self$CrossMatching)) {
                            stop("You have to run ", sQuote("crossMatching"),
                                 " first!")
                          }
