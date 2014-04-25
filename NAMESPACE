@@ -37,6 +37,7 @@ exportMethods(show,
               modelRt,
               findEMRTs,
               searchGrid,
+              crossMatching,
               ## getters and setters
               getGrid,
               getGridDetails,
