@@ -624,10 +624,10 @@ crossmatching <- function(flatEmrts, spectra, tolerance=25e-6, verbose=TRUE) {
 
 #' filter non-unique matches
 #' @param obj synapter object
-#' @param threshold a correct match must have at least "threshold" common peaks
+#' @param nmin a correct match must have at least "nmin" common peaks
 #' @return invisible data.frame, columns: diff, highest
 #' @noRd
-.filterMatchedEMRTsUsingCrossMatching <- function(obj, threshold) {
+.filterMatchedEMRTsUsingCrossMatching <- function(obj, nmin) {
   cx <- obj$CrossMatching
   emrts <- obj$MatchedEMRTs
   pep3d <- obj$QuantPep3DData
@@ -635,7 +635,13 @@ crossmatching <- function(flatEmrts, spectra, tolerance=25e-6, verbose=TRUE) {
   ## backup old Function column
   emrts$Function.0 <- emrts$Function
 
-  cx <- cx[cx$Function > 1 & cx$fragments.identXfragments.quant >= threshold, ]
+  cx <- cx[cx$Function > 1 & cx$fragments.identXfragments.quant >= nmin, ]
+
+  ## if we find duplicates, choose the one with the highest number of common
+  ## peaks
+  cx <- cx[order(cx$precursor.leID.ident, cx$fragments.identXfragments.quant,
+                 decreasing=TRUE), ]
+  cx <- cx[!duplicated(cx$precursor.leID.ident), ]
 
   rowsInEMRTs <- match(cx$precursor.leID.ident, emrts$precursor.leID.ident)
   rowsInPep3D <- match(cx$matched.quant.spectrumIDs, pep3d$spectrumID)

@@ -351,6 +351,11 @@ setMethod(filterQuantPpmError, "Synapter",
             object$filterQuantPpmError()
           })
 
+setMethod(filterMatchedEMRTsByCommonPeaks, "Synapter",
+          function(object) {
+            object$filterMatchedEMRTsByCommonPeaks()
+          })
+
 ## Plotting
 setMethod(plotPpmError, "Synapter",
           function(object,

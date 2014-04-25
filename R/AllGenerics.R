@@ -46,6 +46,7 @@ setGeneric("filterQuantProtFpr", function(object, ...) standardGeneric("filterQu
 setGeneric("filterIdentProtFpr", function(object, ...) standardGeneric("filterIdentProtFpr"))
 setGeneric("filterIdentPpmError", function(object, ...) standardGeneric("filterIdentPpmError"))
 setGeneric("filterQuantPpmError", function(object, ...) standardGeneric("filterQuantPpmError"))
+setGeneric("filterMatchedEMRTsByCommonPeaks", function(object, ...) standardGeneric("filterMatchedEMRTsByCommonPeaks"))
 setGeneric("plotPpmError", function(object, ...) standardGeneric("plotPpmError"))
 setGeneric("plotRt", function(object, ...) standardGeneric("plotRt"))
 setGeneric("plotPepScores", function(object, ...) standardGeneric("plotPepScores"))

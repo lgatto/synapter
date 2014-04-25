@@ -78,6 +78,7 @@ exportMethods(show,
               filterUniqueDbPeptides,
               filterUniqueQuantDbPeptides,
               filterUniqueIdentDbPeptides,
+              filterMatchedEMRTsByCommonPeaks,
               ## plotting
               plotPpmError,
               plotRtDiffs,

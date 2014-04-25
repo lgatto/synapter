@@ -844,5 +844,23 @@
                          'Filters tryptic peptides that match one and only one protein in the fasta database.'
                          .self$filterUniqueIdentDbPeptides(filename, missedCleavages, verbose = verbose)
                          .self$filterUniqueQuantDbPeptides(filename, missedCleavages, verbose = FALSE)
+                       },
+
+                       filterMatchedEMRTsByCommonPeaks = function() {
+                         'Filters non unique matches using cross matching results.'
+
+                         if (!nrow(.self$Crossmatching)) {
+                           stop("You have to run ", sQuote("crossMatching"),
+                                " first!")
+                         }
+                         if (!length(.self$CrossMatchingMinimalNumberOfCommonPeaks)) {
+                           stop("You have to set the minimal number of common via ",
+                                sQuote("setCrossMatchingMinimalNumberOfCommonPeaks"),
+                                " first!")
+                         }
+                         .self$MatchedEMRTs <-
+                           .filterMatchedEMRTsUsingCrossMatching(
+                            .self,
+                            .self$CrossMatchingMinimalNumberOfCommonPeaks)
                        }))
 

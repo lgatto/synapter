@@ -105,6 +105,8 @@
 \alias{filterIdentProtFpr}
 \alias{filterQuantProtFpr,Synapter-method}
 \alias{filterQuantProtFpr}
+\alias{filterMatchedEMRTsByCommonPeaks,Synapter-method}
+\alias{filterMatchedEMRTsByCommonPeaks}
 
 % plotting
 \alias{plotEMRTtable,Synapter-method}
@@ -393,6 +395,12 @@ Synapter(filenames, master) ## creates an instance of class 'Synapter'
     development of the true-positives, false-positives, true-negatives and
     false-negatives using an increasing number of common peaks as threshold. On
     the right panel boxplots for all matches and the sampled matches are shown.
+    Use \code{setCrossMatchingMinimalNumberOfCommonPeaks} to set the number of
+    common peaks between identification and quantitation fragments
+    that have to be at least observed to be considered as unique match. The
+    \code{filterMatchedEMRTsByCommonPeaks} method could be applied to turn non
+    unique matches into unique ones in respect to the results of the cross
+    matching procedure.
   }
 
   \subsection{Exporting and saving data}{
@@ -709,6 +717,14 @@ Synapter(filenames, master) ## creates an instance of class 'Synapter'
 
       \item{filterIdentPpmError}{\code{signature(object="Synapter")}: as
 	\code{filterQuantPpmError}, but for identification peptides.  }
+
+    \item{filterMatchedEMRTsByCommonPeaks}{\code{signature(object="Synapter")}:
+      Turns non unique matches into unique matches based on the cross matching
+      results and a minimal number of common peaks between the identification
+      and quantiation fragments. Use
+      \code{\link{setCrossMatchingMinimalNumberOfCommonPeaks}} to set the
+      minimal number of common peaks.
+    }
 
     }
   }
