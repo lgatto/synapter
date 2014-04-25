@@ -5,13 +5,10 @@ CHANGES IN VERSION 1.7.1
  o add crossMatching, setCrossMatchingPpmTolerance and
    getCrossMatchingPpmTolerance method [2014-04-23 Wed]
  o add plotCrossMatching method  [2014-04-24 Thu]
- o add plotCrossMatchingFdr and plotCrossMatchingBoxplots
-   method [2014-04-24 Thu]
- o replace plotCrossMatchingFdr and plotCrossMatchingBoxplots by
-   plotCrossMatchingSummary [2014-04-25 Fri]
+ o add plotCrossMatchingSummary [2014-04-25 Fri]
  o add {set,get}CrossMatchingMinimalNumberOfCommonPeaks [2014-04-25 Fri]
- o add testthat to Suggests [2014-04-25 Fri]
  o add filterMatchedEMRTsByCommonPeaks [2014-04-25 Fri]
+ o add testthat to Suggests [2014-04-25 Fri]
 
 CHANGES IN VERSION 1.7.0
 ------------------------

@@ -363,25 +363,27 @@ crossmatching <- function(flatEmrts, spectra, tolerance=25e-6, verbose=TRUE) {
 
   cx <- cx[cx$Function > 1 & cx$fragments.identXfragments.quant >= nmin, ]
 
-  ## if we find duplicates, choose the one with the highest number of common
-  ## peaks
-  cx <- cx[order(cx$precursor.leID.ident, cx$fragments.identXfragments.quant,
-                 decreasing=TRUE), ]
-  cx <- cx[!duplicated(cx$precursor.leID.ident), ]
+  ## if we find duplicates (multiple matches even after applying the cross
+  ## matching rule) don't transfer them into unique ones.
+  nonDuplicated <- !(duplicated(cx$precursor.leID.ident) |
+                     rev(duplicated(rev(cx$precursor.leID.ident))))
+  cx <- cx[nonDuplicated, ]
 
-  rowsInEMRTs <- match(cx$precursor.leID.ident, emrts$precursor.leID.ident)
-  rowsInPep3D <- match(cx$matched.quant.spectrumIDs, pep3d$spectrumID)
+  if (nrow(cx)) {
+   rowsInEMRTs <- match(cx$precursor.leID.ident, emrts$precursor.leID.ident)
+   rowsInPep3D <- match(cx$matched.quant.spectrumIDs, pep3d$spectrumID)
 
-  columns <- intersect(colnames(cx), colnames(pep3d))
+   columns <- intersect(colnames(cx), colnames(pep3d))
 
-  cx[, c("precursor.leID.quant", columns)] <-
-    pep3d[rowsInPep3D, c("spectrumID", columns)]
-  cx$matchType <- "unique-true"
-  cx$idSource <- "crossmatching"
-  cx$Function <- 1
-  emrts[rowsInEMRTs, columns] <- cx[, columns]
-  emrts[rowsInEMRTs, c("idSource", "precursor.leID.quant", "spectrumID")] <-
-    cx[, c("idSource", "precursor.leID.quant", "spectrumID")]
+   cx[, c("precursor.leID.quant", columns)] <-
+     pep3d[rowsInPep3D, c("spectrumID", columns)]
+   cx$matchType <- "unique-true"
+   cx$idSource <- "crossmatching"
+   cx$Function <- 1
+   emrts[rowsInEMRTs, columns] <- cx[, columns]
+   emrts[rowsInEMRTs, c("idSource", "precursor.leID.quant", "spectrumID")] <-
+     cx[, c("idSource", "precursor.leID.quant", "spectrumID")]
+  }
   return(emrts)
 }
 

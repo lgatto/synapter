@@ -400,7 +400,9 @@ Synapter(filenames, master) ## creates an instance of class 'Synapter'
     that have to be at least observed to be considered as unique match. The
     \code{filterMatchedEMRTsByCommonPeaks} method could be applied to turn non
     unique matches into unique ones in respect to the results of the cross
-    matching procedure.
+    matching procedure. If there are still multiple matches that have more
+    common peaks than set by \code{setCrossMatchingMinimalNumberOfCommonPeaks}
+    they are kept as non unique matches.
   }
 
   \subsection{Exporting and saving data}{
@@ -723,7 +725,8 @@ Synapter(filenames, master) ## creates an instance of class 'Synapter'
       results and a minimal number of common peaks between the identification
       and quantiation fragments. Use
       \code{\link{setCrossMatchingMinimalNumberOfCommonPeaks}} to set the
-      minimal number of common peaks.
+      minimal number of common peaks. If there are multiple non unique matches
+      above this number they are kept as non unique matches.
     }
 
     }
