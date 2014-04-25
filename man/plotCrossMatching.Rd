@@ -1,4 +1,5 @@
 \name{plotCrossMatching}
+\alias{plotCrossMatching}
 \alias{plotCrossMatching,Synapter-method}
 \docType{methods}
 

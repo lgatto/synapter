@@ -123,6 +123,7 @@
 \alias{plotRt}
 \alias{plotRtDiffs,Synapter-method}
 \alias{plotRtDiffs}
+\alias{plotCrossMatchingSummary,Synapter-method}
 \alias{plotCrossMatchingSummary}
 
 % importers
