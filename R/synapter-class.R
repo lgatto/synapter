@@ -230,6 +230,7 @@
                                                             "quantspectrum")))
                       filenames <- as.list(filenames)
 
+                      .self <- updateSynapterObject(.self)
                       .self$IdentSpectrumFile <- filenames$identspectrum
                       .self$IdentSpectrumData <-
                         .spectrumXml2spectra(df=.self$IdentPeptideData,
@@ -255,6 +256,7 @@
                                                             "quantfragments")))
                       filenames <- as.list(filenames)
 
+                      .self <- updateSynapterObject(.self)
                       .self$IdentFragmentFile <- filenames$identfragments
                       .self$IdentFragmentData <-
                         .finalFragment2spectra(df=.self$IdentPeptideData,

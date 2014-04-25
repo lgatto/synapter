@@ -33,9 +33,9 @@ updateSynapterObject <- function(obj, verbose=TRUE) {
 
   isDeprecated <- current < minimalVersion
 
-  newobj <- obj$copy()
-
   if (isDeprecated) {
+    newobj <- obj$copy()
+
     newobj$Version <- as.character(packageVersion("synapter"))
     newobj$SynapterLog <- c(newobj$SynapterLog,
                             paste("Instance updated to synapter",
@@ -46,8 +46,10 @@ updateSynapterObject <- function(obj, verbose=TRUE) {
               "objects. Your object is updated to synapter ", newobj$Version,
               ". Please see ", sQuote("?updateSynapterObject"), " for details.")
     }
+    return(newobj)
   }
 
-  return(newobj)
+  return(obj)
 }
+
 
