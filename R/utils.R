@@ -571,3 +571,17 @@ flatMatchedEMRTs <- function(emrts, na.rm=TRUE, verbose=TRUE) {
 matched.quant.spectrumIDs2numeric <- function(x) {
   lapply(MSnbase:::utils.ssv2list(x, sep=","), as.numeric)
 }
+
+diagnosticErrors <- function(x) {
+  tp <- x[, "tp"]
+  fp <- x[, "fp"]
+  tn <- x[, "tn"]
+  fn <- x[, "fn"]
+
+  acc <- (tp+tn)/(tp+fp+tn+fn)
+  pre <- tp/(tp+fp)
+  rec <- tp/(tp+fn)
+  f1 <- 2*pre*rec/(pre+rec)
+  return(cbind(accuracy=acc, precision=pre, recall=rec, fdr=1-pre, f1=f1))
+}
+

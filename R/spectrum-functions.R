@@ -514,11 +514,11 @@ crossmatching <- function(flatEmrts, spectra, tolerance=25e-6, verbose=TRUE) {
                           ...)
 }
 
-#' cross matching FDR calculation
+#' create an equal sized sample of true and false matches
 #' @param cx cross matching df, result of crossmatching
-#' @return matrix with cols TP, FP, TN, FN, FDR
+#' @return list with trueIdx and falseIdx
 #' @noRd
-.crossMatchingContingencyMatrix <- function(cx) {
+.groundTruthIndices <- function(cx) {
   ## select "ground-truth"
   trueIdx <- grep("true", cx$matchType)
   falseIdx <- grep("false", cx$matchType)
@@ -532,61 +532,94 @@ crossmatching <- function(flatEmrts, spectra, tolerance=25e-6, verbose=TRUE) {
   if (length(falseIdx) > n) {
     falseIdx <- sample(falseIdx, n)
   }
+  return(list(trueIdx=trueIdx, falseIdx=falseIdx))
+}
 
-  ytrain <- rep(c(TRUE, FALSE), each=n)
+#' @param cx cross matching df, result of crossmatching
+#' @return matrix with cols tp, fp, tn, fn
+#' @noRd
+.crossMatchingConfusionMatrix <- function(cx) {
+  trueIdx <- grep("true", cx$matchType)
+  falseIdx <- grep("false", cx$matchType)
+
+  ytrain <- rep(c(TRUE, FALSE), c(length(trueIdx), length(falseIdx)))
   xtrain <- c(cx$fragments.identXfragments.quant[trueIdx],
               cx$fragments.identXfragments.quant[falseIdx])
   thresholds <- 0:max(xtrain, na.rm=TRUE)
 
-  contengency <- t(sapply(thresholds, function(th) {
+  confusion <- t(sapply(thresholds, function(th) {
     tp <- sum(xtrain >= th & ytrain)
     fp <- sum(xtrain >= th & !ytrain)
     tn <- sum(xtrain < th & !ytrain)
     fn <- sum(xtrain < th & ytrain)
-    fdr <- fp/(tp+fp)
-    return(c(tp=tp, fp=fp, tn=tn, fn=fn, fdr=fdr))
+    return(c(tp=tp, fp=fp, tn=tn, fn=fn))
   }))
-  rownames(contengency) <- thresholds
+  confusion <- cbind(ncommon=thresholds, confusion)
+  rownames(confusion) <- NULL
 
-  return(contengency)
+  return(confusion)
 }
 
-#' plot cross matching FDR
 #' @param cx cross matching df, result of crossmatching
-#' @return invisible matrix with rows TP, FP, TN, FN, FDR
+#' @return matrix with cols tp, fp, tn, fn
 #' @noRd
-.plotCrossMatchingFdr <- function(cx) {
+.crossMatchingContingencyMatrix <- function(cx) {
+  confusion <- .crossMatchingConfusionMatrix(cx)
+  return(cbind(confusion, diagnosticErrors(confusion)))
+}
 
-  contengency <- .crossMatchingContingencyMatrix(cx)
+#' plot cross matching F1/FDR/Confusion/Boxplots
+#' @param cx cross matching df, result of crossmatching
+#' @return invisible matrix with rows tp, fp, tn, fn, accuracy, precision,
+#' recall, fdr, f1
+#' @noRd
+.plotCrossMatchingSummary <- function(cx) {
+  sampled <- .groundTruthIndices(cx)
+  contengency <- .crossMatchingContingencyMatrix(cx[unlist(sampled), ])
 
-  par(mfcol=c(1, 2))
-  plot(0:(nrow(contengency)-1),
-       contengency[, "fdr", drop=FALSE], type="b",
-       xlab="# of common peaks", ylab="FDR",
-       main="cross matching FDR", pch=19)
+  par(mfcol=c(1, 3))
+  x <- (1:nrow(contengency))-1
+  matplot(x, contengency[, c("fdr", "f1"), drop=FALSE], type="b", lty=1,
+          xlab="# of common peaks", ylab="performance",
+          main="cross matching performance", pch=19)
+  legend("topright", legend=c("FDR", "F1"),
+         col=1:2, lwd=1, pch=19, bty="n")
   grid()
-  matplot(contengency[, c("tp", "fp", "tn", "fn"), drop=FALSE], type="l", lty=1,
+  matplot(x, contengency[, c("tp", "fp", "tn", "fn"), drop=FALSE],
+          type="b", lty=1, pch=19,
           xlab="# of common peaks", ylab="# of peptides",
-          main="cross matching contengency")
+          main="cross matching confusion")
   grid()
   legend("right", legend=c("TP", "FP", "TN", "FN"),
-         col=1:4, lwd=1, bty="n", inset=0.05)
+         col=1:4, lwd=1, pch=19, bty="n")
+
+  trueIdx <- grep("true", cx$matchType)
+  falseIdx <- grep("false", cx$matchType)
+
+  l <- list()
+
+  l[["all true matches"]] <-
+    cx$fragments.identXfragments.quant[trueIdx]
+
+  if (length(trueIdx) > length(sampled$trueIdx)) {
+    l[["sampled true matches"]] <-
+      cx$fragments.identXfragments.quant[sampled$trueIdx]
+  }
+
+  l[["all false matches"]] <-
+    cx$fragments.identXfragments.quant[falseIdx]
+
+  if (length(falseIdx) > length(sampled$falseIdx)) {
+    l[["sampled false matches"]] <-
+      cx$fragments.identXfragments.quant[sampled$falseIdx]
+  }
+
+  jitteredBoxplot(l, jitter.factor=1,
+                  main="cross matching distribution", ylab="# of common peaks")
+
   par(mfcol=c(1, 1))
 
   invisible(contengency)
-}
-
-#' boxplots for true and false matches
-#' @param cx crossmatching df, result of crossmatching
-#' @return invisible graphics::boxplot return value
-#' @noRd
-.plotCrossMatchingBoxplots <- function(cx) {
-
-  true <- cx$fragments.identXfragments.quant[grep("true", cx$matchType)]
-  false <- cx$fragments.identXfragments.quant[grep("false", cx$matchType)]
-  invisible(jitteredBoxplot(list("true matches"=true, "false matches"=false),
-                            main="cross matching distribution",
-                            jitter.factor=1))
 }
 
 #' filter non-unique matches

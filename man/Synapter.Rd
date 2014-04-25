@@ -119,8 +119,7 @@
 \alias{plotRt}
 \alias{plotRtDiffs,Synapter-method}
 \alias{plotRtDiffs}
-\alias{plotCrossMatchingFdr}
-\alias{plotCrossMatchingBoxplots}
+\alias{plotCrossMatchingSummary}
 
 % importers
 \alias{loadSpectra,Synapter-method}
@@ -380,12 +379,15 @@ Synapter(filenames, master) ## creates an instance of class 'Synapter'
     quantitation spectrum and identification fragments using the
     \code{crossMatching} method. Use \code{setCrossMatchingPpmTolerance} to set
     the maximal allowed tolerance for considering a peak as identical.
-    There are three different methods to visualise the results of the cross
+    There are two different methods to visualise the results of the cross
     matching procedure. \code{plotCrossMatching} plots the spectra and fragments
-    for each considered cross matching pair. \code{plotCrossMatchingFdr}
-    shows the FDR development for different thresholds of common peaks. The
-    \code{plotCrossMatchingBoxplots} method is used to produce boxplots for the
-    number of common peaks in the group of true and false matches.
+    for each considered cross matching pair. \code{plotCrossMatchingSummary}
+    creates three plots showing the performance of the cross matching procedure.
+    The left panel shows the F1-score and the FDR calculated for an equal sized
+    subset of true and false matches. The panel in the middle shows the
+    development of the true-positives, false-positives, true-negatives and
+    false-negatives using an increasing number of common peaks as threshold. On
+    the right panel boxplots for all matches and the sampled matches are shown.
   }
 
   \subsection{Exporting and saving data}{
@@ -778,15 +780,15 @@ Synapter(filenames, master) ## creates an instance of class 'Synapter'
       \code{\link{plotCrossMatching}} for details.
     }
 
-    \item{plotCrossMatchingFdr}{\code{signature(object = "Synapter")}:
-      Plots the FDR and contengency of the cross matching procedure. Please note
-      that not all samples but an equal sized subset of true (unique true, non
-      unique true) and false matches (unique false, non unique false)
-      is used for the calculation FDR.
-    }
-
-    \item{plotCrossMatchingBoxplots}{\code{signature(object = "Synapter")}:
-      Plots boxplots of common peaks for true and false matches.
+    \item{plotCrossMatchingSummary}{\code{signature(object = "Synapter")}:
+      Creates three plots showing the performance of the cross matching
+      procedure.  The left panel shows the F1-score and the FDR calculated for
+      an equal sized subset of true and false matches.
+      The panel in the middle shows the development of the true-positives,
+      false-positives, true-negatives and false-negatives using an
+      increasing number of common peaks as threshold. On the right panel
+      boxplots for all matches and the sampled matches are shown.
+      This function returns a contingency matrix invisibly.
     }
   }
 }

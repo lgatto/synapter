@@ -7,6 +7,8 @@ CHANGES IN VERSION 1.7.1
  o add plotCrossMatching method  [2014-04-24 Thu]
  o add plotCrossMatchingFdr and plotCrossMatchingBoxplots
    method [2014-04-24 Thu]
+ o replace plotCrossMatchingFdr and plotCrossMatchingBoxplots by
+   plotCrossMatchingSummary [2014-04-25 Fri]
 
 CHANGES IN VERSION 1.7.0
 ------------------------
