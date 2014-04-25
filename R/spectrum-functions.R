@@ -453,7 +453,7 @@ crossmatching <- function(flatEmrts, spectra, tolerance=25e-6, verbose=TRUE) {
   }
 
   if (!missing(key)) {
-    cx <- cx[which(key == cx[, column]), ]
+    cx <- cx[which(cx[, column] %in% key), ]
 
     if (!nrow(cx)) {
       stop("No row matches your criteria!")
