@@ -75,6 +75,10 @@
 \alias{setCrossMatchingPpmTolerance}
 \alias{getCrossMatchingPpmTolerance,Synapter-method}
 \alias{getCrossMatchingPpmTolerance}
+\alias{setCrossMatchingMinimalNumberOfCommonPeaks,Synapter-method}
+\alias{setCrossMatchingMinimalNumberOfCommonPeaks}
+\alias{getCrossMatchingMinimalNumberOfCommonPeaks,Synapter-method}
+\alias{getCrossMatchingMinimalNumberOfCommonPeaks}
 \alias{performance,Synapter-method}
 \alias{performance2,Synapter-method}
 \alias{performance}
@@ -562,15 +566,6 @@ Synapter(filenames, master) ## creates an instance of class 'Synapter'
 	tolerance \code{ppm} (default is 10).
       }
 
-      \item{setCrossMatchingPpmTolerance}{\code{signature(object="Synapter",
-        ppm = "numeric")}: Sets the crossmatching mass tolerance \code{ppm}
-        (default is 25).
-      }
-
-      \item{getCrossMatchingPpmTolerance}{\code{signature(object="Synapter")}:
-        Returns the crossmatching mass tolerance in ppm.
-      }
-
       \item{setLowessSpan}{\code{signature(object="Synapter", span =
 	  "numeric")}: Sets the \code{loess} \code{span} parameter;
 	default is 0.05.
@@ -609,6 +604,24 @@ Synapter(filenames, master) ## creates an instance of class 'Synapter'
 	score densities (see \code{plotPepScores}). Especially the
 	difference between random and regular entries are informative in
 	respect with the confidence of the random scores distribution.
+      }
+
+      \item{setCrossMatchingPpmTolerance}{\code{signature(object="Synapter",
+        ppm = "numeric")}: Sets the cross matching mass tolerance \code{ppm}
+        (default is 25).
+      }
+
+      \item{getCrossMatchingPpmTolerance}{\code{signature(object="Synapter")}:
+        Returns the cross matching mass tolerance in ppm.
+      }
+
+      \item{setCrossMatchingMinimalNumberOfCommonPeaks}{
+        \code{signature(object="Synapter", n = "integer")}:
+        Sets the minimal number of common peaks for cross matching.
+      }
+
+      \item{getCrossMatchingPpmTolerance}{\code{signature(object="Synapter")}:
+        Returns the minimal number of common peaks for cross matching.
       }
 
       \item{showFdrStats}{\code{signature(object="Synapter", k =

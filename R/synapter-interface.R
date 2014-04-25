@@ -242,6 +242,14 @@ setMethod(setCrossMatchingPpmTolerance, "Synapter",
 setMethod(getCrossMatchingPpmTolerance, "Synapter",
           function(object) object$CrossMatchingPpmTolerance)
 
+setMethod(setCrossMatchingMinimalNumberOfCommonPeaks, "Synapter",
+          function(object, n)
+            object$setCrossMatchingMinimalNumberOfCommonPeaks(n))
+
+setMethod(getCrossMatchingMinimalNumberOfCommonPeaks, "Synapter",
+          function(object) object$CrossMatchingMinimalNumberOfCommonPeaks)
+
+
 setMethod(showFdrStats, "Synapter",
           function(object,
                    k = c(0.001, 0.01, 0.05, 0.1)) {

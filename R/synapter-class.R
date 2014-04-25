@@ -45,7 +45,8 @@
                     IdentFragmentFile = "character",
                     IdentFragmentData = "MSnExp",
                     CrossMatching = "data.frame",
-                    CrossMatchingPpmTolerance = "numeric"),
+                    CrossMatchingPpmTolerance = "numeric",
+                    CrossMatchingMinimalNumberOfCommonPeaks = "integer"),
                 methods = list(
                     initialize = function() {
                         .self$Version <- as.character(packageVersion("synapter"))
@@ -581,13 +582,6 @@
                                                       .self$PpmError,
                                                       sep=""))
                        },
-                       setCrossMatchingPpmTolerance = function(ppm = 25) {
-                         'Sets crossmatching mass error tolerance threshold.'
-                         .self$CrossMatchingPpmTolerance <- ppm
-                         .self$SynapterLog <-
-                           c(.self$SynapterLog,
-                             paste0("Set crossmatching ppm error to ", ppm))
-                       },
                        setLowessSpan = function(span = 0.05) {
                          'Sets lowess\' span parameter.'
                          .self$LowessSpan <- span
@@ -602,6 +596,21 @@
                                                 paste("Set nsd to ",
                                                       .self$RtNsd,
                                                       sep=""))
+                       },
+                       setCrossMatchingPpmTolerance = function(ppm = 25) {
+                         'Sets cross matching mass error tolerance threshold.'
+                         .self$CrossMatchingPpmTolerance <- ppm
+                         .self$SynapterLog <-
+                           c(.self$SynapterLog,
+                             paste0("Set cross matching ppm error to ", ppm))
+                       },
+                       setCrossMatchingMinimalNumberOfCommonPeaks = function(n) {
+                         'Sets minimal number of common peaks for cross matching.'
+                         .self$CrossMatchingMinimalNumberOfCommonPeaks <- n
+                         .self$SynapterLog <-
+                           c(.self$SynapterLog,
+                             paste0("Set minimal number of common peaks for ",
+                                    "cross matching to ", n))
                        }))
 
 ## GLOBAL FILTERS

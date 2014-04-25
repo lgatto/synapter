@@ -63,6 +63,8 @@ exportMethods(show,
               getEMRTtable,
               setCrossMatchingPpmTolerance,
               getCrossMatchingPpmTolerance,
+              setCrossMatchingMinimalNumberOfCommonPeaks,
+              getCrossMatchingMinimalNumberOfCommonPeaks,
               performance,
               performance2,
               ## filtering prior to merging
