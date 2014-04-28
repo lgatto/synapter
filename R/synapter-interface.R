@@ -455,6 +455,7 @@ setMethod(plotFeatures, "Synapter",
                        object$setRtNsd()
                      }
                      plot.some.features(object$MergedFeatures,
+                                        object$IdentPeptideData,
                                         object$QuantPep3DData,
                                         object$RtModel,
                                         object$IdentPpmError,

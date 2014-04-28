@@ -1,6 +1,8 @@
 CHANGES IN VERSION 1.7.1
 ------------------------
  o add updateSynapterObject function [2014-04-23 Wed]
+ o fix retention time model calculation in plotFeatures(..., what="some")
+   [2014-04-28 Mon]
 
 CHANGES IN VERSION 1.7.0
 ------------------------
