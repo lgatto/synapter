@@ -261,16 +261,17 @@ crossmatching <- function(flatEmrts, spectra, tolerance=25e-6, verbose=TRUE) {
   return(list(trueIdx=trueIdx, falseIdx=falseIdx))
 }
 
-#' @param cx cross matching df, result of crossmatching
+#' @param cx cross matching df, result of cross matching
+#' @param mcol column name of the matching results (e.g.
+#' fragments.identXfragments.quant)
 #' @return matrix with cols tp, fp, tn, fn
 #' @noRd
-.crossMatchingConfusionMatrix <- function(cx) {
+.crossMatchingConfusionMatrix <- function(cx, mcol) {
   trueIdx <- grep("true", cx$matchType)
   falseIdx <- grep("false", cx$matchType)
 
   ytrain <- rep(c(TRUE, FALSE), c(length(trueIdx), length(falseIdx)))
-  xtrain <- c(cx$fragments.identXfragments.quant[trueIdx],
-              cx$fragments.identXfragments.quant[falseIdx])
+  xtrain <- c(cx[trueIdx, mcol], cx[falseIdx, mcol])
   thresholds <- 0:max(xtrain, na.rm=TRUE)
 
   confusion <- t(sapply(thresholds, function(th) {
@@ -287,21 +288,26 @@ crossmatching <- function(flatEmrts, spectra, tolerance=25e-6, verbose=TRUE) {
 }
 
 #' @param cx cross matching df, result of crossmatching
+#' @param mcol column name of the matching results (e.g.
+#' fragments.identXfragments.quant)
 #' @return matrix with cols tp, fp, tn, fn
 #' @noRd
-.crossMatchingContingencyMatrix <- function(cx) {
-  confusion <- .crossMatchingConfusionMatrix(cx)
+.crossMatchingContingencyMatrix <- function(cx, mcol) {
+  confusion <- .crossMatchingConfusionMatrix(cx, mcol)
   return(cbind(confusion, diagnosticErrors(confusion)))
 }
 
 #' plot cross matching F1/FDR/Confusion/Boxplots
 #' @param cx cross matching df, result of crossmatching
+#' @param mcol column name of the matching results (e.g.
+#' fragments.identXfragments.quant)
 #' @return invisible matrix with rows tp, fp, tn, fn, accuracy, precision,
 #' recall, fdr, f1
 #' @noRd
-.plotCrossMatchingSummary <- function(cx) {
+.plotCrossMatchingSummary <- function(cx,
+                                      mcol="spectrum.quantXfragments.ident") {
   sampled <- .groundTruthIndices(cx)
-  contengency <- .crossMatchingContingencyMatrix(cx[unlist(sampled), ])
+  contengency <- .crossMatchingContingencyMatrix(cx[unlist(sampled), ], mcol)
 
   par(mfcol=c(1, 3))
   x <- (1:nrow(contengency))-1
@@ -324,20 +330,16 @@ crossmatching <- function(flatEmrts, spectra, tolerance=25e-6, verbose=TRUE) {
 
   l <- list()
 
-  l[["all true matches"]] <-
-    cx$fragments.identXfragments.quant[trueIdx]
+  l[["all true matches"]] <- cx[trueIdx, mcol]
 
   if (length(trueIdx) > length(sampled$trueIdx)) {
-    l[["sampled true matches"]] <-
-      cx$fragments.identXfragments.quant[sampled$trueIdx]
+    l[["sampled true matches"]] <- cx[sampled$trueIdx, mcol]
   }
 
-  l[["all false matches"]] <-
-    cx$fragments.identXfragments.quant[falseIdx]
+  l[["all false matches"]] <- cx[falseIdx, mcol]
 
   if (length(falseIdx) > length(sampled$falseIdx)) {
-    l[["sampled false matches"]] <-
-      cx$fragments.identXfragments.quant[sampled$falseIdx]
+    l[["sampled false matches"]] <- cx[sampled$falseIdx, mcol]
   }
 
   jitteredBoxplot(l, jitter.factor=1,
@@ -351,9 +353,11 @@ crossmatching <- function(flatEmrts, spectra, tolerance=25e-6, verbose=TRUE) {
 #' filter non-unique matches
 #' @param obj synapter object
 #' @param nmin a correct match must have at least "nmin" common peaks
+#' @param mcol column name of the matching results (e.g.
+#' fragments.identXfragments.quant)
 #' @return invisible data.frame, columns: diff, highest
 #' @noRd
-.filterMatchedEMRTsUsingCrossMatching <- function(obj, nmin) {
+.filterMatchedEMRTsUsingCrossMatching <- function(obj, nmin, mcol="spectrum.quantXfragments.ident") {
   cx <- obj$CrossMatching
   emrts <- obj$MatchedEMRTs
   pep3d <- obj$QuantPep3DData
@@ -361,7 +365,7 @@ crossmatching <- function(flatEmrts, spectra, tolerance=25e-6, verbose=TRUE) {
   ## backup old Function column
   emrts$Function.0 <- emrts$Function
 
-  cx <- cx[cx$Function > 1 & cx$fragments.identXfragments.quant >= nmin, ]
+  cx <- cx[cx$Function > 1 & cx[, mcol] >= nmin, ]
 
   ## if we find duplicates (multiple matches even after applying the cross
   ## matching rule) don't transfer them into unique ones.

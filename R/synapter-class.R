@@ -846,7 +846,7 @@
                          .self$filterUniqueQuantDbPeptides(filename, missedCleavages, verbose = FALSE)
                        },
 
-                       filterMatchedEMRTsByCommonPeaks = function() {
+                       filterMatchedEMRTsByCommonPeaks = function(mcol = "spectrum.quantXfragments.ident") {
                          'Filters non unique matches using cross matching results.'
 
                          if (!nrow(.self$CrossMatching)) {
@@ -861,6 +861,13 @@
                          .self$MatchedEMRTs <-
                            .filterMatchedEMRTsUsingCrossMatching(
                             .self,
-                            .self$CrossMatchingMinimalNumberOfCommonPeaks)
+                            .self$CrossMatchingMinimalNumberOfCommonPeaks, mcol)
+                         .self$SynapterLog <- c(.self$SynapterLog,
+                                                paste("Filtered matched EMRTs using at least ",
+                                                      .self$CrossMatchingMinimalNumberOfCommonPeaks,
+                                                      " number of common peaks (matchColumn=\"",
+                                                      mcol, "\", ["
+                                                      paste(dim(.self$QuantPeptideData), collapse=","),
+                                                      "]", sep=""))
                        }))
 

@@ -720,13 +720,20 @@ Synapter(filenames, master) ## creates an instance of class 'Synapter'
       \item{filterIdentPpmError}{\code{signature(object="Synapter")}: as
 	\code{filterQuantPpmError}, but for identification peptides.  }
 
-    \item{filterMatchedEMRTsByCommonPeaks}{\code{signature(object="Synapter")}:
+    \item{filterMatchedEMRTsByCommonPeaks}{\code{signature(object="Synapter",
+        matchColumn = "spectrum.quantXfragments.ident")}:
       Turns non unique matches into unique matches based on the cross matching
       results and a minimal number of common peaks between the identification
       and quantiation fragments. Use
       \code{\link{setCrossMatchingMinimalNumberOfCommonPeaks}} to set the
       minimal number of common peaks. If there are multiple non unique matches
       above this number they are kept as non unique matches.
+      Use \code{matchColumn} to select which cross matching result should be
+      used for filtering: \code{"spectrum.quantXfragments.ident"} for quantitation
+      spectra vs identification fragments,
+      \code{"spectrum.identXfragments.quant"} for identification spectra vs
+      quantitation fragments, and \code{"fragments.identXfragments.quant"} for
+      identification fragments vs quantitation fragments.
     }
 
     }
@@ -813,7 +820,8 @@ Synapter(filenames, master) ## creates an instance of class 'Synapter'
       \code{\link{plotCrossMatching}} for details.
     }
 
-    \item{plotCrossMatchingSummary}{\code{signature(object = "Synapter")}:
+    \item{plotCrossMatchingSummary}{\code{signature(object = "Synapter",
+        matchColumn = "spectrum.quantXfragments.ident")}:
       Creates three plots showing the performance of the cross matching
       procedure.  The left panel shows the F1-score and the FDR calculated for
       an equal sized subset of true and false matches.
@@ -821,6 +829,12 @@ Synapter(filenames, master) ## creates an instance of class 'Synapter'
       false-positives, true-negatives and false-negatives using an
       increasing number of common peaks as threshold. On the right panel
       boxplots for all matches and the sampled matches are shown.
+      Use \code{matchColumn} to select which cross matching result should be
+      visualized: \code{"spectrum.quantXfragments.ident"} for quantitation
+      spectra vs identification fragments,
+      \code{"spectrum.identXfragments.quant"} for identification spectra vs
+      quantitation fragments, and \code{"fragments.identXfragments.quant"} for
+      identification fragments vs quantitation fragments.
       This function returns a contingency matrix invisibly.
     }
   }
