@@ -69,7 +69,7 @@
 ##' \code{\link{Synapter}} for references.
 ##' @param fpr Protein false positive rate. Default is 0.01.
 ##' @param peplen Minimum peptide length. Default is 7.
-##' @param missedCleavages Number of allowed missed cleavages. Default
+##' @param missedCleavages Number of maximal allowed missed cleavages. Default
 ##' is 0.
 ##' @param identppm Identification mass tolerance (in ppm). Default is 20.
 ##' @param quantppm Quantitation mass tolerance (in ppm). Default is 20.

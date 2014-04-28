@@ -671,7 +671,7 @@ Synapter(filenames, master) ## creates an instance of class 'Synapter'
 	digestion uses the \code{cleaver} package, replacing the more
 	simplistic inbuild function. The effect of this change is
 	documented in https://github.com/lgatto/synapter/pull/47). The
-	number of missed cleavages can be set as \code{missedCleavages}
+	number of maximal missed cleavages can be set as \code{missedCleavages}
 	(default is 0). Those peptide sequences are then used as a
 	filter against the identification and quantitation peptides,
 	where only unique proteotyptic instances (no miscleavage allowed

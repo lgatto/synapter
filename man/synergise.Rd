@@ -50,7 +50,7 @@ synergise(filenames, master = FALSE, object, outputdir, fdr = 0.01,
 
   \item{peplen}{Minimum peptide length. Default is 7.}
 
-  \item{missedCleavages}{Number of allowed missed
+  \item{missedCleavages}{Number of maximal allowed missed
   cleavages. Default is 0.}
 
   \item{identppm}{Identification mass tolerance (in ppm).
