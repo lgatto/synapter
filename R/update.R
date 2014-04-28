@@ -6,7 +6,11 @@
 ##'
 ##' \describe{
 ##'   \item{synapter 1.7.1}{
-##'     Introduce \code{updateSynapterObject} function.}
+##'     Introduce \code{updateSynapterObject} function. \cr
+##'     Add IdentSpectrumFile, IdentSpectrumData, QuantSpectrumFile,
+##'     QuantSpectrumData, IdentFragmentFile, IdentFragmentData,
+##'     QuantFragmentFile, QuantFragmentData, CrossMatching,
+##'     and CrossMatchingTolerance fields to synapter class.}
 ##' }
 ##'
 ##' @param obj synapter object
@@ -23,13 +27,15 @@ updateSynapterObject <- function(obj, verbose=TRUE) {
 
   current <- as.package_version(obj$Version)
 
-  minimalVersion <- as.package_version("0.0.1")
+  ## 1.7.1 adds {Ident,Quant}{Spectrum,Fragments}{File,Data}, CrossMatching,
+  ## CrossMatchingPpmTolerance fields to the class definition
+  minimalVersion <- as.package_version("1.7.1")
 
   isDeprecated <- current < minimalVersion
 
-  newobj <- obj$copy()
-
   if (isDeprecated) {
+    newobj <- obj$copy()
+
     newobj$Version <- as.character(packageVersion("synapter"))
     newobj$SynapterLog <- c(newobj$SynapterLog,
                             paste("Instance updated to synapter",
@@ -40,8 +46,10 @@ updateSynapterObject <- function(obj, verbose=TRUE) {
               "objects. Your object is updated to synapter ", newobj$Version,
               ". Please see ", sQuote("?updateSynapterObject"), " for details.")
     }
+    return(newobj)
   }
 
-  return(newobj)
+  return(obj)
 }
+
 

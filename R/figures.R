@@ -41,7 +41,7 @@ plotLowess <- function(xx,
        xlab = expression(Identification~retention~time))
   abline(h=0)
   grid()
-  cls <- brewer.pal(length(f), "Set1")  
+  cls <- brewer.pal(length(f), "Set1")
   sapply(1:length(f), function(i) {
     span <- fi <- f[i]
     ## using lowess
@@ -65,11 +65,11 @@ plotLowess2 <- function(xx, model, nsd, ...) {
   lo <- model$lo
   pp <- model$preds
   sd <- model$sd
-  
+
   sdlim1 <- sapply(nsd, function(i) pp$fit[o] - i * sd[o])
   sdlim2 <- sapply(nsd, function(i) pp$fit[o] + i * sd[o])
   ylim <- range(c(sdlim1, sdlim2))
-  
+
   plot(xx$precursor.retT.ident, xx$deltaRt,
        col = "#8FBDDA80", ## col2hcl("steelblue", alpha=.5),
        pch = 19,
@@ -179,19 +179,19 @@ plot.all.features <- function(xx, mse) {
                 range(xx$precursor.retT.quant),
                 range(mse$rt_min))
   plot(xx$precursor.retT.ident, xx$peptide.mhp.ident,
-       col = "#00000020", 
+       col = "#00000020",
        pch = 19, xlim = xlim, ylim = ylim,
        xlab = "retention time", ylab = "precursor mass",
        main = "Identification final peptide")
   grid()
   plot(xx$precursor.retT.quant, xx$peptide.mhp.quant,
-       col = "#00000020", 
+       col = "#00000020",
        pch = 19, xlim = xlim, ylim = ylim,
        xlab = "retention time", ylab = "precursor mass",
        main = "Quantitation final peptide")
   grid()
-  plot(mse$rt_min, mse$mwHPlus, 
-       col = "#00000005", 
+  plot(mse$rt_min, mse$mwHPlus,
+       col = "#00000005",
        pch = 19, xlim = xlim, ylim = ylim,
        xlab = "retention time", ylab = "precursor mass",
        main = "Quantitation Pep3D")
@@ -213,3 +213,12 @@ qPlot <- function(x, qtls=c(0.25, 0.5, 0.75, .90, 0.95, 0.99, 1), ...) {
   segments(qs$x, 0, qs$x, qs$y, col = "red", lty = "dotted")
   segments(0, qs$y, qs$x, qs$y, col = "red", lty = "dotted")
 }
+
+jitteredBoxplot <- function(x, outcol="#00000040", outpch=19,
+                            jitter.factor=1, ...) {
+  bp <- boxplot(x, ..., outline=TRUE, outpch=NA)
+  points(jitter(bp$group, factor=jitter.factor), bp$out,
+         col=outcol, pch=outpch)
+  invisible(bp)
+}
+

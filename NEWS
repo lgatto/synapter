@@ -1,3 +1,16 @@
+CHANGES IN VERSION 1.7.2
+------------------------
+ o add loadSpectrumXmlFiles and loadFragmentCsvFiles method [2014-04-23 Wed]
+ o add crossMatching, setCrossMatchingPpmTolerance and
+   getCrossMatchingPpmTolerance method [2014-04-23 Wed]
+ o add plotCrossMatching method  [2014-04-24 Thu]
+ o add plotCrossMatchingSummary [2014-04-25 Fri]
+ o add {set,get}CrossMatchingMinimalNumberOfCommonPeaks [2014-04-25 Fri]
+ o add filterMatchedEMRTsByCommonPeaks [2014-04-25 Fri]
+ o add testthat to Suggests [2014-04-25 Fri]
+ o add matchColumn argument to filterMatchedEMRTsByCommonPeaks and
+   plotCrossMatchingSummary [2014-04-28 Mon]
+
 CHANGES IN VERSION 1.7.1
 ------------------------
  o add updateSynapterObject function [2014-04-23 Wed]
