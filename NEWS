@@ -1,6 +1,5 @@
-CHANGES IN VERSION 1.7.1
+CHANGES IN VERSION 1.7.2
 ------------------------
- o add updateSynapterObject function [2014-04-23 Wed]
  o add loadSpectrumXmlFiles and loadFragmentCsvFiles method [2014-04-23 Wed]
  o add crossMatching, setCrossMatchingPpmTolerance and
    getCrossMatchingPpmTolerance method [2014-04-23 Wed]
@@ -11,6 +10,12 @@ CHANGES IN VERSION 1.7.1
  o add testthat to Suggests [2014-04-25 Fri]
  o add matchColumn argument to filterMatchedEMRTsByCommonPeaks and
    plotCrossMatchingSummary [2014-04-28 Mon]
+
+CHANGES IN VERSION 1.7.1
+------------------------
+ o add updateSynapterObject function [2014-04-23 Wed]
+ o fix retention time model calculation in plotFeatures(..., what="some")
+   [2014-04-28 Mon]
 
 CHANGES IN VERSION 1.7.0
 ------------------------

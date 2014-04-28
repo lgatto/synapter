@@ -866,7 +866,7 @@
                                                 paste("Filtered matched EMRTs using at least ",
                                                       .self$CrossMatchingMinimalNumberOfCommonPeaks,
                                                       " number of common peaks (matchColumn=\"",
-                                                      mcol, "\", ["
+                                                      mcol, "\", [",
                                                       paste(dim(.self$QuantPeptideData), collapse=","),
                                                       "]", sep=""))
                        }))

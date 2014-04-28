@@ -111,6 +111,7 @@ plotRetTimeDiffs <- function(object, plot = TRUE,
 }
 
 plot.some.features <- function(xx,
+                               identpep,
                                mse,
                                model,
                                ppmthreshold,
@@ -146,21 +147,16 @@ plot.some.features <- function(xx,
   points(mse$rt_min, mse$mwHPlus,
          col = "#FF000080", ## col2hcl("red", alpha=.5),
          cex = 0.2, pch = 3)
-  ## predicted
-  lo <- model$lo
   ## nsd
   mass.ranges <- estimate.mass.range(xx$peptide.mhp.ident, ppmthreshold)
+
   ## from doHDMSePredictions
-  .o <- order(xx$precursor.retT.ident)
-  .allpreds <- predict(model$lo, data.frame(precursor.retT.ident=xx$precursor.retT.ident), se=TRUE)
-  .sd <- .allpreds$se.fit[.o] * sqrt(model$lo$n)
-  .predicted <- xx$precursor.retT.ident - .allpreds$fit[.o]
-  .lower <- .predicted - (nsd * .sd)
-  .upper <- .predicted + (nsd * .sd)
-  stopifnot(all(.lower <= .upper))
-  rt.ranges <- cbind(.lower,
-                     .upper)
-  centers <- cbind(.predicted, xx$peptide.mhp.ident)
+  prediction <- doHDMSePredictions(identpep, model, nsd)
+  pid <- match(xx$precursor.leID.ident, identpep$precursor.leID)
+
+  rt.ranges <- cbind(prediction$lower[pid],
+                     prediction$upper[pid])
+  centers <- cbind(prediction$predicted[pid], xx$peptide.mhp.ident)
   ## points(centers, pch=".")
   rect(rt.ranges[,1], mass.ranges[,1],
        rt.ranges[,2], mass.ranges[,2],
