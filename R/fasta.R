@@ -21,12 +21,17 @@ dbUniquePeptideSet <- function(fastafile, missedCleavages = 0, verbose = TRUE) {
     ##    trypsin rule) and allow maximal n mis-cleavages. n is determined in 3.
     ##
     ## 1) "save split" without any mis-cleavage
-    peptides <- unlist(cleave(proteins, custom = "[K|R](?=[^PDEKR])",
+    peptides <- unlist(cleave(proteins, custom="[K|R](?=[^PDEKR])",
                               missedCleavages=0), use.names=FALSE)
 
     ## 2) guess maximal number of maximal needed mis-cleavages
     rx <- gregexpr("[KR]+", peptides)
     maxMissedCleavages <- sapply(rx, function(x)max(attr(x, "match.length")))
+
+    ## We reduce maxMissedCleavages by one because we assume that all peptides
+    ## that are cleaved in 1) have K, R at their right end (and we don't want to
+    ## cleave something like "AAAK" again).
+    maxMissedCleavages <- maxMissedCleavages-1
 
     ## 3) determine maximal allowed mis-cleavages
     maxMissedCleavages <- pmin(maxMissedCleavages, missedCleavages)
