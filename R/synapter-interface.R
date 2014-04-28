@@ -69,16 +69,16 @@ setMethod(inputFiles, "Synapter",
             quantpep3d = object$QuantPep3DFile,
             fasta = object$DbFastaFile))
 
-setMethod(loadSpectra, "Synapter",
+setMethod(loadSpectrumXmlFiles, "Synapter",
           function(object, filenames, verbose=TRUE) {
-            object$loadSpectra(filenames=filenames, verbose=verbose)
+            object$loadSpectrumXmlFiles(filenames=filenames, verbose=verbose)
           })
 
-setMethod(loadFragments, "Synapter",
+setMethod(loadFragmentCsvFiles, "Synapter",
           function(object, filenames, removeNeutralLoss=TRUE, verbose=TRUE) {
-            object$loadFragments(filenames=filenames,
-                                 removeNeutralLoss=removeNeutralLoss,
-                                 verbose=verbose)
+            object$loadFragmentCsvFiles(filenames=filenames,
+                                        removeNeutralLoss=removeNeutralLoss,
+                                        verbose=verbose)
           })
 
 setMethod(getLog, "Synapter",

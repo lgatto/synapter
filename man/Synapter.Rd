@@ -129,10 +129,10 @@
 \alias{plotCrossMatchingSummary}
 
 % importers
-\alias{loadSpectra,Synapter-method}
-\alias{loadSpectra}
-\alias{loadFragments,Synapter-method}
-\alias{loadFragments}
+\alias{loadSpectrumXmlFiles,Synapter-method}
+\alias{loadSpectrumXmlFiles}
+\alias{loadFragmentCsvFiles,Synapter-method}
+\alias{loadFragmentCsvFiles}
 
 % exporters
 \alias{writeMatchedEMRTs,Synapter-method}
@@ -376,7 +376,7 @@ Synapter(filenames, master) ## creates an instance of class 'Synapter'
 
   \subsection{Importing Spectra and Fragments data}{
     \dQuote{Spectrum.xml} and \dQuote{final_fragment.csv} files could be
-    imported via \code{loadSpectra} respective \code{loadFragments}.
+    imported via \code{loadSpectrumXmlFiles} respective \code{loadFragmentCsvFiles}.
   }
 
   \subsection{Cross Matching}{
@@ -829,7 +829,7 @@ Synapter(filenames, master) ## creates an instance of class 'Synapter'
 \subsection{Importers}{
 
     \describe{
-      \item{loadSpectra}{\code{signature(object="Synapter", filenames = "list",
+      \item{loadSpectrumXmlFiles}{\code{signature(object="Synapter", filenames = "list",
           verbose = "logcial")}:
         Imports \sQuote{Spectrum.xml} files. The file path has to be given as
         named list (\code{filenames}). The names have to be
@@ -837,7 +837,7 @@ Synapter(filenames, master) ## creates an instance of class 'Synapter'
         the quantitation spectrum file. If \code{verbose} is \code{TRUE}
         (default) a progress bar is shown.
       }
-      \item{loadFragments}{\code{signature(object="Synapter",
+      \item{loadFragmentCsvFiles}{\code{signature(object="Synapter",
           filenames = "list", removeNeutralLoss = "logical",
           verbose = "logcial")}:
         Imports \sQuote{final_fragment.csv} files. The file path has to be given

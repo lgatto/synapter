@@ -226,7 +226,7 @@
                         message("Computing identification statistics...")
                         .self$addIdStats()
                     },
-                    loadSpectra = function(filenames, verbose=TRUE) {
+                    loadSpectrumXmlFiles = function(filenames, verbose=TRUE) {
                       stopifnot(all(names(filenames) %in% c("identspectrum",
                                                             "quantspectrum")))
                       filenames <- as.list(filenames)
@@ -251,8 +251,8 @@
                           paste0("Read quantitation spectra [",
                                  length(.self$QuantSpectrumData), "]"))
                     },
-                    loadFragments = function(filenames, removeNeutralLoss=TRUE,
-                                             verbose=TRUE) {
+                    loadFragmentCsvFiles = function(filenames, removeNeutralLoss=TRUE,
+                                                    verbose=TRUE) {
                       stopifnot(all(names(filenames) %in% c("identfragments",
                                                             "quantfragments")))
                       filenames <- as.list(filenames)
