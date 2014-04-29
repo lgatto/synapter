@@ -5,12 +5,13 @@
 \usage{
 synergise(filenames, master = FALSE, object, outputdir, fdr = 0.01,
   fdrMethod = c("BH", "Bonferroni", "qval"), fpr = 0.01, peplen = 7,
-  missedCleavages = 0, identppm = 20, quantppm = 20, uniquepep = TRUE,
-  span = 0.05, grid.ppm.from = 2, grid.ppm.to = 20, grid.ppm.by = 2,
-  grid.nsd.from = 0.5, grid.nsd.to = 5, grid.nsd.by = 0.5,
-  grid.subset = 1, grid.n = 0, grid.param.sel = c("auto", "model",
-  "total", "details"), mergedEMRTs = c("rescue", "copy", "transfer"),
-  css = NULL, verbose = TRUE)
+  missedCleavages = 0, PLGS = TRUE, identppm = 20, quantppm = 20,
+  uniquepep = TRUE, span = 0.05, grid.ppm.from = 2, grid.ppm.to = 20,
+  grid.ppm.by = 2, grid.nsd.from = 0.5, grid.nsd.to = 5,
+  grid.nsd.by = 0.5, grid.subset = 1, grid.n = 0,
+  grid.param.sel = c("auto", "model", "total", "details"),
+  mergedEMRTs = c("rescue", "copy", "transfer"), css = NULL,
+  verbose = TRUE)
 }
 \arguments{
   \item{filenames}{A named \code{list} of file names to be
@@ -52,6 +53,11 @@ synergise(filenames, master = FALSE, object, outputdir, fdr = 0.01,
 
   \item{missedCleavages}{Number of maximal allowed missed
   cleavages. Default is 0.}
+
+  \item{PLGS}{If \code{TRUE} (default) try to emulate PLGS'
+  peptide cleavage rules. Otherwise use the default rules
+  from the \code{cleaver} package. See
+  \code{\link{Synapter}} for references.}
 
   \item{identppm}{Identification mass tolerance (in ppm).
   Default is 20.}

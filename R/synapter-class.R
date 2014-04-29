@@ -814,36 +814,36 @@
                                                       "]", sep=""))
                        },
 
-                       filterUniqueQuantDbPeptides = function(filename, missedCleavages = 0, verbose = TRUE) {
+                       filterUniqueQuantDbPeptides = function(filename, missedCleavages = 0, PLGS = TRUE, verbose = TRUE) {
                          'Filters quantitation tryptic peptides that match one and only one protein in the fasta database.'
-                         upepset <- dbUniquePeptideSet(filename, missedCleavages, verbose)
+                         upepset <- dbUniquePeptideSet(filename, missedCleavages, PLGS, verbose)
                          .self$DbFastaFile <- filename
                          sel2 <- .self$QuantPeptideData$peptide.seq %in% upepset
                          .self$QuantPeptideData <- .self$QuantPeptideData[sel2, ]
                          .self$SynapterLog <- c(.self$SynapterLog,
-                                                paste("Kept quantitation peptides that match unique protein (",
-                                                      missedCleavages, " missed cleavages) " ,
-                                                      "[", paste(dim(.self$QuantPeptideData), collapse=","),
-                                                      "]", sep=""))
+                                                paste0("Kept quantitation peptides that match unique protein (",
+                                                       missedCleavages, " missed cleavages, used cleavage rule: " ,
+                                                       ifelse(PLGS, "PLGS", "cleaver"), ")",
+                                                       "[", paste(dim(.self$QuantPeptideData), collapse=","), "]"))
                        },
 
-                       filterUniqueIdentDbPeptides = function(filename, missedCleavages, verbose = TRUE) {
+                       filterUniqueIdentDbPeptides = function(filename, missedCleavages = 0, PLGS = TRUE, verbose = TRUE) {
                          'Filters identification tryptic peptides that match one and only one protein in the fasta database.'
-                         upepset <- dbUniquePeptideSet(filename, missedCleavages, verbose)
+                         upepset <- dbUniquePeptideSet(filename, missedCleavages, PLGS, verbose)
                          .self$DbFastaFile <- filename
                          sel1 <- .self$IdentPeptideData$peptide.seq %in% upepset
                          .self$IdentPeptideData <- .self$IdentPeptideData[sel1, ]
                          .self$SynapterLog <- c(.self$SynapterLog,
-                                                paste("Kept identification peptides that match unique protein (",
-                                                      missedCleavages, " missed cleavages) " ,
-                                                      "[", paste(dim(.self$IdentPeptideData), collapse=","),
-                                                      "]", sep=""))
+                                                paste0("Kept identification peptides that match unique protein (",
+                                                       missedCleavages, " missed cleavages, used cleavage rule: " ,
+                                                       ifelse(PLGS, "PLGS", "cleaver"), ")",
+                                                       "[", paste(dim(.self$IdentPeptideData), collapse=","), "]"))
                        },
 
-                       filterUniqueDbPeptides = function(filename, missedCleavages, verbose = TRUE) {
+                       filterUniqueDbPeptides = function(filename, missedCleavages = 0, PLGS = TRUE, verbose = TRUE) {
                          'Filters tryptic peptides that match one and only one protein in the fasta database.'
-                         .self$filterUniqueIdentDbPeptides(filename, missedCleavages, verbose = verbose)
-                         .self$filterUniqueQuantDbPeptides(filename, missedCleavages, verbose = FALSE)
+                         .self$filterUniqueIdentDbPeptides(filename, missedCleavages, PLGS, verbose = verbose)
+                         .self$filterUniqueQuantDbPeptides(filename, missedCleavages, PLGS, verbose = FALSE)
                        },
 
                        filterMatchedEMRTsByCommonPeaks = function(mcol = "spectrum.quantXfragments.ident") {
