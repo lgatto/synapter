@@ -79,7 +79,7 @@ writeMasterPeptides <- function(x, file, ...) {
 ##' @param proteotypic Logical. Should number proteotypic peptides be
 ##' used to choose best combination and plot results or total number
 ##' of unique peptides.
-##' @param missedCleavages Number of missed cleavage sites. Default is 0.
+##' @param missedCleavages Number of maximal missed cleavage sites. Default is 0.
 ##' @param verbose Should progress messages be printed?
 ##' @return An instance of class \code{"\linkS4class{MasterFdrResults}"}.
 ##' See details above.

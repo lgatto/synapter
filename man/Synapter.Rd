@@ -665,14 +665,23 @@ Synapter(filenames, master) ## creates an instance of class 'Synapter'
 
     \describe{
 
-      \item{filterUniqueDbPeptides}{\code{signature(object="Synapter")}:
+      \item{filterUniqueDbPeptides}{\code{signature(object="Synapter",
+          missedCleavages = 0, PLGS = TRUE, verbose = TRUE)}:
 	This method first digests the fasta database file and keeps
 	unique tryptic peptides. (NOTE: since version 1.5.3, the tryptic
 	digestion uses the \code{cleaver} package, replacing the more
 	simplistic inbuild function. The effect of this change is
-	documented in https://github.com/lgatto/synapter/pull/47). The
-	number of missed cleavages can be set as \code{missedCleavages}
-	(default is 0). Those peptide sequences are then used as a
+	documented in https://github.com/lgatto/synapter/pull/47).
+  Since version 1.7.2 this method tries to emulate PLGS' peptide cleavage
+  method. In fact PLGS performs a perfect cleavage after K or R if not followed
+  by P, D, E, K, R first. In a second run it cleaves after K or R if not
+  followed by P with mis-cleavages (NOTE: more details are documented in
+  https://github.com/lgatto/synapter/pull/57)
+  Set \code{PLGS = FALSE} to use the \code{cleaver} rules instead.
+  See the references for more details about digest using trypsin.
+  The number of maximal missed cleavages can be set as \code{missedCleavages}
+	(default is 0).
+  Those peptide sequences are then used as a
 	filter against the identification and quantitation peptides,
 	where only unique proteotyptic instances (no miscleavage allowed
 	by default) are eventually kept in the \code{object} instance.
@@ -681,11 +690,11 @@ Synapter(filenames, master) ## creates an instance of class 'Synapter'
 	database.  }
 
       \item{filterUniqueQuantDbPeptides}{\code{signature(object="Synapter",
-	  missedCleavages = 0, verbose = TRUE)}: As
+	  missedCleavages = 0, PLGS = TRUE, verbose = TRUE)}: As
 	\code{filterUniqueDbPeptides} for quantitation peptides only.  }
 
       \item{filterUniqueIdentDbPeptides}{\code{signature(object="Synapter",
-	  missedCleavages = 0, verbose = TRUE)}: As
+	  missedCleavages = 0, PLGS = TRUE, verbose = TRUE)}: As
 	\code{filterUniqueDbPeptides} for identification peptides
 	only. }
 
@@ -932,6 +941,29 @@ Synapter(filenames, master) ## creates an instance of class 'Synapter'
   The Effects of Travelling Wave Ion Mobility Separation on Data
   Independent Acquisition in Proteomics Studies, P.V. Shliaha, N.J. Bond,
   L. Gatto and K.S. Lilley, Journal of Proteome Research, 2013, in press.
+
+  Trypsin cleavage:
+
+  Glatter, Timo, et al.
+  Large-scale quantitative assessment of different in-solution protein digestion
+  protocols reveals superior cleavage efficiency of tandem Lys-C/trypsin
+  proteolysis over trypsin digestion.
+  Journal of proteome research 11.11 (2012): 5145-5156.
+  \url{http://dx.doi.org/10.1021/pr300273g}
+
+  Rodriguez, Jesse, et al.
+  Does trypsin cut before proline?.
+  Journal of proteome research 7.01 (2007): 300-305.
+  \url{http://dx.doi.org/10.1021/pr0705035}
+
+  Brownridge, Philip, and Robert J. Beynon.
+  The importance of the digest: proteolysis and absolute quantification in
+  proteomics.
+  Methods 54.4 (2011): 351-360.
+  \url{http://dx.doi.org/10.1016/j.ymeth.2011.05.005}
+
+  cleaver's rules are taken from:
+  \url{http://web.expasy.org/peptide_cutter/peptidecutter_enzymes.html#Tryps}
 }
 
 

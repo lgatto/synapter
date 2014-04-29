@@ -22,8 +22,8 @@ estimateMasterFdr(pepfiles, fastafile, masterFdr = 0.025, fdr = 0.01,
   peptides be used to choose best combination and plot
   results or total number of unique peptides.}
 
-  \item{missedCleavages}{Number of missed cleavage sites.
-  Default is 0.}
+  \item{missedCleavages}{Number of maximal missed cleavage
+  sites. Default is 0.}
 
   \item{verbose}{Should progress messages be printed?}
 }

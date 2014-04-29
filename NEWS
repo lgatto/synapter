@@ -1,3 +1,13 @@
+CHANGES IN VERSION 1.7.3
+------------------------
+ o change implementation of dbUniquePeptideSet. Now we use a different cleavage
+   approach to emulate PLGS cleavage behaviour (new argument PLGS).
+   If PLGS=FALSE the cleaver approach is used.
+   See also:
+    - https://github.com/lgatto/synapter/issues/53
+    - https://github.com/sgibb/cleaver/issues/4
+   (closes #53 and cleaver:#4) [2014-04-28 Mon]
+
 CHANGES IN VERSION 1.7.2
 ------------------------
  o add loadSpectrumXmlFiles and loadFragmentCsvFiles method [2014-04-23 Wed]

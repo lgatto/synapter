@@ -43,7 +43,7 @@
 ##' If a master identification file is used (\code{master} is set to \code{TRUE}, default
 ##' is \code{FALSE}), the relevant actions that have already been executed when
 ##' the file was created with \code{\link{makeMaster}} are not repeated here.
-##' 
+##'
 ##' @title Synergise identification and quantitation results
 ##' @param filenames A named \code{list} of file names to be load. The
 ##' names must be \code{identpeptide}, \code{quantpeptide},
@@ -59,7 +59,7 @@
 ##' @param object An instance of class \code{Synapter} that will be
 ##' copied,  processed and returned. If \code{filenames} are also
 ##' provided, the latter and \code{object}'s \code{inputFiles} will be
-##' checked for equality. 
+##' checked for equality.
 ##' @param outputdir A \code{character} with the full path to an
 ##' existing directory.
 ##' @param fdrMethod P-value adjustment method. One of \code{"BH"}
@@ -69,8 +69,11 @@
 ##' \code{\link{Synapter}} for references.
 ##' @param fpr Protein false positive rate. Default is 0.01.
 ##' @param peplen Minimum peptide length. Default is 7.
-##' @param missedCleavages Number of allowed missed cleavages. Default
+##' @param missedCleavages Number of maximal allowed missed cleavages. Default
 ##' is 0.
+##' @param PLGS If \code{TRUE} (default) try to emulate PLGS' peptide cleavage
+##' rules. Otherwise use the default rules from the \code{cleaver} package. See
+##' \code{\link{Synapter}} for references.
 ##' @param identppm Identification mass tolerance (in ppm). Default is 20.
 ##' @param quantppm Quantitation mass tolerance (in ppm). Default is 20.
 ##' @param uniquepep A \code{logical} is length 1 indicating if only
@@ -131,6 +134,7 @@ synergise <- function(filenames,
                       fpr = 0.01,
                       peplen = 7,
                       missedCleavages = 0,
+                      PLGS = TRUE,
                       identppm = 20,
                       quantppm = 20,
                       uniquepep = TRUE,
@@ -158,7 +162,7 @@ synergise <- function(filenames,
     stop("'outputdir' not found.")
   if (!missing(object)) {
     if (class(object) != "Synapter")
-      stop("Input 'object' must be of class 'Synapter'; found ", class(object), ".")    
+      stop("Input 'object' must be of class 'Synapter'; found ", class(object), ".")
     if (!missing(filenames)) {
       if (any(unlist(filenames) != inputFiles(object)))
         stop("File names do not match for 'filenames' and 'object' inputs.")
@@ -168,13 +172,13 @@ synergise <- function(filenames,
     gc()
   } else {
     obj <- Synapter(filenames, master)
-  }  
+  }
   htmlfile <- paste0(outputdir, "/index.html")
   p <- openPage(htmlfile,
                 link.css = ifelse(is.null(css),
                   paste0(system.file(package="synapter", dir = "extdata"),
                          "/synapter.css"),
-                  css))  
+                  css))
   hwrite("Synapter report", p, heading = 1)
 
   hwrite("Input", p, heading = 2)
@@ -192,10 +196,10 @@ synergise <- function(filenames,
                 c("Quantitation mass tolerance (ppm)", quantppm),
                 c("Loess span (RT modelling)", span),
                 c("Filtering unique peptides", as.character(uniquepep)))
-  
+
   colnames(prms) <- c("Parameter name", "Value")
   hwrite(prms, p, br = TRUE, row.bgcolor = '#ffdc98')
-  
+
   grd <- rbind(c("Mass tolerance (ppm) start", grid.ppm.from),
                c("Mass tolerance (ppm) end", grid.ppm.to),
                c("Mass tolerance (ppm) by", grid.ppm.by),
@@ -205,145 +209,146 @@ synergise <- function(filenames,
                c("Feature proportion ", grid.subset),
                c("Number of features", grid.n),
                c("parameters selection", grid.param.sel))
-  
+
   colnames(grd) <- c("Grid parameter", "Value")
   hwrite(grd, p, br = TRUE, row.bgcolor = '#ffdc98')
-    
+
   hwrite("Filtering", p, heading = 2)
-  
+
   hwrite("Peptide false discovery rate", p, heading = 3)
   fig.jpg <- makeFigurePath(outputdir, "Fig-pepScores.jpg")
   jpeg(fig.jpg$full)
   plotPepScores(obj)
   dev.off()
   hwriteImage(fig.jpg$relative, p, link = fig.jpg$relative, br = TRUE)
-  
+
   hwrite(getPepNumbers(obj), p, br = TRUE, row.bgcolor = '#ffdc98', col.bgcolor = '#ffdc98')
-  
+
   fig.jpg <- makeFigurePath(outputdir, "Fig-qValues.jpg")
   jpeg(fig.jpg$full)
   plotFdr(obj)
   dev.off()
-  
+
   hwriteImage(fig.jpg$relative, p, link = fig.jpg$relative, br = TRUE)
-  
+
   ## filter data
   if (uniquepep) {
     if (verbose)
       message("Keeping unique peptides...")
-    filterUniqueDbPeptides(obj, missedCleavages, verbose) 
+    filterUniqueDbPeptides(obj, missedCleavages = missedCleavages,
+                           PLGS = PLGS, verbose = verbose)
   }
-  
+
   filterPeptideLength(obj, l = peplen)
-  
+
   setPepScoreFdr(obj, fdr = fdr)
-  filterQuantPepScore(obj, method = fdrMethod) 
+  filterQuantPepScore(obj, method = fdrMethod)
   if (!master)
     filterIdentPepScore(obj, method = fdrMethod)
-  
+
   hwrite("Mass tolerance", p, heading = 3)
-  
+
   fig1.jpg <- makeFigurePath(outputdir, "Fig-Ident-ppmError1.jpg")
   jpeg(fig1.jpg$full)
   plotPpmError(obj, what="Ident")
   dev.off()
-  
-  fig2.jpg <- makeFigurePath(outputdir, "Fig-Quant-ppmError1.jpg")    
+
+  fig2.jpg <- makeFigurePath(outputdir, "Fig-Quant-ppmError1.jpg")
   jpeg(fig2.jpg$full)
   plotPpmError(obj, what="Quant")
   dev.off()
-  
+
   hwriteImage(c(fig1.jpg$relative, fig2.jpg$relative),
-              p, border = 0, 
+              p, border = 0,
               link = c(fig1.jpg$relative, fig2.jpg$relative),
               br = TRUE)
-  
+
   hwrite(getPpmErrorQs(obj), p, br = TRUE, row.bgcolor = '#ffdc98', col.bgcolor = '#ffdc98')
-  
-  filterQuantPpmError(obj, ppm = quantppm) 
-  filterIdentPpmError(obj, ppm = identppm) 
-  
+
+  filterQuantPpmError(obj, ppm = quantppm)
+  filterIdentPpmError(obj, ppm = identppm)
+
   fig1.jpg <- makeFigurePath(outputdir, "Fig-Ident-ppmError2.jpg")
   jpeg(fig1.jpg$full)
   plotPpmError(obj, what="Ident")
   dev.off()
-  
-  fig2.jpg <- makeFigurePath(outputdir, "Fig-Quant-ppmError2.jpg")    
+
+  fig2.jpg <- makeFigurePath(outputdir, "Fig-Quant-ppmError2.jpg")
   jpeg(fig2.jpg$full)
   plotPpmError(obj, what="Quant")
   dev.off()
-  
+
   hwriteImage(c(fig1.jpg$relative, fig2.jpg$relative),
-              p, border = 0, 
+              p, border = 0,
               link = c(fig1.jpg$relative, fig2.jpg$relative),
               br = TRUE)
-  
+
   hwrite(getPpmErrorQs(obj), p, br = TRUE, row.bgcolor = '#ffdc98', col.bgcolor = '#ffdc98')
-  
+
   filterIdentProtFpr(obj, fpr = fpr)
   filterQuantProtFpr(obj, fpr = fpr)
-  
+
   ## (3) Merge peptide sequences
   mergePeptides(obj)
-  
+
   hwrite("Retention time modelling", p, heading = 2)
-  
+
   ## (4) Retention time modelling
   hwrite("Retention time model", p, heading = 3)
   fig.jpg <- makeFigurePath(outputdir, "Fig-rtData.jpg")
   jpeg(fig.jpg$full, width = 960)
   plotRt(obj, what="data")
   dev.off()
-  
+
   hwriteImage(fig.jpg$relative, p, link = fig.jpg$relative, br = TRUE)
-  
+
   setLowessSpan(obj, span)
   modelRt(obj) ## the actual modelling
-    
+
   fig1.jpg <- makeFigurePath(outputdir, "Fig-rtDiff.jpg")
   jpeg(fig1.jpg$full)
   plotRtDiffs(obj)
   dev.off()
-  
+
   fig2.jpg <- makeFigurePath(outputdir, "Fig-rtModel.jpg")
   jpeg(fig2.jpg$full)
   plotRt(obj, what="model", nsd=1) ## better focus on model
   dev.off()
-  
+
   hwriteImage(c(fig1.jpg$relative, fig2.jpg$relative),
-              p, border = 0, 
+              p, border = 0,
               link = c(fig1.jpg$relative, fig2.jpg$relative),
               br = TRUE)
 
   hwrite(c("Retention time difference: ", getRtQs(obj)), p, br = TRUE,
          row.bgcolor = '#ffdc98', col.bgcolor = '#ffdc98')
-  
+
   hwrite("Feature space", p, heading = 3)
-  
+
   fig.jpg <- makeFigurePath(outputdir, "Fig-all-features.jpg")
   jpeg(fig.jpg$full, width = 1200)
   plotFeatures(obj, what="all")
   dev.off()
-  
+
   hwriteImage(fig.jpg$relative, p, link = fig.jpg$relative, br = TRUE)
-  
+
   setRtNsd(obj, 2)     ## RtNsd and PpmError are used for detailed plot
   setPpmError(obj, 10) ## if not set manually, default values are set automatically
-  
+
   fig.svg <- makeFigurePath(outputdir, "Fig-some-features.svg")
   svg(fig.svg$full)
   plotFeatures(obj, what="some", xlim=c(30,50), ylim=c(1160, 1165))
   dev.off()
-  
+
   hwriteImage(fig.svg$relative, p, link = fig.svg$relative, br = TRUE)
-  
+
   hwrite("Using nsd = 2 and ppm error = 10 as an example. ", p, br = FALSE)
   hwrite("Optimal values are selected below.", p, br = TRUE)
-  
+
   hwrite("Grid optimisation", p, heading = 2)
   if (verbose)
     message("Running grid search...")
-  
+
   ## (5) Grid search to optimise EMRT matching parameters
   if (grid.n == 0) {
     hwrite(paste0("Using ", grid.subset * 100, "% of the data."), p, br = TRUE)
@@ -360,18 +365,18 @@ synergise <- function(filenames,
                n = grid.n,
                verbose = verbose)
   }
-  
-  
+
+
   fig1.jpg <- makeFigurePath(outputdir, "Fig-grid-total.jpg")
   jpeg(fig1.jpg$full)
   plotGrid(obj, what = "total") ## plot the grid
   dev.off()
-  
+
   fig2.jpg <- makeFigurePath(outputdir, "Fig-grid-model.jpg")
   jpeg(fig2.jpg$full)
   plotGrid(obj, what = "model")
   dev.off()
-  
+
   fig3.jpg <- makeFigurePath(outputdir, "Fig-grid-details.jpg")
   jpeg(fig3.jpg$full)
   plotGrid(obj, what = "details")  ## TODO
@@ -384,11 +389,11 @@ synergise <- function(filenames,
     print(getGridDetails(obj)[[k]]);
     cat("------------\n")
   }
-  sink()  
+  sink()
 
   img <- hwriteImage(c(fig1.jpg$relative, fig2.jpg$relative, fig3.jpg$relative),
                      link = c(fig1.jpg$full, fig2.jpg$full, fig3.jpg$full),
-                     width = 300, 
+                     width = 300,
                      table = FALSE)
 
   tab <- hwrite(c(hwrite(getGrid(obj)[[1]], row.bgcolor = '#ffdc98', col.bgcolor = '#ffdc98'),
@@ -410,34 +415,34 @@ synergise <- function(filenames,
   rownames(mat) <- c("Grid image", "Grid table", "Best value", "Best parameter(s)")
 
   hwrite(mat, p, br = TRUE, border = 0)
-  
+
   hwrite("Grid details", p, link = basename(detfile), br = TRUE)
   hwrite("", p, br = TRUE)
-  
+
   setBestGridParams(obj, what = grid.param.sel)
   hwrite(paste0("Setting best grid parameters using '", grid.param.sel, "':\n"), p, br = TRUE)
   hwrite(paste0(" - Mass tolerance (ppm): ", obj$PpmError), p, br = TRUE)
   hwrite(paste0(" - Number of retention time stdev: ", obj$RtNsd), p, br = TRUE)
-  
+
   hwrite("EMRT matching", p, heading = 2)
   if (verbose)
     message("Matching EMRTs...")
-  
+
   ## (6) Matching ident peptides and quant EMRTs
   mergedEMRTs <- match.arg(mergedEMRTs)
   findEMRTs(obj, mergedEMRTs = mergedEMRTs)
-  
+
   fig.jpg <- makeFigurePath(outputdir, "Fig-emrt-matching.jpg")
-  jpeg(fig.jpg$full)    
+  jpeg(fig.jpg$full)
   plotEMRTtable(obj)
   dev.off()
-  
+
   hwriteImage(fig.jpg$relative, p, link = fig.jpg$relative, br = TRUE)
-  
+
   hwrite(as.matrix(getEMRTtable(obj)), p, br = TRUE, col.bgcolor = '#ffdc98')
-  
+
   hwrite("Performance", p, heading = 2)
-  
+
   perf <- performance(obj, verbose = verbose)
   hwrite(paste0("(S) Synapter: ", perf$Synapter, " EMRTs uniquely matched."), p, br = TRUE)
   hwrite(paste0("(I) Identification: ", perf$Ident, " peptides."), p, br = TRUE)
@@ -445,17 +450,17 @@ synergise <- function(filenames,
   hwrite(paste0("Enrichment (S/Q): ", round(perf$Enrichment, 2), "%"), p, br = TRUE)
   hwrite("Overlap:", p, br = TRUE)
   hwrite(as.matrix(perf$VennCounts), p, br = TRUE, col.bgcolor = '#ffdc98')
-    
+
   hwrite("Exported result files", p, heading = 2)
-  
+
   ## (7) Exporting data to csv spreadsheets
   writeMergedPeptides(obj, what = "light", file = paste0(outputdir, "/MergedPeptidesLight.csv"))
   writeMergedPeptides(obj, what = "full", file = paste0(outputdir, "/MergedPeptidesFull.csv"))
-  writeMatchedEMRTs(obj, what = "light", file = paste0(outputdir, "/MatchedPeptidesLight.csv")) 
-  writeMatchedEMRTs(obj, what = "full", file = paste0(outputdir, "/MatchedPeptidesFull.csv"))                       
+  writeMatchedEMRTs(obj, what = "light", file = paste0(outputdir, "/MatchedPeptidesLight.csv"))
+  writeMatchedEMRTs(obj, what = "full", file = paste0(outputdir, "/MatchedPeptidesFull.csv"))
   writeIdentPeptides(obj, file = paste0(outputdir, "/IdentPeptides_filtered.csv"))
   writeQuantPeptides(obj, file = paste0(outputdir, "/QuantPeptides_filtered.csv"))
-  
+
   hwrite("Identification peptide file (non filtered)", link = "IdentPeptides_nonFiltered.csv", p, br = TRUE)
   hwrite("Quantitation peptide file (non filtered)", link = "QuantPeptides_nonFiltered.csv", p, br = TRUE)
   hwrite("Identification peptide file (filtered)", link = "IdentPeptides_filtered.csv", p, br = TRUE)
@@ -463,21 +468,21 @@ synergise <- function(filenames,
   hwrite("Merged peptides (light)", link = "MergedPeptidesLight.csv", p, br = TRUE)
   hwrite("Merged peptides (full)", link = "MergedPeptidesFull.csv", p, br = TRUE)
   hwrite("Matched peptides (light)", link = "MatchedPeptidesLight.csv", p, br = TRUE)
-  hwrite("Matched peptides (full)", link = "MatchedPeptidesFull.csv", p, br = TRUE)    
-  
+  hwrite("Matched peptides (full)", link = "MatchedPeptidesFull.csv", p, br = TRUE)
+
   save(obj, file = paste0(outputdir, "/SynapterObject.rda"))
-  
-  hwrite("Saved R object (binary)", link = "SynapterObject.rda", p, br = TRUE)    
-  
+
+  hwrite("Saved R object (binary)", link = "SynapterObject.rda", p, br = TRUE)
+
   ## Write full log
   hwrite("Full analysis log", p, heading = 2)
   hwrite(cbind(1:length(getLog(obj)), getLog(obj)), p, br = TRUE, col.bgcolor = '#ffdc98')
-  
+
   closePage(p)
 
   if (verbose)
     message("Report written to '", basename(outputdir), "'.")
-  
+
   invisible(obj)
 }
 
