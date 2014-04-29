@@ -47,7 +47,8 @@
 ##' @title Synergise identification and quantitation results
 ##' @param filenames A named \code{list} of file names to be load. The
 ##' names must be \code{identpeptide}, \code{quantpeptide},
-##' \code{quantpep3d} and \code{fasta}.  If missing, a dialog box opens
+##' \code{quantpep3d} and \code{fasta} (could be an RDS file created by
+##' \code{link{createUniquePeptideDbRds}}). If missing, a dialog box opens
 ##' to select files interactively. \code{identpeptide} can be a \code{csv}
 ##' final peptide file (from PLGS) or a saved \code{"\linkS4class{MasterPeptides}"}
 ##' data object as created by \code{\link{makeMaster}} if working with

@@ -1,5 +1,19 @@
-dbUniquePeptideSet <- function(fastafile, missedCleavages = 0, PLGS = TRUE,
+dbUniquePeptideSet <- function(file, missedCleavages = 0, PLGS = TRUE,
                                verbose = TRUE) {
+  if (tolower(getExtension(file)) == "rds") {
+    peptides <- readRDS(file)
+    if (verbose) {
+        message("RDS file: ", length(peptides), " peptides.")
+    }
+  } else {
+    peptides <- .dbUniquePeptideSet(file, missedCleavages=missedCleavages,
+                                    PLGS=PLGS, verbose=verbose)
+  }
+  return(peptides)
+}
+
+.dbUniquePeptideSet <- function(fastafile, missedCleavages = 0, PLGS = TRUE,
+                                verbose = TRUE) {
 
     missedCleavages <- max(missedCleavages)
     stopifnot(missedCleavages >= 0)
@@ -85,13 +99,13 @@ dbUniquePeptideSet <- function(fastafile, missedCleavages = 0, PLGS = TRUE,
     ##      "YYGYTGAFR" and "EGYYGYTGAFR"
     ## where the first ones are NOT unique!
     ## Such cases are handled by filtering duplicates in the peptide data
-    if (verbose)
-        message(paste("Fasta file: ", length(proteins), " proteins\n",
-                      "            ", length(upeptides),
-                      " out of ", length(unique(peptides)),
-                      " tryptic peptides are proteotypic.\n",
-                      "Used rule:  ", ifelse(PLGS, "PLGS", "cleaver"),
-                      sep = ""))
+    if (verbose) {
+        message("Fasta file: ", length(proteins), " proteins\n",
+                "            ", length(upeptides),
+                " out of ", length(unique(peptides)),
+                " tryptic peptides are proteotypic.\n",
+                "Used rule:  ", ifelse(PLGS, "PLGS", "cleaver"))
+    }
     return(upeptides)
 }
 
@@ -127,8 +141,8 @@ createUniquePeptideDbRds <- function(fastaFile,
     stop("outputFile must have the file extention .rds!")
   }
 
-  peptides <- dbUniquePeptideSet(fastaFile, missedCleavages=missedCleavages,
-                                 PLGS=PLGS, verbose=verbose)
+  peptides <- .dbUniquePeptideSet(fastaFile, missedCleavages=missedCleavages,
+                                  PLGS=PLGS, verbose=verbose)
   if (verbose) {
     message("Save unique peptides to ", sQuote(outputFile))
   }
