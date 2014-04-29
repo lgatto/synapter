@@ -2,6 +2,19 @@ dbUniquePeptideSet <- function(file, missedCleavages = 0, PLGS = TRUE,
                                verbose = TRUE) {
   if (tolower(getExtension(file)) == "rds") {
     peptides <- readRDS(file)
+    if (attr(peptides, "PLGS") != PLGS) {
+      warning("The RDS file was created with PLGS=", attr(peptides, "PLGS"),
+              "\nYour current setting has not any effect! ",
+              "Recreate your RDS file if you want to change these settings",
+              immediate.=TRUE)
+    }
+    if (!all(attr(peptides, "missedCleavages") == missedCleavages)) {
+      warning("The RDS file was created with missedCleavages=",
+              attr(peptides, "missedCleavages"),
+              "\nYour current setting has not any effect! ",
+              "Recreate your RDS file if you want to change these settings",
+              immediate.=TRUE)
+    }
     if (verbose) {
         message("RDS file: ", length(peptides), " peptides.")
     }
@@ -146,6 +159,8 @@ createUniquePeptideDbRds <- function(fastaFile,
   if (verbose) {
     message("Save unique peptides to ", sQuote(outputFile))
   }
+  attr(peptides, "missedCleavages") <- missedCleavages
+  attr(peptides, "PLGS") <- PLGS
   saveRDS(peptides, file=outputFile)
 }
 
