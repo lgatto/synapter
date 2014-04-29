@@ -5,14 +5,14 @@ dbUniquePeptideSet <- function(file, missedCleavages = 0, PLGS = TRUE,
     if (attr(peptides, "PLGS") != PLGS) {
       warning("The RDS file was created with PLGS=", attr(peptides, "PLGS"),
               "\nYour current setting has not any effect! ",
-              "Recreate your RDS file if you want to change these settings",
+              "Recreate your RDS file if you want to change these settings.",
               immediate.=TRUE)
     }
     if (!all(attr(peptides, "missedCleavages") == missedCleavages)) {
       warning("The RDS file was created with missedCleavages=",
               attr(peptides, "missedCleavages"),
               "\nYour current setting has not any effect! ",
-              "Recreate your RDS file if you want to change these settings",
+              "Recreate your RDS file if you want to change these settings.",
               immediate.=TRUE)
     }
     if (verbose) {

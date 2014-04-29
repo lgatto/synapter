@@ -284,6 +284,7 @@ setMethod(filterUniqueDbPeptides, "Synapter",
           function(object, missedCleavages = 0, PLGS = TRUE, verbose = TRUE) {
             object$filterUniqueSeq()
             object$filterUniqueDbPeptides(object$DbFastaFile,
+                                          what = c("ident", "quant"),
                                           missedCleavages = missedCleavages,
                                           PLGS = PLGS,
                                           verbose = verbose)
