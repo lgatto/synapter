@@ -17,6 +17,7 @@ importFrom(Biostrings, readAAStringSet)
 
 export(Synapter, ## constructor
        as.MSnSet.Synapter,
+       createUniquePeptideDbRds,
        synergise,
        synapterGUI,
        makeMaster,

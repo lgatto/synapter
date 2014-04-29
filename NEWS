@@ -7,6 +7,7 @@ CHANGES IN VERSION 1.7.3
     - https://github.com/lgatto/synapter/issues/53
     - https://github.com/sgibb/cleaver/issues/4
    (closes #53 and cleaver:#4) [2014-04-28 Mon]
+ o add createUniquePeptideDbRds (regards #55) [2014-04-29 Tue]
 
 CHANGES IN VERSION 1.7.2
 ------------------------

@@ -95,3 +95,43 @@ dbUniquePeptideSet <- function(fastafile, missedCleavages = 0, PLGS = TRUE,
     return(upeptides)
 }
 
+#' This function creates an RDS file to store the \dQuote{Unique Peptides
+#' Database} for future runs of \code{\link{synergise}} or
+#' \code{\link{Synapter}}.
+#'
+#' @title Create an RDS file for the 'Unique Peptides Database'
+#' @param fastaFile file path of the input fasta file
+#' @param outputFile file path of the target RDS file; must have the file
+#' extension ".rds"
+#' @param missedCleavages Number of maximal allowed missed cleavages. Default
+#' is 0.
+#' @param PLGS If \code{TRUE} (default) try to emulate PLGS' peptide cleavage
+#' rules. Otherwise use the default rules from the \code{cleaver} package. See
+#' \code{\link{Synapter}} for references.
+#' @param verbose If \code{TRUE} a verbose output is provied.
+#' @author Sebastian Gibb <mail@@sebastiangibb.de>
+#' @seealso \code{\link{Synapter}} for details about the cleavage procedure.
+#' @examples
+#' \dontrun{
+#' createUniquePeptideDbRds("uniprot.fasta", "uniprot.fasta.rds", PLGS=TRUE)
+#' }
+createUniquePeptideDbRds <- function(fastaFile,
+                                     outputFile = paste0(fastaFile, ".rds"),
+                                     missedCleavages = 0, PLGS = TRUE,
+                                     verbose = TRUE) {
+  if (!file.exists(fastaFile)) {
+    stop("File ", sQuote(fastaFile), " does not exists!")
+  }
+
+  if (tolower(getExtension(outputFile)) != "rds") {
+    stop("outputFile must have the file extention .rds!")
+  }
+
+  peptides <- dbUniquePeptideSet(fastaFile, missedCleavages=missedCleavages,
+                                 PLGS=PLGS, verbose=verbose)
+  if (verbose) {
+    message("Save unique peptides to ", sQuote(outputFile))
+  }
+  saveRDS(peptides, file=outputFile)
+}
+
