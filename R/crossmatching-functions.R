@@ -240,27 +240,6 @@ crossmatching <- function(flatEmrts, spectra, tolerance=25e-6, verbose=TRUE) {
                           ...)
 }
 
-#' create an equal sized sample of true and false matches
-#' @param cx cross matching df, result of crossmatching
-#' @return list with trueIdx and falseIdx
-#' @noRd
-.groundTruthIndices <- function(cx) {
-  ## select "ground-truth"
-  trueIdx <- grep("true", cx$matchType)
-  falseIdx <- grep("false", cx$matchType)
-
-  n <- min(c(length(trueIdx), length(falseIdx)))
-
-  if (length(trueIdx) > n) {
-    trueIdx <- sample(trueIdx, n)
-  }
-
-  if (length(falseIdx) > n) {
-    falseIdx <- sample(falseIdx, n)
-  }
-  return(list(trueIdx=trueIdx, falseIdx=falseIdx))
-}
-
 #' @param cx cross matching df, result of cross matching
 #' @param mcol column name of the matching results (e.g.
 #' fragments.identXfragments.quant)
@@ -301,7 +280,7 @@ crossmatching <- function(flatEmrts, spectra, tolerance=25e-6, verbose=TRUE) {
 #' @param cx cross matching df, result of crossmatching
 #' @param mcol column name of the matching results (e.g.
 #' fragments.identXfragments.quant)
-#' @return invisible matrix with rows tp, fp, tn, fn, accuracy, precision,
+#' @return invisible matrix cols ncommon, tp, fp, tn, fn, accuracy, precision,
 #' recall, fdr, f1
 #' @noRd
 .plotCrossMatchingSummary <- function(cx,
