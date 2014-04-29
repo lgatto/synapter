@@ -81,6 +81,9 @@ writeMasterPeptides <- function(x, file, ...) {
 ##' of unique peptides.
 ##' @param missedCleavages Number of maximal missed cleavage sites. Default is 0.
 ##' @param verbose Should progress messages be printed?
+##' @param PLGS If \code{TRUE} (default) try to emulate PLGS' peptide cleavage
+##' rules. Otherwise use the default rules from the \code{cleaver} package. See
+##' \code{\link{Synapter}} for references.
 ##' @return An instance of class \code{"\linkS4class{MasterFdrResults}"}.
 ##' See details above.
 ##' @author Laurent Gatto
@@ -99,6 +102,7 @@ estimateMasterFdr <- function(pepfiles,
                               fdr = 0.01,
                               proteotypic = TRUE,
                               missedCleavages = 0,
+                              PLGS = TRUE,
                               verbose = TRUE) {
     pepfile <- unlist(pepfiles)
     m <- length(pepfiles)
@@ -114,7 +118,9 @@ estimateMasterFdr <- function(pepfiles,
                         verbose = verbose)
     if (verbose)
         message("Generating unique proteotypic peptides...")
-    proteotyptic <- dbUniquePeptideSet(fastafile, missedCleavages, verbose = FALSE)      
+    proteotyptic <- dbUniquePeptideSet(fastafile,
+                                       missedCleavages = missedCleavages,
+                                       PLGS = PLGS, verbose = FALSE)
     if (verbose)
         message("Calculating...")
     uniquePepList <-
