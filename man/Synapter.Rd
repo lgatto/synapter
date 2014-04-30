@@ -668,7 +668,7 @@ Synapter(filenames, master) ## creates an instance of class 'Synapter'
     \describe{
 
       \item{filterUniqueDbPeptides}{\code{signature(object="Synapter",
-          missedCleavages = 0, PLGS = TRUE, verbose = TRUE)}:
+          missedCleavages = 0, PLGS = TRUE, IisL = TRUE, verbose = TRUE)}:
 	This method first digests the fasta database file and keeps
 	unique tryptic peptides. (NOTE: since version 1.5.3, the tryptic
 	digestion uses the \code{cleaver} package, replacing the more
@@ -683,7 +683,11 @@ Synapter(filenames, master) ## creates an instance of class 'Synapter'
   See the references for more details about digest using trypsin.
   The number of maximal missed cleavages can be set as \code{missedCleavages}
 	(default is 0).
-  Those peptide sequences are then used as a
+  If \code{IisL = TRUE} Isoleucin and Leucin are treated as the same aminoacid.
+  In this case sequences like "ABCI", "ABCL" are removed
+  because they are not unqiue anymore. If \code{IisL = FALSE} (default)
+  "ABCI" and "ABCL" are reported as unique.
+  The peptide sequences are then used as a
 	filter against the identification and quantitation peptides,
 	where only unique proteotyptic instances (no miscleavage allowed
 	by default) are eventually kept in the \code{object} instance.
@@ -692,11 +696,11 @@ Synapter(filenames, master) ## creates an instance of class 'Synapter'
 	database.  }
 
       \item{filterUniqueQuantDbPeptides}{\code{signature(object="Synapter",
-	  missedCleavages = 0, PLGS = TRUE, verbose = TRUE)}: As
+	  missedCleavages = 0, PLGS = TRUE, IisL = TRUE, verbose = TRUE)}: As
 	\code{filterUniqueDbPeptides} for quantitation peptides only.  }
 
       \item{filterUniqueIdentDbPeptides}{\code{signature(object="Synapter",
-	  missedCleavages = 0, PLGS = TRUE, verbose = TRUE)}: As
+	  missedCleavages = 0, PLGS = TRUE, IisL = TRUE, verbose = TRUE)}: As
 	\code{filterUniqueDbPeptides} for identification peptides
 	only. }
 

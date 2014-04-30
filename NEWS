@@ -12,6 +12,9 @@ CHANGES IN VERSION 1.7.3
    closes #55 [2014-04-29 Tue]
  o add removePrecursor and tolerance argument to loadSpectrumXmlFiles and
    loadFragmentCsvFiles; closes #59 [2014-04-30 Wed]
+ o introduce IisL argument to dbUniquePeptideSet which treats I/L as same
+   aminoacid if IisL == TRUE (default: IisL = FALSE);
+   closes #60 [2014-04-30 Wed]
 
 CHANGES IN VERSION 1.7.2
 ------------------------

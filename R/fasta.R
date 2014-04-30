@@ -1,32 +1,49 @@
 dbUniquePeptideSet <- function(file, missedCleavages = 0, PLGS = TRUE,
-                               verbose = TRUE) {
+                               IisL = FALSE, verbose = TRUE) {
   if (tolower(getExtension(file)) == "rds") {
     peptides <- readRDS(file)
+
+    noeffectMsg <- paste0("\nYour current setting has not any effect! ",
+                          "Recreate your RDS file if you want to change ",
+                          "these settings.")
+
     if (attr(peptides, "PLGS") != PLGS) {
       warning("The RDS file was created with PLGS=", attr(peptides, "PLGS"),
-              "\nYour current setting has not any effect! ",
-              "Recreate your RDS file if you want to change these settings.",
-              immediate.=TRUE)
+              noeffectMsg, immediate.=TRUE)
     }
     if (!all(attr(peptides, "missedCleavages") == missedCleavages)) {
       warning("The RDS file was created with missedCleavages=",
-              attr(peptides, "missedCleavages"),
-              "\nYour current setting has not any effect! ",
-              "Recreate your RDS file if you want to change these settings.",
-              immediate.=TRUE)
+              attr(peptides, "missedCleavages"), noeffectMsg, immediate.=TRUE)
     }
-    if (verbose) {
-        message("RDS file: ", length(peptides), " peptides.")
+    if (!all(attr(peptides, "IisL") == IisL)) {
+      warning("The RDS file was created with IisL=",
+              attr(peptides, "IisL"), noeffectMsg, immediate.=TRUE)
     }
   } else {
     peptides <- .dbUniquePeptideSet(file, missedCleavages=missedCleavages,
-                                    PLGS=PLGS, verbose=verbose)
+                                    PLGS=PLGS, IisL=IisL, verbose=verbose)
   }
+
+  if (verbose) {
+      topics <- c("Peptide database file: ",
+                  "Allowed mis-cleavages: ",
+                  "Used cleavage rule: ",
+                  "I/L treatment: ")
+      values <- c(file,
+                  attr(peptides, "missedCleavages"),
+                  ifelse(attr(peptides, "PLGS"), "PLGS", "cleaver"),
+                  ifelse(attr(peptides, "IisL"), "I == L", "I != L"))
+
+      topics <- format(topics, justify="left")
+
+      message(paste0(topics, values, collapse="\n"))
+  }
+
   return(peptides)
 }
 
 .dbUniquePeptideSet <- function(fastafile, missedCleavages = 0, PLGS = TRUE,
-                                verbose = TRUE) {
+                                IisL = FALSE, verbose = TRUE) {
 
     missedCleavages <- max(missedCleavages)
     stopifnot(missedCleavages >= 0)
@@ -91,10 +108,12 @@ dbUniquePeptideSet <- function(file, missedCleavages = 0, PLGS = TRUE,
       toCleave <- maxMissedCleavages > 0
 
       ## 4) final cleaving
-      peptides[toCleave] <- unlist(mapply(function(x, m) {
+      peptides2 <- unlist(mapply(function(x, m) {
         cleave(x, custom="[K|R](?=[^P])", missedCleavages=(0:m))
       }, x=peptides[toCleave], m=maxMissedCleavages[toCleave],
       SIMPLIFY=FALSE, USE.NAMES=FALSE), use.names=FALSE)
+
+      peptides <- c(peptides, peptides2)
     } else {
       ## using default cleaver cleavages rules for trypsin, defined:
       ## http://web.expasy.org/peptide_cutter/peptidecutter_enzymes.html#Tryps
@@ -104,21 +123,36 @@ dbUniquePeptideSet <- function(file, missedCleavages = 0, PLGS = TRUE,
     }
 
     ## remove non-unique peptides
-    upeptides <- peptides[!(duplicated(peptides) |
-                            duplicated(peptides, fromLast=TRUE))]
-
     ## Note that this does however not take pre/post-fix peptides into account
     ## like "DLIELTESLFR" and "HNPEFTMMELYMAYADYHDLIELTESLFR",
     ##      "YYGYTGAFR" and "EGYYGYTGAFR"
     ## where the first ones are NOT unique!
     ## Such cases are handled by filtering duplicates in the peptide data
-    if (verbose) {
-        message("Fasta file: ", length(proteins), " proteins\n",
-                "            ", length(upeptides),
-                " out of ", length(unique(peptides)),
-                " tryptic peptides are proteotypic.\n",
-                "Used rule:  ", ifelse(PLGS, "PLGS", "cleaver"))
+    if (IisL) {
+      .peptides <- gsub(pattern="[IL]", replacement="-", x=peptides)
+      uniqueIdx <- !(duplicated(.peptides) |
+                            duplicated(.peptides, fromLast=TRUE))
+    } else {
+      uniqueIdx <- !(duplicated(peptides) |
+                            duplicated(peptides, fromLast=TRUE))
     }
+
+    upeptides <- peptides[uniqueIdx]
+
+    attr(upeptides, "missedCleavages") <- missedCleavages
+    attr(upeptides, "PLGS") <- PLGS
+    attr(upeptides, "IisL") <- IisL
+
+    if (verbose) {
+      topics <- c("Cleavage results:      ", "")
+      values <- c(paste0(length(proteins), " proteins"),
+                  paste0(length(upeptides), " out of ", length(peptides),
+                  " tryptic peptides are proteotypic."))
+
+      topics <- format(topics, justify="left")
+      message(paste0(topics, values, collapse="\n"))
+    }
+
     return(upeptides)
 }
 
@@ -135,6 +169,10 @@ dbUniquePeptideSet <- function(file, missedCleavages = 0, PLGS = TRUE,
 #' @param PLGS If \code{TRUE} (default) try to emulate PLGS' peptide cleavage
 #' rules. Otherwise use the default rules from the \code{cleaver} package. See
 #' \code{\link{Synapter}} for references.
+#' @param IisL If \code{TRUE} Isoleucin and Leucin are treated as identical.
+#' In this case sequences like "ABCI", "ABCL" are removed because they
+#' are not unqiue. If \code{FALSE} (default) "ABCI" and "ABCL" are reported as
+#' unique.
 #' @param verbose If \code{TRUE} a verbose output is provied.
 #' @author Sebastian Gibb <mail@@sebastiangibb.de>
 #' @seealso \code{\link{Synapter}} for details about the cleavage procedure.
@@ -144,7 +182,9 @@ dbUniquePeptideSet <- function(file, missedCleavages = 0, PLGS = TRUE,
 #' }
 createUniquePeptideDbRds <- function(fastaFile,
                                      outputFile = paste0(fastaFile, ".rds"),
-                                     missedCleavages = 0, PLGS = TRUE,
+                                     missedCleavages = 0,
+                                     PLGS = TRUE,
+                                     IisL = FALSE,
                                      verbose = TRUE) {
   if (!file.exists(fastaFile)) {
     stop("File ", sQuote(fastaFile), " does not exists!")
@@ -154,13 +194,11 @@ createUniquePeptideDbRds <- function(fastaFile,
     stop("outputFile must have the file extention .rds!")
   }
 
-  peptides <- .dbUniquePeptideSet(fastaFile, missedCleavages=missedCleavages,
-                                  PLGS=PLGS, verbose=verbose)
+  peptides <- dbUniquePeptideSet(fastaFile, missedCleavages=missedCleavages,
+                                 PLGS=PLGS, IisL=IisL, verbose=verbose)
   if (verbose) {
     message("Save unique peptides to ", sQuote(outputFile))
   }
-  attr(peptides, "missedCleavages") <- missedCleavages
-  attr(peptides, "PLGS") <- PLGS
   saveRDS(peptides, file=outputFile)
 }
 
