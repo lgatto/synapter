@@ -281,7 +281,7 @@ setMethod(filterPeptideLength, "Synapter",
 
 
 setMethod(filterUniqueDbPeptides, "Synapter",
-          function(object, missedCleavages = 0, PLGS = TRUE, IisL = TRUE,
+          function(object, missedCleavages = 0, PLGS = TRUE, IisL = FALSE,
                    verbose = TRUE) {
             object$filterUniqueSeq()
             object$filterUniqueDbPeptides(object$DbFastaFile,
@@ -293,7 +293,7 @@ setMethod(filterUniqueDbPeptides, "Synapter",
           })
 
 setMethod(filterUniqueQuantDbPeptides, "Synapter",
-          function(object, missedCleavages = 0, PLGS = TRUE, IisL = TRUE,
+          function(object, missedCleavages = 0, PLGS = TRUE, IisL = FALSE,
                    verbose = TRUE) {
             object$filterUniqueQuantSeq()
             object$filterUniqueQuantDbPeptides(object$DbFastaFile,
@@ -304,7 +304,7 @@ setMethod(filterUniqueQuantDbPeptides, "Synapter",
           })
 
 setMethod(filterUniqueIdentDbPeptides, "Synapter",
-          function(object, missedCleavages = 0, PLGS = TRUE, IisL = TRUE,
+          function(object, missedCleavages = 0, PLGS = TRUE, IisL = FALSE,
                    verbose = TRUE) {
             object$filterUniqueIdentSeq()
             object$filterUniqueIdentDbPeptides(object$DbFastaFile,

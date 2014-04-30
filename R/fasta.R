@@ -1,5 +1,5 @@
 dbUniquePeptideSet <- function(file, missedCleavages = 0, PLGS = TRUE,
-                               IisL = TRUE, verbose = TRUE) {
+                               IisL = FALSE, verbose = TRUE) {
   if (tolower(getExtension(file)) == "rds") {
     peptides <- readRDS(file)
 
@@ -43,7 +43,7 @@ dbUniquePeptideSet <- function(file, missedCleavages = 0, PLGS = TRUE,
 }
 
 .dbUniquePeptideSet <- function(fastafile, missedCleavages = 0, PLGS = TRUE,
-                                IisL = TRUE, verbose = TRUE) {
+                                IisL = FALSE, verbose = TRUE) {
 
     missedCleavages <- max(missedCleavages)
     stopifnot(missedCleavages >= 0)
@@ -169,9 +169,10 @@ dbUniquePeptideSet <- function(file, missedCleavages = 0, PLGS = TRUE,
 #' @param PLGS If \code{TRUE} (default) try to emulate PLGS' peptide cleavage
 #' rules. Otherwise use the default rules from the \code{cleaver} package. See
 #' \code{\link{Synapter}} for references.
-#' @param IisL If \code{TRUE} (default) Isoleucin and Leucin are treated as
-#' equal. In this case sequences like "ABCI", "ABCL" are removed because they
-#' are not unqiue. If \code{FALSE} "ABCI" and "ABCL" are reported as unique.
+#' @param IisL If \code{TRUE} Isoleucin and Leucin are treated as identical.
+#' In this case sequences like "ABCI", "ABCL" are removed because they
+#' are not unqiue. If \code{FALSE} (default) "ABCI" and "ABCL" are reported as
+#' unique.
 #' @param verbose If \code{TRUE} a verbose output is provied.
 #' @author Sebastian Gibb <mail@@sebastiangibb.de>
 #' @seealso \code{\link{Synapter}} for details about the cleavage procedure.
@@ -183,7 +184,7 @@ createUniquePeptideDbRds <- function(fastaFile,
                                      outputFile = paste0(fastaFile, ".rds"),
                                      missedCleavages = 0,
                                      PLGS = TRUE,
-                                     IisL = TRUE,
+                                     IisL = FALSE,
                                      verbose = TRUE) {
   if (!file.exists(fastaFile)) {
     stop("File ", sQuote(fastaFile), " does not exists!")
