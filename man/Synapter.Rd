@@ -683,7 +683,7 @@ Synapter(filenames, master) ## creates an instance of class 'Synapter'
   See the references for more details about digest using trypsin.
   The number of maximal missed cleavages can be set as \code{missedCleavages}
 	(default is 0).
-  If \code{IisL = TRUE} Isoleucin and Leucin are treated as
+  If \code{IisL = TRUE} (default) Isoleucin and Leucin are treated as
   the same aminoacid. In this case sequences like "ABCI", "ABCL" are removed
   because they are not unqiue anymore. If \code{IisL = FALSE} "ABCI" and
   "ABCL" are reported as unique.
@@ -696,11 +696,11 @@ Synapter(filenames, master) ## creates an instance of class 'Synapter'
 	database.  }
 
       \item{filterUniqueQuantDbPeptides}{\code{signature(object="Synapter",
-	  missedCleavages = 0, PLGS = TRUE, IisL, verbose = TRUE)}: As
+	  missedCleavages = 0, PLGS = TRUE, IisL = TRUE, verbose = TRUE)}: As
 	\code{filterUniqueDbPeptides} for quantitation peptides only.  }
 
       \item{filterUniqueIdentDbPeptides}{\code{signature(object="Synapter",
-	  missedCleavages = 0, PLGS = TRUE, IisL, verbose = TRUE)}: As
+	  missedCleavages = 0, PLGS = TRUE, IisL = TRUE, verbose = TRUE)}: As
 	\code{filterUniqueDbPeptides} for identification peptides
 	only. }
 

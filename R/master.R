@@ -84,7 +84,7 @@ writeMasterPeptides <- function(x, file, ...) {
 ##' @param PLGS If \code{TRUE} (default) try to emulate PLGS' peptide cleavage
 ##' rules. Otherwise use the default rules from the \code{cleaver} package. See
 ##' \code{\link{Synapter}} for references.
-##' @param IisL If \code{TRUE} Isoleucin and Leucin are treated as
+##' @param IisL If \code{TRUE} (default) Isoleucin and Leucin are treated as
 ##' equal. In this case sequences like "ABCI", "ABCL" are removed because they
 ##' are not unqiue. If \code{FALSE} "ABCI" and "ABCL" are reported as unique.
 ##' @return An instance of class \code{"\linkS4class{MasterFdrResults}"}.
@@ -106,7 +106,7 @@ estimateMasterFdr <- function(pepfiles,
                               proteotypic = TRUE,
                               missedCleavages = 0,
                               PLGS = TRUE,
-                              IisL,
+                              IisL = TRUE,
                               verbose = TRUE) {
     pepfile <- unlist(pepfiles)
     m <- length(pepfiles)
