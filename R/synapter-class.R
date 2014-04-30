@@ -814,7 +814,7 @@
                                                       "]", sep=""))
                        },
 
-                       filterUniqueQuantDbPeptides = function(filename, missedCleavages = 0, PLGS = TRUE, IisL = TRUE, verbose = TRUE) {
+                       filterUniqueQuantDbPeptides = function(filename, missedCleavages = 0, PLGS = TRUE, IisL, verbose = TRUE) {
                          'Filters quantitation tryptic peptides that match one and only one protein in the fasta database.'
                          .self$filterUniqueDbPeptides(filename,
                                                       what="quant",
@@ -824,7 +824,7 @@
                                                       verbose=verbose)
                        },
 
-                       filterUniqueIdentDbPeptides = function(filename, missedCleavages = 0, PLGS = TRUE, IisL = TRUE, verbose = TRUE) {
+                       filterUniqueIdentDbPeptides = function(filename, missedCleavages = 0, PLGS = TRUE, IisL, verbose = TRUE) {
                          'Filters identification tryptic peptides that match one and only one protein in the fasta database.'
                          .self$filterUniqueDbPeptides(filename,
                                                       what="ident",
@@ -834,7 +834,7 @@
                                                       verbose=verbose)
                        },
 
-                       filterUniqueDbPeptides = function(filename, what = c("ident", "quant"), missedCleavages = 0, PLGS = TRUE, IisL = TRUE, verbose = TRUE) {
+                       filterUniqueDbPeptides = function(filename, what = c("ident", "quant"), missedCleavages = 0, PLGS = TRUE, IisL, verbose = TRUE) {
                         'Filters tryptic peptides that match one and only one protein in the fasta database.'
                         what <- match.arg(what, several.ok=TRUE)
 
