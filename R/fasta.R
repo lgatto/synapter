@@ -108,10 +108,12 @@ dbUniquePeptideSet <- function(file, missedCleavages = 0, PLGS = TRUE,
       toCleave <- maxMissedCleavages > 0
 
       ## 4) final cleaving
-      peptides[toCleave] <- unlist(mapply(function(x, m) {
+      peptides2 <- unlist(mapply(function(x, m) {
         cleave(x, custom="[K|R](?=[^P])", missedCleavages=(0:m))
       }, x=peptides[toCleave], m=maxMissedCleavages[toCleave],
       SIMPLIFY=FALSE, USE.NAMES=FALSE), use.names=FALSE)
+
+      peptides <- c(peptides, peptides2)
     } else {
       ## using default cleaver cleavages rules for trypsin, defined:
       ## http://web.expasy.org/peptide_cutter/peptidecutter_enzymes.html#Tryps
