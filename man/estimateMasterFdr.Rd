@@ -3,7 +3,8 @@
 \title{Computes FDR for all possible final peptide combinations}
 \usage{
 estimateMasterFdr(pepfiles, fastafile, masterFdr = 0.025, fdr = 0.01,
-  proteotypic = TRUE, missedCleavages = 0, PLGS = TRUE, verbose = TRUE)
+  proteotypic = TRUE, missedCleavages = 0, PLGS = TRUE, ILequal = TRUE,
+  verbose = TRUE)
 }
 \arguments{
   \item{pepfiles}{A \code{list} of \code{vector} of final
@@ -31,6 +32,12 @@ estimateMasterFdr(pepfiles, fastafile, masterFdr = 0.025, fdr = 0.01,
   peptide cleavage rules. Otherwise use the default rules
   from the \code{cleaver} package. See
   \code{\link{Synapter}} for references.}
+
+  \item{ILequal}{If \code{TRUE} (default) Isoleucin and
+  Leucin are treated as equal. In this case sequences like
+  "ABCI", "ABCL" are removed because they are not unqiue.
+  If \code{FALSE} "ABCI" and "ABCL" are reported as
+  unique.}
 }
 \value{
 An instance of class

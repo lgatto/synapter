@@ -3,7 +3,7 @@
 \title{Create an RDS file for the 'Unique Peptides Database'}
 \usage{
 createUniquePeptideDbRds(fastaFile, outputFile = paste0(fastaFile, ".rds"),
-  missedCleavages = 0, PLGS = TRUE, verbose = TRUE)
+  missedCleavages = 0, PLGS = TRUE, ILequal = TRUE, verbose = TRUE)
 }
 \arguments{
   \item{fastaFile}{file path of the input fasta file}
@@ -18,6 +18,12 @@ createUniquePeptideDbRds(fastaFile, outputFile = paste0(fastaFile, ".rds"),
   peptide cleavage rules. Otherwise use the default rules
   from the \code{cleaver} package. See
   \code{\link{Synapter}} for references.}
+
+  \item{ILequal}{If \code{TRUE} (default) Isoleucin and
+  Leucin are treated as equal. In this case sequences like
+  "ABCI", "ABCL" are removed because they are not unqiue.
+  If \code{FALSE} "ABCI" and "ABCL" are reported as
+  unique.}
 
   \item{verbose}{If \code{TRUE} a verbose output is
   provied.}
