@@ -70,14 +70,21 @@ setMethod(inputFiles, "Synapter",
             fasta = object$DbFastaFile))
 
 setMethod(loadSpectrumXmlFiles, "Synapter",
-          function(object, filenames, verbose=TRUE) {
-            object$loadSpectrumXmlFiles(filenames=filenames, verbose=verbose)
+          function(object, filenames, removePrecursor=TRUE, tolerance=25e-6,
+                   verbose=TRUE) {
+            object$loadSpectrumXmlFiles(filenames=filenames,
+                                        removePrecursor=removePrecursor,
+                                        tolerance=25e-6,
+                                        verbose=verbose)
           })
 
 setMethod(loadFragmentCsvFiles, "Synapter",
-          function(object, filenames, removeNeutralLoss=TRUE, verbose=TRUE) {
+          function(object, filenames, removeNeutralLoss=TRUE,
+                   removePrecursor=TRUE, tolerance=25e-6, verbose=TRUE) {
             object$loadFragmentCsvFiles(filenames=filenames,
                                         removeNeutralLoss=removeNeutralLoss,
+                                        removePrecursor=removePrecursor,
+                                        tolerance=25e-6,
                                         verbose=verbose)
           })
 

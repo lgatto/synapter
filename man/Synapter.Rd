@@ -858,16 +858,22 @@ Synapter(filenames, master) ## creates an instance of class 'Synapter'
 \subsection{Importers}{
 
     \describe{
-      \item{loadSpectrumXmlFiles}{\code{signature(object="Synapter", filenames = "list",
-          verbose = "logcial")}:
+      \item{loadSpectrumXmlFiles}{\code{signature(object="Synapter",
+          filenames = "list", removePrecursor = "logical",
+          tolerance = "numeric", verbose = "logcial")}:
         Imports \sQuote{Spectrum.xml} files. The file path has to be given as
         named list (\code{filenames}). The names have to be
         \code{identspectrum} and \code{quantspectrum} for the identification and
-        the quantitation spectrum file. If \code{verbose} is \code{TRUE}
+        the quantitation spectrum file.
+        If \code{removePrecursor} is \code{TRUE} (default) the precursor ion is
+        removed from the fragment spectrum. Use \code{tolerance} to adjust the
+        sensitivity (default is \code{25e-6} = 25 ppm).
+        If \code{verbose} is \code{TRUE}
         (default) a progress bar is shown.
       }
       \item{loadFragmentCsvFiles}{\code{signature(object="Synapter",
           filenames = "list", removeNeutralLoss = "logical",
+          removePrecursor = "logical", tolerance = "numeric",
           verbose = "logcial")}:
         Imports \sQuote{final_fragment.csv} files. The file path has to be given
         as named list (\code{filenames}). The names have to be
@@ -875,6 +881,9 @@ Synapter(filenames, master) ## creates an instance of class 'Synapter'
         and the quantitation fragment file. In the default setting rows
         with a neutrol loss value not equal to \sQuote{none} are removed.
         To keep these rows you have to set \code{removeNeutralLoss = FALSE}.
+        If \code{removePrecursor} is \code{TRUE} (default) the precursor ion is
+        removed from the fragment spectrum. Use \code{tolerance} to adjust the
+        sensitivity (default is \code{25e-6} = 25 ppm).
         If \code{verbose} is \code{TRUE} (default) a progress bar is shown.
       }
     }
