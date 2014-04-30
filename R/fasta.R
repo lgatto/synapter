@@ -21,7 +21,7 @@ dbUniquePeptideSet <- function(file, missedCleavages = 0, PLGS = TRUE,
     }
   } else {
     peptides <- .dbUniquePeptideSet(file, missedCleavages=missedCleavages,
-                                    PLGS=PLGS, verbose=verbose)
+                                    PLGS=PLGS, IisL=IisL, verbose=verbose)
   }
 
   if (verbose) {

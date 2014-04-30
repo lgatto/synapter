@@ -835,8 +835,8 @@
                          .self$filterUniqueDbPeptides(filename,
                                                       what="quant",
                                                       missedCleavages=missedCleavages,
-                                                      IisL = IisL,
                                                       PLGS=PLGS,
+                                                      IisL=IisL,
                                                       verbose=verbose)
                        },
 
@@ -846,7 +846,7 @@
                                                       what="ident",
                                                       missedCleavages=missedCleavages,
                                                       PLGS=PLGS,
-                                                      IisL = IisL,
+                                                      IisL=IisL,
                                                       verbose=verbose)
                        },
 
@@ -857,7 +857,7 @@
                         upepset <- dbUniquePeptideSet(filename,
                                                       missedCleavages=missedCleavages,
                                                       PLGS=PLGS,
-                                                      IisL = IisL,
+                                                      IisL=IisL,
                                                       verbose=verbose)
                         .self$DbFastaFile <- filename
                         logmsg <- paste0("peptides that match unique protein (",
