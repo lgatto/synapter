@@ -1,5 +1,5 @@
 dbUniquePeptideSet <- function(file, missedCleavages = 0, PLGS = TRUE,
-                               ILequal = TRUE, verbose = TRUE) {
+                               IisL = TRUE, verbose = TRUE) {
   if (tolower(getExtension(file)) == "rds") {
     peptides <- readRDS(file)
 
@@ -15,9 +15,9 @@ dbUniquePeptideSet <- function(file, missedCleavages = 0, PLGS = TRUE,
       warning("The RDS file was created with missedCleavages=",
               attr(peptides, "missedCleavages"), noeffectMsg, immediate.=TRUE)
     }
-    if (!all(attr(peptides, "ILequal") == ILequal)) {
-      warning("The RDS file was created with ILequal=",
-              attr(peptides, "ILequal"), noeffectMsg, immediate.=TRUE)
+    if (!all(attr(peptides, "IisL") == IisL)) {
+      warning("The RDS file was created with IisL=",
+              attr(peptides, "IisL"), noeffectMsg, immediate.=TRUE)
     }
   } else {
     peptides <- .dbUniquePeptideSet(file, missedCleavages=missedCleavages,
@@ -32,7 +32,7 @@ dbUniquePeptideSet <- function(file, missedCleavages = 0, PLGS = TRUE,
       values <- c(file,
                   attr(peptides, "missedCleavages"),
                   ifelse(attr(peptides, "PLGS"), "PLGS", "cleaver"),
-                  ifelse(attr(peptides, "ILequal"), "I == L", "I != L"))
+                  ifelse(attr(peptides, "IisL"), "I == L", "I != L"))
 
       topics <- format(topics, justify="left")
 
@@ -43,7 +43,7 @@ dbUniquePeptideSet <- function(file, missedCleavages = 0, PLGS = TRUE,
 }
 
 .dbUniquePeptideSet <- function(fastafile, missedCleavages = 0, PLGS = TRUE,
-                                ILequal = TRUE, verbose = TRUE) {
+                                IisL = TRUE, verbose = TRUE) {
 
     missedCleavages <- max(missedCleavages)
     stopifnot(missedCleavages >= 0)
@@ -126,7 +126,7 @@ dbUniquePeptideSet <- function(file, missedCleavages = 0, PLGS = TRUE,
     ##      "YYGYTGAFR" and "EGYYGYTGAFR"
     ## where the first ones are NOT unique!
     ## Such cases are handled by filtering duplicates in the peptide data
-    if (ILequal) {
+    if (IisL) {
       .peptides <- gsub(pattern="[IL]", replacement="-", x=peptides)
       uniqueIdx <- !(duplicated(.peptides) |
                             duplicated(.peptides, fromLast=TRUE))
@@ -139,7 +139,7 @@ dbUniquePeptideSet <- function(file, missedCleavages = 0, PLGS = TRUE,
 
     attr(upeptides, "missedCleavages") <- missedCleavages
     attr(upeptides, "PLGS") <- PLGS
-    attr(upeptides, "ILequal") <- ILequal
+    attr(upeptides, "IisL") <- IisL
 
     if (verbose) {
       topics <- c("Cleavage results:      ", "")
@@ -167,7 +167,7 @@ dbUniquePeptideSet <- function(file, missedCleavages = 0, PLGS = TRUE,
 #' @param PLGS If \code{TRUE} (default) try to emulate PLGS' peptide cleavage
 #' rules. Otherwise use the default rules from the \code{cleaver} package. See
 #' \code{\link{Synapter}} for references.
-#' @param ILequal If \code{TRUE} (default) Isoleucin and Leucin are treated as
+#' @param IisL If \code{TRUE} (default) Isoleucin and Leucin are treated as
 #' equal. In this case sequences like "ABCI", "ABCL" are removed because they
 #' are not unqiue. If \code{FALSE} "ABCI" and "ABCL" are reported as unique.
 #' @param verbose If \code{TRUE} a verbose output is provied.
@@ -181,7 +181,7 @@ createUniquePeptideDbRds <- function(fastaFile,
                                      outputFile = paste0(fastaFile, ".rds"),
                                      missedCleavages = 0,
                                      PLGS = TRUE,
-                                     ILequal = TRUE,
+                                     IisL = TRUE,
                                      verbose = TRUE) {
   if (!file.exists(fastaFile)) {
     stop("File ", sQuote(fastaFile), " does not exists!")
@@ -192,7 +192,7 @@ createUniquePeptideDbRds <- function(fastaFile,
   }
 
   peptides <- dbUniquePeptideSet(fastaFile, missedCleavages=missedCleavages,
-                                 PLGS=PLGS, ILequal=ILequal, verbose=verbose)
+                                 PLGS=PLGS, IisL=IisL, verbose=verbose)
   if (verbose) {
     message("Save unique peptides to ", sQuote(outputFile))
   }

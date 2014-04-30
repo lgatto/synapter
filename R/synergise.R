@@ -75,7 +75,7 @@
 ##' @param PLGS If \code{TRUE} (default) try to emulate PLGS' peptide cleavage
 ##' rules. Otherwise use the default rules from the \code{cleaver} package. See
 ##' \code{\link{Synapter}} for references.
-##' @param ILequal If \code{TRUE} (default) Isoleucin and Leucin are treated as
+##' @param IisL If \code{TRUE} (default) Isoleucin and Leucin are treated as
 ##' equal. In this case sequences like "ABCI", "ABCL" are removed because they
 ##' are not unqiue. If \code{FALSE} "ABCI" and "ABCL" are reported as unique.
 ##' @param identppm Identification mass tolerance (in ppm). Default is 20.
@@ -139,7 +139,7 @@ synergise <- function(filenames,
                       peplen = 7,
                       missedCleavages = 0,
                       PLGS = TRUE,
-                      ILequal = TRUE,
+                      IisL = TRUE,
                       identppm = 20,
                       quantppm = 20,
                       uniquepep = TRUE,
@@ -241,7 +241,7 @@ synergise <- function(filenames,
     if (verbose)
       message("Keeping unique peptides...")
     filterUniqueDbPeptides(obj, missedCleavages = missedCleavages,
-                           PLGS = PLGS, ILequal = ILequal, verbose = verbose)
+                           PLGS = PLGS, IisL = IisL, verbose = verbose)
   }
 
   filterPeptideLength(obj, l = peplen)
