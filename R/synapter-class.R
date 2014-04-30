@@ -226,7 +226,10 @@
                         message("Computing identification statistics...")
                         .self$addIdStats()
                     },
-                    loadSpectrumXmlFiles = function(filenames, verbose=TRUE) {
+                    loadSpectrumXmlFiles = function(filenames,
+                                                    removePrecursor=TRUE,
+                                                    tolerance=25e-6,
+                                                    verbose=TRUE) {
                       stopifnot(all(names(filenames) %in% c("identspectrum",
                                                             "quantspectrum")))
                       filenames <- as.list(filenames)
@@ -236,7 +239,10 @@
                       .self$IdentSpectrumData <-
                         .spectrumXml2spectra(df=.self$IdentPeptideData,
                                              file=.self$IdentSpectrumFile,
-                                             storeAll=FALSE, verbose=verbose)
+                                             storeAll=FALSE,
+                                             removePrecursor=removePrecursor,
+                                             tolerance=tolerance,
+                                             verbose=verbose)
                       .self$SynapterLog <-
                         c(.self$SynapterLog,
                           paste0("Read identification spectra [",
@@ -245,13 +251,19 @@
                       .self$QuantSpectrumData <-
                         .spectrumXml2spectra(df=.self$QuantPeptideData,
                                              file=.self$QuantSpectrumFile,
-                                             storeAll=TRUE, verbose=verbose)
+                                             storeAll=TRUE,
+                                             removePrecursor=removePrecursor,
+                                             tolerance=tolerance,
+                                             verbose=verbose)
                       .self$SynapterLog <-
                         c(.self$SynapterLog,
                           paste0("Read quantitation spectra [",
                                  length(.self$QuantSpectrumData), "]"))
                     },
-                    loadFragmentCsvFiles = function(filenames, removeNeutralLoss=TRUE,
+                    loadFragmentCsvFiles = function(filenames,
+                                                    removeNeutralLoss=TRUE,
+                                                    removePrecursor=TRUE,
+                                                    tolerance=25e-6,
                                                     verbose=TRUE) {
                       stopifnot(all(names(filenames) %in% c("identfragments",
                                                             "quantfragments")))
@@ -264,6 +276,8 @@
                                                file=.self$IdentFragmentFile,
                                                storeAll=FALSE,
                                                removeNeutralLoss=removeNeutralLoss,
+                                               removePrecursor=removePrecursor,
+                                               tolerance=tolerance,
                                                verbose=verbose)
                       .self$SynapterLog <-
                         c(.self$SynapterLog,
@@ -276,6 +290,8 @@
                                                file=.self$QuantFragmentFile,
                                                storeAll=TRUE,
                                                removeNeutralLoss=removeNeutralLoss,
+                                               removePrecursor=removePrecursor,
+                                               tolerance=tolerance,
                                                verbose=verbose)
                       .self$SynapterLog <-
                         c(.self$SynapterLog,
