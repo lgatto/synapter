@@ -19,14 +19,26 @@ dbUniquePeptideSet <- function(file, missedCleavages = 0, PLGS = TRUE,
       warning("The RDS file was created with ILequal=",
               attr(peptides, "ILequal"), noeffectMsg, immediate.=TRUE)
     }
-
-    if (verbose) {
-        message("RDS file: ", length(peptides), " peptides.")
-    }
   } else {
     peptides <- .dbUniquePeptideSet(file, missedCleavages=missedCleavages,
                                     PLGS=PLGS, verbose=verbose)
   }
+
+  if (verbose) {
+      topics <- c("Peptide database file: ",
+                  "Allowed mis-cleavages: ",
+                  "Used cleavage rule: ",
+                  "I/L treatment: ")
+      values <- c(file,
+                  attr(peptides, "missedCleavages"),
+                  ifelse(attr(peptides, "PLGS"), "PLGS", "cleaver"),
+                  ifelse(attr(peptides, "ILequal"), "I == L", "I != L"))
+
+      topics <- format(topics, justify="left")
+
+      message(paste0(topics, values, collapse="\n"))
+  }
+
   return(peptides)
 }
 
@@ -109,6 +121,11 @@ dbUniquePeptideSet <- function(file, missedCleavages = 0, PLGS = TRUE,
     }
 
     ## remove non-unique peptides
+    ## Note that this does however not take pre/post-fix peptides into account
+    ## like "DLIELTESLFR" and "HNPEFTMMELYMAYADYHDLIELTESLFR",
+    ##      "YYGYTGAFR" and "EGYYGYTGAFR"
+    ## where the first ones are NOT unique!
+    ## Such cases are handled by filtering duplicates in the peptide data
     if (ILequal) {
       .peptides <- gsub(pattern="[IL]", replacement="-", x=peptides)
       uniqueIdx <- !(duplicated(.peptides) |
@@ -120,18 +137,20 @@ dbUniquePeptideSet <- function(file, missedCleavages = 0, PLGS = TRUE,
 
     upeptides <- peptides[uniqueIdx]
 
-    ## Note that this does however not take pre/post-fix peptides into account
-    ## like "DLIELTESLFR" and "HNPEFTMMELYMAYADYHDLIELTESLFR",
-    ##      "YYGYTGAFR" and "EGYYGYTGAFR"
-    ## where the first ones are NOT unique!
-    ## Such cases are handled by filtering duplicates in the peptide data
+    attr(upeptides, "missedCleavages") <- missedCleavages
+    attr(upeptides, "PLGS") <- PLGS
+    attr(upeptides, "ILequal") <- ILequal
+
     if (verbose) {
-        message("Fasta file: ", length(proteins), " proteins\n",
-                "            ", length(upeptides),
-                " out of ", length(unique(peptides)),
-                " tryptic peptides are proteotypic.\n",
-                "Used rule:  ", ifelse(PLGS, "PLGS", "cleaver"))
+      topics <- c("Cleavage results:      ", "")
+      values <- c(paste0(length(proteins), " proteins"),
+                  paste0(length(upeptides), " out of ", length(peptides),
+                  " tryptic peptides are proteotypic."))
+
+      topics <- format(topics, justify="left")
+      message(paste0(topics, values, collapse="\n"))
     }
+
     return(upeptides)
 }
 
@@ -172,14 +191,11 @@ createUniquePeptideDbRds <- function(fastaFile,
     stop("outputFile must have the file extention .rds!")
   }
 
-  peptides <- .dbUniquePeptideSet(fastaFile, missedCleavages=missedCleavages,
-                                  PLGS=PLGS, ILequal=ILequal, verbose=verbose)
+  peptides <- dbUniquePeptideSet(fastaFile, missedCleavages=missedCleavages,
+                                 PLGS=PLGS, ILequal=ILequal, verbose=verbose)
   if (verbose) {
     message("Save unique peptides to ", sQuote(outputFile))
   }
-  attr(peptides, "missedCleavages") <- missedCleavages
-  attr(peptides, "PLGS") <- PLGS
-  attr(peptides, "ILequal") <- ILequal
   saveRDS(peptides, file=outputFile)
 }
 
