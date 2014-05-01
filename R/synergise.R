@@ -72,9 +72,6 @@
 ##' @param peplen Minimum peptide length. Default is 7.
 ##' @param missedCleavages Number of maximal allowed missed cleavages. Default
 ##' is 0.
-##' @param PLGS If \code{TRUE} (default) try to emulate PLGS' peptide cleavage
-##' rules. Otherwise use the default rules from the \code{cleaver} package. See
-##' \code{\link{Synapter}} for references.
 ##' @param IisL If \code{TRUE} Isoleucin and Leucin are treated as
 ##' equal. In this case sequences like "ABCI", "ABCL" are removed because they
 ##' are not unqiue. If \code{FALSE} (default) "ABCI" and "ABCL" are reported as
@@ -139,7 +136,6 @@ synergise <- function(filenames,
                       fpr = 0.01,
                       peplen = 7,
                       missedCleavages = 0,
-                      PLGS = TRUE,
                       IisL = FALSE,
                       identppm = 20,
                       quantppm = 20,
@@ -242,7 +238,7 @@ synergise <- function(filenames,
     if (verbose)
       message("Keeping unique peptides...")
     filterUniqueDbPeptides(obj, missedCleavages = missedCleavages,
-                           PLGS = PLGS, IisL = IisL, verbose = verbose)
+                           IisL = IisL, verbose = verbose)
   }
 
   filterPeptideLength(obj, l = peplen)

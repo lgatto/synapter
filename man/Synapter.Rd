@@ -668,19 +668,12 @@ Synapter(filenames, master) ## creates an instance of class 'Synapter'
     \describe{
 
       \item{filterUniqueDbPeptides}{\code{signature(object="Synapter",
-          missedCleavages = 0, PLGS = TRUE, IisL = TRUE, verbose = TRUE)}:
+          missedCleavages = 0, IisL = TRUE, verbose = TRUE)}:
 	This method first digests the fasta database file and keeps
 	unique tryptic peptides. (NOTE: since version 1.5.3, the tryptic
 	digestion uses the \code{cleaver} package, replacing the more
 	simplistic inbuild function. The effect of this change is
 	documented in https://github.com/lgatto/synapter/pull/47).
-  Since version 1.7.2 this method tries to emulate PLGS' peptide cleavage
-  method. In fact PLGS performs a perfect cleavage after K or R if not followed
-  by P, D, E, K, R first. In a second run it cleaves after K or R if not
-  followed by P with mis-cleavages (NOTE: more details are documented in
-  https://github.com/lgatto/synapter/pull/57)
-  Set \code{PLGS = FALSE} to use the \code{cleaver} rules instead.
-  See the references for more details about digest using trypsin.
   The number of maximal missed cleavages can be set as \code{missedCleavages}
 	(default is 0).
   If \code{IisL = TRUE} Isoleucin and Leucin are treated as the same aminoacid.
@@ -696,11 +689,11 @@ Synapter(filenames, master) ## creates an instance of class 'Synapter'
 	database.  }
 
       \item{filterUniqueQuantDbPeptides}{\code{signature(object="Synapter",
-	  missedCleavages = 0, PLGS = TRUE, IisL = TRUE, verbose = TRUE)}: As
+	  missedCleavages = 0, IisL = TRUE, verbose = TRUE)}: As
 	\code{filterUniqueDbPeptides} for quantitation peptides only.  }
 
       \item{filterUniqueIdentDbPeptides}{\code{signature(object="Synapter",
-	  missedCleavages = 0, PLGS = TRUE, IisL = TRUE, verbose = TRUE)}: As
+	  missedCleavages = 0, IisL = TRUE, verbose = TRUE)}: As
 	\code{filterUniqueDbPeptides} for identification peptides
 	only. }
 

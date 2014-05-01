@@ -3,7 +3,7 @@
 \title{Create an RDS file for the 'Unique Peptides Database'}
 \usage{
 createUniquePeptideDbRds(fastaFile, outputFile = paste0(fastaFile, ".rds"),
-  missedCleavages = 0, PLGS = TRUE, IisL = FALSE, verbose = TRUE)
+  missedCleavages = 0, IisL = FALSE, verbose = TRUE)
 }
 \arguments{
   \item{fastaFile}{file path of the input fasta file}
@@ -13,11 +13,6 @@ createUniquePeptideDbRds(fastaFile, outputFile = paste0(fastaFile, ".rds"),
 
   \item{missedCleavages}{Number of maximal allowed missed
   cleavages. Default is 0.}
-
-  \item{PLGS}{If \code{TRUE} (default) try to emulate PLGS'
-  peptide cleavage rules. Otherwise use the default rules
-  from the \code{cleaver} package. See
-  \code{\link{Synapter}} for references.}
 
   \item{IisL}{If \code{TRUE} Isoleucin and Leucin are
   treated as identical. In this case sequences like "ABCI",
@@ -35,7 +30,7 @@ This function creates an RDS file to store the
 }
 \examples{
 \dontrun{
-createUniquePeptideDbRds("uniprot.fasta", "uniprot.fasta.rds", PLGS=TRUE)
+createUniquePeptideDbRds("uniprot.fasta", "uniprot.fasta.rds")
 }
 }
 \author{

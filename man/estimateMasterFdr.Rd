@@ -3,8 +3,7 @@
 \title{Computes FDR for all possible final peptide combinations}
 \usage{
 estimateMasterFdr(pepfiles, fastafile, masterFdr = 0.025, fdr = 0.01,
-  proteotypic = TRUE, missedCleavages = 0, PLGS = TRUE, IisL = FALSE,
-  verbose = TRUE)
+  proteotypic = TRUE, missedCleavages = 0, IisL = FALSE, verbose = TRUE)
 }
 \arguments{
   \item{pepfiles}{A \code{list} of \code{vector} of final
@@ -27,11 +26,6 @@ estimateMasterFdr(pepfiles, fastafile, masterFdr = 0.025, fdr = 0.01,
   sites. Default is 0.}
 
   \item{verbose}{Should progress messages be printed?}
-
-  \item{PLGS}{If \code{TRUE} (default) try to emulate PLGS'
-  peptide cleavage rules. Otherwise use the default rules
-  from the \code{cleaver} package. See
-  \code{\link{Synapter}} for references.}
 
   \item{IisL}{If \code{TRUE} Isoleucin and Leucin are
   treated as identical. In this case sequences like "ABCI",
