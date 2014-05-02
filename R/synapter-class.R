@@ -363,8 +363,11 @@
                     },
                     modelRetentionTime = function(span) {
                         'Models retention time'
-                        if (missing(span))
+                        if (missing(span)) {
                             span <- .self$LowessSpan
+                        } else {
+                          .self$LowessSpan <- span
+                        }
                         .self$RtModel <- modelRetTime(.self$MergedFeatures, span = span)
                         .self$SynapterLog <- c(.self$SynapterLog,
                                                paste("Modelled retention time using lowess and span ",
