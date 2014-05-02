@@ -34,10 +34,12 @@
 #' plot ionmobility F1/FDR/Confusion/Boxplots
 #' @param obj synapter object
 #' @param thresholds
+#' @param equalCharge compare only equally charged ions
 #' @return invisible matrix with cols tp, fp, tn, fn, accuracy, precision,
 #' recall, fdr, f1
 #' @noRd
-.plotIonMobilitySummary <- function(obj, thresholds=seq(0, 100, 0.5)) {
+.plotIonMobilitySummary <- function(obj, thresholds=seq(0, 100, 0.5),
+                                    equalCharge=FALSE) {
 
   if (!"precursor.Mobility" %in% colnames(obj$IdentPeptideData) ||
       !"clust_drift" %in% colnames(obj$QuantPep3DData)) {
@@ -45,6 +47,12 @@
   }
 
   emrts <- flatMatchedEMRTs(obj$MatchedEMRTs, verbose=TRUE)
+
+  if (equalCharge) {
+    isChargeEqual <- emrts$precursor.z == emrts$ion_z
+
+    emrts <- emrts[isChargeEqual,]
+  }
 
   sampled <- .groundTruthIndices(emrts)
 
@@ -60,9 +68,10 @@
 
   contengency <- .ionMobilityContingencyMatrix(emrts$ionmobdiff[unlist(sampled)],
                                                labels, thresholds)
+  colnames(contengency)[1] <- "absdiff"
 
   par(mfcol=c(1, 3))
-  x <- (1:nrow(contengency))-1
+  x <- contengency[,1]
   matplot(x, contengency[, c("fdr", "f1"), drop=FALSE], type="b", lty=1,
           xlab="ion mobility difference", ylab="performance",
           main="ion mobility performance", pch=19)
