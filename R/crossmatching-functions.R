@@ -357,10 +357,16 @@ crossmatching <- function(flatEmrts, spectra, tolerance=25e-6, verbose=TRUE) {
 #' fragments.identXfragments.quant)
 #' @return invisible data.frame, columns: diff, highest
 #' @noRd
-.filterMatchedEMRTsUsingCrossMatching <- function(obj, nmin, mcol="spectrum.quantXfragments.ident") {
+.filterMatchedEMRTsUsingCrossMatching <- function(obj, nmin,
+                                                  mcol="spectrum.quantXfragments.ident") {
   cx <- obj$CrossMatching
   emrts <- obj$MatchedEMRTs
   pep3d <- obj$QuantPep3DData
+
+  if ("Function.0" %in% colnames(emrts)) {
+    warning("You already filtered using the CrossMatching results! ",
+            "The results may be wrong!", immediate. = TRUE)
+  }
 
   ## backup old Function column
   emrts$Function.0 <- emrts$Function
