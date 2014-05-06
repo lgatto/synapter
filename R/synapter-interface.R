@@ -531,6 +531,19 @@ setMethod(plotCrossMatchingSummary, "Synapter",
                                                 mcol=matchColumn))
           })
 
+setMethod(plotCrossMatchingPerformance, "Synapter",
+          function(object, matchColumn = "spectrum.quantXfragments.ident",
+                   ...) {
+            if (!nrow(object$CrossMatching)) {
+              stop("You have to run ", sQuote("crossMatching"), " first!")
+            }
+
+            invisible(.plotCrossMatchingPerformance(object$CrossMatching,
+                                                    mcol=matchColumn))
+          })
+
+
+
 setMethod(getEMRTtable, "Synapter",
           function(object) table(object$MatchedEMRTs$Function))
 
