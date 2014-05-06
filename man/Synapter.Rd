@@ -729,13 +729,17 @@ Synapter(filenames, master) ## creates an instance of class 'Synapter'
 	\code{filterQuantPpmError}, but for identification peptides.  }
 
     \item{filterMatchedEMRTsByCommonPeaks}{\code{signature(object="Synapter",
+        what = c("non-unique", "all"),
         matchColumn = "spectrum.quantXfragments.ident")}:
       Turns non unique matches into unique matches based on the cross matching
       results and a minimal number of common peaks between the identification
-      and quantiation fragments. Use
+      and quantiation fragments (if \code{what = "non-unique"}). Use
       \code{\link{setCrossMatchingMinimalNumberOfCommonPeaks}} to set the
       minimal number of common peaks. If there are multiple non unique matches
       above this number they are kept as non unique matches.
+      Use \code{what = "all"} to remove all matches with less than the minimal
+      number of common peaks set by
+      \code{\link{setCrossMatchingMinimalNumberOfCommonPeaks}}.
       Use \code{matchColumn} to select which cross matching result should be
       used for filtering: \code{"spectrum.quantXfragments.ident"} for quantitation
       spectra vs identification fragments,

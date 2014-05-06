@@ -353,12 +353,18 @@ crossmatching <- function(flatEmrts, spectra, tolerance=25e-6, verbose=TRUE) {
 #' filter non-unique matches
 #' @param obj synapter object
 #' @param nmin a correct match must have at least "nmin" common peaks
+#' @param what filter on non-unique matches only or on all
 #' @param mcol column name of the matching results (e.g.
 #' fragments.identXfragments.quant)
-#' @return invisible data.frame, columns: diff, highest
+#' @return filtered emrts data.frame
 #' @noRd
 .filterMatchedEMRTsUsingCrossMatching <- function(obj, nmin,
+                                                  what = c("non-unique", "all"),
                                                   mcol="spectrum.quantXfragments.ident") {
+  if (nmin <= 0) {
+    stop("Invalid number of minimal common peaks.")
+  }
+
   cx <- obj$CrossMatching
   emrts <- obj$MatchedEMRTs
   pep3d <- obj$QuantPep3DData
@@ -371,29 +377,54 @@ crossmatching <- function(flatEmrts, spectra, tolerance=25e-6, verbose=TRUE) {
   ## backup old Function column
   emrts$Function.0 <- emrts$Function
 
-  cx <- cx[cx$Function > 1 & cx[, mcol] >= nmin, ]
-
-  ## if we find duplicates (multiple matches even after applying the cross
-  ## matching rule) don't transfer them into unique ones.
-  nonDuplicated <- !(duplicated(cx$precursor.leID.ident) |
-                     rev(duplicated(rev(cx$precursor.leID.ident))))
-  cx <- cx[nonDuplicated, ]
-
-  if (nrow(cx)) {
-   rowsInEMRTs <- match(cx$precursor.leID.ident, emrts$precursor.leID.ident)
-   rowsInPep3D <- match(cx$matched.quant.spectrumIDs, pep3d$spectrumID)
-
-   columns <- intersect(colnames(cx), colnames(pep3d))
-
-   cx[, c("precursor.leID.quant", columns)] <-
-     pep3d[rowsInPep3D, c("spectrumID", columns)]
-   cx$matchType <- "unique-true"
-   cx$idSource <- "crossmatching"
-   cx$Function <- 1
-   emrts[rowsInEMRTs, columns] <- cx[, columns]
-   emrts[rowsInEMRTs, c("idSource", "precursor.leID.quant", "spectrumID")] <-
-     cx[, c("idSource", "precursor.leID.quant", "spectrumID")]
+  idx <- .cxFilteredMatchedEMRTsIndices(cx=cx, nmin=nmin, what=match.arg(what),
+                                        mcol=mcol)
+  if (!length(idx$keep)) {
+    stop("No EMRT matches your criteria! Try a lower number of common peaks.")
   }
+
+  rowsInEMRTs <- match(cx$precursor.leID.ident, emrts$precursor.leID.ident)
+  rowsInPep3D <- match(cx$matched.quant.spectrumIDs, pep3d$spectrumID)
+
+  columns <- intersect(colnames(cx), colnames(pep3d))
+
+  cx[idx$unique, c("precursor.leID.quant", columns)] <-
+    pep3d[rowsInPep3D[idx$unique], c("spectrumID", columns)]
+  cx$matchType[idx$unique] <- "unique-true"
+  cx$idSource[idx$unique] <- "crossmatching"
+  cx$Function[idx$unique] <- 1
+  emrts[rowsInEMRTs, columns] <- cx[, columns]
+  emrts[rowsInEMRTs, c("idSource", "precursor.leID.quant", "spectrumID")] <-
+    cx[, c("idSource", "precursor.leID.quant", "spectrumID")]
+
+  if (what == "all") {
+    emrts <- emrts[rowsInEMRTs[idx$keep], ]
+  }
+
   return(emrts)
+}
+
+#' filter non-unique matches
+#' @param cx cross matching data.frame
+#' @param nmin a correct match must have at least "nmin" common peaks
+#' @param what filter on non-unique matches only or on all
+#' @param mcol column name of the matching results (e.g.
+#' fragments.identXfragments.quant)
+#' @return list, $keep == rows to keep, $unique == new non unique matches
+#' @noRd
+.cxFilteredMatchedEMRTsIndices <- function(cx, nmin,
+                                           what = c("non-unique", "all"),
+                                           mcol="spectrum.quantXfragments.ident") {
+  what <- match.arg(what)
+
+  if (what != "all") {
+    keep <- which(cx$Function > 1 & cx[, mcol] >= nmin)
+  } else {
+    keep <- which(cx[, mcol] >= nmin)
+  }
+  idx <- (1:nrow(cx))[keep]
+  idx <- idx[!(duplicated(cx$precursor.leID.ident[idx]) |
+                rev(duplicated(rev(cx$precursor.leID.ident[idx]))))]
+  list(keep=keep, unique=idx)
 }
 

@@ -363,8 +363,10 @@ setMethod(filterQuantPpmError, "Synapter",
           })
 
 setMethod(filterMatchedEMRTsByCommonPeaks, "Synapter",
-          function(object, matchColumn = "spectrum.quantXfragments.ident") {
-            object$filterMatchedEMRTsByCommonPeaks(mcol=matchColumn)
+          function(object, what = c("non-unique", "all"),
+                   matchColumn = "spectrum.quantXfragments.ident") {
+            object$filterMatchedEMRTsByCommonPeaks(what=match.arg(what),
+                                                   mcol=matchColumn)
           })
 
 ## Plotting
