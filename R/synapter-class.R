@@ -433,6 +433,15 @@
                                  "ppm [",
                                  paste0(dim(.self$CrossMatching), collapse=","),
                                  "]"))
+                      .self$MatchedEMRTs <- appendCrossMatchingColumns(
+                        .self$MatchedEMRTs, .self$CrossMatching)
+
+                      .self$SynapterLog <-
+                        c(.self$SynapterLog,
+                          paste0("Append crossmatching results to ",
+                                 "MatchedEMRTs [",
+                                 paste0(dim(.self$MatchedEMRTs), collapse=","),
+                                 "]"))
                     }))
 
 
