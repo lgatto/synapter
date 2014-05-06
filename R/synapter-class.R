@@ -433,6 +433,15 @@
                                  "ppm [",
                                  paste0(dim(.self$CrossMatching), collapse=","),
                                  "]"))
+                      .self$MatchedEMRTs <- appendCrossMatchingColumns(
+                        .self$MatchedEMRTs, .self$CrossMatching)
+
+                      .self$SynapterLog <-
+                        c(.self$SynapterLog,
+                          paste0("Append crossmatching results to ",
+                                 "MatchedEMRTs [",
+                                 paste0(dim(.self$MatchedEMRTs), collapse=","),
+                                 "]"))
                     }))
 
 
@@ -882,7 +891,7 @@
                         }
                        },
 
-                       filterMatchedEMRTsByCommonPeaks = function(mcol = "spectrum.quantXfragments.ident") {
+                       filterMatchedEMRTsByCommonPeaks = function(what = c("non-unique", "all"), mcol = "spectrum.quantXfragments.ident") {
                          'Filters non unique matches using cross matching results.'
 
                          if (!nrow(.self$CrossMatching)) {
@@ -896,13 +905,15 @@
                          }
                          .self$MatchedEMRTs <-
                            .filterMatchedEMRTsUsingCrossMatching(
-                            .self,
-                            .self$CrossMatchingMinimalNumberOfCommonPeaks, mcol)
+                            obj=.self,
+                            nmin=.self$CrossMatchingMinimalNumberOfCommonPeaks,
+                            what=match.arg(what),
+                            mcol=mcol)
                          .self$SynapterLog <- c(.self$SynapterLog,
                                                 paste("Filtered matched EMRTs using at least ",
                                                       .self$CrossMatchingMinimalNumberOfCommonPeaks,
-                                                      " number of common peaks (matchColumn=\"",
-                                                      mcol, "\", [",
+                                                      " number of common peaks (what=\"", what,
+                                                      "\" matchColumn=\"", mcol, "\", [",
                                                       paste(dim(.self$QuantPeptideData), collapse=","),
                                                       "]", sep=""))
                        }))

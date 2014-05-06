@@ -127,6 +127,8 @@
 \alias{plotRtDiffs}
 \alias{plotCrossMatchingSummary,Synapter-method}
 \alias{plotCrossMatchingSummary}
+\alias{plotCrossMatchingPerformance,Synapter-method}
+\alias{plotCrossMatchingPerformance}
 
 % importers
 \alias{loadSpectrumXmlFiles,Synapter-method}
@@ -397,6 +399,10 @@ Synapter(filenames, master) ## creates an instance of class 'Synapter'
     development of the true-positives, false-positives, true-negatives and
     false-negatives using an increasing number of common peaks as threshold. On
     the right panel boxplots for all matches and the sampled matches are shown.
+    \code{plotCrossMatchingPerformance} draws two plots. On the left panel the
+    distribution of common peaks for unique and non unique matches is shown.
+    The right panel visualizes the total number of unique and non unique matches
+    depending on the number of common peaks.
     Use \code{setCrossMatchingMinimalNumberOfCommonPeaks} to set the number of
     common peaks between identification and quantitation fragments
     that have to be at least observed to be considered as unique match. The
@@ -729,13 +735,17 @@ Synapter(filenames, master) ## creates an instance of class 'Synapter'
 	\code{filterQuantPpmError}, but for identification peptides.  }
 
     \item{filterMatchedEMRTsByCommonPeaks}{\code{signature(object="Synapter",
+        what = c("non-unique", "all"),
         matchColumn = "spectrum.quantXfragments.ident")}:
       Turns non unique matches into unique matches based on the cross matching
       results and a minimal number of common peaks between the identification
-      and quantiation fragments. Use
+      and quantiation fragments (if \code{what = "non-unique"}). Use
       \code{\link{setCrossMatchingMinimalNumberOfCommonPeaks}} to set the
       minimal number of common peaks. If there are multiple non unique matches
       above this number they are kept as non unique matches.
+      Use \code{what = "all"} to remove all matches with less than the minimal
+      number of common peaks set by
+      \code{\link{setCrossMatchingMinimalNumberOfCommonPeaks}}.
       Use \code{matchColumn} to select which cross matching result should be
       used for filtering: \code{"spectrum.quantXfragments.ident"} for quantitation
       spectra vs identification fragments,
@@ -845,6 +855,17 @@ Synapter(filenames, master) ## creates an instance of class 'Synapter'
       identification fragments vs quantitation fragments.
       This function returns a contingency matrix invisibly.
     }
+    \item{plotCrossMatchingPerformance}{\code{signature(object = "Synapter",
+        matchColumn = "spectrum.quantXfragments.ident")}:
+    Creates two plots. The left panel shows the distribution of common peaks
+    for unique and non unique matches.  The right panel shows the total number
+    of unique and non unique matches depending on the number of common peaks.
+    Use \code{matchColumn} to select which cross matching result should be
+    visualized: \code{"spectrum.quantXfragments.ident"} for quantitation
+    spectra vs identification fragments,
+    \code{"spectrum.identXfragments.quant"} for identification spectra vs
+    quantitation fragments, and \code{"fragments.identXfragments.quant"} for
+    identification fragments vs quantitation fragments.}
   }
 }
 

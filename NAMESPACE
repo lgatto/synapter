@@ -92,6 +92,7 @@ exportMethods(show,
               plotFeatures,
               plotCrossMatching,
               plotCrossMatchingSummary,
+              plotCrossMatchingPerformance,
               ## importers
               loadSpectrumXmlFiles,
               loadFragmentCsvFiles,

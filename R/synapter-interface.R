@@ -363,8 +363,10 @@ setMethod(filterQuantPpmError, "Synapter",
           })
 
 setMethod(filterMatchedEMRTsByCommonPeaks, "Synapter",
-          function(object, matchColumn = "spectrum.quantXfragments.ident") {
-            object$filterMatchedEMRTsByCommonPeaks(mcol=matchColumn)
+          function(object, what = c("non-unique", "all"),
+                   matchColumn = "spectrum.quantXfragments.ident") {
+            object$filterMatchedEMRTsByCommonPeaks(what=match.arg(what),
+                                                   mcol=matchColumn)
           })
 
 ## Plotting
@@ -528,6 +530,19 @@ setMethod(plotCrossMatchingSummary, "Synapter",
             invisible(.plotCrossMatchingSummary(object$CrossMatching,
                                                 mcol=matchColumn))
           })
+
+setMethod(plotCrossMatchingPerformance, "Synapter",
+          function(object, matchColumn = "spectrum.quantXfragments.ident",
+                   ...) {
+            if (!nrow(object$CrossMatching)) {
+              stop("You have to run ", sQuote("crossMatching"), " first!")
+            }
+
+            invisible(.plotCrossMatchingPerformance(object$CrossMatching,
+                                                    mcol=matchColumn))
+          })
+
+
 
 setMethod(getEMRTtable, "Synapter",
           function(object) table(object$MatchedEMRTs$Function))
