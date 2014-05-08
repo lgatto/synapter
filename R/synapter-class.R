@@ -891,6 +891,73 @@
                         }
                        },
 
+                       filterFragments = function(what, minIntensity = NULL,
+                                                  maxNumber = NULL, verbose = TRUE) {
+                         'Filters spectra/fragments using a minimal intensity or a maximal number of fragments as threshold.'
+
+                         what <- match.arg(what, choices = c(
+                                            "spectrum.ident", "spectrum.quant",
+                                            "fragments.ident", "fragments.quant"))
+                         msexp <- switch(what,
+                            "spectrum.ident" = .self$IdentSpectrumData,
+                            "spectrum.quant" = .self$QuantSpectrumData,
+                            "fragments.ident" = .self$IdentFragmentData,
+                            "fragments.quant" = .self$QuantFragmentData)
+
+                         if (!length(msexp)) {
+                           stop("You have to import the ", sQuote(what),
+                                " data first!")
+                         }
+
+                         msg <- "Filtered "
+
+                         if (what == "spectrum.ident") {
+                           .self$IdentSpectrumData <-
+                             .filterIntensity(msexp,
+                                              minIntensity = minIntensity,
+                                              maxNumber = maxNumber,
+                                              verbose = verbose)
+                           msg <- paste0("identification spectra")
+                         }
+
+                         if (what == "spectrum.quant") {
+                           .self$QuantSpectrumData <-
+                             .filterIntensity(msexp,
+                                              minIntensity = minIntensity,
+                                              maxNumber = maxNumber,
+                                              verbose = verbose)
+                           msg <- paste0("quantitation spectra")
+                         }
+
+                         if (what == "fragments.ident") {
+                           .self$IdentFragmentData <-
+                             .filterIntensity(msexp,
+                                              minIntensity = minIntensity,
+                                              maxNumber = maxNumber,
+                                              verbose = verbose)
+                           msg <- paste0("identification fragment data")
+                         }
+
+                         if (what == "fragments.quant") {
+                           .self$QuantFragmentData <-
+                             .filterIntensity(msexp,
+                                              minIntensity = minIntensity,
+                                              maxNumber = maxNumber,
+                                              verbose = verbose)
+                           msg <- paste0("quantitation fragment data")
+                         }
+
+                         msg <- paste0(" using a ",
+                                       ifelse(is.null(minIntensity), "",
+                                              paste0("minimal intensity > ",
+                                                     minIntensity)),
+                                       ifelse(is.null(maxNumber), "",
+                                              paste0("maximal number < ",
+                                                     maxNumber)))
+
+                         .self$SynapterLog <- c(.self$SynapterLog, msg)
+                       },
+
                        filterMatchedEMRTsByCommonPeaks = function(what = c("non-unique", "all"), mcol = "spectrum.quantXfragments.ident") {
                          'Filters non unique matches using cross matching results.'
 

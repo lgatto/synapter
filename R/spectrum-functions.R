@@ -306,3 +306,61 @@
   new("Spectrum2", precScanNum=as.integer(leID), fromFile=1L)
 }
 
+#' @param msexp MSnExp object to filter
+#' @param minIntensity minimal intensity
+#' @param maxNumber maximal number of fragments to preserve
+#' @param verbose verbose output?
+#' @return modified MSnExp object
+#' @nRd
+.filterIntensity <- function(msexp, minIntensity=NULL, maxNumber=NULL,
+                             verbose=TRUE) {
+  if(is.null(minIntensity) && is.null(maxNumber)) {
+    stop("At least one of arguments ", sQuote("minIntensity"), " and ",
+         sQuote("maxNumber"), " must be given!")
+  }
+
+  minIntensity2 <- 0
+
+  if (!is.null(maxNumber)) {
+    cs <- .cumsumIntensities(msexp)
+    minIntensity2 <- as.double(names(cs)[which(cs > (tail(cs, 1)-maxNumber))[1]])
+  }
+
+  minIntensity <- max(minIntensity, minIntensity2)
+
+  if (verbose) {
+    message("Set peaks with an intensity < ", minIntensity, " to zero")
+    pcBefore <- .sumAllPeakCounts(msexp)
+  }
+
+  msexp <- removePeaks(msexp, t=minIntensity, verbose=verbose)
+
+  if (verbose) {
+    message("Remove peaks with zero intensity")
+    pcBefore <- .sumAllPeakCounts(msexp)
+  }
+
+  msexp <- clean(msexp, all=TRUE, verbose=verbose)
+
+  if (verbose) {
+    pcAfter <- .sumAllPeakCounts(msexp)
+    message(pcBefore - pcAfter, " peaks removed; new total number of peaks: ",
+            pcAfter)
+  }
+  msexp
+}
+
+#' @param msexp MSnExp object to filter
+#' @nRd
+.plotIntensityVsNumber <- function(msexp, what) {
+  cs <- .cumsumIntensities(msexp)
+  plot(as.double(names(cs)), cs, log="x", type="l",
+       main=paste0("Cumulative Number of Fragments (", what, ")"),
+       xlab="Intensity", ylab="# of Fragments")
+  grid()
+}
+
+.cumsumIntensities <- function(msexp) {
+  cumsum(table(unlist(intensity(msexp))))
+}
+
