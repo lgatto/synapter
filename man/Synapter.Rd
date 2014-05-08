@@ -127,6 +127,8 @@
 \alias{plotRtDiffs}
 \alias{plotCrossMatchingPerformance,Synapter-method}
 \alias{plotCrossMatchingPerformance}
+\alias{plotCumulativeNumberOfFragments,Synapter-method}
+\alias{plotCumulativeNumberOfFragments}
 
 % importers
 \alias{loadSpectrumXmlFiles,Synapter-method}

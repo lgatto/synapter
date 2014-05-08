@@ -364,7 +364,6 @@ setMethod(filterFragments, "Synapter",
                                    verbose = verbose)
           })
 
-
 setMethod(filterUniqueMatches, "Synapter",
           function(object, minNumber) {
             object$filterUniqueMatches(minNumber)
@@ -535,9 +534,20 @@ setMethod(plotCrossMatchingPerformance, "Synapter",
             invisible(.plotCrossMatchingPerformance(object$CrossMatching))
           })
 
+setMethod(plotCumulativeNumberOfFragments, "Synapter",
+          function(object, what = c("spectrum.ident", "spectrum.quant",
+                                    "fragments.ident", "fragments.quant")) {
+            what <- match.arg(what)
+            msexp <- switch(what,
+                            "spectrum.ident" = object$IdentSpectrumData,
+                            "spectrum.quant" = object$QuantSpectrumData,
+                            "fragments.ident" = object$IdentFragmentData,
+                            "fragments.quant" = object$QuantFragmentData)
+            .plotIntensityVsNumber(msexp, what = what)
+          })
+
 setMethod(getEMRTtable, "Synapter",
           function(object) table(object$MatchedEMRTs$Function))
-
 
 setMethod(plotEMRTtable, "Synapter",
           function(object) {
