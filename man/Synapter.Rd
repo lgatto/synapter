@@ -107,6 +107,8 @@
 \alias{filterQuantProtFpr}
 \alias{filterMatchedEMRTsByCommonPeaks,Synapter-method}
 \alias{filterMatchedEMRTsByCommonPeaks}
+\alias{filterFragments,Synapter-method}
+\alias{filterFragments}
 
 % plotting
 \alias{plotEMRTtable,Synapter-method}
@@ -129,6 +131,8 @@
 \alias{plotCrossMatchingSummary}
 \alias{plotCrossMatchingPerformance,Synapter-method}
 \alias{plotCrossMatchingPerformance}
+\alias{plotCumulativeNumberOfFragments,Synapter-method}
+\alias{plotCumulativeNumberOfFragments}
 
 % importers
 \alias{loadSpectrumXmlFiles,Synapter-method}
@@ -378,9 +382,24 @@ Synapter(filenames, master) ## creates an instance of class 'Synapter'
     and Venn counts.
   }
 
-  \subsection{Importing Spectra and Fragments data}{
+  \subsection{Importing Spectra and Fragments Data}{
     \dQuote{Spectrum.xml} and \dQuote{final_fragment.csv} files could be
     imported via \code{loadSpectrumXmlFiles} respective \code{loadFragmentCsvFiles}.
+  }
+
+  \subsection{Remove Less Intense Peaks}{
+    As an additional step it is possible to remove less intense peaks from the
+    spectra and fragment data. Use \code{plotCumulativeNumberOfFragments} to
+    plot the number of fragments vs the intensity and to find a good threshold.
+    The \code{filterFragments} method could remove peaks if the intensity is
+    below a specified threshold via the \code{minIntensity} argument. Set the
+    \code{maxNumber} argument to keep only the \code{maxNumber} highest
+    peaks/fragments. The \code{what} argument controls the data on which the
+    filter is applied. Use \code{what = "spectrum.ident"} for the
+    identification spectra, \code{what = "spectrum.quant"} for the
+    quantiation spectra, \code{what = "fragments.ident"} for the identification
+    fragment data and \code{what = "fragments.quant"} for the quantiation
+    fragment data.
   }
 
   \subsection{Cross Matching}{
@@ -734,6 +753,24 @@ Synapter(filenames, master) ## creates an instance of class 'Synapter'
       \item{filterIdentPpmError}{\code{signature(object="Synapter")}: as
 	\code{filterQuantPpmError}, but for identification peptides.  }
 
+    \item{filterFragments}{\code{signature(object = "Synapter",
+        what = c("spectrum.ident", "spectrum.quant",
+                 "fragments.ident", "fragments.quant"),
+        minIntensity = "numeric", maxNumber = "numeric", verbose = "logical")}:
+      Filters the spectra/fragment data using a minimal intensity threshold
+      (\code{minIntensity}) or a maximal number of peaks/fragments threshold
+      (\code{maxNumber}). Please note that the maximal number is transfered to
+      an intensity threshold and the result could contain less peaks than
+      specified by \code{maxNumber}.
+      If both arguments are given, the more aggressive one is chosen.
+      Use the \code{what} argument to specify the data that should be filtered.
+      Set \code{what = "spectrum.ident"} for the identification spectra,
+      \code{what = "spectrum.quant"} for the quantiation spectra,
+      \code{what = "fragments.ident"} for the identification fragment data and
+      \code{what = "fragments.quant"} for the quantiation fragment data.
+      If \code{verbose} is \code{TRUE} (default) a progress bar is shown.
+    }
+
     \item{filterMatchedEMRTsByCommonPeaks}{\code{signature(object="Synapter",
         what = c("non-unique", "all"),
         matchColumn = "spectrum.quantXfragments.ident")}:
@@ -865,7 +902,18 @@ Synapter(filenames, master) ## creates an instance of class 'Synapter'
     spectra vs identification fragments,
     \code{"spectrum.identXfragments.quant"} for identification spectra vs
     quantitation fragments, and \code{"fragments.identXfragments.quant"} for
-    identification fragments vs quantitation fragments.}
+    identification fragments vs quantitation fragments.
+    }
+    \item{plotCumulativeNumberOfFragments}{\code{signature(object = "Synapter",
+        what = c("spectrum.ident", "spectrum.quant",
+                 "fragments.ident", "fragments.quant"))}:
+    Plots the cumulative number of the fragments/peaks vs their intensity (log10
+    scaled). Use the \code{what} argument to create this plot for the
+    identification spectra (\code{what = "spectrum.ident"}),
+    the quantitation spectra (\code{what = "spectrum.quant"}),
+    the identification fragments (\code{what = "fragments.quant"}) or the
+    quantitation fragments (\code{what = "fragments.ident"}).
+    }
   }
 }
 

@@ -362,6 +362,16 @@ setMethod(filterQuantPpmError, "Synapter",
             object$filterQuantPpmError()
           })
 
+# filter post merging
+setMethod(filterFragments, "Synapter",
+          function(object, what, minIntensity = NULL, maxNumber = NULL,
+                   verbose = TRUE) {
+            object$filterFragments(what = what,
+                                   minIntensity = minIntensity,
+                                   maxNumber = maxNumber,
+                                   verbose = verbose)
+          })
+
 setMethod(filterMatchedEMRTsByCommonPeaks, "Synapter",
           function(object, what = c("non-unique", "all"),
                    matchColumn = "spectrum.quantXfragments.ident") {
@@ -542,7 +552,17 @@ setMethod(plotCrossMatchingPerformance, "Synapter",
                                                     mcol=matchColumn))
           })
 
-
+setMethod(plotCumulativeNumberOfFragments, "Synapter",
+          function(object, what = c("spectrum.ident", "spectrum.quant",
+                                    "fragments.ident", "fragments.quant")) {
+            what <- match.arg(what)
+            msexp <- switch(what,
+                            "spectrum.ident" = object$IdentSpectrumData,
+                            "spectrum.quant" = object$QuantSpectrumData,
+                            "fragments.ident" = object$IdentFragmentData,
+                            "fragments.quant" = object$QuantFragmentData)
+            .plotIntensityVsNumber(msexp, what = what)
+          })
 
 setMethod(getEMRTtable, "Synapter",
           function(object) table(object$MatchedEMRTs$Function))
