@@ -529,7 +529,7 @@ crossmatching <- function(flatEmrts, spectra, tolerance=25e-6, verbose=TRUE) {
 #' fragments.identXfragments.quant)
 .plotCxDiff <- function(obj, mcol="spectrum.quantXfragments.ident.diff") {
   emrts <- obj$MatchedEMRTs
-  cx <- obj$CrossMatching[cx$precursor.leID.ident %in%
+  cx <- obj$CrossMatching[obj$CrossMatching$precursor.leID.ident %in%
                           emrts$precursor.leID.ident, ]
 
   # use only non-unique matches
