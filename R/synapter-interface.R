@@ -373,7 +373,7 @@ setMethod(filterFragments, "Synapter",
           })
 
 setMethod(filterMatchedEMRTsByCommonPeaks, "Synapter",
-          function(object, what = c("non-unique", "all"),
+          function(object, what = c("non-unique", "all", "diff"),
                    matchColumn = "spectrum.quantXfragments.ident") {
             object$filterMatchedEMRTsByCommonPeaks(what=match.arg(what),
                                                    mcol=matchColumn)
@@ -550,6 +550,17 @@ setMethod(plotCrossMatchingPerformance, "Synapter",
 
             invisible(.plotCrossMatchingPerformance(object$CrossMatching,
                                                     mcol=matchColumn))
+          })
+
+setMethod(plotCrossMatchingDiff, "Synapter",
+          function(object, matchColumn = "spectrum.quantXfragments.ident",
+                   ...) {
+            if (!nrow(object$CrossMatching)) {
+              stop("You have to run ", sQuote("crossMatching"), " first!")
+            }
+
+            .plotCxDiff(object$CrossMatching,
+                        mcol=paste0(match.arg(matchColumn), ".diff"))
           })
 
 setMethod(plotCumulativeNumberOfFragments, "Synapter",

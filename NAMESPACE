@@ -93,6 +93,8 @@ exportMethods(show,
               plotCrossMatching,
               plotCrossMatchingSummary,
               plotCrossMatchingPerformance,
+              plotCrossMatchingDiff,
+              plotCumulativeNumberOfFragments,
               ## importers
               loadSpectrumXmlFiles,
               loadFragmentCsvFiles,

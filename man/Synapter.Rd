@@ -131,6 +131,8 @@
 \alias{plotCrossMatchingSummary}
 \alias{plotCrossMatchingPerformance,Synapter-method}
 \alias{plotCrossMatchingPerformance}
+\alias{plotCrossMatchingDiff,Synapter-method}
+\alias{plotCrossMatchingDiff}
 \alias{plotCumulativeNumberOfFragments,Synapter-method}
 \alias{plotCumulativeNumberOfFragments}
 
@@ -422,6 +424,9 @@ Synapter(filenames, master) ## creates an instance of class 'Synapter'
     distribution of common peaks for unique and non unique matches is shown.
     The right panel visualizes the total number of unique and non unique matches
     depending on the number of common peaks.
+    \code{plotCrossMatchingDiff} shows a boxplot for the differences of the
+    first highest number of common peaks to the second one
+    for true and false matches.
     Use \code{setCrossMatchingMinimalNumberOfCommonPeaks} to set the number of
     common peaks between identification and quantitation fragments
     that have to be at least observed to be considered as unique match. The
@@ -772,7 +777,7 @@ Synapter(filenames, master) ## creates an instance of class 'Synapter'
     }
 
     \item{filterMatchedEMRTsByCommonPeaks}{\code{signature(object="Synapter",
-        what = c("non-unique", "all"),
+        what = c("non-unique", "all", "diff"),
         matchColumn = "spectrum.quantXfragments.ident")}:
       Turns non unique matches into unique matches based on the cross matching
       results and a minimal number of common peaks between the identification
@@ -783,6 +788,10 @@ Synapter(filenames, master) ## creates an instance of class 'Synapter'
       Use \code{what = "all"} to remove all matches with less than the minimal
       number of common peaks set by
       \code{\link{setCrossMatchingMinimalNumberOfCommonPeaks}}.
+      If \code{what = "diff"} is used all matches with a higher difference
+      (than set by \code{\link{setCrossMatchingMinimalNumberOfCommonPeaks}})
+      from the highest number of common peaks in each match group are
+      removed.
       Use \code{matchColumn} to select which cross matching result should be
       used for filtering: \code{"spectrum.quantXfragments.ident"} for quantitation
       spectra vs identification fragments,
@@ -790,7 +799,6 @@ Synapter(filenames, master) ## creates an instance of class 'Synapter'
       quantitation fragments, and \code{"fragments.identXfragments.quant"} for
       identification fragments vs quantitation fragments.
     }
-
     }
   }
 
@@ -904,6 +912,12 @@ Synapter(filenames, master) ## creates an instance of class 'Synapter'
     quantitation fragments, and \code{"fragments.identXfragments.quant"} for
     identification fragments vs quantitation fragments.
     }
+    \item{plotCrossMatchingDiff}{\code{signature(object = "Synapter",
+        matchColumn = "spectrum.quantXfragments.ident")}:
+    Shows a boxplot for the differences of the first highest number of common
+    peaks to the second one for true and false matches in each match group.
+    }
+
     \item{plotCumulativeNumberOfFragments}{\code{signature(object = "Synapter",
         what = c("spectrum.ident", "spectrum.quant",
                  "fragments.ident", "fragments.quant"))}:

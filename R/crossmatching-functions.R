@@ -153,7 +153,10 @@ crossmatching <- function(flatEmrts, spectra, tolerance=25e-6, verbose=TRUE) {
 
   if (verbose) {
     close(pb)
+    message("Calculate Differences")
   }
+
+  flatEmrts <- .cxDiff(flatEmrts)
 
   return(flatEmrts)
 }
@@ -412,26 +415,33 @@ crossmatching <- function(flatEmrts, spectra, tolerance=25e-6, verbose=TRUE) {
 #' @return filtered emrts data.frame
 #' @noRd
 .filterMatchedEMRTsUsingCrossMatching <- function(obj, nmin,
-                                                  what = c("non-unique", "all"),
+                                                  what = c("non-unique", "all", "diff"),
                                                   mcol="spectrum.quantXfragments.ident") {
   if (nmin <= 0) {
     stop("Invalid number of minimal common peaks.")
   }
 
-  cx <- obj$CrossMatching
   emrts <- obj$MatchedEMRTs
+  cx <- obj$CrossMatching[obj$CrossMatching$precursor.leID.ident %in%
+                          emrts$precursor.leID.ident, ]
   pep3d <- obj$QuantPep3DData
 
   if ("Function.0" %in% colnames(emrts)) {
     warning("You already filtered using the CrossMatching results! ",
-            "The results may be wrong!", immediate. = TRUE)
+            "The results may be wrong!", immediate.=TRUE)
   }
 
   ## backup old Function column
   emrts$Function.0 <- emrts$Function
 
-  idx <- .cxFilteredMatchedEMRTsIndices(cx=cx, nmin=nmin, what=match.arg(what),
-                                        mcol=mcol)
+  what <- match.arg(what)
+
+  if (what == "diff") {
+    mcol <- paste0(mcol, ".diff")
+    what <- "all"
+  }
+
+  idx <- .cxFilteredMatchedEMRTsIndices(cx=cx, nmin=nmin, what=what, mcol=mcol)
   if (!length(idx$keep)) {
     stop("No EMRT matches your criteria! Try a lower number of common peaks.")
   }
@@ -470,7 +480,7 @@ crossmatching <- function(flatEmrts, spectra, tolerance=25e-6, verbose=TRUE) {
                                            mcol="spectrum.quantXfragments.ident") {
   what <- match.arg(what)
 
-  if (what != "all") {
+  if (what == "non-unique") {
     keep <- which(cx$Function > 1 & cx[, mcol] >= nmin)
   } else {
     keep <- which(cx[, mcol] >= nmin)
@@ -479,5 +489,64 @@ crossmatching <- function(flatEmrts, spectra, tolerance=25e-6, verbose=TRUE) {
   idx <- idx[!(duplicated(cx$precursor.leID.ident[idx]) |
                 rev(duplicated(rev(cx$precursor.leID.ident[idx]))))]
   list(keep=keep, unique=idx)
+}
+
+#' calculate differences in cross matching
+#' diff between the true-match and the highest number of common peaks in a match
+#' group. If the highest is the true match we use the second highest.
+#' @param cx cross matching data.frame
+#' @param mcol column name of the matching results (e.g.
+#' fragments.identXfragments.quant)
+#' @return double
+.cxDiff <- function(cx, mcol="spectrum.quantXfragments.ident") {
+
+  # use only non-unique matches
+  idx <- grep("^non-unique", cx$matchType)
+  rcol <- paste0(mcol, ".rank")
+  dcol <- paste0(mcol, ".diff")
+  tcol <- paste0(mcol, ".correct")
+
+  groups <- unique(cx[idx, ]$precursor.leID.ident)
+
+  for (i in seq(along=groups)) {
+    g <- which(cx$precursor.leID.ident == groups[i])
+    sorted <- sort(cx[g, mcol], decreasing=TRUE, index.return=TRUE)
+    cx[g, rcol] <- sorted$ix
+    cx[g, dcol] <- diff(sorted$x[2:1])
+    cx[g, tcol] <-
+      cx[g, rcol] ==
+        as.numeric(grepl("^non-unique-true", cx$matchType[g])) &
+        cx[g, dcol] != 0
+  }
+  return(cx)
+}
+
+#' plot differences in cross matching
+#' diff between the true-match and the highest number of common peaks in a match
+#' group. If the highest is the true match we use the second highest.
+#' @param obj synapter obj
+#' @param mcol column name of the matching results (e.g.
+#' fragments.identXfragments.quant)
+.plotCxDiff <- function(obj, mcol="spectrum.quantXfragments.ident.diff") {
+  emrts <- obj$MatchedEMRTs
+  cx <- obj$CrossMatching[cx$precursor.leID.ident %in%
+                          emrts$precursor.leID.ident, ]
+
+  # use only non-unique matches
+  idx <- grep("^non-unique", cx$matchType)
+
+  cx <- cx[idx, ]
+
+  true <- cx$spectrum.quantXfragments.ident.correct
+  false <- !cx$spectrum.quantXfragments.ident.correct &
+            cx$spectrum.quantXfragments.ident.rank == 1
+
+  l <- list(cx[true, mcol], cx[false, mcol])
+  names(l) <- paste0(c("true", "false"), " non unique matches (n=",
+                     c(sum(true), sum(false)), ")")
+
+  jitteredBoxplot(l, jitter.factor=1,
+                  main="Difference in Number of Common Peaks for Non Unique Matches",
+                  ylab="Difference in Common Peaks")
 }
 

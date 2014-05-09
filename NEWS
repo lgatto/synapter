@@ -10,6 +10,8 @@ CHANGES IN VERSION 1.7.3
    closes #60 [2014-04-30 Wed]
  o introduce filterFragments and plotCumulativeNumberOfFragments method.
    [2014-05-08 Thu]
+ o add plotCrossMatchingDiff and a `what = "diff"` argument to
+   filterMatchedEMRTsByCommonPeaks [2014-05-09 Fri]
 
 CHANGES IN VERSION 1.7.2
 ------------------------

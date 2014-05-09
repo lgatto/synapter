@@ -958,7 +958,7 @@
                          .self$SynapterLog <- c(.self$SynapterLog, msg)
                        },
 
-                       filterMatchedEMRTsByCommonPeaks = function(what = c("non-unique", "all"), mcol = "spectrum.quantXfragments.ident") {
+                       filterMatchedEMRTsByCommonPeaks = function(what = c("non-unique", "all", "diff"), mcol = "spectrum.quantXfragments.ident") {
                          'Filters non unique matches using cross matching results.'
 
                          if (!nrow(.self$CrossMatching)) {
