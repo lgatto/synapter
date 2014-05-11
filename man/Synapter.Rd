@@ -75,10 +75,6 @@
 \alias{setCrossMatchingPpmTolerance}
 \alias{getCrossMatchingPpmTolerance,Synapter-method}
 \alias{getCrossMatchingPpmTolerance}
-\alias{setCrossMatchingMinimalNumberOfCommonPeaks,Synapter-method}
-\alias{setCrossMatchingMinimalNumberOfCommonPeaks}
-\alias{getCrossMatchingMinimalNumberOfCommonPeaks,Synapter-method}
-\alias{getCrossMatchingMinimalNumberOfCommonPeaks}
 \alias{performance,Synapter-method}
 \alias{performance2,Synapter-method}
 \alias{performance}
@@ -105,10 +101,12 @@
 \alias{filterIdentProtFpr}
 \alias{filterQuantProtFpr,Synapter-method}
 \alias{filterQuantProtFpr}
-\alias{filterMatchedEMRTsByCommonPeaks,Synapter-method}
-\alias{filterMatchedEMRTsByCommonPeaks}
 \alias{filterFragments,Synapter-method}
 \alias{filterFragments}
+\alias{filterUniqueMatches,Synapter-method}
+\alias{filterUniqueMatches}
+\alias{filterNonUniqueMatches,Synapter-method}
+\alias{filterNonUniqueMatches}
 
 % plotting
 \alias{plotEMRTtable,Synapter-method}
@@ -127,14 +125,8 @@
 \alias{plotRt}
 \alias{plotRtDiffs,Synapter-method}
 \alias{plotRtDiffs}
-\alias{plotCrossMatchingSummary,Synapter-method}
-\alias{plotCrossMatchingSummary}
 \alias{plotCrossMatchingPerformance,Synapter-method}
 \alias{plotCrossMatchingPerformance}
-\alias{plotCrossMatchingDiff,Synapter-method}
-\alias{plotCrossMatchingDiff}
-\alias{plotCumulativeNumberOfFragments,Synapter-method}
-\alias{plotCumulativeNumberOfFragments}
 
 % importers
 \alias{loadSpectrumXmlFiles,Synapter-method}
@@ -413,28 +405,16 @@ Synapter(filenames, master) ## creates an instance of class 'Synapter'
     the maximal allowed tolerance for considering a peak as identical.
     There are two different methods to visualise the results of the cross
     matching procedure. \code{plotCrossMatching} plots the spectra and fragments
-    for each considered cross matching pair. \code{plotCrossMatchingSummary}
-    creates three plots showing the performance of the cross matching procedure.
-    The left panel shows the F1-score and the FDR calculated for an equal sized
-    subset of true and false matches. The panel in the middle shows the
-    development of the true-positives, false-positives, true-negatives and
-    false-negatives using an increasing number of common peaks as threshold. On
-    the right panel boxplots for all matches and the sampled matches are shown.
-    \code{plotCrossMatchingPerformance} draws two plots. On the left panel the
-    distribution of common peaks for unique and non unique matches is shown.
-    The right panel visualizes the total number of unique and non unique matches
-    depending on the number of common peaks.
-    \code{plotCrossMatchingDiff} shows a boxplot for the differences of the
-    first highest number of common peaks to the second one
-    for true and false matches.
-    Use \code{setCrossMatchingMinimalNumberOfCommonPeaks} to set the number of
-    common peaks between identification and quantitation fragments
-    that have to be at least observed to be considered as unique match. The
-    \code{filterMatchedEMRTsByCommonPeaks} method could be applied to turn non
-    unique matches into unique ones in respect to the results of the cross
-    matching procedure. If there are still multiple matches that have more
-    common peaks than set by \code{setCrossMatchingMinimalNumberOfCommonPeaks}
-    they are kept as non unique matches.
+    for each considered cross matching pair.
+    \code{plotCrossMatchingPerformance} draws two plots. On the left panel you
+    could see the performance of different thresholds for the number of common
+    peaks for unique matches.  The right panel visualizes the performance of
+    different differences (delta) of common peaks between the best match
+    (highest number of common peaks) and the second best match in each non
+    unique match group.
+    Use \code{filterUniqueMatches} and \code{filterNonUniqueMatches} to remove
+    unique or non unique matches below the threshold of common peaks
+    respective the difference in common peaks from the MatchedEMRTs data.frame.
   }
 
   \subsection{Exporting and saving data}{
@@ -658,15 +638,6 @@ Synapter(filenames, master) ## creates an instance of class 'Synapter'
         Returns the cross matching mass tolerance in ppm.
       }
 
-      \item{setCrossMatchingMinimalNumberOfCommonPeaks}{
-        \code{signature(object="Synapter", n = "integer")}:
-        Sets the minimal number of common peaks for cross matching.
-      }
-
-      \item{getCrossMatchingPpmTolerance}{\code{signature(object="Synapter")}:
-        Returns the minimal number of common peaks for cross matching.
-      }
-
       \item{showFdrStats}{\code{signature(object="Synapter", k =
 	  "numeric")}: Returns a named \code{list} of length
 	2 with the proportion of identification and quantitation
@@ -776,29 +747,25 @@ Synapter(filenames, master) ## creates an instance of class 'Synapter'
       If \code{verbose} is \code{TRUE} (default) a progress bar is shown.
     }
 
-    \item{filterMatchedEMRTsByCommonPeaks}{\code{signature(object="Synapter",
-        what = c("non-unique", "all", "diff"),
-        matchColumn = "spectrum.quantXfragments.ident")}:
-      Turns non unique matches into unique matches based on the cross matching
-      results and a minimal number of common peaks between the identification
-      and quantiation fragments (if \code{what = "non-unique"}). Use
-      \code{\link{setCrossMatchingMinimalNumberOfCommonPeaks}} to set the
-      minimal number of common peaks. If there are multiple non unique matches
-      above this number they are kept as non unique matches.
-      Use \code{what = "all"} to remove all matches with less than the minimal
-      number of common peaks set by
-      \code{\link{setCrossMatchingMinimalNumberOfCommonPeaks}}.
-      If \code{what = "diff"} is used all matches with a higher difference
-      (than set by \code{\link{setCrossMatchingMinimalNumberOfCommonPeaks}})
-      from the highest number of common peaks in each match group are
-      removed.
-      Use \code{matchColumn} to select which cross matching result should be
-      used for filtering: \code{"spectrum.quantXfragments.ident"} for quantitation
-      spectra vs identification fragments,
-      \code{"spectrum.identXfragments.quant"} for identification spectra vs
-      quantitation fragments, and \code{"fragments.identXfragments.quant"} for
-      identification fragments vs quantitation fragments.
+    \item{filterUniqueMatches}{\code{signature(object="Synapter", minNumber =
+        "numeric")}:
+      Removes all unique matches that have less than \code{minNumber} of
+      peaks/fragments in common. Use \code{plotCrossMatchingPerformance}
+      (left panel) to find an ideal threshold.
     }
+
+    \item{filterNonUniqueMatches}{\code{signature(object="Synapter", minDelta =
+        "numeric")}:
+      Removes all non unique matches that have a difference between the best
+      match (highest number of common peaks/fragments, treated as true match)
+      and the second best match (second highest number of common
+      peaks/fragments) less than \code{minDelta}. For the matches above the
+      threshold only the one with the highest number of common peaks/fragments
+      in each match group is kept.
+      Use \code{plotCrossMatchingPerformance} (right panel) to find an ideal
+      threshold.
+    }
+
     }
   }
 
@@ -883,34 +850,23 @@ Synapter(filenames, master) ## creates an instance of class 'Synapter'
       \code{\link{plotCrossMatching}} for details.
     }
 
-    \item{plotCrossMatchingSummary}{\code{signature(object = "Synapter",
-        matchColumn = "spectrum.quantXfragments.ident")}:
-      Creates three plots showing the performance of the cross matching
-      procedure.  The left panel shows the F1-score and the FDR calculated for
-      an equal sized subset of true and false matches.
-      The panel in the middle shows the development of the true-positives,
-      false-positives, true-negatives and false-negatives using an
-      increasing number of common peaks as threshold. On the right panel
-      boxplots for all matches and the sampled matches are shown.
-      Use \code{matchColumn} to select which cross matching result should be
-      visualized: \code{"spectrum.quantXfragments.ident"} for quantitation
-      spectra vs identification fragments,
-      \code{"spectrum.identXfragments.quant"} for identification spectra vs
-      quantitation fragments, and \code{"fragments.identXfragments.quant"} for
-      identification fragments vs quantitation fragments.
-      This function returns a contingency matrix invisibly.
-    }
     \item{plotCrossMatchingPerformance}{\code{signature(object = "Synapter",
         matchColumn = "spectrum.quantXfragments.ident")}:
-    Creates two plots. The left panel shows the distribution of common peaks
-    for unique and non unique matches.  The right panel shows the total number
-    of unique and non unique matches depending on the number of common peaks.
-    Use \code{matchColumn} to select which cross matching result should be
-    visualized: \code{"spectrum.quantXfragments.ident"} for quantitation
-    spectra vs identification fragments,
-    \code{"spectrum.identXfragments.quant"} for identification spectra vs
-    quantitation fragments, and \code{"fragments.identXfragments.quant"} for
-    identification fragments vs quantitation fragments.
+    Creates two plots. The left panel shows the performance of filtering the
+    unique matches using a different number of common peaks. The right panel
+    shows the performance of filtering the non unique matches using different
+    differences (delta) in common peaks/fragments. These differences (delta) are
+    calculated between the match with the highest number of common
+    peaks/fragments and the second highest one.
+    Use \code{filterUniqueMatches} and \code{filterNonUniqueMatches} to filter
+    the \code{MatchedEMRT} \code{data.frame} using one of these thresholds.
+    This function returns a \code{list} with two named elements (\code{unqiue}
+    and \code{nonunqiue} invisibly. Each \code{list} element contains a
+    \code{matrix} with six columns. The first column
+    \code{ncommon}/\code{deltacommon} contains the
+    thresholds. Column 2 to 6 are the true positives \code{tp}, false positives
+    \code{fp}, true negatives \code{tn}, false negatives \code{fn} and FDR
+    \code{fdr} for the current threshold (in that row).
     }
     \item{plotCrossMatchingDiff}{\code{signature(object = "Synapter",
         matchColumn = "spectrum.quantXfragments.ident")}:

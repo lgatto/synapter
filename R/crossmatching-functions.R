@@ -156,9 +156,39 @@ crossmatching <- function(flatEmrts, spectra, tolerance=25e-6, verbose=TRUE) {
     message("Calculate Differences")
   }
 
-  flatEmrts <- .cxDiff(flatEmrts)
+  flatEmrts <- .crossMatchingDifferences(flatEmrts)
 
   return(flatEmrts)
+}
+
+#' calculate difference between first highest and second highest number of
+#' common peaks in a non-unique match group
+#' @param cx data.frame
+#' @param mcol column name of the matching results (e.g.
+#' fragments.identXfragments.quant)
+#' @return modified cx data.frame
+#' @noRd
+.crossMatchingDifferences <- function(cx,
+                                      mcol="spectrum.quantXfragments.ident") {
+  # use only non-unique matches
+  idx <- grep("^non-unique", cx$matchType)
+
+  dcol <- paste0(mcol, ".diff")
+  rcol <- paste0(mcol, ".rank")
+  cx[, dcol] <- NA
+  cx[, rcol] <- NA
+  ## we use the second argument (precursor.leID.quant) is just needed to allow a
+  ## return value with 2 columns
+  cx[idx, c(dcol, rcol)] <- ave(cx[idx, c("precursor.leID.quant", mcol)],
+                                cx$precursor.leID.ident[idx],
+                                FUN=function(x) {
+    sorted <- sort(x[, 2], decreasing=TRUE, index.return=TRUE)
+    r <- sorted$ix
+    d <- diff(sorted$x[2:1])
+    cbind(d, r)
+  })
+
+  return(cx)
 }
 
 #' plot crossmatching
@@ -243,35 +273,51 @@ crossmatching <- function(flatEmrts, spectra, tolerance=25e-6, verbose=TRUE) {
                           ...)
 }
 
-#' create an equal sized sample of true and false matches
-#' @param cx cross matching df, result of crossmatching
-#' @return list with trueIdx and falseIdx
-#' @noRd
-.groundTruthIndices <- function(cx) {
-  ## select "ground-truth"
-  trueIdx <- grep("true", cx$matchType)
-  falseIdx <- grep("false", cx$matchType)
+#' plot cx performance
+#' @param cx cx data.frame
+#' @return invisible list with two elements (unique,nonunique) each containing a
+#' matrix of 3 columns threshold, true, false
+.plotCrossMatchingPerformance <- function(cx,
+                                          mcol="spectrum.quantXfragments.ident") {
+  l <- setNames(vector(mode="list", length=2), c("unique", "nonunique"))
+  what <- c("unique", "non-unique")
+  xlab <- c("# of common peaks", "delta common peaks")
 
-  n <- min(c(length(trueIdx), length(falseIdx)))
+  par(mfcol=c(1, 2))
+  for (i in seq(along=l)) {
+    l[[i]] <- .crossMatchingContingencyMatrix(cx, what=what[i], mcol=mcol)
 
-  if (length(trueIdx) > n) {
-    trueIdx <- sample(trueIdx, n)
+    matplot(l[[i]][, 1], l[[i]][, c("tp", "fp"), drop=FALSE],
+            type="b", lty=1, pch=19, col=c(4, 2),
+            xlab=xlab[i], ylab="# of peptides",
+            main=paste("performance", what[i]))
+    grid()
+    legend("topright", legend=c("true matches", "false matches"),
+           col=c(4, 2), lwd=1, pch=19, bty="n")
   }
+  par(mfcol=c(1, 1))
 
-  if (length(falseIdx) > n) {
-    falseIdx <- sample(falseIdx, n)
-  }
-  return(list(trueIdx=trueIdx, falseIdx=falseIdx))
+  invisible(l)
 }
 
 #' @param cx cross matching df, result of cross matching
+#' @param what character unique/non-unique
 #' @param mcol column name of the matching results (e.g.
 #' fragments.identXfragments.quant)
-#' @return matrix with cols tp, fp, tn, fn
+#' @return matrix with cols threshold,
 #' @noRd
-.crossMatchingConfusionMatrix <- function(cx, mcol) {
-  trueIdx <- grep("true", cx$matchType)
-  falseIdx <- grep("false", cx$matchType)
+.crossMatchingConfusionMatrix <- function(cx, what=c("unique", "non-unique"),
+                                          mcol) {
+  what <- match.arg(what)
+
+  if (what == "non-unique") {
+    rcol <- paste0(mcol, ".rank")
+    mcol <- paste0(mcol, ".diff")
+    cx <- cx[cx[, rcol] == 1, ]
+  }
+
+  trueIdx <- grep(paste0("^", what, "-true"), cx$matchType)
+  falseIdx <- grep(paste0("^", what, "-false"), cx$matchType)
 
   ytrain <- rep(c(TRUE, FALSE), c(length(trueIdx), length(falseIdx)))
   xtrain <- c(cx[trueIdx, mcol], cx[falseIdx, mcol])
@@ -284,269 +330,103 @@ crossmatching <- function(flatEmrts, spectra, tolerance=25e-6, verbose=TRUE) {
     fn <- sum(xtrain < th & ytrain)
     return(c(tp=tp, fp=fp, tn=tn, fn=fn))
   }))
-  confusion <- cbind(ncommon=thresholds, confusion)
+  confusion <- cbind(thresholds, confusion)
+
+  colnames(confusion)[1] <- ifelse(what == "unique", "ncommon", "deltacommon")
   rownames(confusion) <- NULL
 
   return(confusion)
 }
 
 #' @param cx cross matching df, result of crossmatching
+#' @param what character unique/non-unique
 #' @param mcol column name of the matching results (e.g.
 #' fragments.identXfragments.quant)
 #' @return matrix with cols tp, fp, tn, fn
 #' @noRd
-.crossMatchingContingencyMatrix <- function(cx, mcol) {
-  confusion <- .crossMatchingConfusionMatrix(cx, mcol)
-  return(cbind(confusion, diagnosticErrors(confusion)))
+.crossMatchingContingencyMatrix <- function(cx, what, mcol) {
+  confusion <- .crossMatchingConfusionMatrix(cx, what, mcol)
+  return(cbind(confusion, fdr=diagnosticErrors(confusion)[, "fdr"]))
 }
 
-#' plot cross matching F1/FDR/Confusion/Boxplots
-#' @param cx cross matching df, result of crossmatching
-#' @param mcol column name of the matching results (e.g.
-#' fragments.identXfragments.quant)
-#' @return invisible matrix with rows tp, fp, tn, fn, accuracy, precision,
-#' recall, fdr, f1
-#' @noRd
-.plotCrossMatchingSummary <- function(cx,
-                                      mcol="spectrum.quantXfragments.ident") {
-  sampled <- .groundTruthIndices(cx)
-  contengency <- .crossMatchingContingencyMatrix(cx[unlist(sampled), ], mcol)
-
-  par(mfcol=c(1, 3))
-  x <- (1:nrow(contengency))-1
-  matplot(x, contengency[, c("fdr", "f1"), drop=FALSE], type="b", lty=1,
-          xlab="# of common peaks", ylab="performance",
-          main="cross matching performance", pch=19)
-  legend("topright", legend=c("FDR", "F1"),
-         col=1:2, lwd=1, pch=19, bty="n")
-  grid()
-  matplot(x, contengency[, c("tp", "fp", "tn", "fn"), drop=FALSE],
-          type="b", lty=1, pch=19,
-          xlab="# of common peaks", ylab="# of peptides",
-          main="cross matching confusion")
-  grid()
-  legend("right", legend=c("TP", "FP", "TN", "FN"),
-         col=1:4, lwd=1, pch=19, bty="n")
-
-  trueIdx <- grep("true", cx$matchType)
-  falseIdx <- grep("false", cx$matchType)
-
-  l <- list()
-
-  l[["all true matches"]] <- cx[trueIdx, mcol]
-
-  if (length(trueIdx) > length(sampled$trueIdx)) {
-    l[["sampled true matches"]] <- cx[sampled$trueIdx, mcol]
-  }
-
-  l[["all false matches"]] <- cx[falseIdx, mcol]
-
-  if (length(falseIdx) > length(sampled$falseIdx)) {
-    l[["sampled false matches"]] <- cx[sampled$falseIdx, mcol]
-  }
-
-  jitteredBoxplot(l, jitter.factor=1,
-                  main="cross matching distribution", ylab="# of common peaks")
-
-  par(mfcol=c(1, 1))
-
-  invisible(contengency)
-}
-
-#' plot cross matching results for all/ and non-unique hists and total #
-#' @param cx cross matching df, result of crossmatching
-#' @param mcol column name of the matching results (e.g.
-#' fragments.identXfragments.quant)
-#' @noRd
-.plotCrossMatchingPerformance <- function(cx,
-                                          mcol="spectrum.quantXfragments.ident") {
-
-  uniqueIdx <- which(cx$Function == 1)
-  nonUniqueIdx <- which(cx$Function > 1)
-
-  uniqueCounts <- cx[uniqueIdx, mcol]
-  nonUniqueCounts <- cx[nonUniqueIdx, mcol]
-
-  nCommon <- 0:max(c(uniqueCounts, nonUniqueCounts), na.rm=TRUE)
-
-  breaks <- c(nCommon - 0.5, tail(nCommon, 1) + 0.5)
-  uniqueHist <- hist(uniqueCounts, breaks = breaks, plot=FALSE)
-  nonUniqueHist <- hist(nonUniqueCounts, breaks = breaks, plot=FALSE)
-  ylim <- c(0, max(c(uniqueHist$counts, nonUniqueHist$counts)))
-
-  nUnique <- sapply(nCommon, function(n) {
-    length(.cxFilteredMatchedEMRTsIndices(cx, nmin=n, what="all",
-                                          mcol=mcol)$unique)
-  })
-  nNewUnique <- sapply(nCommon, function(n) {
-    length(.cxFilteredMatchedEMRTsIndices(cx, nmin=n, what="non-unique",
-                                          mcol=mcol)$unique)
-  })
-
-  par(mfrow=c(1, 2))
-  plot(uniqueHist, ylim=ylim, col="#0000ff80",
-       main = "Distribution of Common Peaks",
-       ylab="# of peptides", xlab="# of common peaks")
-  plot(nonUniqueHist, ylim=ylim, col="#00ff0080", add=TRUE)
-  legend("topright", legend=c("all unique matches", "all non unique matches"),
-         col=c("#0000ff80", "#00ff0080"), pch=15, bty="n")
-
-  ylim <- c(min(nUnique, nNewUnique), max(nUnique, nNewUnique))
-  plot(nCommon, nUnique, type="b", pch=19, col=4, ylim=ylim,
-       main="Total Number of Unique Matches",
-       xlab="# of common peaks", ylab="# of peptides")
-  lines(nCommon, nNewUnique, type="b", pch=19, col=3)
-  grid()
-  legend("topright",
-         legend=c("total number of unique matches (all)",
-                  "total number of new unique matches (non-unique before)"),
-         col=4:3, pch=19, bty="n")
-
-  par(mfrow=c(1, 1))
-}
-
-
-#' filter non-unique matches
+#' filter unique matches
 #' @param obj synapter object
-#' @param nmin a correct match must have at least "nmin" common peaks
-#' @param what filter on non-unique matches only or on all
+#' @param mincommon a correct match must have at least "mincommon" common peaks
 #' @param mcol column name of the matching results (e.g.
 #' fragments.identXfragments.quant)
 #' @return filtered emrts data.frame
 #' @noRd
-.filterMatchedEMRTsUsingCrossMatching <- function(obj, nmin,
-                                                  what = c("non-unique", "all", "diff"),
-                                                  mcol="spectrum.quantXfragments.ident") {
-  if (nmin <= 0) {
-    stop("Invalid number of minimal common peaks.")
-  }
-
+.filterUniqueMatches <- function(obj, mincommon,
+                                 mcol="spectrum.quantXfragments.ident") {
   emrts <- obj$MatchedEMRTs
-  cx <- obj$CrossMatching[obj$CrossMatching$precursor.leID.ident %in%
-                          emrts$precursor.leID.ident, ]
-  pep3d <- obj$QuantPep3DData
+  cx <- obj$CrossMatching
 
-  if ("Function.0" %in% colnames(emrts)) {
-    warning("You already filtered using the CrossMatching results! ",
-            "The results may be wrong!", immediate.=TRUE)
+  cx <- cx[cx$precursor.leID.ident %in% emrts$precursor.leID.ident &
+           cx$Function == 1, ]
+
+  keep <- cx[, mcol] >= mincommon
+
+  if (!any(keep)) {
+    stop("No EMRT match your criteria! Try a lower threshold")
   }
 
-  ## backup old Function column
-  emrts$Function.0 <- emrts$Function
+  rows <- match(cx$precursor.leID.ident, emrts$precursor.leID.ident)
 
-  what <- match.arg(what)
+  exclude <- rows[!keep]
 
-  if (what == "diff") {
-    mcol <- paste0(mcol, ".diff")
-    what <- "all"
+  ## backup function
+  emrts$Function.1 <- emrts$Function
+  emrts$Function[rows] <- 1
+
+  if (length(exclude)) {
+    # comment the next line and uncomment the over next line to *not* remove the
+    # filtered emrts
+    emrts <- emrts[-exclude, ]
+    #emrts$Function[exclude] <-  -1
   }
-
-  idx <- .cxFilteredMatchedEMRTsIndices(cx=cx, nmin=nmin, what=what, mcol=mcol)
-  if (!length(idx$keep)) {
-    stop("No EMRT matches your criteria! Try a lower number of common peaks.")
-  }
-
-  rowsInEMRTs <- match(cx$precursor.leID.ident, emrts$precursor.leID.ident)
-  rowsInPep3D <- match(cx$matched.quant.spectrumIDs, pep3d$spectrumID)
-
-  columns <- intersect(colnames(cx), colnames(pep3d))
-
-  cx[idx$unique, c("precursor.leID.quant", columns)] <-
-    pep3d[rowsInPep3D[idx$unique], c("spectrumID", columns)]
-  cx$matchType[idx$unique] <- "unique-true"
-  cx$idSource[idx$unique] <- "crossmatching"
-  cx$Function[idx$unique] <- 1
-  emrts[rowsInEMRTs, columns] <- cx[, columns]
-  emrts[rowsInEMRTs, c("idSource", "precursor.leID.quant", "spectrumID")] <-
-    cx[, c("idSource", "precursor.leID.quant", "spectrumID")]
-
-  if (what == "all") {
-    emrts <- emrts[rowsInEMRTs[idx$keep], ]
-  }
-
   return(emrts)
 }
 
-#' filter non-unique matches
-#' @param cx cross matching data.frame
-#' @param nmin a correct match must have at least "nmin" common peaks
-#' @param what filter on non-unique matches only or on all
+#' filter nonunique matches
+#' @param obj synapter object
+#' @param mindelta a correct match must have at least "nmin" common peaks
 #' @param mcol column name of the matching results (e.g.
 #' fragments.identXfragments.quant)
-#' @return list, $keep == rows to keep, $unique == new non unique matches
+#' @return filtered emrts data.frame
 #' @noRd
-.cxFilteredMatchedEMRTsIndices <- function(cx, nmin,
-                                           what = c("non-unique", "all"),
-                                           mcol="spectrum.quantXfragments.ident") {
-  what <- match.arg(what)
-
-  if (what == "non-unique") {
-    keep <- which(cx$Function > 1 & cx[, mcol] >= nmin)
-  } else {
-    keep <- which(cx[, mcol] >= nmin)
-  }
-  idx <- (1:nrow(cx))[keep]
-  idx <- idx[!(duplicated(cx$precursor.leID.ident[idx]) |
-                rev(duplicated(rev(cx$precursor.leID.ident[idx]))))]
-  list(keep=keep, unique=idx)
-}
-
-#' calculate differences in cross matching
-#' diff between the true-match and the highest number of common peaks in a match
-#' group. If the highest is the true match we use the second highest.
-#' @param cx cross matching data.frame
-#' @param mcol column name of the matching results (e.g.
-#' fragments.identXfragments.quant)
-#' @return double
-.cxDiff <- function(cx, mcol="spectrum.quantXfragments.ident") {
-
-  # use only non-unique matches
-  idx <- grep("^non-unique", cx$matchType)
-  rcol <- paste0(mcol, ".rank")
-  dcol <- paste0(mcol, ".diff")
-  tcol <- paste0(mcol, ".correct")
-
-  groups <- unique(cx[idx, ]$precursor.leID.ident)
-
-  for (i in seq(along=groups)) {
-    g <- which(cx$precursor.leID.ident == groups[i])
-    sorted <- sort(cx[g, mcol], decreasing=TRUE, index.return=TRUE)
-    cx[g, rcol] <- sorted$ix
-    cx[g, dcol] <- diff(sorted$x[2:1])
-    cx[g, tcol] <-
-      cx[g, rcol] ==
-        as.numeric(grepl("^non-unique-true", cx$matchType[g])) &
-        cx[g, dcol] != 0
-  }
-  return(cx)
-}
-
-#' plot differences in cross matching
-#' diff between the true-match and the highest number of common peaks in a match
-#' group. If the highest is the true match we use the second highest.
-#' @param obj synapter obj
-#' @param mcol column name of the matching results (e.g.
-#' fragments.identXfragments.quant)
-.plotCxDiff <- function(obj, mcol="spectrum.quantXfragments.ident.diff") {
+.filterNonUniqueMatches <- function(obj, mindelta,
+                                    mcol="spectrum.quantXfragments.ident") {
   emrts <- obj$MatchedEMRTs
-  cx <- obj$CrossMatching[obj$CrossMatching$precursor.leID.ident %in%
-                          emrts$precursor.leID.ident, ]
+  cx <- obj$CrossMatching
 
-  # use only non-unique matches
-  idx <- grep("^non-unique", cx$matchType)
+  rcol <- paste0(mcol, ".rank")
+  mcol <- paste0(mcol, ".diff")
 
-  cx <- cx[idx, ]
+  cx <- cx[cx$precursor.leID.ident %in% emrts$precursor.leID.ident &
+           cx$Function > 1 & cx[, rcol] == 1, ]
 
-  true <- cx$spectrum.quantXfragments.ident.correct
-  false <- !cx$spectrum.quantXfragments.ident.correct &
-            cx$spectrum.quantXfragments.ident.rank == 1
+  keep <- cx[, mcol] >= mindelta
 
-  l <- list(cx[true, mcol], cx[false, mcol])
-  names(l) <- paste0(c("true", "false"), " non unique matches (n=",
-                     c(sum(true), sum(false)), ")")
+  if (!any(keep)) {
+    stop("No EMRT match your criteria! Try a lower threshold")
+  }
 
-  jitteredBoxplot(l, jitter.factor=1,
-                  main="Difference in Number of Common Peaks for Non Unique Matches",
-                  ylab="Difference in Common Peaks")
+  rows <- match(cx$precursor.leID.ident, emrts$precursor.leID.ident)
+
+  exclude <- rows[!keep]
+
+  ## backup function
+  emrts$Function.2 <- emrts$Function
+  emrts$Function[rows] <- 1
+
+  if (length(exclude)) {
+    cols <- c("matched.quant.spectrumIDs", "precursor.leID.quant", "spectrumID")
+    emrts[rows, cols] <- cx[, cols]
+    # comment the next line and uncomment the over next line to *not* remove the
+    # filtered emrts
+    emrts <- emrts[-exclude, ]
+    #emrts$Function[exclude] <- -1
+  }
+  return(emrts)
 }
 

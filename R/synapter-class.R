@@ -45,8 +45,7 @@
                     IdentFragmentFile = "character",
                     IdentFragmentData = "MSnExp",
                     CrossMatching = "data.frame",
-                    CrossMatchingPpmTolerance = "numeric",
-                    CrossMatchingMinimalNumberOfCommonPeaks = "integer"),
+                    CrossMatchingPpmTolerance = "numeric"),
                 methods = list(
                     initialize = function() {
                         .self$Version <- as.character(packageVersion("synapter"))
@@ -631,14 +630,6 @@
                          .self$SynapterLog <-
                            c(.self$SynapterLog,
                              paste0("Set cross matching ppm error to ", ppm))
-                       },
-                       setCrossMatchingMinimalNumberOfCommonPeaks = function(n) {
-                         'Sets minimal number of common peaks for cross matching.'
-                         .self$CrossMatchingMinimalNumberOfCommonPeaks <- as.integer(n)
-                         .self$SynapterLog <-
-                           c(.self$SynapterLog,
-                             paste0("Set minimal number of common peaks for ",
-                                    "cross matching to ", n))
                        }))
 
 ## GLOBAL FILTERS
@@ -958,30 +949,41 @@
                          .self$SynapterLog <- c(.self$SynapterLog, msg)
                        },
 
-                       filterMatchedEMRTsByCommonPeaks = function(what = c("non-unique", "all", "diff"), mcol = "spectrum.quantXfragments.ident") {
+                       filterUniqueMatches = function(minNumber) {
+                         'Filters unique matches using cross matching results.'
+
+                         if (!nrow(.self$CrossMatching)) {
+                           stop("You have to run ", sQuote("crossMatching"),
+                                " first!")
+                         }
+
+                         .self$MatchedEMRTs <-
+                           .filterUniqueMatches(obj = .self,
+                                                mincommon = minNumber)
+                         .self$SynapterLog <- c(.self$SynapterLog,
+                                                paste0("Filtered unique matched EMRTs ",
+                                                       "(minimal number of common peaks: ",
+                                                       minNumber, " [",
+                                                      paste0(dim(.self$MatchedEMRTs),
+                                                             collapse=","), "]"))
+                       },
+
+                       filterNonUniqueMatches = function(minDelta) {
                          'Filters non unique matches using cross matching results.'
 
                          if (!nrow(.self$CrossMatching)) {
                            stop("You have to run ", sQuote("crossMatching"),
                                 " first!")
                          }
-                         if (!length(.self$CrossMatchingMinimalNumberOfCommonPeaks)) {
-                           stop("You have to set the minimal number of common via ",
-                                sQuote("setCrossMatchingMinimalNumberOfCommonPeaks"),
-                                " first!")
-                         }
+
                          .self$MatchedEMRTs <-
-                           .filterMatchedEMRTsUsingCrossMatching(
-                            obj=.self,
-                            nmin=.self$CrossMatchingMinimalNumberOfCommonPeaks,
-                            what=match.arg(what),
-                            mcol=mcol)
+                           .filterNonUniqueMatches(obj = .self,
+                                                   mindelta = minDelta)
                          .self$SynapterLog <- c(.self$SynapterLog,
-                                                paste("Filtered matched EMRTs using at least ",
-                                                      .self$CrossMatchingMinimalNumberOfCommonPeaks,
-                                                      " number of common peaks (what=\"", what,
-                                                      "\" matchColumn=\"", mcol, "\", [",
-                                                      paste(dim(.self$QuantPeptideData), collapse=","),
-                                                      "]", sep=""))
+                                                paste0("Filtered non unique matched EMRTs ",
+                                                       "(minimal delta of common peaks: ",
+                                                       minDelta, " [",
+                                                      paste0(dim(.self$MatchedEMRTs),
+                                                             collapse=","), "]"))
                        }))
 

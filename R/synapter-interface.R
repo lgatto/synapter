@@ -249,14 +249,6 @@ setMethod(setCrossMatchingPpmTolerance, "Synapter",
 setMethod(getCrossMatchingPpmTolerance, "Synapter",
           function(object) object$CrossMatchingPpmTolerance)
 
-setMethod(setCrossMatchingMinimalNumberOfCommonPeaks, "Synapter",
-          function(object, n)
-            object$setCrossMatchingMinimalNumberOfCommonPeaks(n))
-
-setMethod(getCrossMatchingMinimalNumberOfCommonPeaks, "Synapter",
-          function(object) object$CrossMatchingMinimalNumberOfCommonPeaks)
-
-
 setMethod(showFdrStats, "Synapter",
           function(object,
                    k = c(0.001, 0.01, 0.05, 0.1)) {
@@ -372,11 +364,15 @@ setMethod(filterFragments, "Synapter",
                                    verbose = verbose)
           })
 
-setMethod(filterMatchedEMRTsByCommonPeaks, "Synapter",
-          function(object, what = c("non-unique", "all", "diff"),
-                   matchColumn = "spectrum.quantXfragments.ident") {
-            object$filterMatchedEMRTsByCommonPeaks(what=match.arg(what),
-                                                   mcol=matchColumn)
+
+setMethod(filterUniqueMatches, "Synapter",
+          function(object, minNumber) {
+            object$filterUniqueMatches(minNumber)
+          })
+
+setMethod(filterNonUniqueMatches, "Synapter",
+          function(object, minDelta) {
+            object$filterNonUniqueMatches(minDelta)
           })
 
 ## Plotting
@@ -530,49 +526,13 @@ setMethod(plotCrossMatching, "Synapter",
                                ...)
           })
 
-setMethod(plotCrossMatchingSummary, "Synapter",
-          function(object, matchColumn = "spectrum.quantXfragments.ident",
-                   ...) {
-            if (!nrow(object$CrossMatching)) {
-              stop("You have to run ", sQuote("crossMatching"), " first!")
-            }
-
-            invisible(.plotCrossMatchingSummary(object$CrossMatching,
-                                                mcol=matchColumn))
-          })
-
 setMethod(plotCrossMatchingPerformance, "Synapter",
-          function(object, matchColumn = "spectrum.quantXfragments.ident",
-                   ...) {
+          function(object, ...) {
             if (!nrow(object$CrossMatching)) {
               stop("You have to run ", sQuote("crossMatching"), " first!")
             }
 
-            invisible(.plotCrossMatchingPerformance(object$CrossMatching,
-                                                    mcol=matchColumn))
-          })
-
-setMethod(plotCrossMatchingDiff, "Synapter",
-          function(object, matchColumn = "spectrum.quantXfragments.ident",
-                   ...) {
-            if (!nrow(object$CrossMatching)) {
-              stop("You have to run ", sQuote("crossMatching"), " first!")
-            }
-
-            .plotCxDiff(object$CrossMatching,
-                        mcol=paste0(match.arg(matchColumn), ".diff"))
-          })
-
-setMethod(plotCumulativeNumberOfFragments, "Synapter",
-          function(object, what = c("spectrum.ident", "spectrum.quant",
-                                    "fragments.ident", "fragments.quant")) {
-            what <- match.arg(what)
-            msexp <- switch(what,
-                            "spectrum.ident" = object$IdentSpectrumData,
-                            "spectrum.quant" = object$QuantSpectrumData,
-                            "fragments.ident" = object$IdentFragmentData,
-                            "fragments.quant" = object$QuantFragmentData)
-            .plotIntensityVsNumber(msexp, what = what)
+            invisible(.plotCrossMatchingPerformance(object$CrossMatching))
           })
 
 setMethod(getEMRTtable, "Synapter",
