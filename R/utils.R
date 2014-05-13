@@ -523,7 +523,7 @@ getExtension <- function (filename) {
 ## adds a columns "matchType" that could be "unique-true", "unique-false",
 ## "non-unique-true", "non-unique-false"
 ## please note that it would change the order of the data.frame
-flatMatchedEMRTs <- function(emrts, na.rm=TRUE, verbose=TRUE) {
+flatMatchedEMRTs <- function(emrts, pep3d, na.rm=TRUE, verbose=TRUE) {
   if (verbose) {
     message("create flat EMRTs data.frame")
   }
@@ -565,6 +565,15 @@ flatMatchedEMRTs <- function(emrts, na.rm=TRUE, verbose=TRUE) {
   flatEmrts$matched.quant.spectrumIDs <-
     as.numeric(flatEmrts$matched.quant.spectrumIDs)
   rownames(flatEmrts) <- NULL
+
+  ## refill pep3d information
+  rows <- flatEmrts$matched.quant.spectrumIDs
+
+  ## find corresponding columns (but exclude spectrumID and Function
+  cols <- intersect(colnames(flatEmrts), colnames(pep3d)[-c(1:2)])
+
+  flatEmrts[, cols] <- pep3d[rows, cols]
+
   return(flatEmrts)
 }
 

@@ -408,6 +408,7 @@
                              " first!")
                       }
                       emrts <- flatMatchedEMRTs(.self$MatchedEMRTs,
+                                                .self$QuantPep3DData,
                                                 na.rm=FALSE,
                                                 verbose=verbose)
                       if (!length(.self$CrossMatchingPpmTolerance)) {
