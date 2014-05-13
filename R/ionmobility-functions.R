@@ -46,7 +46,7 @@
     stop("No ion mobility information available!")
   }
 
-  emrts <- flatMatchedEMRTs(obj$MatchedEMRTs, verbose=TRUE)
+  emrts <- flatMatchedEMRTs(obj$MatchedEMRTs, obj$QuantPep3DData, verbose=TRUE)
 
   if (equalCharge) {
     isChargeEqual <- emrts$precursor.z == emrts$ion_z
