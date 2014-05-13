@@ -669,9 +669,10 @@
                                                       "]", sep=""))
                        },
                        filterDuplicatedQuantSpectrumIds = function() {
-                         'Removes duplicated quantitation EMRT spectrum ids (different charge states, isotopes,.. ) keeping the first instance.'
-                         keep <- !duplicated(.self$QuantPep3DData$spectrumID)
+                         'Removes duplicated quantitation EMRT spectrum ids (different charge states, isotopes,.. ) keeping the one with isFid == 1 (is used for identification).'
+                         keep  <- .self$QuantPep3DData$isFid == 1
                          .self$QuantPep3DData <- .self$QuantPep3DData[keep, ]
+
                          .self$SynapterLog <- c(.self$SynapterLog,
                                                 paste("Kept unique spectrum ids ",
                                                       "quantitation Pep3D [", paste(dim(.self$QuantPep3DData), collapse=","), "] ",
