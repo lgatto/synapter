@@ -607,24 +607,3 @@ diagnosticErrors <- function(x) {
   return(cbind(accuracy=acc, precision=pre, recall=rec, fdr=1-pre, f1=f1))
 }
 
-#' create an equal sized sample of true and false matches
-#' @param cx cross matching df, result of crossmatching
-#' @return list with trueIdx and falseIdx
-#' @noRd
-.groundTruthIndices <- function(cx) {
-  ## select "ground-truth"
-  trueIdx <- grep("true", cx$matchType)
-  falseIdx <- grep("false", cx$matchType)
-
-  n <- min(c(length(trueIdx), length(falseIdx)))
-
-  if (length(trueIdx) > n) {
-    trueIdx <- sample(trueIdx, n)
-  }
-
-  if (length(falseIdx) > n) {
-    falseIdx <- sample(falseIdx, n)
-  }
-  return(list(trueIdx=trueIdx, falseIdx=falseIdx))
-}
-

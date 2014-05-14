@@ -33,8 +33,6 @@ CHANGES IN VERSION 1.7.2
  o add testthat to Suggests [2014-04-25 Fri]
  o add matchColumn argument to filterMatchedEMRTsByCommonPeaks and
    plotCrossMatchingSummary [2014-04-28 Mon]
- o extract the ion that is used for identification (isFid == 1) from the Pep3D
-   file instead of the first instance [2014-05-13 Tue]
 
 CHANGES IN VERSION 1.7.1
 ------------------------

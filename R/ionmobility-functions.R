@@ -1,3 +1,24 @@
+#' create an equal sized sample of true and false matches
+#' @param cx cross matching df, result of crossmatching
+#' @return list with trueIdx and falseIdx
+#' @noRd
+.groundTruthIndices <- function(cx) {
+  ## select "ground-truth"
+  trueIdx <- grep("true", cx$matchType)
+  falseIdx <- grep("false", cx$matchType)
+
+  n <- min(c(length(trueIdx), length(falseIdx)))
+
+  if (length(trueIdx) > n) {
+    trueIdx <- sample(trueIdx, n)
+  }
+
+  if (length(falseIdx) > n) {
+    falseIdx <- sample(falseIdx, n)
+  }
+  return(list(trueIdx=trueIdx, falseIdx=falseIdx))
+}
+
 #' @param d ionmobility difference
 #' @param label TRUE/FALSE matchType
 #' @param thresholds
