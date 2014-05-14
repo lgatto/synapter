@@ -59,20 +59,19 @@
 }
 
 
-\author{Laurent Gatto%
-  \thanks{\email{lg390@cam.ac.uk}}
-}
-
 \author{Sebastian Gibb
   \thanks{\email{mail@sebastiangibb.de}}
 }
 
 \author{Pavel V. Shliaha
-  \thanks{\email{pvs22@cam.ac.uk}}
+}
+
+\author{Laurent Gatto%
+  \thanks{\email{lg390@cam.ac.uk}}
 }
 
 \affil{
-  Cambridge Center for Proteomics\\
+  Computational Proteomics Unit\\
   University of Cambridge
 }
 
@@ -105,15 +104,15 @@ independent acquisition.
 
 \tableofcontents
 
-\newpage
-
 <<knitr, include=FALSE, cache=FALSE>>=
 library(knitr)
-opts_chunk$set(fig.align = 'center',
-               fig.show = 'hold',
+opts_chunk$set(fig.align = "center",
+               fig.height = 5,
+               fig.show = "hold",
                stop_on_error = 1L,
+               tidy = FALSE,
                par = TRUE,
-               prompt = TRUE,
+               prompt = FALSE,
                comment = NA)
 options(replace.assign = TRUE,
         width = 70)
@@ -122,6 +121,8 @@ options(replace.assign = TRUE,
 <<setup, echo=FALSE>>=
 suppressPackageStartupMessages(library(synapter))
 library(synapterdata)
+library(xtable)
+data(synobj2)
 @
 
 \section{Introduction}
@@ -135,35 +136,16 @@ fragments in later versions of \Rpackage{synapter}.
 
 \section{Running \Rfunction{synergise}}
 
-Currently it is a requirement to run the default \Rfunction{synergize} workflow
+Currently it is a requirement to run the default \Rfunction{synergise} workflow
 before using the ion mobility data.
 Please read the general \Rpackage{synapter} vignette for the general use of
 \Rfunction{synergise}.
 
-<<prepare-synergise, echo=TRUE, eval=TRUE, tidy=FALSE>>=
-## TODO: replace files with files from synapterdata
-basedir <- file.path("..", "inst", "extdata", "HDMSE")
-finalpeptide <- list.files(basedir, pattern = ".*IA_final_peptide\\.csv$",
-                           recursive = TRUE, full.names = TRUE)
-pep3d <- list.files(basedir, pattern = ".*Pep3DAMRT\\.csv$",
-                    recursive = TRUE, full.names = TRUE)
-fas <- list.files(basedir, pattern = ".*\\.fasta$", full.names = TRUE)
-
-## the synergise input is a (named) list of filenames
-input <- list(identpeptide = finalpeptide[1],
-              quantpeptide = finalpeptide[2],
-              quantpep3d = pep3d[2],
-              fasta = fas)
-
-## a report and result files will be stored
-## in the 'output' directory
-output <- tempdir()
-output
+<<create-synobj2, cache=FALSE, eval=TRUE, echo=FALSE>>=
+cat(readLines(system.file(file.path("scripts", "create_synobj2.R"),
+                          package="synapterdata")), sep = "\n")
 @
 
-<<synergise, echo=TRUE, eval=TRUE>>=
-res <- synergise(filenames = input, outputdir = output, verbose = FALSE)
-@
 
 \section{Investigating ion mobility}
 
@@ -185,20 +167,24 @@ all matches and the sampled matches are shown.
 
 <<plotionmobility>>=
 set.seed(1) # only for demonstration
-synapter:::.plotIonMobilitySummary(res, thresholds = seq(0, 2, by=0.01))
+synapter:::.plotIonMobilitySummary(synobj2,
+                                   thresholds = seq(0, 2, by=0.01))
 @
 
 Use only equally charged ions for comparison.
 
 <<plotionmobilityequal>>=
 set.seed(1) # only for demonstration
-m <- synapter:::.plotIonMobilitySummary(res, thresholds = seq(0, 2, by=0.01),
+m <- synapter:::.plotIonMobilitySummary(synobj2,
+                                        thresholds = seq(0, 2, by=0.01),
                                         equalCharge = TRUE)
 @
 
 <<confusionmatrix, results="asis">>=
-kable(m[1:25,], row.names=FALSE)
+xtable(m[1:25,], row.names=FALSE)
 @
+
+\clearpage
 
 \section{Session information}\label{sec:sessionInfo}
 
