@@ -1,0 +1,216 @@
+%\VignetteEngine{knitr}
+%\VignetteIndexEntry{Investigate ion mobility in HDMSe data using 'synapter'}
+%\VignetteKeywords{Mass Spectrometry, Proteomics, Bioinformatics, quantitative, Ion mobility, label-free}
+%\VignettePackage{synapter}
+
+\documentclass[12pt,a4paper,english]{scrartcl}
+\usepackage{amsmath,amsfonts,amssymb}
+\usepackage{tikz}
+\usepackage{hyperref}
+%\usepackage[authoryear,round]{natbib}
+\usepackage[auth-sc]{authblk}
+\usepackage{setspace}
+\onehalfspacing
+
+% caption formatting
+\setcapindent{0em}
+\setkomafont{captionlabel}{\sffamily\bfseries}
+\setkomafont{caption}{\sffamily}
+
+\renewcommand\Authands{ and }
+
+\newcommand{\R}{\texttt{R} }
+\newcommand{\code}[1]{{\texttt{#1}}}
+\newcommand{\Rfunction}[1]{{\texttt{#1}}}
+\newcommand{\Robject}[1]{{\texttt{#1}}}
+\newcommand{\Rpackage}[1]{{\mbox{\normalfont\textsf{#1}}}}
+\newcommand{\email}[1]{\href{mailto:#1}{\normalfont\texttt{#1}}}
+%% colors
+\definecolor{Red}{rgb}{0.7,0,0}
+\definecolor{Blue}{rgb}{0,0,0.8}
+
+\usepackage{geometry}
+\geometry{verbose,
+  tmargin = 2.5cm,
+  bmargin = 2.5cm,
+  lmargin = 3.0cm,
+  rmargin = 3.0cm}
+
+\usepackage{hyperref}
+\usepackage{breakurl}
+\hypersetup{%
+  pdfusetitle,
+  bookmarks = {true},
+  bookmarksnumbered = {true},
+  bookmarksopen = {true},
+  bookmarksopenlevel = 2,
+  unicode = {true},
+  breaklinks = {false},
+  hyperindex = {true},
+  colorlinks = {true},
+  linktocpage = {true},
+  plainpages = {false},
+  linkcolor = {Blue},
+  citecolor = {Blue},
+  urlcolor = {Red},
+  pdfstartview = {Fit},
+  pdfpagemode = {UseOutlines},
+  pdfview = {XYZ null null null}
+}
+
+
+\author{Laurent Gatto%
+  \thanks{\email{lg390@cam.ac.uk}}
+}
+
+\author{Sebastian Gibb
+  \thanks{\email{mail@sebastiangibb.de}}
+}
+
+\author{Pavel V. Shliaha
+  \thanks{\email{pvs22@cam.ac.uk}}
+}
+
+\affil{
+  Cambridge Center for Proteomics\\
+  University of Cambridge
+}
+
+\begin{document}
+
+\title{Investigate ion mobility in HDMSe data using \Rpackage{synapter} package}
+
+\maketitle
+
+%% Abstract and keywords %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\vskip 0.3in minus 0.1in
+\hrule
+\begin{abstract}
+  This vignette describes how to investigate the ion mobility feature of
+  HDMS$^E$ data using the \Rpackage{synapter} package. This function is still
+  work-in-progress and not exported to the user. It could change without any
+  information.
+\end{abstract}
+
+\textit{Keywords}: Mass Spectrometry (MS), proteomics, bioinformatics,
+IMS, ion mobility separation ion mobility, Synapt, label free, data
+independent acquisition.
+
+\vskip 0.1in minus 0.05in
+\hrule
+\vskip 0.2in minus 0.1in
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\newpage
+
+\tableofcontents
+
+\newpage
+
+<<knitr, include=FALSE, cache=FALSE>>=
+library(knitr)
+opts_chunk$set(fig.align = 'center',
+               fig.show = 'hold',
+               stop_on_error = 1L,
+               par = TRUE,
+               prompt = TRUE,
+               comment = NA)
+options(replace.assign = TRUE,
+        width = 70)
+@
+
+<<setup, echo=FALSE>>=
+suppressPackageStartupMessages(library(synapter))
+library(synapterdata)
+@
+
+\section{Introduction}
+
+The ion mobility is a fourth dimension present in HDMS$^E$ data. Roughly
+speaking the ion mobility is the time an ion needs to travel through a gas
+filled tube. \\
+We are developing some functions to investigate the ion mobility feature.
+Maybe we will use the ion mobility for the grid search or for filtering of
+fragments in later versions of \Rpackage{synapter}.
+
+\section{Running \Rfunction{synergise}}
+
+Currently it is a requirement to run the default \Rfunction{synergize} workflow
+before using the ion mobility data.
+Please read the general \Rpackage{synapter} vignette for the general use of
+\Rfunction{synergise}.
+
+<<prepare-synergise, echo=TRUE, eval=TRUE, tidy=FALSE>>=
+## TODO: replace files with files from synapterdata
+basedir <- file.path("..", "inst", "extdata", "HDMSE")
+finalpeptide <- list.files(basedir, pattern = ".*IA_final_peptide\\.csv$",
+                           recursive = TRUE, full.names = TRUE)
+pep3d <- list.files(basedir, pattern = ".*Pep3DAMRT\\.csv$",
+                    recursive = TRUE, full.names = TRUE)
+fas <- list.files(basedir, pattern = ".*\\.fasta$", full.names = TRUE)
+
+## the synergise input is a (named) list of filenames
+input <- list(identpeptide = finalpeptide[1],
+              quantpeptide = finalpeptide[2],
+              quantpep3d = pep3d[2],
+              fasta = fas)
+
+## a report and result files will be stored
+## in the 'output' directory
+output <- tempdir()
+output
+@
+
+<<synergise, echo=TRUE, eval=TRUE>>=
+res <- synergise(filenames = input, outputdir = output, verbose = FALSE)
+@
+
+\section{Investigating ion mobility}
+
+We use the not exported function \Rfunction{.plotIonMobilitySummary} to get an
+overview about the ion mobility behaviour.
+This functions creates three plots showing the performance for filtering the
+matches between two runs via an ion mobility difference threshold.
+The left panel shows the F1-score and the FDR calculated for an equal sized
+subset of true and false matches. This subset is sampled out of all data.
+Therefore all true matches (unique true and non unique true) and all false
+matches (unique false and non unique false) are considered. If the number of
+false and positives differs the smaller number is sampled from the larger
+group to get equally sized groups.\\
+The panel in the middle shows the development of the true-positives,
+false-positives, true-negatives and false-negatives using an increasing
+difference in ion mobility as threshold. On the right panel boxplots for
+all matches and the sampled matches are shown.
+\Rfunction{.plotIonMobilitySummary} returns a confusion matrix invisiblely.
+
+<<plotionmobility>>=
+set.seed(1) # only for demonstration
+synapter:::.plotIonMobilitySummary(res, thresholds = seq(0, 2, by=0.01))
+@
+
+Use only equally charged ions for comparison.
+
+<<plotionmobilityequal>>=
+set.seed(1) # only for demonstration
+m <- synapter:::.plotIonMobilitySummary(res, thresholds = seq(0, 2, by=0.01),
+                                        equalCharge = TRUE)
+@
+
+<<confusionmatrix, results="asis">>=
+kable(m[1:25,], row.names=FALSE)
+@
+
+\section{Session information}\label{sec:sessionInfo}
+
+All software and respective versions used to produce this document are
+listed below.
+
+<<sessioninfo, results='asis', echo=FALSE, cache=FALSE>>=
+toLatex(sessionInfo())
+@
+
+%\bibliographystyle{plainnat}
+%\bibliography{synapter}
+
+\end{document}
+
