@@ -70,14 +70,21 @@ setMethod(inputFiles, "Synapter",
             fasta = object$DbFastaFile))
 
 setMethod(loadSpectrumXmlFiles, "Synapter",
-          function(object, filenames, verbose=TRUE) {
-            object$loadSpectrumXmlFiles(filenames=filenames, verbose=verbose)
+          function(object, filenames, removePrecursor=TRUE, tolerance=25e-6,
+                   verbose=TRUE) {
+            object$loadSpectrumXmlFiles(filenames=filenames,
+                                        removePrecursor=removePrecursor,
+                                        tolerance=25e-6,
+                                        verbose=verbose)
           })
 
 setMethod(loadFragmentCsvFiles, "Synapter",
-          function(object, filenames, removeNeutralLoss=TRUE, verbose=TRUE) {
+          function(object, filenames, removeNeutralLoss=TRUE,
+                   removePrecursor=TRUE, tolerance=25e-6, verbose=TRUE) {
             object$loadFragmentCsvFiles(filenames=filenames,
                                         removeNeutralLoss=removeNeutralLoss,
+                                        removePrecursor=removePrecursor,
+                                        tolerance=25e-6,
                                         verbose=verbose)
           })
 
@@ -242,14 +249,6 @@ setMethod(setCrossMatchingPpmTolerance, "Synapter",
 setMethod(getCrossMatchingPpmTolerance, "Synapter",
           function(object) object$CrossMatchingPpmTolerance)
 
-setMethod(setCrossMatchingMinimalNumberOfCommonPeaks, "Synapter",
-          function(object, n)
-            object$setCrossMatchingMinimalNumberOfCommonPeaks(n))
-
-setMethod(getCrossMatchingMinimalNumberOfCommonPeaks, "Synapter",
-          function(object) object$CrossMatchingMinimalNumberOfCommonPeaks)
-
-
 setMethod(showFdrStats, "Synapter",
           function(object,
                    k = c(0.001, 0.01, 0.05, 0.1)) {
@@ -281,26 +280,30 @@ setMethod(filterPeptideLength, "Synapter",
 
 
 setMethod(filterUniqueDbPeptides, "Synapter",
-          function(object, missedCleavages = 0, verbose = TRUE) {
+          function(object, missedCleavages = 0, IisL = FALSE, verbose = TRUE) {
             object$filterUniqueSeq()
             object$filterUniqueDbPeptides(object$DbFastaFile,
-                                          missedCleavages,
+                                          what = c("ident", "quant"),
+                                          missedCleavages = missedCleavages,
+                                          IisL = IisL,
                                           verbose = verbose)
           })
 
 setMethod(filterUniqueQuantDbPeptides, "Synapter",
-          function(object, missedCleavages = 0, verbose = TRUE) {
+          function(object, missedCleavages = 0, IisL = FALSE, verbose = TRUE) {
             object$filterUniqueQuantSeq()
             object$filterUniqueQuantDbPeptides(object$DbFastaFile,
-                                               missedCleavages,
+                                               missedCleavages = missedCleavages,
+                                               IisL = IisL,
                                                verbose = verbose)
           })
 
 setMethod(filterUniqueIdentDbPeptides, "Synapter",
-          function(object, missedCleavages = 0, verbose = TRUE) {
+          function(object, missedCleavages = 0, IisL = FALSE, verbose = TRUE) {
             object$filterUniqueIdentSeq()
             object$filterUniqueIdentDbPeptides(object$DbFastaFile,
-                                               missedCleavages,
+                                               missedCleavages = missedCleavages,
+                                               IisL = IisL,
                                                verbose = verbose)
           })
 
@@ -351,9 +354,24 @@ setMethod(filterQuantPpmError, "Synapter",
             object$filterQuantPpmError()
           })
 
-setMethod(filterMatchedEMRTsByCommonPeaks, "Synapter",
-          function(object, matchColumn = "spectrum.quantXfragments.ident") {
-            object$filterMatchedEMRTsByCommonPeaks(mcol=matchColumn)
+# filter post merging
+setMethod(filterFragments, "Synapter",
+          function(object, what, minIntensity = NULL, maxNumber = NULL,
+                   verbose = TRUE) {
+            object$filterFragments(what = what,
+                                   minIntensity = minIntensity,
+                                   maxNumber = maxNumber,
+                                   verbose = verbose)
+          })
+
+setMethod(filterUniqueMatches, "Synapter",
+          function(object, minNumber) {
+            object$filterUniqueMatches(minNumber)
+          })
+
+setMethod(filterNonUniqueMatches, "Synapter",
+          function(object, minDelta) {
+            object$filterNonUniqueMatches(minDelta)
           })
 
 ## Plotting
@@ -507,20 +525,29 @@ setMethod(plotCrossMatching, "Synapter",
                                ...)
           })
 
-setMethod(plotCrossMatchingSummary, "Synapter",
-          function(object, matchColumn = "spectrum.quantXfragments.ident",
-                   ...) {
+setMethod(plotCrossMatchingPerformance, "Synapter",
+          function(object, ...) {
             if (!nrow(object$CrossMatching)) {
               stop("You have to run ", sQuote("crossMatching"), " first!")
             }
 
-            invisible(.plotCrossMatchingSummary(object$CrossMatching,
-                                                mcol=matchColumn))
+            invisible(.plotCrossMatchingPerformance(object$CrossMatching))
+          })
+
+setMethod(plotCumulativeNumberOfFragments, "Synapter",
+          function(object, what = c("spectrum.ident", "spectrum.quant",
+                                    "fragments.ident", "fragments.quant")) {
+            what <- match.arg(what)
+            msexp <- switch(what,
+                            "spectrum.ident" = object$IdentSpectrumData,
+                            "spectrum.quant" = object$QuantSpectrumData,
+                            "fragments.ident" = object$IdentFragmentData,
+                            "fragments.quant" = object$QuantFragmentData)
+            .plotIntensityVsNumber(msexp, what = what)
           })
 
 setMethod(getEMRTtable, "Synapter",
           function(object) table(object$MatchedEMRTs$Function))
-
 
 setMethod(plotEMRTtable, "Synapter",
           function(object) {

@@ -45,8 +45,7 @@
                     IdentFragmentFile = "character",
                     IdentFragmentData = "MSnExp",
                     CrossMatching = "data.frame",
-                    CrossMatchingPpmTolerance = "numeric",
-                    CrossMatchingMinimalNumberOfCommonPeaks = "integer"),
+                    CrossMatchingPpmTolerance = "numeric"),
                 methods = list(
                     initialize = function() {
                         .self$Version <- as.character(packageVersion("synapter"))
@@ -226,7 +225,10 @@
                         message("Computing identification statistics...")
                         .self$addIdStats()
                     },
-                    loadSpectrumXmlFiles = function(filenames, verbose=TRUE) {
+                    loadSpectrumXmlFiles = function(filenames,
+                                                    removePrecursor=TRUE,
+                                                    tolerance=25e-6,
+                                                    verbose=TRUE) {
                       stopifnot(all(names(filenames) %in% c("identspectrum",
                                                             "quantspectrum")))
                       filenames <- as.list(filenames)
@@ -236,7 +238,10 @@
                       .self$IdentSpectrumData <-
                         .spectrumXml2spectra(df=.self$IdentPeptideData,
                                              file=.self$IdentSpectrumFile,
-                                             storeAll=FALSE, verbose=verbose)
+                                             storeAll=FALSE,
+                                             removePrecursor=removePrecursor,
+                                             tolerance=tolerance,
+                                             verbose=verbose)
                       .self$SynapterLog <-
                         c(.self$SynapterLog,
                           paste0("Read identification spectra [",
@@ -245,13 +250,19 @@
                       .self$QuantSpectrumData <-
                         .spectrumXml2spectra(df=.self$QuantPeptideData,
                                              file=.self$QuantSpectrumFile,
-                                             storeAll=TRUE, verbose=verbose)
+                                             storeAll=TRUE,
+                                             removePrecursor=removePrecursor,
+                                             tolerance=tolerance,
+                                             verbose=verbose)
                       .self$SynapterLog <-
                         c(.self$SynapterLog,
                           paste0("Read quantitation spectra [",
                                  length(.self$QuantSpectrumData), "]"))
                     },
-                    loadFragmentCsvFiles = function(filenames, removeNeutralLoss=TRUE,
+                    loadFragmentCsvFiles = function(filenames,
+                                                    removeNeutralLoss=TRUE,
+                                                    removePrecursor=TRUE,
+                                                    tolerance=25e-6,
                                                     verbose=TRUE) {
                       stopifnot(all(names(filenames) %in% c("identfragments",
                                                             "quantfragments")))
@@ -264,6 +275,8 @@
                                                file=.self$IdentFragmentFile,
                                                storeAll=FALSE,
                                                removeNeutralLoss=removeNeutralLoss,
+                                               removePrecursor=removePrecursor,
+                                               tolerance=tolerance,
                                                verbose=verbose)
                       .self$SynapterLog <-
                         c(.self$SynapterLog,
@@ -276,6 +289,8 @@
                                                file=.self$QuantFragmentFile,
                                                storeAll=TRUE,
                                                removeNeutralLoss=removeNeutralLoss,
+                                               removePrecursor=removePrecursor,
+                                               tolerance=tolerance,
                                                verbose=verbose)
                       .self$SynapterLog <-
                         c(.self$SynapterLog,
@@ -347,8 +362,11 @@
                     },
                     modelRetentionTime = function(span) {
                         'Models retention time'
-                        if (missing(span))
+                        if (missing(span)) {
                             span <- .self$LowessSpan
+                        } else {
+                          .self$LowessSpan <- span
+                        }
                         .self$RtModel <- modelRetTime(.self$MergedFeatures, span = span)
                         .self$SynapterLog <- c(.self$SynapterLog,
                                                paste("Modelled retention time using lowess and span ",
@@ -414,6 +432,15 @@
                                  .self$CrossMatchingPpmTolerance,
                                  "ppm [",
                                  paste0(dim(.self$CrossMatching), collapse=","),
+                                 "]"))
+                      .self$MatchedEMRTs <- appendCrossMatchingColumns(
+                        .self$MatchedEMRTs, .self$CrossMatching)
+
+                      .self$SynapterLog <-
+                        c(.self$SynapterLog,
+                          paste0("Append crossmatching results to ",
+                                 "MatchedEMRTs [",
+                                 paste0(dim(.self$MatchedEMRTs), collapse=","),
                                  "]"))
                     }))
 
@@ -604,14 +631,6 @@
                          .self$SynapterLog <-
                            c(.self$SynapterLog,
                              paste0("Set cross matching ppm error to ", ppm))
-                       },
-                       setCrossMatchingMinimalNumberOfCommonPeaks = function(n) {
-                         'Sets minimal number of common peaks for cross matching.'
-                         .self$CrossMatchingMinimalNumberOfCommonPeaks <- as.integer(n)
-                         .self$SynapterLog <-
-                           c(.self$SynapterLog,
-                             paste0("Set minimal number of common peaks for ",
-                                    "cross matching to ", n))
                        }))
 
 ## GLOBAL FILTERS
@@ -816,60 +835,157 @@
                                                       "]", sep=""))
                        },
 
-                       filterUniqueQuantDbPeptides = function(filename, missedCleavages = 0, verbose = TRUE) {
+                       filterUniqueQuantDbPeptides = function(filename, missedCleavages = 0,  IisL = FALSE, verbose = TRUE) {
                          'Filters quantitation tryptic peptides that match one and only one protein in the fasta database.'
-                         upepset <- dbUniquePeptideSet(filename, missedCleavages, verbose)
-                         .self$DbFastaFile <- filename
-                         sel2 <- .self$QuantPeptideData$peptide.seq %in% upepset
-                         .self$QuantPeptideData <- .self$QuantPeptideData[sel2, ]
-                         .self$SynapterLog <- c(.self$SynapterLog,
-                                                paste("Kept quantitation peptides that match unique protein (",
-                                                      missedCleavages, " missed cleavages) " ,
-                                                      "[", paste(dim(.self$QuantPeptideData), collapse=","),
-                                                      "]", sep=""))
+                         .self$filterUniqueDbPeptides(filename,
+                                                      what="quant",
+                                                      missedCleavages=missedCleavages,
+                                                      IisL=IisL,
+                                                      verbose=verbose)
                        },
 
-                       filterUniqueIdentDbPeptides = function(filename, missedCleavages, verbose = TRUE) {
+                       filterUniqueIdentDbPeptides = function(filename, missedCleavages = 0, IisL = FALSE, verbose = TRUE) {
                          'Filters identification tryptic peptides that match one and only one protein in the fasta database.'
-                         upepset <- dbUniquePeptideSet(filename, missedCleavages, verbose)
-                         .self$DbFastaFile <- filename
-                         sel1 <- .self$IdentPeptideData$peptide.seq %in% upepset
-                         .self$IdentPeptideData <- .self$IdentPeptideData[sel1, ]
+                         .self$filterUniqueDbPeptides(filename,
+                                                      what="ident",
+                                                      missedCleavages=missedCleavages,
+                                                      IisL=IisL,
+                                                      verbose=verbose)
+                       },
+
+                       filterUniqueDbPeptides = function(filename, what = c("ident", "quant"), missedCleavages = 0, IisL = FALSE, verbose = TRUE) {
+                        'Filters tryptic peptides that match one and only one protein in the fasta database.'
+                        what <- match.arg(what, several.ok=TRUE)
+
+                        upepset <- dbUniquePeptideSet(filename,
+                                                      missedCleavages=missedCleavages,
+                                                      IisL=IisL,
+                                                      verbose=verbose)
+                        .self$DbFastaFile <- filename
+                        logmsg <- paste0("peptides that match unique protein (",
+                                         attr(upepset, "missedCleavages"),
+                                         " missed cleavages; I/L treatment: ",
+                                         ifelse(attr(upepset, "IisL"), "I == L", "I != L"), ")")
+
+                        if ("ident" %in% what) {
+                          sel <- .self$IdentPeptideData$peptide.seq %in% upepset
+                          .self$IdentPeptideData <- .self$IdentPeptideData[sel, ]
+                          .self$SynapterLog <- c(.self$SynapterLog,
+                                                 paste0("Kept identification ", logmsg,
+                                                       "[", paste(dim(.self$IdentPeptideData), collapse=","), "]"))
+                        }
+
+                        if ("quant" %in% what) {
+                          sel <- .self$QuantPeptideData$peptide.seq %in% upepset
+                         .self$QuantPeptideData <- .self$QuantPeptideData[sel, ]
                          .self$SynapterLog <- c(.self$SynapterLog,
-                                                paste("Kept identification peptides that match unique protein (",
-                                                      missedCleavages, " missed cleavages) " ,
-                                                      "[", paste(dim(.self$IdentPeptideData), collapse=","),
-                                                      "]", sep=""))
+                                                paste0("Kept quantitation ", logmsg,
+                                                       "[", paste(dim(.self$QuantPeptideData), collapse=","), "]"))
+                        }
                        },
 
-                       filterUniqueDbPeptides = function(filename, missedCleavages, verbose = TRUE) {
-                         'Filters tryptic peptides that match one and only one protein in the fasta database.'
-                         .self$filterUniqueIdentDbPeptides(filename, missedCleavages, verbose = verbose)
-                         .self$filterUniqueQuantDbPeptides(filename, missedCleavages, verbose = FALSE)
+                       filterFragments = function(what, minIntensity = NULL,
+                                                  maxNumber = NULL, verbose = TRUE) {
+                         'Filters spectra/fragments using a minimal intensity or a maximal number of fragments as threshold.'
+
+                         what <- match.arg(what, choices = c(
+                                            "spectrum.ident", "spectrum.quant",
+                                            "fragments.ident", "fragments.quant"))
+                         msexp <- switch(what,
+                            "spectrum.ident" = .self$IdentSpectrumData,
+                            "spectrum.quant" = .self$QuantSpectrumData,
+                            "fragments.ident" = .self$IdentFragmentData,
+                            "fragments.quant" = .self$QuantFragmentData)
+
+                         if (!length(msexp)) {
+                           stop("You have to import the ", sQuote(what),
+                                " data first!")
+                         }
+
+                         msg <- "Filtered "
+
+                         if (what == "spectrum.ident") {
+                           .self$IdentSpectrumData <-
+                             .filterIntensity(msexp,
+                                              minIntensity = minIntensity,
+                                              maxNumber = maxNumber,
+                                              verbose = verbose)
+                           msg <- paste0("identification spectra")
+                         }
+
+                         if (what == "spectrum.quant") {
+                           .self$QuantSpectrumData <-
+                             .filterIntensity(msexp,
+                                              minIntensity = minIntensity,
+                                              maxNumber = maxNumber,
+                                              verbose = verbose)
+                           msg <- paste0("quantitation spectra")
+                         }
+
+                         if (what == "fragments.ident") {
+                           .self$IdentFragmentData <-
+                             .filterIntensity(msexp,
+                                              minIntensity = minIntensity,
+                                              maxNumber = maxNumber,
+                                              verbose = verbose)
+                           msg <- paste0("identification fragment data")
+                         }
+
+                         if (what == "fragments.quant") {
+                           .self$QuantFragmentData <-
+                             .filterIntensity(msexp,
+                                              minIntensity = minIntensity,
+                                              maxNumber = maxNumber,
+                                              verbose = verbose)
+                           msg <- paste0("quantitation fragment data")
+                         }
+
+                         msg <- paste0(" using a ",
+                                       ifelse(is.null(minIntensity), "",
+                                              paste0("minimal intensity > ",
+                                                     minIntensity)),
+                                       ifelse(is.null(maxNumber), "",
+                                              paste0("maximal number < ",
+                                                     maxNumber)))
+
+                         .self$SynapterLog <- c(.self$SynapterLog, msg)
                        },
 
-                       filterMatchedEMRTsByCommonPeaks = function(mcol = "spectrum.quantXfragments.ident") {
+                       filterUniqueMatches = function(minNumber) {
+                         'Filters unique matches using cross matching results.'
+
+                         if (!nrow(.self$CrossMatching)) {
+                           stop("You have to run ", sQuote("crossMatching"),
+                                " first!")
+                         }
+
+                         .self$MatchedEMRTs <-
+                           .filterUniqueMatches(obj = .self,
+                                                mincommon = minNumber)
+                         .self$SynapterLog <- c(.self$SynapterLog,
+                                                paste0("Filtered unique matched EMRTs ",
+                                                       "(minimal number of common peaks: ",
+                                                       minNumber, " [",
+                                                      paste0(dim(.self$MatchedEMRTs),
+                                                             collapse=","), "]"))
+                       },
+
+                       filterNonUniqueMatches = function(minDelta) {
                          'Filters non unique matches using cross matching results.'
 
                          if (!nrow(.self$CrossMatching)) {
                            stop("You have to run ", sQuote("crossMatching"),
                                 " first!")
                          }
-                         if (!length(.self$CrossMatchingMinimalNumberOfCommonPeaks)) {
-                           stop("You have to set the minimal number of common via ",
-                                sQuote("setCrossMatchingMinimalNumberOfCommonPeaks"),
-                                " first!")
-                         }
+
                          .self$MatchedEMRTs <-
-                           .filterMatchedEMRTsUsingCrossMatching(
-                            .self,
-                            .self$CrossMatchingMinimalNumberOfCommonPeaks, mcol)
+                           .filterNonUniqueMatches(obj = .self,
+                                                   mindelta = minDelta)
                          .self$SynapterLog <- c(.self$SynapterLog,
-                                                paste("Filtered matched EMRTs using at least ",
-                                                      .self$CrossMatchingMinimalNumberOfCommonPeaks,
-                                                      " number of common peaks (matchColumn=\"",
-                                                      mcol, "\", [",
-                                                      paste(dim(.self$QuantPeptideData), collapse=","),
-                                                      "]", sep=""))
+                                                paste0("Filtered non unique matched EMRTs ",
+                                                       "(minimal delta of common peaks: ",
+                                                       minDelta, " [",
+                                                      paste0(dim(.self$MatchedEMRTs),
+                                                             collapse=","), "]"))
                        }))
 

@@ -5,20 +5,23 @@
 \usage{
 synergise(filenames, master = FALSE, object, outputdir, fdr = 0.01,
   fdrMethod = c("BH", "Bonferroni", "qval"), fpr = 0.01, peplen = 7,
-  missedCleavages = 0, identppm = 20, quantppm = 20, uniquepep = TRUE,
-  span = 0.05, grid.ppm.from = 2, grid.ppm.to = 20, grid.ppm.by = 2,
-  grid.nsd.from = 0.5, grid.nsd.to = 5, grid.nsd.by = 0.5,
-  grid.subset = 1, grid.n = 0, grid.param.sel = c("auto", "model",
-  "total", "details"), mergedEMRTs = c("rescue", "copy", "transfer"),
-  css = NULL, verbose = TRUE)
+  missedCleavages = 0, IisL = FALSE, identppm = 20, quantppm = 20,
+  uniquepep = TRUE, span = 0.05, grid.ppm.from = 2, grid.ppm.to = 20,
+  grid.ppm.by = 2, grid.nsd.from = 0.5, grid.nsd.to = 5,
+  grid.nsd.by = 0.5, grid.subset = 1, grid.n = 0,
+  grid.param.sel = c("auto", "model", "total", "details"),
+  mergedEMRTs = c("rescue", "copy", "transfer"), css = NULL,
+  verbose = TRUE)
 }
 \arguments{
   \item{filenames}{A named \code{list} of file names to be
   load. The names must be \code{identpeptide},
-  \code{quantpeptide}, \code{quantpep3d} and \code{fasta}.
-  If missing, a dialog box opens to select files
-  interactively. \code{identpeptide} can be a \code{csv}
-  final peptide file (from PLGS) or a saved
+  \code{quantpeptide}, \code{quantpep3d} and \code{fasta}
+  (could be an RDS file created by
+  \code{link{createUniquePeptideDbRds}}). If missing, a
+  dialog box opens to select files interactively.
+  \code{identpeptide} can be a \code{csv} final peptide
+  file (from PLGS) or a saved
   \code{"\linkS4class{MasterPeptides}"} data object as
   created by \code{\link{makeMaster}} if working with
   \emph{master} peptide data. To serialise the
@@ -50,8 +53,14 @@ synergise(filenames, master = FALSE, object, outputdir, fdr = 0.01,
 
   \item{peplen}{Minimum peptide length. Default is 7.}
 
-  \item{missedCleavages}{Number of allowed missed
+  \item{missedCleavages}{Number of maximal allowed missed
   cleavages. Default is 0.}
+
+  \item{IisL}{If \code{TRUE} Isoleucin and Leucin are
+  treated as equal. In this case sequences like "ABCI",
+  "ABCL" are removed because they are not unqiue. If
+  \code{FALSE} (default) "ABCI" and "ABCL" are reported as
+  unique.}
 
   \item{identppm}{Identification mass tolerance (in ppm).
   Default is 20.}

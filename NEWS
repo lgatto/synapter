@@ -1,3 +1,26 @@
+CHANGES IN VERSION 1.7.3
+------------------------
+ o add createUniquePeptideDbRds (regards #55) [2014-04-29 Tue]
+ o allow to use an RDS instead of a fasta file as 'Unique Peptides Database';
+   closes #55 [2014-04-29 Tue]
+ o add removePrecursor and tolerance argument to loadSpectrumXmlFiles and
+   loadFragmentCsvFiles; closes #59 [2014-04-30 Wed]
+ o introduce IisL argument to dbUniquePeptideSet which treats I/L as same
+   aminoacid if IisL == TRUE (default: IisL = FALSE);
+   closes #60 [2014-04-30 Wed]
+ o introduce filterFragments and plotCumulativeNumberOfFragments method.
+   [2014-05-08 Thu]
+ o add plotCrossMatchingDiff and a `what = "diff"` argument to
+   filterMatchedEMRTsByCommonPeaks [2014-05-09 Fri]
+ o remove plotCrossMatchingSummary, plotCrossMatchingDiff,
+   plotCumulativeNumberOfFragments,
+   {get,set}CrossMatchingMinimalNumberOfCommonPeaks and
+   filterMatchedEMRTsByCommonPeaks [2014-05-11 Sun]
+ o change plotCrossMatchingPerformance [2014-05-11 Sun]
+ o add filterUniqueMatches and filterNonUniqueMatches [2014-05-11 Sun]
+ o extract the ion that is used for identification (isFid == 1) from the Pep3D
+   file instead of the first instance [2014-05-13 Tue]
+
 CHANGES IN VERSION 1.7.2
 ------------------------
  o add loadSpectrumXmlFiles and loadFragmentCsvFiles method [2014-04-23 Wed]
