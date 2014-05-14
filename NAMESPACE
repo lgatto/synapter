@@ -68,6 +68,7 @@ exportMethods(show,
               performance,
               performance2,
               ## filtering prior to merging
+              filterFragments,
               filterPeptideLength,
               filterQuantPepScore,
               filterIdentPepScore,
