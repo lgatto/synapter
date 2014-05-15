@@ -428,7 +428,6 @@ crossmatching <- function(flatEmrts, spectra, tolerance=25e-6, verbose=TRUE) {
 
   ## backup function
   emrts$Function.2 <- emrts$Function
-  emrts$Function[rows] <- 1
 
   if (length(exclude)) {
     cols <- c("matched.quant.spectrumIDs", "precursor.leID.quant", "spectrumID")
@@ -436,7 +435,12 @@ crossmatching <- function(flatEmrts, spectra, tolerance=25e-6, verbose=TRUE) {
     # comment the next line and uncomment the over next line to *not* remove the
     # filtered emrts
     #emrts <- emrts[-exclude, ]
+
+    ## this order is important because include could contain row numbers that
+    ## are present in keep as well (because cx has many duplicated
+    ## precursor.leID.idents)
     emrts$Function[exclude] <- -2
+    emrts$Function[rows[keep]] <- 1
   }
   return(emrts)
 }
