@@ -20,7 +20,8 @@ CHANGES IN VERSION 1.7.3
  o add filterUniqueMatches and filterNonUniqueMatches [2014-05-11 Sun]
  o extract the ion that is used for identification (isFid == 1) from the Pep3D
    file instead of the first instance [2014-05-13 Tue]
- o add basic vignette for ion mobility [2014-05-14 Wed]
+ o add basic vignette for the ion mobility [2014-05-14 Wed]
+ o add basic vignette for the fragment matching workflow [2014-05-15 Thu]
 
 CHANGES IN VERSION 1.7.2
 ------------------------
