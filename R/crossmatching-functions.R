@@ -287,10 +287,13 @@ crossmatching <- function(flatEmrts, spectra, tolerance=25e-6, verbose=TRUE) {
   for (i in seq(along=l)) {
     l[[i]] <- .crossMatchingContingencyMatrix(cx, what=what[i], mcol=mcol)
 
-    matplot(l[[i]][, 1], l[[i]][, c("tp", "fp"), drop=FALSE],
-            type="b", lty=1, pch=19, col=c(4, 2),
-            xlab=xlab[i], ylab="# of peptides",
-            main=paste("performance", what[i]))
+    ylim <- range(l[[i]][, c("tp", "fp")])
+    plot(l[[i]][, 1], l[[i]][, "tp"],
+         type="b", lty=1, pch=ifelse(l[[i]][, "tp"], 19, 1),
+         ylim=ylim, col=4, xlab=xlab[i], ylab="# of peptides",
+         main=paste("performance", what[i]))
+    lines(l[[i]][, 1], l[[i]][, "fp"], type="b",
+          pch=ifelse(l[[i]][, "fp"], 19, 1), col=2)
     grid()
     legend("topright", legend=c("true matches", "false matches"),
            col=c(4, 2), lwd=1, pch=19, bty="n")
