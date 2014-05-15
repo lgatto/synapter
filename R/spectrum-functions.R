@@ -335,6 +335,21 @@
 
   msexp <- removePeaks(msexp, t=minIntensity, verbose=verbose)
 
+  ## remove corresponding fragment information if available
+  stopifnot(fData(msexp)$leID == precScanNum(msexp))
+  if ("fragment.str" %in% colnames(fData(msexp))) {
+    fragments <- MSnbase:::utils.ssv2list(as.character(fData(msexp)$fragment.str))
+    fData(msexp)$fragment.str <- MSnbase:::utils.list2ssv(mapply(function(f, i) {
+      if (length(f) && length(i)) {
+        as.character(f[i > 0])
+      } else {
+        character()
+      }
+    }, f=fragments, i=intensity(msexp), SIMPLIFY=FALSE, USE.NAMES=FALSE))
+
+    stopifnot(validObject(msexp))
+  }
+
   if (verbose) {
     message("Remove peaks with zero intensity")
     pcBefore <- .sumAllPeakCounts(msexp)
