@@ -532,7 +532,7 @@ flatMatchedEMRTs <- function(emrts, pep3d, na.rm=TRUE, verbose=TRUE) {
     emrts <- emrts[!is.na(emrts$precursor.leID.quant), ]
   }
 
-  emrts$gridSearchResult <- NA
+  emrts$gridSearchResult <- "no_quant_id"
 
   ## unique matches
   k1 <- which(emrts$Function == 1)
