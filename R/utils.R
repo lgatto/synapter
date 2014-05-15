@@ -525,7 +525,7 @@ getExtension <- function (filename) {
 ## please note that it would change the order of the data.frame
 flatMatchedEMRTs <- function(emrts, pep3d, na.rm=TRUE, verbose=TRUE) {
   if (verbose) {
-    message("create flat EMRTs data.frame")
+    message("create flat EMRT data.frame (one matched EMRT per row)")
   }
 
   if (na.rm) {
