@@ -16,8 +16,9 @@ test_that("flatMatchedEMRTs", {
                     precursor.leID.quant=c(1, 3, 3, 3, 9, 9),
                     matched.quant.spectrumIDs=c(1:4, 3, 4),
                     ion_z=c(1, 2, 3, 4, 3, 4),
-                    matchType=c("unique-true", "unique-false",
-                                "non-unique-true", rep("non-unique-false", 3)),
+                    gridSearchResult=c("unique-true", "unique-false",
+                                       "non-unique-true",
+                                       rep("non-unique-false", 3)),
                     stringsAsFactors=FALSE)
 
   expect_error(synapter:::flatMatchedEMRTs(df), ".*pep3d.* is missing")

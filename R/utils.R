@@ -520,8 +520,8 @@ getExtension <- function (filename) {
 }
 
 ## duplicate rows if the have multiple matched.quant.spectrumIDs
-## adds a columns "matchType" that could be "unique-true", "unique-false",
-## "non-unique-true", "non-unique-false"
+## adds a columns "gridSearchResult" that could be "unique-true",
+## "unique-false", "non-unique-true", "non-unique-false"
 ## please note that it would change the order of the data.frame
 flatMatchedEMRTs <- function(emrts, pep3d, na.rm=TRUE, verbose=TRUE) {
   if (verbose) {
@@ -532,13 +532,14 @@ flatMatchedEMRTs <- function(emrts, pep3d, na.rm=TRUE, verbose=TRUE) {
     emrts <- emrts[!is.na(emrts$precursor.leID.quant), ]
   }
 
-  emrts$matchType <- NA
+  emrts$gridSearchResult <- NA
 
   ## unique matches
   k1 <- which(emrts$Function == 1)
   isCorrectMatch <- as.numeric(emrts$spectrumID[k1]) ==
                       as.numeric(emrts$precursor.leID.quant[k1])
-  emrts$matchType[k1] <- ifelse(isCorrectMatch, "unique-true", "unique-false")
+  emrts$gridSearchResult[k1] <- ifelse(isCorrectMatch,
+                                       "unique-true", "unique-false")
   emrts$matched.quant.spectrumIDs[k1] <- emrts$spectrumID[k1]
 
   ## non-unique matches
@@ -553,9 +554,9 @@ flatMatchedEMRTs <- function(emrts, pep3d, na.rm=TRUE, verbose=TRUE) {
     ## update spectrumID
     curRow$spectrumID <- curRow$matched.quant.spectrumIDs
 
-    curRow$matchType <- ifelse(mIds[[j]] %in%
-                                as.numeric(curRow$precursor.leID.quant),
-                                "non-unique-true", "non-unique-false")
+    curRow$gridSearchResult <- ifelse(mIds[[j]] %in%
+                                      as.numeric(curRow$precursor.leID.quant),
+                                      "non-unique-true", "non-unique-false")
     return(curRow)
   })
 

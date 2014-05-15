@@ -4,8 +4,8 @@
 #' @noRd
 .groundTruthIndices <- function(cx) {
   ## select "ground-truth"
-  trueIdx <- grep("true", cx$matchType)
-  falseIdx <- grep("false", cx$matchType)
+  trueIdx <- grep("true", cx$gridSearchResult)
+  falseIdx <- grep("false", cx$gridSearchResult)
 
   n <- min(c(length(trueIdx), length(falseIdx)))
 
@@ -20,7 +20,7 @@
 }
 
 #' @param d ionmobility difference
-#' @param label TRUE/FALSE matchType
+#' @param label TRUE/FALSE gridSearchResult
 #' @param thresholds
 #' @return matrix with cols tp, fp, tn, fn
 #' @noRd
@@ -43,7 +43,7 @@
 }
 
 #' @param d ionmobility difference
-#' @param label TRUE/FALSE matchType
+#' @param label TRUE/FALSE gridSearchResult
 #' @param thresholds
 #' @return matrix with cols tp, fp, tn, fn
 #' @noRd
@@ -107,8 +107,8 @@
   legend("right", legend=c("TP", "FP", "TN", "FN"),
          col=1:4, lwd=1, pch=19, bty="n")
 
-  trueIdx <- grep("true", emrts$matchType)
-  falseIdx <- grep("false", emrts$matchType)
+  trueIdx <- grep("true", emrts$gridSearchResult)
+  falseIdx <- grep("false", emrts$gridSearchResult)
 
   l <- list()
 

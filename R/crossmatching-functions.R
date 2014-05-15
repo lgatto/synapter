@@ -51,7 +51,7 @@
 #' sequences for both spectra
 #' @param common list (length==2), containing logical vector for common peaks
 #' @param fragments list (length==2), containing fragments data.frames
-#' @param matchType character
+#' @param gridSearchResult character
 #' @param fragments.cex cex for fragments
 #' @param legend.cex cex for legend
 #' @param ... passed to MSnbase:::.plotSingleSpectrum
@@ -60,7 +60,7 @@
                                     sequences,
                                     common,
                                     fragments=vector(mode="list", length=2),
-                                    matchType,
+                                    gridSearchResult,
                                     xlim, ylim,
                                     legend.cex=1, ...) {
   if (missing(sequences)) {
@@ -94,7 +94,7 @@
       label <- paste0(label, ", prec mass: ", round(precursorMz(spectra[[i]]), 3),
                              ", prec z: ", precursorCharge(spectra[[i]]),
                              ", # common: ", sum(common[[i]]),
-                             ", match: ", matchType)
+                             ", match: ", gridSearchResult)
       if (nchar(sequences[[i]])) {
         label <- paste0(label, ",\nseq: ", sequences[[i]])
       }
@@ -112,7 +112,7 @@
 #' @param tolerance double, allowed deviation to consider a m/z as equal
 #' @param verbose verbose output?
 #' @return data.frame, extend/flatted matchedEmrts df with additional columns:
-#' matchType,
+#' gridSearchResult,
 #' spectrum.identXfragments.ident, spectrum.quantXfragments.quant,
 #' spectrum.identXfragments.quant, spectrum.quantXfragments.ident
 #' sorry for the names
@@ -171,7 +171,7 @@ crossmatching <- function(flatEmrts, spectra, tolerance=25e-6, verbose=TRUE) {
 .crossMatchingDifferences <- function(cx,
                                       mcol="spectrum.quantXfragments.ident") {
   # use only non-unique matches
-  idx <- grep("^non-unique", cx$matchType)
+  idx <- grep("^non-unique", cx$gridSearchResult)
 
   dcol <- paste0(mcol, ".diff")
   rcol <- paste0(mcol, ".rank")
@@ -267,7 +267,7 @@ crossmatching <- function(flatEmrts, spectra, tolerance=25e-6, verbose=TRUE) {
   .plotSpectraVsFragments(spectra=.getSpectra(keys, spectralist=spectra),
                           sequences=sequences,
                           fragments=fragments,
-                          matchType=cxrow$matchType,
+                          gridSearchResult=cxrow$gridSearchResult,
                           legend.cex=legend.cex,
                           fragments.cex=fragments.cex,
                           ...)
@@ -313,7 +313,7 @@ crossmatching <- function(flatEmrts, spectra, tolerance=25e-6, verbose=TRUE) {
                                           mcol) {
   what <- match.arg(what)
 
-  cx <- cx[grep(paste0("^", what), cx$matchType), ]
+  cx <- cx[grep(paste0("^", what), cx$gridSearchResult), ]
 
   rcol <- paste0(mcol, ".rank")
 
@@ -324,7 +324,7 @@ crossmatching <- function(flatEmrts, spectra, tolerance=25e-6, verbose=TRUE) {
   }
 
   train <- tapply(1:nrow(cx), cx$precursor.leID.ident, function(i) {
-    ytrain <- any(grepl("true$", cx$matchType[i]) & cx[i, rcol] == 1)
+    ytrain <- any(grepl("true$", cx$gridSearchResult[i]) & cx[i, rcol] == 1)
     xtrain <- cx[i[which.min(cx[i, rcol])], mcol]
     cbind(xtrain, ytrain)
   }, simplify=FALSE)
