@@ -182,9 +182,9 @@ crossmatching <- function(flatEmrts, spectra, tolerance=25e-6, verbose=TRUE) {
   cx[idx, c(dcol, rcol)] <- ave(cx[idx, c("precursor.leID.quant", mcol)],
                                 cx$precursor.leID.ident[idx],
                                 FUN=function(x) {
-    sorted <- sort(x[, 2], decreasing=TRUE, index.return=TRUE)
-    r <- sorted$ix
-    d <- diff(sorted$x[2:1])
+    sorted <- sort(x[, 2], decreasing=TRUE)
+    r <- rank(-x[,2])
+    d <- diff(sorted[2:1])
     cbind(d, r)
   })
 
