@@ -372,6 +372,11 @@ crossmatching <- function(flatEmrts, spectra, tolerance=25e-6, verbose=TRUE) {
   emrts <- obj$MatchedEMRTs
   cx <- obj$CrossMatching
 
+  if ("Function.1" %in% colnames(emrts)) {
+    warning("This function should not used multiple times. It removes your ",
+            "original ", sQuote("Function"), " column.", immediate.=TRUE)
+  }
+
   cx <- cx[cx$precursor.leID.ident %in% emrts$precursor.leID.ident &
            cx$Function == 1, ]
 
@@ -409,6 +414,11 @@ crossmatching <- function(flatEmrts, spectra, tolerance=25e-6, verbose=TRUE) {
                                     mcol="spectrum.quantXfragments.ident") {
   emrts <- obj$MatchedEMRTs
   cx <- obj$CrossMatching
+
+  if ("Function.2" %in% colnames(emrts)) {
+    warning("This function should not used multiple times. It removes your ",
+            "original ", sQuote("Function"), " column.", immediate.=TRUE)
+  }
 
   rcol <- paste0(mcol, ".rank")
   mcol <- paste0(mcol, ".diff")
