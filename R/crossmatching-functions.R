@@ -392,8 +392,8 @@ crossmatching <- function(flatEmrts, spectra, tolerance=25e-6, verbose=TRUE) {
   if (length(exclude)) {
     # comment the next line and uncomment the over next line to *not* remove the
     # filtered emrts
-    emrts <- emrts[-exclude, ]
-    #emrts$Function[exclude] <-  -1
+    #emrts <- emrts[-exclude, ]
+    emrts$Function[exclude] <-  -1
   }
   return(emrts)
 }
@@ -414,9 +414,9 @@ crossmatching <- function(flatEmrts, spectra, tolerance=25e-6, verbose=TRUE) {
   mcol <- paste0(mcol, ".diff")
 
   cx <- cx[cx$precursor.leID.ident %in% emrts$precursor.leID.ident &
-           cx$Function > 1 & cx[, rcol] == 1, ]
+           cx$Function > 1, ]
 
-  keep <- cx[, mcol] >= mindelta
+  keep <- cx[, mcol] >= mindelta & cx[, rcol] == 1
 
   if (!any(keep)) {
     stop("No EMRT match your criteria! Try a lower threshold")
@@ -435,8 +435,8 @@ crossmatching <- function(flatEmrts, spectra, tolerance=25e-6, verbose=TRUE) {
     emrts[rows, cols] <- cx[, cols]
     # comment the next line and uncomment the over next line to *not* remove the
     # filtered emrts
-    emrts <- emrts[-exclude, ]
-    #emrts$Function[exclude] <- -1
+    #emrts <- emrts[-exclude, ]
+    emrts$Function[exclude] <- -2
   }
   return(emrts)
 }
