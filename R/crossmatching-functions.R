@@ -310,17 +310,25 @@ crossmatching <- function(flatEmrts, spectra, tolerance=25e-6, verbose=TRUE) {
                                           mcol) {
   what <- match.arg(what)
 
-  if (what == "non-unique") {
-    rcol <- paste0(mcol, ".rank")
+  cx <- cx[grep(paste0("^", what), cx$matchType), ]
+
+  rcol <- paste0(mcol, ".rank")
+
+  if (what == "unique") {
+    cx[, rcol] <- 1
+  } else {
     mcol <- paste0(mcol, ".diff")
-    cx <- cx[cx[, rcol] == 1, ]
   }
 
-  trueIdx <- grep(paste0("^", what, "-true"), cx$matchType)
-  falseIdx <- grep(paste0("^", what, "-false"), cx$matchType)
+  train <- tapply(1:nrow(cx), cx$precursor.leID.ident, function(i) {
+    ytrain <- any(grepl("true$", cx$matchType[i]) & cx[i, rcol] == 1)
+    xtrain <- cx[i[which.min(cx[i, rcol])], mcol]
+    cbind(xtrain, ytrain)
+  }, simplify=FALSE)
+  train <- do.call(rbind, train)
+  xtrain <- train[, 1]
+  ytrain <- train[, 2]
 
-  ytrain <- rep(c(TRUE, FALSE), c(length(trueIdx), length(falseIdx)))
-  xtrain <- c(cx[trueIdx, mcol], cx[falseIdx, mcol])
   thresholds <- 0:max(xtrain, na.rm=TRUE)
 
   confusion <- t(sapply(thresholds, function(th) {
