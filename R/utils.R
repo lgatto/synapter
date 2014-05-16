@@ -181,6 +181,9 @@ findMzIndices <- function(pep3dMz, hdmseMz, rtIndices, ppmthreshold) {
 }
 
 findImIndices <- function(pep3dIm, hdmseIm, mzIndices, imthreshold) {
+  if (imthreshold == Inf) {
+    return(mzIndices)
+  }
   stopifnot(length(mzIndices) == length(hdmseIm))
   mapply(function(mzIdx, im) {
     mzIdx[which( abs(pep3dIm[mzIdx] - im) < imthreshold )]
@@ -422,6 +425,7 @@ gridSearch3 <- function(model,
                              ppms[j])
       for (k in 1:o) {
         ._k <- ._k + 1L
+
         matches <- findImIndices(sortedPep3d$clust_drift,
                                  identpep$precursor.Mobility, mzIdx,
                                  imdiffs[k])
