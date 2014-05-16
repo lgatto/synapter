@@ -187,22 +187,6 @@ findImIndices <- function(pep3dIm, hdmseIm, mzIndices, imthreshold) {
   }, mzIdx=mzIndices, im=hdmseIm, SIMPLIFY=FALSE, USE.NAMES=FALSE)
 }
 
-## TODO: replaced by findMzIndices; remove this function when gridSearch2 is
-## removed
-findMSeEMRTMatches <- function(observedMass,
-                               hdmseMass,
-                               rtIndices,
-                               ppmthreshold) {
-  n <- length(hdmseMass)
-  stopifnot(nrow(rtIndices) == n)
-
-  res <- apply(cbind(rtIndices, hdmseMass), 1, function(x) {
-    selPpm <- which((abs(error.ppm(obs = observedMass[x[1]:x[2]] ,
-                                   theo = x[3])) < ppmthreshold))
-    (x[1]:x[2])[selPpm]
-  })
-}
-
 calculateGridPerformance <- function(identpep, sortedPep3d, mergedpep, matches) {
   ## Those that match *1* spectumIDs will be transferred
   ## BUT there is no guarantee that with *1* unique match,
@@ -395,66 +379,6 @@ lightMatchedEMRTs <- function(x) {
             "ion_area",
             "ion_counts")
   return(x[,cols])
-}
-
-## TODO: replaced by gridSearch3
-gridSearch2 <- function(model,
-                        identpep,
-                        pep3d,
-                        mergedPeptides,
-                        ppms,
-                        nsds,
-                        verbose = TRUE) {
-  ## As initial gridSearch, but now returns a list
-  ## with two grids; first one as before, percent of
-  ## uniquely matched features; second is percent of
-  ## correctly assigned features (based on marged feautres
-  ## used to model rt).
-  ##
-  n <- length(nsds)
-  m <- length(ppms)
-  grd1 <- grd2 <- outer(nsds, ppms)
-  N <- n*m
-  details <- vector("list", length=N)
-
-  ._k <- 0
-  if (verbose) {
-    pb <- txtProgressBar(min=0, max=N, style=3)
-  }
-
-  sortedPep3d <- pep3d[order(pep3d$rt_min),]
-
-  for (i in 1:n) {
-    hdmseData <- doHDMSePredictions(identpep, model, nsds[i])
-    rtIdx <- findRtIndices(sortedPep3d, hdmseData$lower, hdmseData$upper)
-
-    for (j in 1:m) {
-      ._k <- ._k + 1
-      matches <- findMSeEMRTMatches(sortedPep3d$mwHPlus,
-                                    hdmseData$mass,
-                                    rtIdx,
-                                    ppms[j])
-
-      gridDetails <- calculateGridPerformance(identpep, sortedPep3d, mergedPeptides, matches)
-      grd1[i, j] <- gridDetails$grd1
-      grd2[i, j] <- gridDetails$grd2
-      details[[._k]] <- gridDetails$details
-
-      if (verbose) {
-        setTxtProgressBar(pb, ._k)
-      }
-    }
-  }
-  if (verbose) {
-    close(pb)
-  }
-  nms <- paste(rep(nsds, each = m) ,
-               rep(ppms, n),
-               sep=":")
-  names(details) <- nms
-  return(list(prcntTotal = grd1,
-              prcntModel = grd2,
-              details = details))
 }
 
 gridSearch3 <- function(model,
