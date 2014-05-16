@@ -473,7 +473,8 @@ gridSearch3 <- function(model,
   n <- length(nsds)
   m <- length(ppms)
   o <- length(imdiffs)
-  grd1 <- grd2 <- array(NA_integer_, dim=c(n, m, o))
+  grd1 <- grd2 <- array(NA_integer_, dim=c(n, m, o),
+                        dimnames=list(nsds, ppms, imdiffs))
   N <- n*m*o
   details <- vector("list", length=N)
 
