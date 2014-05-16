@@ -390,11 +390,17 @@
                             warning("Retention time tolerance for EMRT matching undefined. Setting to default value.")
                             .self$setRtNsd()
                         }
+                        if (length(.self$ImDiff) == 0) {
+                            warning("Ion mobility difference for EMRT matching undefined. Setting to default value.")
+                            .self$setImDiff()
+                        }
+
                         .self$MatchedEMRTs <- findMSeEMRTs(.self$IdentPeptideData,
                                                            .self$QuantPep3DData,
                                                            .self$MergedFeatures,
                                                            .self$RtNsd,
                                                            .self$PpmError,
+                                                           .self$ImDiff,
                                                            .self$RtModel,
                                                            mergedEMRTs)
                         .self$SynapterLog <- c(.self$SynapterLog,

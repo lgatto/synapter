@@ -109,13 +109,15 @@ setMethod(modelRt, "Synapter",
           })
 
 setMethod(findEMRTs, "Synapter",
-          function(object, ppm, nsd,
+          function(object, ppm, nsd, imdiff,
                    mergedEMRTs = c("rescue", "copy", "transfer")) {
             mergedEMRTs <- match.arg(mergedEMRTs)
             if (!missing(ppm))
               object$setPpmError(ppm)
             if (!missing(nsd))
               object$setRtNsd(nsd)
+            if (!missing(imdiff))
+              object$setImDiff(imdiff)
             object$findEMRTs(mergedEMRTs)
           })
 

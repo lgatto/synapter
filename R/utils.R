@@ -262,6 +262,7 @@ findMSeEMRTs <- function(identpep,
                          mergedpep,
                          nsd,
                          ppmthreshold,
+                         imdiff,
                          model,
                          mergedEMRTs) {
   sortedPep3d <- pep3d
@@ -269,8 +270,11 @@ findMSeEMRTs <- function(identpep,
 
   hdmseData <- doHDMSePredictions(identpep, model, nsd)
   rtIdx <- findRtIndices(sortedPep3d, hdmseData$lower, hdmseData$upper)
-  res <- findMSeEMRTMatches(sortedPep3d$mwHPlus, hdmseData$mass, rtIdx,
-                            ppmthreshold)
+  mzIdx <- findMzIndices(sortedPep3d$mwHPlus, hdmseData$mass, rtIdx,
+                         ppmthreshold)
+  res <- findImIndices(sortedPep3d$clust_drift, identpep$precursor.Mobility,
+                       mzIdx, imdiff)
+
   k <- sapply(res, length)
 
   ## Those that match *1* spectumIDs will be transferred
