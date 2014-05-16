@@ -630,7 +630,8 @@ setMethod(plotRtDiffs, "Synapter",
           })
 
 setMethod(plotGrid, "Synapter",
-          function(object, what = c("total", "model", "details")) {
+          function(object, what = c("total", "model", "details"),
+                   maindim = c("im", "rt", "mz")) {
             ## Plots the grid search results.
             if ( length(object$Grid) == 0 )
               stop("No grid search result to plot.")
@@ -645,7 +646,22 @@ setMethod(plotGrid, "Synapter",
               grd <- object$Grid[[3]]
               main <- "Percentage of correct unique assignments."
             }
-            p <- levelplot(grd, xlab = "nsd", ylab = "ppm", main = main)
+
+            maindim <- match.arg(maindim)
+            if (maindim == "im") {
+              xlab <- "nsd"
+              ylab <- "ppm"
+            } else if (maindim == "rt") {
+              grd <- aperm(grd, c(2, 3, 1))
+              xlab <- "ppm"
+              ylab <- "imdiff"
+            } else {
+              grd <- aperm(grd, c(1, 3, 2))
+              xlab <- "nsd"
+              ylab <- "imdiff"
+            }
+
+            p <- levelplot(grd, xlab = xlab, ylab = ylab, main = main)
             print(p)
             invisible(p)
           })
