@@ -549,7 +549,7 @@
                          return(ans)
                        },
                        setBestGridParams = function(what) {
-                         'Sets best grid search (ppm, nsd) pair.'
+                         'Sets best grid search (ppm, nsd, imdiff) tripple.'
                          i <- 1 ## take first parameter pair by default
                          if (what == "auto") {
                            x <- .self$getBestGridParams()[["prcntModel"]]
@@ -557,17 +557,21 @@
                              y <- .self$getBestGridParams()[["details"]]
                              ppm_i <- x[, "ppm"] %in% y[, "ppm"]
                              nsd_i <- x[, "nsd"] %in% y[, "nsd"]
-                             if (any(ppm_i & nsd_i)) {
+                             imdiff_i <- x[, "imdiff"] %in% y[, "imdiff"]
+                             if (any(ppm_i & nsd_i & imdiff_i)) {
                                ## (1) first ppm and nsd match
-                               i <- which(ppm_i & nsd_i)[1]
+                               i <- which(ppm_i & nsd_i & imdiff_i)[1]
                              } else if (any(ppm_i)) {
                                ## (2) first ppm match
                                i <- which(ppm_i)[1]
-                             } else if (any(ppm_i)) {
-                               ## (2) first nsd match
+                             } else if (any(nsd_i)) {
+                               ## (3) first nsd match
                                i <- which(nsd_i)[1]
+                             } else if (any(imdiff_i)) {
+                               ## (4) first imdiff match
+                               i <- which(imdiff_i)[1]
                              }
-                             ## else (4) no match - taking first one
+                             ## else (5) no match - taking first one
                            }
                          } else {
                            x <- switch(what,
@@ -577,10 +581,11 @@
                          }
                          .self$RtNsd <- x[i,"nsd"]
                          .self$PpmError <- x[i,"ppm"]
+                         .self$ImDiff <- x[i,"imdiff"]
                          .self$SynapterLog <- c(.self$SynapterLog,
-                                                paste("Set 'nsd' and 'ppm error' to ",
-                                                      .self$RtNsd, " and ", .self$PpmError,
-                                                      " (best '", what, "')", sep=""))
+                                                paste0("Set 'nsd', 'ppm error' and 'im diff' to ",
+                                                       .self$RtNsd, ", ", .self$PpmError, " and ",
+                                                       .self$ImDiff, " (best '", what, "')"))
                        }))
 
 ## Setters
