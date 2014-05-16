@@ -172,6 +172,23 @@ findRtIndices <- function(sortedPep3d, lowerHDMSeRt, upperHDMSeRt) {
   return(cbind(lower=lowerIdx, upper=upperIdx))
 }
 
+findMzIndices <- function(pep3dMz, hdmseMz, rtIndices, ppmthreshold) {
+  stopifnot(nrow(rtIndices) == length(hdmseMz))
+  apply(cbind(rtIndices, hdmseMz), 1, function(x) {
+    (x[1]:x[2])[which((abs(error.ppm(obs=pep3dMz[x[1]:x[2]] ,
+                                     theo=x[3])) < ppmthreshold))]
+  })
+}
+
+findImIndices <- function(pep3dIm, hdmseIm, mzIndices, imthreshold) {
+  stopifnot(length(mzIndices) == length(hdmseIm))
+  mapply(function(mzIdx, im) {
+    mzIdx[which( abs(pep3dIm[mzIdx] - im) < imthreshold )]
+  }, mzIdx=mzIndices, im=hdmseIm, SIMPLIFY=FALSE, USE.NAMES=FALSE)
+}
+
+## TODO: replaced by findMzIndices; remove this function when gridSearch2 is
+## removed
 findMSeEMRTMatches <- function(observedMass,
                                hdmseMass,
                                rtIndices,
@@ -233,7 +250,11 @@ calculateGridPerformance <- function(identpep, sortedPep3d, mergedpep, matches) 
   ## tabulate needs positive integer values
   details <- setNames(tabulate(1-min(details)+details), sort(unique(details)))
 
-  return(list(grd1=grd1, grd2=grd2, details=details))
+  ## make sure that we have alway 5 categories
+  grddetails <- c("-2"=0, "-1"=0, "0"=0, "1"=0, "2"=0)
+  grddetails[names(details)] <- details
+
+  return(list(grd1=grd1, grd2=grd2, details=grddetails))
 }
 
 findMSeEMRTs <- function(identpep,
@@ -425,6 +446,71 @@ gridSearch2 <- function(model,
   }
   nms <- paste(rep(nsds, each = m) ,
                rep(ppms, n),
+               sep=":")
+  names(details) <- nms
+  return(list(prcntTotal = grd1,
+              prcntModel = grd2,
+              details = details))
+}
+
+gridSearch3 <- function(model,
+                        identpep,
+                        pep3d,
+                        mergedPeptides,
+                        ppms,
+                        nsds,
+                        imdiffs,
+                        verbose = TRUE) {
+  ## As initial gridSearch, but now returns a list
+  ## with two grids; first one as before, percent of
+  ## uniquely matched features; second is percent of
+  ## correctly assigned features (based on merged features
+  ## used to model rt).
+  ##
+  n <- length(nsds)
+  m <- length(ppms)
+  o <- length(imdiffs)
+  grd1 <- grd2 <- array(NA_integer_, dim=c(n, m, o))
+  N <- n*m*o
+  details <- vector("list", length=N)
+
+  ._k <- 0
+  if (verbose) {
+    pb <- txtProgressBar(min=0, max=N, style=3)
+  }
+
+  sortedPep3d <- pep3d[order(pep3d$rt_min),]
+
+  for (i in 1:n) {
+    hdmseData <- doHDMSePredictions(identpep, model, nsds[i])
+    rtIdx <- findRtIndices(sortedPep3d, hdmseData$lower, hdmseData$upper)
+
+    for (j in 1:m) {
+      mzIdx <- findMzIndices(sortedPep3d$mwHPlus, hdmseData$mass, rtIdx,
+                             ppms[j])
+      for (k in 1:o) {
+        ._k <- ._k + 1L
+        matches <- findImIndices(sortedPep3d$clust_drift,
+                                 identpep$precursor.Mobility, mzIdx,
+                                 imdiffs[k])
+        gridDetails <- calculateGridPerformance(identpep, sortedPep3d,
+                                                mergedPeptides, matches)
+        grd1[i, j, k] <- gridDetails$grd1
+        grd2[i, j, k] <- gridDetails$grd2
+        details[[._k]] <- gridDetails$details
+      }
+
+      if (verbose) {
+        setTxtProgressBar(pb, ._k)
+      }
+    }
+  }
+  if (verbose) {
+    close(pb)
+  }
+  nms <- paste(rep(nsds, each = m*o) ,
+               replicate(n, rep(ppms, each = o)),
+               rep(imdiffs, m*n),
                sep=":")
   names(details) <- nms
   return(list(prcntTotal = grd1,
