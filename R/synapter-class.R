@@ -526,17 +526,21 @@
                          return(ans)
                        },
                        getBestGridParams = function() {
-                         'Retrieves the best grid search (ppm, nsd) pair(s).'
+                         'Retrieves the best grid search (ppm, nsd, imdiff) tripple(s).'
                          if ( length(.self$Grid) == 0 )
                            stop("No grid search result found.")
                          .getBestParams <- function(x) {
                            k <- arrayInd(which( x == max(x) ),
                                          dim(x),
                                          useNames = TRUE)
+                           .dn <- dimnames(x)
                            k <- apply(k, 1,
-                                      function(i)
-                                      as.numeric(c(colnames(x)[i["col"]], rownames(x)[i["row"]])))
-                           rownames(k) <- c("ppm", "nsd")
+                                      function(i) {
+                                      as.numeric(c(.dn[[1]][i[1]],
+                                                   .dn[[2]][i[2]],
+                                                   .dn[[3]][i[3]]))
+                                      })
+                           rownames(k) <- c("ppm", "nsd", "imdiff")
                            return(t(k))
                          }
                          ans <- lapply(.self$Grid, .getBestParams)
