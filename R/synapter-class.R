@@ -548,7 +548,7 @@
                                                    .dn[[2]][i[2]],
                                                    .dn[[3]][i[3]]))
                                       })
-                           rownames(k) <- c("ppm", "nsd", "imdiff")
+                           rownames(k) <- c("nsd", "ppm", "imdiff")
                            return(t(k))
                          }
                          ans <- lapply(.self$Grid, .getBestParams)
