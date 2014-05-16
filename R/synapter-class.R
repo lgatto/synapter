@@ -34,6 +34,7 @@
                     ## matching EMRTs
                     PpmError = "numeric",
                     RtNsd = "numeric",
+                    ImDiff = "numeric",
                     MatchedEMRTs = "data.frame",
                     ## cross matching stuff
                     QuantSpectrumFile = "character",
@@ -453,6 +454,7 @@
                        searchGrid = function(ppms, nsds, imdiffs, subset, n,
                                              verbose = TRUE) {
                          'Performs a grid search in ppm x nsd x imdiff space.'
+                         .self <- updateSynapterObject(.self)
                          .IdentPeptideData <- .self$IdentPeptideData
                          if (!missing(subset)) {
                            if (subset < 1) {
