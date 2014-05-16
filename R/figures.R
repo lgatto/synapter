@@ -170,8 +170,13 @@ plot.some.features <- function(xx,
          bty = "n")
 }
 
-plot.all.features <- function(xx, mse) {
-  par(mfrow=c(1,3))
+plot.all.features <- function(xx, mse, ionmobility=FALSE) {
+  if (ionmobility) {
+    par(mfrow=c(2, 3))
+  } else {
+    par(mfrow=c(1, 3))
+  }
+  ## rt vs mz
   ylim <- range(range(xx$peptide.mhp.ident),
                 range(xx$peptide.mhp.quant),
                 range(mse$mwHPlus))
@@ -196,6 +201,34 @@ plot.all.features <- function(xx, mse) {
        xlab = "retention time", ylab = "precursor mass",
        main = "Quantitation Pep3D")
   grid()
+
+  ## mz vs im
+  if (ionmobility) {
+    ylim <- range(range(xx$precursor.Mobility.ident),
+                  range(xx$precursor.Mobility.quant),
+                  range(mse$clust_drift))
+    xlim <- range(range(xx$peptide.mhp.ident),
+                  range(xx$peptide.mhp.quant),
+                  range(mse$mwHPlus))
+    plot(xx$peptide.mhp.ident, xx$precursor.Mobility.ident,
+         col = "#00000020",
+         pch = 19, xlim = xlim, ylim = ylim,
+         xlab = "precursor mass", ylab = "ion mobility",
+         main = "Identification final peptide")
+    grid()
+    plot(xx$peptide.mhp.quant, xx$precursor.Mobility.quant,
+         col = "#00000020",
+         pch = 19, xlim = xlim, ylim = ylim,
+         xlab = "precursor mass", ylab = "ion mobility",
+         main = "Quantitation final peptide")
+    grid()
+    plot(mse$mwHPlus, mse$clust_drift,
+         col = "#00000005",
+         pch = 19, xlim = xlim, ylim = ylim,
+         xlab = "precursor mass", ylab = "ion mobility",
+         main = "Quantitation Pep3D")
+    grid()
+  }
   par(mfrow=c(1,1))
 }
 

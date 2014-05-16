@@ -504,12 +504,14 @@ setMethod(plotFeatures, "Synapter",
           function(object,
                    what = c("all", "some"),
                    xlim = c(40, 60),
-                   ylim = c(1160, 1165)) {
+                   ylim = c(1160, 1165),
+                   ionmobility = FALSE) {
             what <- match.arg(what)
             switch(what,
                    all = plot.all.features(
                      object$MergedFeatures,
-                     object$QuantPep3DData),
+                     object$QuantPep3DData,
+                     ionmobility=ionmobility),
                    some = {
                      if (length(object$PpmError) == 0) {
                        warning("Ppm error for EMRTs matching is not set. Using default value.")
