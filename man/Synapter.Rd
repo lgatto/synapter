@@ -57,6 +57,10 @@
 \alias{setRtNsd}
 \alias{getRtNsd,Synapter-method}
 \alias{getRtNsd}
+\alias{setImDiff,Synapter-method}
+\alias{setImDiff}
+\alias{getImDiff,Synapter-method}
+\alias{getImDiff}
 \alias{getPpmErrorQs,Synapter-method}
 \alias{getPpmErrorQs}
 \alias{getRtQs,Synapter-method}
@@ -344,8 +348,8 @@ Synapter(filenames, master) ## creates an instance of class 'Synapter'
     further details).
 
     The parameters used for matching can be set manually with
-    \code{setPpmError} and \code{setRtNsd} respectively, or using
-    \code{setBestGridParams} to apply best parameters as defined using
+    \code{setPpmError}, \code{setRtNsd}, \code{setImDiff} respectively,
+    or using \code{setBestGridParams} to apply best parameters as defined using
     the grid search. See example and method documentation for details.
   }
 
@@ -449,15 +453,16 @@ Synapter(filenames, master) ## creates an instance of class 'Synapter'
       }
 
       \item{findEMRTs}{\code{signature(object = "Synapter", ppm =
-	  "numeric", nsd = "numeric", mergedEMRTs = c("rescue", "copy",
-	  "transfer"))}:
+	  "numeric", nsd = "numeric", imdiff = "numeric",
+    mergedEMRTs = c("rescue", "copy", "transfer"))}:
 	Finds EMRTs matching identification peptides using \code{ppm}
-	mass tolerance and \code{nsd} number of retention time standard
-	deviations. The last two parameters are optional if previously
-	set with \code{setPpmError} and \code{setRtNsd} or, better,
-	\code{setBestGridParams} (see below). The \code{mergedEMRTs}
-	parameter defined the behaviour for those high confidence
-	features that where identified in both identification and
+	mass tolerance, \code{nsd} number of retention time standard
+	deviations and \code{imdiff} difference in ion mobility.
+  The last three parameters are optional if previously
+	set with \code{setPpmError}, \code{setRtNsd}, \code{setImDiff},
+  or, better, \code{setBestGridParams} (see below).
+  The \code{mergedEMRTs} parameter defined the behaviour for those
+  high confidence features that where identified in both identification and
 	quantitation acquisitions and used for the retention time model
 	(see \code{mergePeptides}). Prior to version 1.1.1, these
 	features were transferred from the quantitation pep3d file if
@@ -607,6 +612,15 @@ Synapter(filenames, master) ## creates an instance of class 'Synapter'
 
       \item{getRtNsd}{\code{signature(object="Synapter")}: Returns the
 	value of the retention time tolerance \code{nsd}.
+      }
+
+      \item{setImDiff}{\code{signature(object="Synapter", imdiff =
+	  "numeric")}: Sets the ion mobility tolerance \code{imdiff},
+	default is 0.5.
+      }
+
+      \item{getImDiff}{\code{signature(object="Synapter")}: Returns the
+	value of the ion mobility tolerance \code{imdiff}.
       }
 
       \item{getPpmErrorQs}{\code{signature(object="Synapter", qs =
