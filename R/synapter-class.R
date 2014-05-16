@@ -450,8 +450,9 @@
 ## Grid search
 .Synapter$methods(
                   list(
-                       searchGrid = function(ppms, nsds, subset, n, verbose = TRUE) {
-                         'Performs a grid search in ppm x nsd space.'
+                       searchGrid = function(ppms, nsds, imdiffs, subset, n,
+                                             verbose = TRUE) {
+                         'Performs a grid search in ppm x nsd x imdiff space.'
                          .IdentPeptideData <- .self$IdentPeptideData
                          if (!missing(subset)) {
                            if (subset < 1) {
@@ -478,36 +479,44 @@
                            .log <- paste0("Performed grid search using ",
                                           n, " identification peptides.")
                          }
-                         .grid <- gridSearch2(.self$RtModel,
+
+                         ## test for ion mobility
+                         if (!"precursor.Mobility" %in% colnames(.self$IdentPeptideData) ||
+                             !"clust_drift" %in% colnames(.self$QuantPep3DData)) {
+                           warning("No ion mobility available. ",
+                                   "Step back to 2D grid search.", immediate.=TRUE)
+                           ## by setting imdiffs to Inf we disable the 3D grid
+                           ## search
+                           imdiffs <- Inf
+                         }
+
+                         .grid <- gridSearch3(.self$RtModel,
                                               .IdentPeptideData,
                                               .self$QuantPep3DData,
                                               .self$MergedFeatures[midx, ],
                                               ppms,
                                               nsds,
+                                              imdiffs,
                                               verbose = verbose)
                          .self$Grid <- .grid[1:2]
                          .self$GridDetails <- .grid[[3]]
                          ## generate a proper detail grid - new v 0.7.2
-                         .nc <- ncol(.grid[[1]])
-                         .nr <- nrow(.grid[[1]])
-                         .gdet <- matrix(sapply(.self$GridDetails,
-                                                function(.x) {
-                                                  .x1 <- ifelse(is.na(.x["1"]) , 0, .x["1"])
-                                                  .x2 <- ifelse(is.na(.x["-1"]), 0, .x["-1"])
-                                                  ans <- .x1/(.x1 + .x2)
-                                                  if (is.na(ans))
-                                                    ans <- 0
-                                                  return(ans)
-                                                }),
-                                         ncol = .nc,
-                                         nrow = .nr,
-                                         byrow = TRUE)
-                         rownames(.gdet) <- rownames(.grid[[1]])
-                         colnames(.gdet) <- colnames(.grid[[1]])
-                         .self$Grid[[3]] <- .gdet
+                         .nd <- dim(.grid[[1]])
+                         .dd <- do.call(rbind, .grid[[3]])
+                         .dd[is.na(.dd)] <- 0
+                         .prec <- .dd[,"1"]/(.dd[,"-1"]+.dd[,"1"])
+                         .self$Grid[[3]] <- aperm(array(.prec,
+                                                        dim=c(
+                                                          length(imdiffs),
+                                                          length(ppms),
+                                                          length(nsds)),
+                                                        dimnames=list(
+                                                          as.character(imdiffs),
+                                                          as.character(ppms),
+                                                          as.character(nsds))),
+                                                  perm=c(3, 2, 1))
                          names(.self$Grid)[3] <- "details"
-                         .self$SynapterLog <- c(.self$SynapterLog,
-                                                .log)
+                         .self$SynapterLog <- c(.self$SynapterLog, .log)
                        },
                        getBestGridValue = function() {
                          'Retieves the highest grid value.'

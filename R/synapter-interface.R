@@ -124,6 +124,7 @@ setMethod(searchGrid, "Synapter",
           function(object,
                    ppms,
                    nsds,
+                   imdiffs,
                    subset,
                    n,
                    verbose = TRUE) {
@@ -133,13 +134,20 @@ setMethod(searchGrid, "Synapter",
             if (missing(nsds))
               nsds <- seq(0.5, 5, 0.5)
             names(nsds) <- nsds
+            if (missing(imdiffs))
+              imdiffs <- seq(0.2, 2, 0.2)
             if (!missing(n) & !missing(subset))
               stop("Use either 'n' or 'subset', not both.")
             if (missing(n) & missing(subset))
               subset <- 1
             if (!missing(subset) && (subset > 1 | subset <= 0))
               subset <- 1
-            object$searchGrid(ppms, nsds, subset, n, verbose)
+            object$searchGrid(ppms = ppms,
+                              nsds = nsds,
+                              imdiffs = imdiffs,
+                              subset = subset,
+                              n = n,
+                              verbose = verbose)
           })
 
 setMethod(getGrid, "Synapter",

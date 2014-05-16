@@ -393,7 +393,7 @@ lightMatchedEMRTs <- function(x) {
   return(x[,cols])
 }
 
-
+## TODO: replaced by gridSearch3
 gridSearch2 <- function(model,
                         identpep,
                         pep3d,
@@ -467,6 +467,9 @@ gridSearch3 <- function(model,
   ## correctly assigned features (based on merged features
   ## used to model rt).
   ##
+
+  ## set imdiffs=Inf to disable 3D grid search
+
   n <- length(nsds)
   m <- length(ppms)
   o <- length(imdiffs)
