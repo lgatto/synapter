@@ -534,7 +534,7 @@
                          return(ans)
                        },
                        getBestGridParams = function() {
-                         'Retrieves the best grid search (ppm, nsd, imdiff) tripple(s).'
+                         'Retrieves the best grid search (ppm, nsd, imdiff) triple(s).'
                          if ( length(.self$Grid) == 0 )
                            stop("No grid search result found.")
                          .getBestParams <- function(x) {
@@ -555,7 +555,7 @@
                          return(ans)
                        },
                        setBestGridParams = function(what) {
-                         'Sets best grid search (ppm, nsd, imdiff) tripple.'
+                         'Sets best grid search (ppm, nsd, imdiff) triple.'
                          i <- 1 ## take first parameter pair by default
                          if (what == "auto") {
                            x <- .self$getBestGridParams()[["prcntModel"]]
