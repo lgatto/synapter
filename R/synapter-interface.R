@@ -212,6 +212,12 @@ setMethod(setPpmError, "Synapter",
 setMethod(getPpmError, "Synapter",
           function(object) object$PpmError)
 
+setMethod(setImDiff, "Synapter",
+          function(object, imdiff = 0.5) object$setImDiff(imdiff))
+
+setMethod(getImDiff, "Synapter",
+          function(object) object$ImDiff)
+
 setMethod(getPpmErrorQs, "Synapter",
           function(object,
                    qs = c(0.25, 0.5, 0.75, seq(0.9, 1, 0.01)),

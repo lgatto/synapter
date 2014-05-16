@@ -645,6 +645,12 @@
                                                       .self$RtNsd,
                                                       sep=""))
                        },
+                       setImDiff = function(imdiff = 0.5) {
+                         .self$ImDiff <- imdiff
+                         .self$SynapterLog <- c(.self$SynapterLog,
+                                                paste0("Set imdiff to ",
+                                                       .self$ImDiff))
+                       },
                        setCrossMatchingPpmTolerance = function(ppm = 25) {
                          'Sets cross matching mass error tolerance threshold.'
                          .self$CrossMatchingPpmTolerance <- ppm
