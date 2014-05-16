@@ -491,8 +491,10 @@
                          ## test for ion mobility
                          if (!"precursor.Mobility" %in% colnames(.self$IdentPeptideData) ||
                              !"clust_drift" %in% colnames(.self$QuantPep3DData)) {
-                           warning("No ion mobility available. ",
-                                   "Step back to 2D grid search.", immediate.=TRUE)
+                           if (verbose) {
+                             message("No ion mobility available. ",
+                                     "Step back to 2D grid search.")
+                           }
                            ## by setting imdiffs to Inf we disable the 3D grid
                            ## search
                            imdiffs <- Inf
