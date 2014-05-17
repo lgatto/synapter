@@ -33,48 +33,25 @@ R_HOME=	$(shell R RHOME)
 endif
 
 synapter: 
+	"$(R_HOME)/bin/R" --vanilla -e "library(knitr); knit('synapter.Rnw');"
 	"$(R_HOME)/bin/R" CMD pdflatex synapter.tex
 	bibtex synapter
 	"$(R_HOME)/bin/R" CMD pdflatex synapter.tex
 	"$(R_HOME)/bin/R" CMD pdflatex synapter.tex
 
-synapter2: 
-	## local
-	"$(R_HOME)/bin/R" --vanilla -e "library(knitr); knit2pdf('synapter.Rnw');"
-	"$(R_HOME)/bin/R" CMD pdflatex synapter.tex
-	bibtex synapter
-	"$(R_HOME)/bin/R" CMD pdflatex synapter.tex
-	"$(R_HOME)/bin/R" CMD pdflatex synapter.tex
-
-ionmmobility: 
-	"$(R_HOME)/bin/R" CMD pdflatex ionmobility.tex
-	bibtex ionmobility
-	"$(R_HOME)/bin/R" CMD pdflatex ionmobility.tex
-	"$(R_HOME)/bin/R" CMD pdflatex ionmobility.tex
-
-ionmobility2: 
-	## local
-	"$(R_HOME)/bin/R" --vanilla -e "library(knitr); knit2pdf('ionmobility.Rnw');"
+ionmobility: 
+	"$(R_HOME)/bin/R" --vanilla -e "library(knitr); knit('ionmobility.Rnw');"
 	"$(R_HOME)/bin/R" CMD pdflatex ionmobility.tex
 	bibtex ionmobility
 	"$(R_HOME)/bin/R" CMD pdflatex ionmobility.tex
 	"$(R_HOME)/bin/R" CMD pdflatex ionmobility.tex
 
 crossmatching: 
+	"$(R_HOME)/bin/R" --vanilla -e "library(knitr); knit('crossmatching.Rnw');"
 	"$(R_HOME)/bin/R" CMD pdflatex crossmatching.tex
 	bibtex crossmatching
 	"$(R_HOME)/bin/R" CMD pdflatex crossmatching.tex
 	"$(R_HOME)/bin/R" CMD pdflatex crossmatching.tex
-
-crossmatching2: 
-	## local
-	"$(R_HOME)/bin/R" --vanilla -e "library(knitr); knit2pdf('crossmatching.Rnw');"
-	"$(R_HOME)/bin/R" CMD pdflatex crossmatching.tex
-	bibtex crossmatching
-	"$(R_HOME)/bin/R" CMD pdflatex crossmatching.tex
-	"$(R_HOME)/bin/R" CMD pdflatex crossmatching.tex
-
-
 
 clean:
 	rm -f $(LATEXFILES)
@@ -85,7 +62,7 @@ clean:
 
 clean2: 
 	make clean
-	rm -rf figures
+	rm -rf figure
 	rm -rf cache
 
 pdfclean: 

@@ -63,6 +63,9 @@
   \thanks{\email{mail@sebastiangibb.de}}
 }
 
+\author{Pavel V. Shliaha
+}
+
 \author{Laurent Gatto%
   \thanks{\email{lg390@cam.ac.uk}}
 }
@@ -153,8 +156,8 @@ data(synobj2)
 @
 
 In sections \ref{sec:synergise} and \ref{sec:spec}, we describe how
-\Robject{synobj2} was generated. The test files used this vignette can
-be downloaded from
+\Robject{synobj2} was generated. The test files used in this vignette
+can be downloaded from
 \url{http://proteome.sysbiol.cam.ac.uk/lgatto/synapter/data/}. The
 following sections then describe the new peak cross matching
 functionality.
