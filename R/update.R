@@ -11,7 +11,7 @@
 ##'     QuantSpectrumData, IdentFragmentFile, IdentFragmentData,
 ##'     QuantFragmentFile, QuantFragmentData, CrossMatching,
 ##'     and CrossMatchingTolerance fields to synapter class.}
-##'   \item{synapter 1.7.4}{
+##'   \item{synapter 1.7.2}{
 ##'     Add ImDiff field to synapter class.}
 ##' }
 ##'
@@ -29,8 +29,8 @@ updateSynapterObject <- function(obj, verbose=TRUE) {
 
   current <- as.package_version(obj$Version)
 
-  ## 1.7.4 adds ImDiff and gridSearch3
-  minimalVersion <- as.package_version("1.7.4")
+  ## 1.7.2 adds ImDiff and gridSearch3
+  minimalVersion <- as.package_version("1.7.2")
 
   isDeprecated <- current < minimalVersion
 
