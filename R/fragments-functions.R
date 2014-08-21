@@ -12,7 +12,7 @@
 #' @param verbose verbose output?
 #' @return a data.frame
 #' @noRd
-.readFragements <- function(file, removeNeutralLoss=FALSE, verbose=TRUE) {
+.readFragments <- function(file, removeNeutralLoss=FALSE, verbose=TRUE) {
   stopifnot(file.exists(file))
 
   if (verbose) {
@@ -42,8 +42,8 @@
                                    removeNeutralLoss=TRUE,
                                    removePrecursor=TRUE,
                                    tolerance=25e-6, verbose=TRUE) {
-  fragments <- .readFragements(file, removeNeutralLoss=removeNeutralLoss,
-                               verbose=verbose)
+  fragments <- .readFragments(file, removeNeutralLoss=removeNeutralLoss,
+                              verbose=verbose)
 
   assignments <- new.env(hash=TRUE, parent=emptyenv())
   idx <- split(1:nrow(fragments), f=fragments$precursor.leID)

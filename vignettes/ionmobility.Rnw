@@ -7,7 +7,7 @@
 \usepackage{amsmath,amsfonts,amssymb}
 \usepackage{tikz}
 \usepackage{hyperref}
-%\usepackage[authoryear,round]{natbib}
+\usepackage[authoryear,round]{natbib}
 \usepackage[auth-sc]{authblk}
 \usepackage{setspace}
 \onehalfspacing
@@ -59,7 +59,7 @@
 }
 
 
-\author{Sebastian Gibb
+\author{Sebastian Gibb%
   \thanks{\email{mail@sebastiangibb.de}}
 }
 
@@ -85,10 +85,10 @@
 \vskip 0.3in minus 0.1in
 \hrule
 \begin{abstract}
-  This vignette describes how to investigate the ion mobility feature of
-  HDMS$^E$ data using the \Rpackage{synapter} package. This function is still
-  work-in-progress and not exported to the user. It could change without any
-  information.
+  This vignette describes how to investigate the ion mobility feature
+  of HDMS$^E$ data using the \Rpackage{synapter} package. This
+  function is currently still work-in-progress and not exported to the
+  user and will be incorporated in a standard workflow in due time.
 \end{abstract}
 
 \textit{Keywords}: Mass Spectrometry (MS), proteomics, bioinformatics,
@@ -127,18 +127,44 @@ data(synobj2)
 
 \section{Introduction}
 
-The ion mobility is a fourth dimension present in HDMS$^E$ data. Roughly
-speaking the ion mobility is the time an ion needs to travel through a gas
-filled tube. \\
-We are developing some functions to investigate the ion mobility feature.
-Maybe we will use the ion mobility for the grid search or for filtering of
-fragments in later versions of \Rpackage{synapter}.
+This document assumes familiarity with standard \Rpackage{synapter}
+pipeline described in \cite{Bond2013} and in the package
+\textit{synapter} vignette, available
+online\footnote{\url{http://www.bioconductor.org/packages/devel/bioc/html/synapter.html}}
+and with \Rfunction{vignette("synapter", package = "synapter")}.
 
-\section{Running \Rfunction{synergise}}
+\bigskip
 
-Currently it is a requirement to run the default \Rfunction{synergise} workflow
-before using the ion mobility data.
-Please read the general \Rpackage{synapter} vignette for the general use of
+The ion mobility is a third separation dimension (after retention time
+and mass) present in HDMS$^E$ data allowing to separate and
+distinguish ions. Roughly speaking the ion mobility is the time an ion
+needs to travel through a gas filled tube. 
+
+We are developing new functionality to investigate the ion mobility
+and use ion drift times to deconvolute ions with similar masses and
+retention times.  We will incorporate the ion mobility into the grid
+search in later versions of \Rpackage{synapter}.
+
+\bigskip 
+
+The example data \Robject{synobj2} used throughout this document is
+available in the \Rpackage{synapterdata} package and can be directly
+load as follows:
+
+<<loadsynobj2, eval=FALSE>>=
+library("synapterdata")
+data(synobj2)
+@
+
+In section \ref{sec:synergise}, we describe how \Robject{synobj2} was
+generated. The test files used in this vignette can be downloaded from
+\url{http://proteome.sysbiol.cam.ac.uk/lgatto/synapter/data/}. 
+ 
+\section{Running \Rfunction{synergise}}\label{sec:synergise}
+
+Currently it is a requirement to run the default \Rfunction{synergise}
+workflow before using the ion mobility data. Please read the general
+\Rpackage{synapter} vignette for the general use of
 \Rfunction{synergise}.
 
 <<create-synobj2, cache=FALSE, eval=TRUE, echo=FALSE>>=
@@ -147,19 +173,21 @@ cat(readLines(system.file(file.path("scripts", "create_synobj2.R"),
     sep = "\n")
 @
 
+\section{Investigating ion mobility}\label{sec:ionmob}
 
-\section{Investigating ion mobility}
-
-We use the not exported function \Rfunction{.plotIonMobilitySummary} to get an
-overview about the ion mobility behaviour.
-This functions creates three plots showing the performance for filtering the
-matches between two runs via an ion mobility difference threshold.
-The left panel shows the F1-score and the FDR calculated for an equal sized
-subset of true and false matches. This subset is sampled out of all data.
-Therefore all true matches (unique true and non unique true) and all false
-matches (unique false and non unique false) are considered. If the number of
-false and positives differs the smaller number is sampled from the larger
+We use the not exported function \Rfunction{.plotIonMobilitySummary}
+to get an overview about the ion mobility behaviour.  This functions
+creates three plots showing the performance for filtering the matches
+between two runs via an ion mobility difference threshold.  The left
+panel shows the F1-score and the FDR calculated for an equal sized
+subset of true and false matches. This subset is sampled out of all
+data.  Therefore all true matches (unique true and non unique true)
+and all false matches (unique false and non unique false) are
+considered. If the number of false and positives differs the smaller
+number is sampled from the larger
 group to get equally sized groups.\\
+
+
 The panel in the middle shows the development of the true-positives,
 false-positives, true-negatives and false-negatives using an increasing
 difference in ion mobility as threshold. On the right panel boxplots for
@@ -196,8 +224,8 @@ listed below.
 toLatex(sessionInfo())
 @
 
-%\bibliographystyle{plainnat}
-%\bibliography{synapter}
+\bibliographystyle{plainnat}
+\bibliography{synapter}
 
 \end{document}
 

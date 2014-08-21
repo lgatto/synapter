@@ -1,4 +1,4 @@
-CHANGES IN VERSION 1.7.4
+CHANGES IN VERSION 1.7.2
 ------------------------
  o add 3D grid search (retention time, m/z, ion mobility); set imdiff = Inf to
    get the original 2D grid search; closes #33 [2014-05-16 Fri]
@@ -9,7 +9,7 @@ CHANGES IN VERSION 1.7.4
    dimension should be used. [2014-05-16 Fri]
  o add {set,get}ImDiff [2014-05-16 Fri]
 
- CHANGES IN VERSION 1.7.3
+CHANGES IN VERSION 1.7.1
 ------------------------
  o add createUniquePeptideDbRds (regards #55) [2014-04-29 Tue]
  o allow to use an RDS instead of a fasta file as 'Unique Peptides Database';
@@ -33,9 +33,6 @@ CHANGES IN VERSION 1.7.4
    file instead of the first instance [2014-05-13 Tue]
  o add basic vignette for the ion mobility [2014-05-14 Wed]
  o add basic vignette for the fragment matching workflow [2014-05-15 Thu]
-
-CHANGES IN VERSION 1.7.2
-------------------------
  o add loadSpectrumXmlFiles and loadFragmentCsvFiles method [2014-04-23 Wed]
  o add crossMatching, setCrossMatchingPpmTolerance and
    getCrossMatchingPpmTolerance method [2014-04-23 Wed]
@@ -46,9 +43,6 @@ CHANGES IN VERSION 1.7.2
  o add testthat to Suggests [2014-04-25 Fri]
  o add matchColumn argument to filterMatchedEMRTsByCommonPeaks and
    plotCrossMatchingSummary [2014-04-28 Mon]
-
-CHANGES IN VERSION 1.7.1
-------------------------
  o add updateSynapterObject function [2014-04-23 Wed]
  o fix retention time model calculation in plotFeatures(..., what="some")
    [2014-04-28 Mon]

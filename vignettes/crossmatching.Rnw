@@ -7,7 +7,7 @@
 \usepackage{amsmath,amsfonts,amssymb}
 \usepackage{tikz}
 \usepackage{hyperref}
-%\usepackage[authoryear,round]{natbib}
+\usepackage[authoryear,round]{natbib}
 \usepackage[auth-sc]{authblk}
 \usepackage{setspace}
 \onehalfspacing
@@ -59,7 +59,7 @@
 }
 
 
-\author{Sebastian Gibb
+\author{Sebastian Gibb%
   \thanks{\email{mail@sebastiangibb.de}}
 }
 
@@ -77,7 +77,7 @@
 
 \begin{document}
 
-\title{Fragment matching using \Rpackage{synapter} package}
+\title{Fragment matching using the \Rpackage{synapter} package}
 
 \maketitle
 
@@ -86,9 +86,9 @@
 \hrule
 \begin{abstract}
   This vignette describes how to apply fragment matching to
-  MS$^E$/HDMS$^E$ data using the \Rpackage{synapter}. The fragment matching
-  feature allows you to rescue many non unique matches and to get rid of false
-  assigned unique matches as well.
+  MS$^E$/HDMS$^E$ data using the \Rpackage{synapter} package. The
+  fragment matching feature allows one to rescue non unique matches
+  and remove falsely assigned unique matches as well. 
 \end{abstract}
 
 \textit{Keywords}: Mass Spectrometry (MS), proteomics, bioinformatics,
@@ -103,6 +103,8 @@ independent acquisition, spectra similarity, fragment matching.
 \newpage
 
 \tableofcontents
+
+\newpage
 
 <<knitr, include=FALSE, cache=FALSE>>=
 library(knitr)
@@ -119,27 +121,52 @@ options(replace.assign = TRUE,
 @
 
 <<setup, echo=FALSE>>=
+library(xtable)
 suppressPackageStartupMessages(library(synapter))
 library(synapterdata)
-library(xtable)
 data(synobj2)
 @
 
 \section{Introduction}
 
-In this vignette we introduce the new fragment matching feature. This feature
-improves the matching of the identification and the quantitation run. After
-applying the usual \Rfunction{synergise} workflow you may end up with more or
-less unique matches and a few false unique matches. The fragment matching
-procedure allows you to remove false unique matches and increase the number of
-unique true matches by resolving most of the non unique match situations.
+This document assumes familiarity with standard \Rpackage{synapter}
+pipeline described in \cite{Bond2013} and in the package
+\textit{synapter} vignette, available
+online\footnote{\url{http://www.bioconductor.org/packages/devel/bioc/html/synapter.html}}
+and with \Rfunction{vignette("synapter", package = "synapter")}.
 
-\section{Running \Rfunction{synergise}}
+\bigskip
 
-You have to run the \Rfunction{synergize} workflow before you could
-apply the fragment matching.
-Please read the general \Rpackage{synapter} vignette for the general use of
-\Rfunction{synergise}.
+In this vignette we introduce a new fragment matching feature (see
+figures \ref{fig:xm1}, \ref{fig:xm2} and \ref{fig:xm3}), which
+improves the matching of identification and the quantitation
+features. After applying the usual \Rfunction{synergise} workflow (see
+\Rfunction{?synergise} and \Rfunction{?Synapter} for details) a number
+of multiple matches and possible false unique matches remain that can
+be deconvoluted by comparing common peaks in the quantitation fragment
+peaks and the identification spectrum.
+
+The example data \Robject{synobj2} used throughout this document is
+available in the \Rpackage{synapterdata} package and can be directly
+load as follows:
+
+<<loadsynobj2, eval=FALSE>>=
+library("synapterdata")
+data(synobj2)
+@
+
+In sections \ref{sec:synergise} and \ref{sec:spec}, we describe how
+\Robject{synobj2} was generated. The test files used in this vignette
+can be downloaded from
+\url{http://proteome.sysbiol.cam.ac.uk/lgatto/synapter/data/}. The
+following sections then describe the new peak cross matching
+functionality.
+
+\section{Running \Rfunction{synergise}}\label{sec:synergise}
+
+One has to run the \Rfunction{synergise} workflow before fragment
+matching can be applied. Please read the general \Rpackage{synapter}
+vignette for the general use of \Rfunction{synergise}. 
 
 <<create-synobj2, cache=FALSE, eval=TRUE, echo=FALSE>>=
 cat(readLines(system.file(file.path("scripts", "create_synobj2.R"),
@@ -147,113 +174,183 @@ cat(readLines(system.file(file.path("scripts", "create_synobj2.R"),
     sep = "\n")
 @
 
-\section{Loading the spectrum  and fragment data}
+\section{Loading the spectrum  and fragment data}\label{sec:spec}
 
-The data needed for the fragment matching procedure are a \code{Spectrum.xml}
-and a \code{final\_fragment.csv} file for the identification and the
-quantitation run.
+The data needed for the fragment matching procedure are a
+\code{Spectrum.xml} and a \code{final\_fragment.csv} file for the
+identification and the quantitation run.
 
 <<prepare-loadspectra, echo=FALSE, eval=TRUE, tidy=FALSE>>=
 cat(readLines(system.file(file.path("scripts", "create_synobj2.R"),
                           package="synapterdata"))[c(11:18, 20:21)], sep = "\n")
 @
 
-\section{Filtering fragments}
+\section{Filtering fragments}\label{sec:filtfrag}
 
-This is an optional step. If you have to many less abundant fragments in your
-raw files you could filter them using \Rfunction{filterFragments}. To visualize
-the intensity of all fragments you could use
-\Rfunction{plotCumulativeNumberOfFragments}.
-Both functions have a \code{what}
-argument to decide which spectra/fragments you want to filter. Choose
-\code{spectrum.ident} for the identification spectra, \code{spectrum.quant} for
-the quantitation spectra, \code{fragments.ident} for the identification
-fragments and \code{fragment.quant} for the quantitation fragments.
+This step is optional and allows one to remove low abundance fragments
+in the spectra using the \Rfunction{filterFragments}. Filtering
+fragments can remove noise in the spectra and reduce undesired
+fragment matches. Prior to filtering, the \\
+\Rfunction{plotCumulativeNumberOfFragments} function can be use to
+visualise the intensity of all fragments. Both functions have a
+\code{what} argument to decide what spectra/fragments to
+filter/plot. Choose \code{spectrum.ident} for the identification
+spectra, \code{spectrum.quant} for the quantitation spectra,
+\code{fragments.ident} for the identification fragments and
+\code{fragment.quant} for the quantitation fragments.
 
-<<filterfragments>>=
+<<filterfragmentsplot>>=
 plotCumulativeNumberOfFragments(synobj2, what = "spectrum.quant")
+plotCumulativeNumberOfFragments(synobj2, what = "fragments.ident")
+@
+
+<<filterfragments, cache=TRUE>>=
 filterFragments(synobj2, what = "spectrum.quant", minIntensity = 70,
                 verbose = FALSE)
-
-plotCumulativeNumberOfFragments(synobj2, what = "fragments.ident")
 filterFragments(synobj2, what = "fragments.ident", minIntensity = 70,
                 verbose = FALSE)
 @
 
-\section{Cross matching}
 
-We named the method that is doing the fragment matching
-\Rfunction{crossMatching} because we compare the identification spectra vs the
-quantitation fragments \\
-(\code{spectrum.identXfragments.quant}), the quantitation
-spectra vs the identification fragments (\code{spectrum.quantXfragments.ident})
-and the identification vs the quantitation fragments
-(\code{fragments.identXfragments.quant}). Because the peaks/fragments in the
-spectra of one run will never be numerical identical to these in another run you
-have to specify a tolerance parameter via
-\Rfunction{setCrossMatchingPpmTolerance}. Peaks/Fragments within this tolerance
-are treated as identical.
+\section{Cross matching}\label{sec:crossm}
+
+This method compares, named \Rfunction{crossMatching} performs
+multiple comparisons:
+
+\begin{itemize}
+
+\item identification spectra vs the quantitation fragments (results
+  stored as \\ \code{spectrum.identXfragments.quant}),
+
+\item the quantitation spectra vs the identification fragments
+  (results stored as \\ \code{spectrum.quantXfragments.ident}), 
+
+\item the identification vs the quantitation fragments
+  (results stored as \\ \code{fragments.identXfragments.quant}).
+
+\end{itemize}
+
+
+Because the peaks/fragments in the spectra of one run will never be
+numerically identical to these in another, a tolerance parameter has
+to be set using the \Rfunction{setCrossMatchingPpmTolerance}
+function. Peaks/Fragments within this tolerance are treated as
+identical.
 
 <<cx>>=
 setCrossMatchingPpmTolerance(synobj2, 25)
 crossMatching(synobj2, verbose = FALSE)
 @
 
-There is the \Rfunction{plotCrossMatching} to show the details of this cross
-matching procedure. If it is called without any additional argument every
-cross matching is plotted. You can use the \code{key} argument to select a
-special value in a column (given by the \code{column} argument) of the
-\code{MatchedEMRTs} data.frame. E.g. we want to select the cross matching
-results with a high number of common peaks, e.g. 22 common peaks:
-<<plotcx22>>=
-plotCrossMatching(synobj2, key = 22, column = "spectrum.quantXfragments.ident",
+The \Rfunction{plotCrossMatching} function illustrates the details of
+this cross matching procedure. If it is called without any additional
+argument every cross matching is plotted. One can use the \code{key}
+argument to select a special value in a column (defined by the
+\code{column} argument) of the \code{MatchedEMRTs} data.frame. E.g. if
+one wants to select the cross matching results with a high number of
+common peaks, e.g. 28 common peaks:
+
+\begin{figure}[!hbt]
+  \begin{center}
+<<plotcx22, dev ='pdf', fig.widht=10, fig.height=5>>=
+plotCrossMatching(synobj2, key = 28,
+                  column = "spectrum.quantXfragments.ident",
                   verbose = FALSE)
 @
+\caption{Fragment matching for cases with 28 common fragments. The
+  identification (top, blue) and quantitation (bottom, red) low energy
+  spectra are shown on the left. The high energy identification (top,
+  blue) and quantitation (bottom, red) fragments are show on the
+  right. Common peaks between the identification spectrum and
+  quantitation fragments, quantitation spectrum and identification
+  fragments and identification and quantitation fragments that are
+  shared are displayed in darker colours and highlighted by full
+  points on the identification spectrum, quantitation spectrum and
+  fragment spectra respectively. }
+    \label{fig:xm1}
+  \end{center}
+\end{figure}
 
-Or we may be interested in all results for the peptide with the sequence
-\code{"TALIDGLAQR"}.
 
-<<plotcxseq>>=
-plotCrossMatching(synobj2, key = "TALIDGLAQR", column = "peptide.seq",
+Or, if one is interested in all results for the peptide with the
+sequence \code{"TALIDGLAQR"}.
+
+\begin{figure}[!hbt]
+  \begin{center}
+<<plotcxseq, dev ='pdf', fig.widht=10, fig.height=5>>=
+plotCrossMatching(synobj2,
+                  key = "TALIDGLAQR", column = "peptide.seq",
                   verbose = FALSE)
 @
+\caption{Fragment matching for peptide \code{TALIDGLAQ}. }
+    \label{fig:xm2}
+  \end{center}
+\end{figure}
 
 Maybe the peptide with a special precursor ID looks interesting.
 
-<<plotcxid>>=
-plotCrossMatching(synobj2, key = 12589, column = "precursor.leID.ident",
+\begin{figure}[!hbt]
+  \begin{center}
+<<plotcxid, dev ='pdf', fig.widht=10, fig.height=5>>=
+plotCrossMatching(synobj2,
+                  key = 12589, column = "precursor.leID.ident",
                   verbose = FALSE)
 @
+\caption{Fragment matching precursor with \texttt{leID} identifier
+  12589. }
+    \label{fig:xm3}
+  \end{center}
+\end{figure}
 
 \section{Plot distribution of common peaks}\label{sec:plotperf}
 
-You could use \Rfunction{plotCrossMatchingPerformance} to get an idea how well
-the cross matching works and what are the results if you will filter the
-\code{MatchedEMRT} data.frame by the number of common peaks.\\
-This function returns a list with a matrix containing true-positive,
-false-positive, true-negative and false-negative matches for the unique and non
-unique matches.
+The \Rfunction{plotCrossMatchingPerformance} function can be used to
+assess the performance of the cross matching and the result of the
+filtering procedure (see below) based on the number of common
+peaks. This function invisibly returns a list with matrices containing
+true positive, false positive, true negative and false negative
+matches for the unique and non unique matches EMRT matches, as
+illustrated in tables \ref{tab:unique} and \ref{tab:multiple}. 
 
-<<plotcxperformance>>=
+\begin{figure}[!hbt]
+  \begin{center}
+<<plotcxperformance, dev='pdf', fig.widht=8, fig.height=4>>=
 m <- plotCrossMatchingPerformance(synobj2)
 @
+\caption{Number of true/false match peptides for different peak
+  matching thresholds and difference in number of peaks between the
+  first and second (in terms of number of common peaks) possible
+  matches. The former metric is used to filter out possible false
+  positive unique matches while the second is used to filter multiple
+  matches. Empty circles indicate zero peptides. }
+    \label{fig:xmplot}
+  \end{center}
+\end{figure}
 
-<<confusionmatrixunique, results="asis">>=
-xtable(m$unique[1:15,], row.names=FALSE)
+<<confusionmatrixunique, results="asis", echo=FALSE>>=
+xtable(m$unique[1:15,], row.names=FALSE,
+       caption="Number of true positives, false negatives, false positives, false negatives and false discovery rate for a given number of common peaks",
+       label = "tab:unique")
 @
 
-<<confusionmatrixnonunqiue, results="asis">>=
-xtable(m$nonunique[1:15,], row.names=FALSE)
+<<confusionmatrixnonunqiue, results="asis", echo=FALSE>>=
+xtable(m$nonunique[1:15,], row.names=FALSE,
+       caption="Number of true positives, false negatives, false positives, false negatives and false discovery rate for a given difference in number of common peaks between the higest and second highest multiply matching EMRTs in terms of number of common peptides.",
+       label="tab:multiple")
 @
 
-\section{Filter unique matches}
+\clearpage
 
-From the left panel of the plot shown in section \ref{sec:plotperf} and the
-table of unique matches it is obvious that you can easily reduce the number of
-false matches by applying a rules that true matches must have at least one
-peak/fragment in common. Clearly this will also remove some true matches. The
-question is whether you want to rely on matches that have no (or only a few)
-peaks/fragments in common?
+\section{Filtering unique matches}\label{sec:unique}
+
+From the left panel on figure \ref{fig:xmplot} and table
+\ref{tab:unique} displaying counts for unique matches one can define
+filtering values for the unique (this section) and multiple matches
+(next section). In the case of uniquely matching EMRTs, one can easily
+reduce the number of false matches by requiring that true matches
+must have at least one peak/fragment in common. Clearly this will also
+remove some true matches. The question is whether you want to rely on
+matches that have no (or only a few) peaks/fragments in common?
 
 <<filerunique>>=
 performance(synobj2)
@@ -263,23 +360,27 @@ performance(synobj2)
 getEMRTtable(synobj2)
 @
 
-\section{Filter non-unique matches}
+\section{Filtering non-unique matches}\label{sec:multiple}
 
-The largest potential offers the cross matching for non unique matches. If we
-consider the match with the highest number of common peaks/fragments as true
-match we will win a lot of new unique matches that could not resolved before
-(c.f. section \ref{sec:plotperf}).
-You could filter the non unique matches by the difference of common peaks from
-the highest to the second highest number in the match group. E.g. we have two
-different match groups. In the first group we have two possible matches: a match
-with 7 and a match with 2 fragments in common. In the other group there are a
-matches with 2 and 1 fragments in common. If we decide to accept a difference
-of at least 2 the one with 7 common peaks will turn into an unique match and all
-other matches will be removed (marked as no match). To choose a good threshold
-for the difference look at the right panel of the plot generated in section
-\ref{sec:plotperf} and the corresponding table.
-In the following example we rescue 289 unique matches out of the non unique
-ones.
+The largest benefit of cross matching peaks is for non unique
+matches. If we assume that true match have a highest number of common
+peaks/fragments, we can distinguish correct matches among multiple
+possible matches that could not resolved before (c.f. section
+\ref{sec:plotperf}). To do so, we use the difference of common peaks
+from the highest to the second highest number in the match
+group. Assuming two cases with multiple matches. In the first case, we
+have two possible matches: a match with 7 and a match with 2 fragments
+in common. In the second ambiguous match, there are a matches with 2
+and 1 fragments in common respectively. If we decide to accept a
+difference of at least 2, our first multiple match case be resolved
+into a unique match as the difference between the best and second
+matches is 5 and the best match with 7 common fragments will be
+upgraded to a unique match.
+
+The right panel of figure \ref{fig:xmplot} and table
+\ref{tab:multiple} can be used to choose a good threshold for the
+difference in number of common peaks. In the following example we
+rescue 289 unique matches out of the non unique ones.
 
 <<filernonunique>>=
 performance(synobj2)
@@ -292,15 +393,19 @@ getEMRTtable(synobj2)
 
 \section{Exporting results}
 
-Like in the normal \Rpackage{synapter} workflow you can export the
-\code{MatchedEMRT} data.frame using the \Rfunction{writeMatchedEMRTs} function.
-The table has some new columns that correspond to the cross matching procedure,
+Like in the initial \Rpackage{synapter} workflow, it is possible to
+export the \code{MatchedEMRT} results using the
+\Rfunction{writeMatchedEMRTs} function.  The table has some new
+columns that correspond to the cross matching procedure,
 e.g. \code{spectrum.identXfragments.quant},
-\code{spectrum.quantXfragments.ident}, \code{fragments.identXfragments.quant}
-and so on.
+\code{spectrum.quantXfragments.ident},
+\code{fragments.identXfragments.quant}, \ldots.  
+
 <<export, eval=FALSE>>=
 writeMatchedEMRTs(synobj2, file = "MatchedEMRTs.csv", what = "full")
 @
+
+\clearpage 
 
 \section{Session information}\label{sec:sessionInfo}
 
@@ -311,8 +416,8 @@ listed below.
 toLatex(sessionInfo())
 @
 
-%\bibliographystyle{plainnat}
-%\bibliography{synapter}
+\bibliographystyle{plainnat}
+\bibliography{synapter}
 
 \end{document}
 
