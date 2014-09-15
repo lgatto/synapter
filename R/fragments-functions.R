@@ -30,6 +30,9 @@
   df <- read.csv(file, stringsAsFactors=FALSE)
   df <- .filterEmptyFragments(df)
 
+  ## convert non-ascii characters to _
+  df$fragment.str <- iconv(x=df$fragment.str, to="ASCII", sub="_")
+
   if (removeNeutralLoss) {
     return(.filterNeutralLoss(df))
   } else {
