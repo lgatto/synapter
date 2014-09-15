@@ -6,6 +6,14 @@
   return(df[which(df$Neutral.LossType == "None"), ])
 }
 
+#' filter empty fragments
+#' @param df data.frame (needs a column Neutral.LossType)
+#' @return a data.frame that contains only rows with Neutral.LossType != ""
+#' @noRd
+.filterEmptyFragments <- function(df) {
+  return(df[which(nchar(df$Neutral.LossType) > 0), ])
+}
+
 #' read final_fragments.csv
 #' @param file file path
 #' @param removeNeutralLoss remove rows with neutral loss != "none"?
@@ -20,6 +28,10 @@
   }
 
   df <- read.csv(file, stringsAsFactors=FALSE)
+  df <- .filterEmptyFragments(df)
+
+  ## convert non-ascii characters to _
+  df$fragment.str <- iconv(x=df$fragment.str, to="ASCII", sub="_")
 
   if (removeNeutralLoss) {
     return(.filterNeutralLoss(df))
