@@ -1,10 +1,17 @@
 #' @param spectra list, 4 MSnbase::Spectrum2 objects
+#' @param sequences list, 4 character vectors containing the peptide sequences
+#' for spectra and fragments
 #' @param fragments list, 2 character vectors containing the fragment.str
 #' @param tolerance double, allowed deviation
 #' @param ... passed to MSnbase:::.plotSingleSpectrum
 #' @noRd
-.plotSpectraVsFragments <- function(spectra, fragments, tolerance=25e-6, ...) {
+.plotSpectraVsFragments <- function(spectra, sequences, fragments,
+                                    tolerance=25e-6, ...) {
   spectra <- lapply(spectra, normalize, method="precursor")
+
+  if (missing(sequences)) {
+    sequences <- character(4)
+  }
 
   mass <- unlist(lapply(spectra, mz))
   xlim <- c(min(mass, na.rm=TRUE), max(mass, na.rm=TRUE))
@@ -20,6 +27,7 @@
   par(mar=c(2, 2, 2, 0.5)) #c(bottom, left, top, right)
   .plotSpectrumVsSpectrum(
     spectra[1:2],
+    sequences=unlist(sequences[1:2]),
     common=list(MSnbase:::commonPeaks(spectra[[1]],
                                       spectra[[4]],
                                       tolerance=tolerance),
@@ -31,6 +39,7 @@
   par(mar=c(2, 0.5, 2, 2)) #c(bottom, left, top, right)
   .plotSpectrumVsSpectrum(
     spectra[3:4],
+    sequences=unlist(sequences[3:4]),
     common=list(MSnbase:::commonPeaks(spectra[[3]],
                                       spectra[[4]],
                                       tolerance=tolerance),
@@ -63,10 +72,6 @@
                                     gridSearchResult,
                                     xlim, ylim,
                                     legend.cex=1, ...) {
-  if (missing(sequences)) {
-    sequences <- character(2)
-  }
-
   orientation <- c(1, -1)
   add <- c(FALSE, TRUE)
   legend.pos <- c("topleft", "bottomleft")

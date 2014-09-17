@@ -6,13 +6,21 @@
   return(df[which(df$Neutral.LossType == "None"), ])
 }
 
+#' filter empty fragments
+#' @param df data.frame (needs a column Neutral.LossType)
+#' @return a data.frame that contains only rows with Neutral.LossType != ""
+#' @noRd
+.filterEmptyFragments <- function(df) {
+  return(df[which(nchar(df$Neutral.LossType) > 0), ])
+}
+
 #' read final_fragments.csv
 #' @param file file path
 #' @param removeNeutralLoss remove rows with neutral loss != "none"?
 #' @param verbose verbose output?
 #' @return a data.frame
 #' @noRd
-.readFragements <- function(file, removeNeutralLoss=FALSE, verbose=TRUE) {
+.readFragments <- function(file, removeNeutralLoss=FALSE, verbose=TRUE) {
   stopifnot(file.exists(file))
 
   if (verbose) {
@@ -20,6 +28,10 @@
   }
 
   df <- read.csv(file, stringsAsFactors=FALSE)
+  df <- .filterEmptyFragments(df)
+
+  ## convert non-ascii characters to _
+  df$fragment.str <- iconv(x=df$fragment.str, to="ASCII", sub="_")
 
   if (removeNeutralLoss) {
     return(.filterNeutralLoss(df))
@@ -42,8 +54,8 @@
                                    removeNeutralLoss=TRUE,
                                    removePrecursor=TRUE,
                                    tolerance=25e-6, verbose=TRUE) {
-  fragments <- .readFragements(file, removeNeutralLoss=removeNeutralLoss,
-                               verbose=verbose)
+  fragments <- .readFragments(file, removeNeutralLoss=removeNeutralLoss,
+                              verbose=verbose)
 
   assignments <- new.env(hash=TRUE, parent=emptyenv())
   idx <- split(1:nrow(fragments), f=fragments$precursor.leID)
