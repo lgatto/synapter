@@ -36,6 +36,8 @@ CHANGES IN VERSION 1.7.1
  o fix retention time model calculation in plotFeatures(..., what="some")
    [2014-04-28 Mon]
  o add recommended biocView [2014-06-05 Thu]
+ o replace `any(is.na(...)` by `anyNA(...)`; synapter depends on
+   R >= 3.1.0 now [2014-11-01 Sat]
 
 CHANGES IN VERSION 1.7.0
 ------------------------
