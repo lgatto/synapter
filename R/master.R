@@ -1,4 +1,4 @@
-loadIdentOnly <- function(pepfile, 
+loadIdentOnly <- function(pepfile,
                           fdr = 0.01,
                           method = "BH",
                           verbose = TRUE) {
@@ -11,10 +11,10 @@ loadIdentOnly <- function(pepfile,
   x1$IdentPeptideData$errorppm <-
     error.ppm(obs = x1$IdentPeptideData$precursor.mhp,
               theo = x1$IdentPeptideData$peptide.mhp)
-  x1$IdentPeptideData$protein.falsePositiveRate <- 
-    x1$IdentPeptideData$protein.falsePositiveRate / 100 
+  x1$IdentPeptideData$protein.falsePositiveRate <-
+    x1$IdentPeptideData$protein.falsePositiveRate / 100
   x1$filterMatchType()
-  x1$addIdentIdStats() 
+  x1$addIdentIdStats()
   x1$setPepScoreFdr(fdr)
   x1$filterIdentPepScore(fdrMethod = method)
   ## x1$setProtFpr(fpr)
@@ -27,8 +27,8 @@ setMethod("show", "MasterPeptides",
           function(object) {
             if (length(object@masters) == 0) {
               cat("Empty object of class \"", class(object), "\"\n",sep = "")
-            } else  {              
-              cat("Object of class \"", class(object), "\"\n",sep = "")              
+            } else  {
+              cat("Object of class \"", class(object), "\"\n",sep = "")
               f <- basename(object@pepfiles)[object@orders[[1]]]
               f <- paste0(" [", 1:length(f), "] ", f)
               o1 <- paste(1:length(object@pepfiles), collapse = " ")
@@ -60,15 +60,15 @@ writeMasterPeptides <- function(x, file, ...) {
 ##' The best combination has an fdr lower than \code{masterFdr}
 ##' and the highest number of unique (proteotypic) peptides.
 ##'
-##' The false discovery rate for the master (merged) file is calcualted 
+##' The false discovery rate for the master (merged) file is calcualted
 ##' by summing the number of estimated false discoveries for each
 ##' individual final peptide file (number of unique peptides in that file
 ##' multiplied by \code{fdr}) divided by the total number of unique
-##' peptides for that specific combination. 
+##' peptides for that specific combination.
 ##'
 ##' The function returns an instance of the class
 ##' \code{"\linkS4class{MasterFdrResults}"}.
-##' 
+##'
 ##' @title Computes FDR for all possible final peptide combinations
 ##' @param pepfiles A \code{list} of \code{vector} of final peptide
 ##' filenames.
@@ -93,7 +93,7 @@ writeMasterPeptides <- function(x, file, ...) {
 ##' @seealso The \code{\link{makeMaster}} function to combine
 ##' the peptide data as suggested by \code{estimateMasterFdr} into
 ##' one single \emph{master} peptide file.
-##' 
+##'
 ##' The vignette, accessible with \code{synapterGuide()} illustrates a
 ##' complete pipeline using \code{estimateMasterFdr} and
 ##' \code{makeMaster}.
@@ -127,11 +127,11 @@ estimateMasterFdr <- function(pepfiles,
         message("Calculating...")
     uniquePepList <-
         lapply(hdmseList, function(.x) .x$IdentPeptideData$peptide.seq)
-    uniquePeps <- unique(unlist(uniquePepList))  
-    n <- length(uniquePeps)  
+    uniquePeps <- unique(unlist(uniquePepList))
+    n <- length(uniquePeps)
     contMat <- matrix(0L, nrow = n, ncol = m)
     rownames(contMat) <- uniquePeps
-    colnames(contMat) <- 1:m 
+    colnames(contMat) <- 1:m
     for (i in 1:ncol(contMat)) {
         x <- uniquePeps[uniquePeps %in% uniquePepList[[i]]]
         contMat[x, i] <- 1L
@@ -148,7 +148,7 @@ estimateMasterFdr <- function(pepfiles,
           unique = .nbUnique,
           proteotypic = .nbProteotypic,
           fdr = .fdr)
-    })  
+    })
     ans <- data.frame(t(ans))
     ans$combinationAsText <- sapply(cmbs, paste, collapse = ".")
     ans$combination <- cmbs
@@ -177,13 +177,13 @@ setMethod("show", "MasterFdrResults",
 
 setMethod("plot", c("MasterFdrResults", "missing"),
           function(x,y, proteotypic = TRUE) {
-            .x <- x@all$fdr    
+            .x <- x@all$fdr
             ifelse(proteotypic,
                    { .y <- x@all[, "proteotypic"]; .ylab <- "Number of unique proteotypic peptides"},
                    { .y <- x@all[, "unique"]; .ylab <- "Number of unique peptides"})
             plot(.y ~ .x, type = "n",
                  xlab = "Total FDR", ylab = .ylab)
-            text(.x, .y, 
+            text(.x, .y,
                  as.character(x@all$nbSample),
                  cex = .6,
                  col = ifelse(x@all$fdr < x@masterFdr,
@@ -192,9 +192,9 @@ setMethod("plot", c("MasterFdrResults", "missing"),
             abline(v = x@masterFdr, lty = "dotted")
             ifelse(proteotypic,
                    .x <- x@best[, c("fdr", "proteotypic")],
-                   .x <- x@best[, c("fdr", "unique")])           
+                   .x <- x@best[, c("fdr", "unique")])
             points(.x, pch = 19, cex = 2, col = "#FF000020")
-            points(.x, pch = 19, cex = 2, col = "#FF000020")            
+            points(.x, pch = 19, cex = 2, col = "#FF000020")
           })
 
 
@@ -225,30 +225,30 @@ setMethod("allComb", "MasterFdrResults",
 ##' (i) non-duplicated unique tryptic peptides, (ii) peptides with a
 ##' false discovery rate <= \code{fdr} and (iii) proteins with a false
 ##' positive rate <= \code{fpr}.
-##' 
+##'
 ##' \item The filtered peptide files are ordered (1) according to their total
 ##' number of peptides (for example [P1, P2, P3]) and (2) as before with the first
 ##' item is positioned last ([P2, P3, P1] in the previous example).
 ##' The peptide data are then combined in pairs in these respective orders.
 ##' The first one is called the \emph{master} file.
-##' 
+##'
 ##' \item For each (master, slave) pair, the slave peptide file
 ##' retention times are modelled according to the (original)
 ##' master's retention times and slave peptides, not yet present in the
 ##' master file are added to the master file.
-##' 
+##'
 ##' \item The final \emph{master} datasets, containing their own peptides and
 ##' the respective slave specific retention time adjusted peptides are returned
 ##' as a \code{MasterPeptides} instance.
 ##' }
-##' 
+##'
 ##' The resulting \code{MasterPeptides} instance can be further used
 ##' for a complete master vs. peptides/Pep3D analysis, as described in
 ##' \code{\link{Synapter}}, \code{\link{synergise}} or using the GUI
 ##' (\code{\link{synapterGUI}}). To do so, it must be serialised (using the
 ##' \code{saveRDS} function) with a \code{.rds} file
 ##' extension, to be recognised (and loded) as a \code{R} object.
-##' 
+##'
 ##' When several quantitation (or identification) files are combined as a master set
 ##' to be mapped back against the inidividual final peptide files,
 ##' the second master [P2, P3, P1] is used when analysing the peptide data
@@ -281,16 +281,16 @@ setMethod("allComb", "MasterFdrResults",
 ##' @seealso See the \code{\link{Synapter}} class manual page for
 ##' detailed information on filtering and modelling and the general
 ##' algorithm implemented in the \code{synapter} package.
-##' 
+##'
 ##' The \code{\link{estimateMasterFdr}} function allows to control
 ##' false dicovery rate when combining several peptide files while
 ##' maximising the number of identifications and suggest which
 ##' combination of peptide files to use.
-##' 
+##'
 ##' The vignette, accessible with \code{synapterGuide()}
 ##' illustrates a complete pipeline using \code{estimateMasterFdr} and
 ##' \code{makeMaster}.
-makeMaster <- function(pepfiles, 
+makeMaster <- function(pepfiles,
                        fdr = 0.01,
                        ## fpr
                        method = c("BH", "Bonferroni", "qval"),
@@ -306,7 +306,7 @@ makeMaster <- function(pepfiles,
   o1 <- order(npeps, decreasing = TRUE)
   o2 <- c(o1[-1], o1[1])
   orders <- list(o1, o2)
-  mergedList <- 
+  mergedList <-
     lapply(orders, function(o) {
       ._hdmseList <- hdmseList[o]
       master <- ._hdmseList[[1]]
@@ -318,7 +318,7 @@ makeMaster <- function(pepfiles,
       }
       for (i in 2:n) {
         slave <- ._hdmseList[[i]]
-        if (verbose)                  
+        if (verbose)
           message(" +- Merging master and ", basename(slave$IdentPeptideFile),
                   " (", nrow(slave$IdentPeptideData), " peptides)")
         mergedPeptideData <- merge(master$IdentPeptideData,
@@ -341,9 +341,22 @@ makeMaster <- function(pepfiles,
         }
       }
       sel <- is.na(merged$precursor.retT)
-      merged <- merged[!sel, ]    
+      merged <- merged[!sel, ]
       return(merged)
     })
+
+  ## regenerate precursor.leID
+  if (verbose) {
+    message("Regenerate precursor.leIDs.")
+  }
+  peptide.seqs <- unique(mergedList[[1]]$peptide.seq)
+  precursor.leID <- setNames(seq_along(peptide.seqs), peptide.seqs)
+
+  mergedList <- lapply(mergedList, function(x) {
+    x$precursor.leID <- precursor.leID[x$peptide.seq]
+    x
+  })
+
   master <- new("MasterPeptides",
                 masters = mergedList,
                 pepfiles = pepfiles,

@@ -47,10 +47,6 @@
   }
   fragments <- .recalculateFragmentIntensities(fragments)
 
-  ## TODO: reset master precursor.leID to 1:nrow in makeMaster and return just
-  ## the fragments data.frame
-  master$precursor.leID <- 1:nrow(master)
-
   ## match precursor.leID
   if (verbose) {
     message("Regenerate precursor.leID values.")
@@ -60,7 +56,7 @@
 
   rownames(fragments) <- NULL
 
-  return(list(master=master, fragments=fragments))
+  fragments
 }
 
 #' recalculate fragment intensities for a library
