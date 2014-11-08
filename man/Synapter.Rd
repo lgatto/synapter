@@ -57,6 +57,10 @@
 \alias{setRtNsd}
 \alias{getRtNsd,Synapter-method}
 \alias{getRtNsd}
+\alias{setImDiff,Synapter-method}
+\alias{setImDiff}
+\alias{getImDiff,Synapter-method}
+\alias{getImDiff}
 \alias{getPpmErrorQs,Synapter-method}
 \alias{getPpmErrorQs}
 \alias{getRtQs,Synapter-method}
@@ -344,8 +348,8 @@ Synapter(filenames, master) ## creates an instance of class 'Synapter'
     further details).
 
     The parameters used for matching can be set manually with
-    \code{setPpmError} and \code{setRtNsd} respectively, or using
-    \code{setBestGridParams} to apply best parameters as defined using
+    \code{setPpmError}, \code{setRtNsd}, \code{setImDiff} respectively,
+    or using \code{setBestGridParams} to apply best parameters as defined using
     the grid search. See example and method documentation for details.
   }
 
@@ -449,15 +453,16 @@ Synapter(filenames, master) ## creates an instance of class 'Synapter'
       }
 
       \item{findEMRTs}{\code{signature(object = "Synapter", ppm =
-	  "numeric", nsd = "numeric", mergedEMRTs = c("rescue", "copy",
-	  "transfer"))}:
+	  "numeric", nsd = "numeric", imdiff = "numeric",
+    mergedEMRTs = c("rescue", "copy", "transfer"))}:
 	Finds EMRTs matching identification peptides using \code{ppm}
-	mass tolerance and \code{nsd} number of retention time standard
-	deviations. The last two parameters are optional if previously
-	set with \code{setPpmError} and \code{setRtNsd} or, better,
-	\code{setBestGridParams} (see below). The \code{mergedEMRTs}
-	parameter defined the behaviour for those high confidence
-	features that where identified in both identification and
+	mass tolerance, \code{nsd} number of retention time standard
+	deviations and \code{imdiff} difference in ion mobility.
+  The last three parameters are optional if previously
+	set with \code{setPpmError}, \code{setRtNsd}, \code{setImDiff},
+  or, better, \code{setBestGridParams} (see below).
+  The \code{mergedEMRTs} parameter defined the behaviour for those
+  high confidence features that where identified in both identification and
 	quantitation acquisitions and used for the retention time model
 	(see \code{mergePeptides}). Prior to version 1.1.1, these
 	features were transferred from the quantitation pep3d file if
@@ -472,12 +477,15 @@ Synapter(filenames, master) ## creates an instance of class 'Synapter'
       }
 
       \item{searchGrid}{\code{signature(object="Synapter",
-	  ppms="character", nsds="character", subset="numeric", n =
-	  "numeric", verbose="logical")}: Performs a grid search. The
-	grid is defined by the \code{ppm} and \code{nsd} numerical
-	vectors, representing the sequence of values to be
-	tested. Default are \code{seq(5, 20, 2)} and \code{seq(0.5, 5,
-	  0.5)} respectively. \code{subset} and \code{n} allow to use a
+	  ppms="numeric", nsds="numeric", imdiffs = "numeric",
+    subset="numeric", n = "numeric", verbose="logical")}:
+  Performs a grid search. The
+	grid is defined by the \code{ppm}, \code{nsd} and \code{imdiffs}
+  numerical vectors, representing the sequence of values to be
+	tested. Default are \code{seq(5, 20, 2)}, \code{seq(0.5, 5,
+	  0.5)}, \code{seq(0.2, 2, 0.2)} respectively. To ignore ion mobility set
+  \code{imdiffs = Inf}.
+  \code{subset} and \code{n} allow to use a
 	randomly  chosen subset of the data for the grid search to
 	reduce search time. \code{subset} is a numeric, between 0 and 1,
 	describing the percentage of data to be used; \code{n} specifies
@@ -607,6 +615,15 @@ Synapter(filenames, master) ## creates an instance of class 'Synapter'
 
       \item{getRtNsd}{\code{signature(object="Synapter")}: Returns the
 	value of the retention time tolerance \code{nsd}.
+      }
+
+      \item{setImDiff}{\code{signature(object="Synapter", imdiff =
+	  "numeric")}: Sets the ion mobility tolerance \code{imdiff},
+	default is 0.5.
+      }
+
+      \item{getImDiff}{\code{signature(object="Synapter")}: Returns the
+	value of the ion mobility tolerance \code{imdiff}.
       }
 
       \item{getPpmErrorQs}{\code{signature(object="Synapter", qs =
@@ -822,16 +839,25 @@ Synapter(filenames, master) ## creates an instance of class 'Synapter'
     }
 
     \item{plotGrid}{\code{signature(object="Synapter", what =
-	"character")}: Plots a heatmap of the respective grid search
+	"character"), maindim = "character"}:
+      Plots a heatmap of the respective grid search
       results. This grid to be plotted is controlled by \code{what}:
       \code{"total"}, \code{"model"} or \code{"details"} are
-      available.
+      available. If ion mobility was used in the grid search you can use
+      \code{maindim} to decided which dimensions should be shown. \code{maindim}
+      could be one of \code{"im"} (default), \code{"rt"} and \code{"mz"}. If
+      \code{maindim = "im"} a heatmap for each ion mobility threshold is drawn.
+      For \code{maindim = "rt"} and \code{maindim} you get a heatmap for each
+      retention time respective mass threshold.
     }
 
     \item{plotFeatures}{\code{signature(object="Synapter", what =
-	"character", xlim = "numeric", ylim = "numeric")}: Plots the
-      retention time against precursor mass space. If \code{what} is
-      \code{"all"}, three such plots are created side by side: for the
+	"character", xlim = "numeric", ylim = "numeric", ionmobiltiy = "logical")}:
+      Plots the retention time against precursor mass space.
+      If \code{what} is \code{"all"}, three (six if ion mobility is available
+      and \code{ionmobility = TRUE} (default is \code{FALSE});
+      three additional plots with precursor mass against ion mobility)
+      such plots are created side by side: for the
       identification peptides, the quantitation peptides and the
       quantitation Pep3D data. If \code{what} is \code{"some"}, a
       subset of the rt/mass space can be defined with \code{xlim}

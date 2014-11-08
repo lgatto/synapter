@@ -109,13 +109,15 @@ setMethod(modelRt, "Synapter",
           })
 
 setMethod(findEMRTs, "Synapter",
-          function(object, ppm, nsd,
+          function(object, ppm, nsd, imdiff,
                    mergedEMRTs = c("rescue", "copy", "transfer")) {
             mergedEMRTs <- match.arg(mergedEMRTs)
             if (!missing(ppm))
               object$setPpmError(ppm)
             if (!missing(nsd))
               object$setRtNsd(nsd)
+            if (!missing(imdiff))
+              object$setImDiff(imdiff)
             object$findEMRTs(mergedEMRTs)
           })
 
@@ -124,6 +126,7 @@ setMethod(searchGrid, "Synapter",
           function(object,
                    ppms,
                    nsds,
+                   imdiffs,
                    subset,
                    n,
                    verbose = TRUE) {
@@ -133,13 +136,20 @@ setMethod(searchGrid, "Synapter",
             if (missing(nsds))
               nsds <- seq(0.5, 5, 0.5)
             names(nsds) <- nsds
+            if (missing(imdiffs))
+              imdiffs <- seq(0.2, 2, 0.2)
             if (!missing(n) & !missing(subset))
               stop("Use either 'n' or 'subset', not both.")
             if (missing(n) & missing(subset))
               subset <- 1
             if (!missing(subset) && (subset > 1 | subset <= 0))
               subset <- 1
-            object$searchGrid(ppms, nsds, subset, n, verbose)
+            object$searchGrid(ppms = ppms,
+                              nsds = nsds,
+                              imdiffs = imdiffs,
+                              subset = subset,
+                              n = n,
+                              verbose = verbose)
           })
 
 setMethod(getGrid, "Synapter",
@@ -203,6 +213,12 @@ setMethod(setPpmError, "Synapter",
 
 setMethod(getPpmError, "Synapter",
           function(object) object$PpmError)
+
+setMethod(setImDiff, "Synapter",
+          function(object, imdiff = 0.5) object$setImDiff(imdiff))
+
+setMethod(getImDiff, "Synapter",
+          function(object) object$ImDiff)
 
 setMethod(getPpmErrorQs, "Synapter",
           function(object,
@@ -488,12 +504,14 @@ setMethod(plotFeatures, "Synapter",
           function(object,
                    what = c("all", "some"),
                    xlim = c(40, 60),
-                   ylim = c(1160, 1165)) {
+                   ylim = c(1160, 1165),
+                   ionmobility = FALSE) {
             what <- match.arg(what)
             switch(what,
                    all = plot.all.features(
                      object$MergedFeatures,
-                     object$QuantPep3DData),
+                     object$QuantPep3DData,
+                     ionmobility=ionmobility),
                    some = {
                      if (length(object$PpmError) == 0) {
                        warning("Ppm error for EMRTs matching is not set. Using default value.")
@@ -614,7 +632,8 @@ setMethod(plotRtDiffs, "Synapter",
           })
 
 setMethod(plotGrid, "Synapter",
-          function(object, what = c("total", "model", "details")) {
+          function(object, what = c("total", "model", "details"),
+                   maindim = c("im", "rt", "mz")) {
             ## Plots the grid search results.
             if ( length(object$Grid) == 0 )
               stop("No grid search result to plot.")
@@ -629,7 +648,22 @@ setMethod(plotGrid, "Synapter",
               grd <- object$Grid[[3]]
               main <- "Percentage of correct unique assignments."
             }
-            p <- levelplot(grd, xlab = "nsd", ylab = "ppm", main = main)
+
+            maindim <- match.arg(maindim)
+            if (maindim == "im") {
+              xlab <- "nsd"
+              ylab <- "ppm"
+            } else if (maindim == "rt") {
+              grd <- aperm(grd, c(2, 3, 1))
+              xlab <- "ppm"
+              ylab <- "imdiff"
+            } else {
+              grd <- aperm(grd, c(1, 3, 2))
+              xlab <- "nsd"
+              ylab <- "imdiff"
+            }
+
+            p <- levelplot(grd, xlab = xlab, ylab = ylab, main = main)
             print(p)
             invisible(p)
           })
