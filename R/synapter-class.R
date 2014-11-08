@@ -34,6 +34,7 @@
                     ## matching EMRTs
                     PpmError = "numeric",
                     RtNsd = "numeric",
+                    ImDiff = "numeric",
                     MatchedEMRTs = "data.frame",
                     ## cross matching stuff
                     QuantSpectrumFile = "character",
@@ -389,11 +390,17 @@
                             warning("Retention time tolerance for EMRT matching undefined. Setting to default value.")
                             .self$setRtNsd()
                         }
+                        if (length(.self$ImDiff) == 0) {
+                            warning("Ion mobility difference for EMRT matching undefined. Setting to default value.")
+                            .self$setImDiff()
+                        }
+
                         .self$MatchedEMRTs <- findMSeEMRTs(.self$IdentPeptideData,
                                                            .self$QuantPep3DData,
                                                            .self$MergedFeatures,
                                                            .self$RtNsd,
                                                            .self$PpmError,
+                                                           .self$ImDiff,
                                                            .self$RtModel,
                                                            mergedEMRTs)
                         .self$SynapterLog <- c(.self$SynapterLog,
@@ -450,8 +457,10 @@
 ## Grid search
 .Synapter$methods(
                   list(
-                       searchGrid = function(ppms, nsds, subset, n, verbose = TRUE) {
-                         'Performs a grid search in ppm x nsd space.'
+                       searchGrid = function(ppms, nsds, imdiffs, subset, n,
+                                             verbose = TRUE) {
+                         'Performs a grid search in ppm x nsd x imdiff space.'
+                         .self <- updateSynapterObject(.self)
                          .IdentPeptideData <- .self$IdentPeptideData
                          if (!missing(subset)) {
                            if (subset < 1) {
@@ -478,36 +487,46 @@
                            .log <- paste0("Performed grid search using ",
                                           n, " identification peptides.")
                          }
-                         .grid <- gridSearch2(.self$RtModel,
+
+                         ## test for ion mobility
+                         if (!"precursor.Mobility" %in% colnames(.self$IdentPeptideData) ||
+                             !"clust_drift" %in% colnames(.self$QuantPep3DData)) {
+                           if (verbose) {
+                             message("No ion mobility available. ",
+                                     "Step back to 2D grid search.")
+                           }
+                           ## by setting imdiffs to Inf we disable the 3D grid
+                           ## search
+                           imdiffs <- Inf
+                         }
+
+                         .grid <- gridSearch3(.self$RtModel,
                                               .IdentPeptideData,
                                               .self$QuantPep3DData,
                                               .self$MergedFeatures[midx, ],
                                               ppms,
                                               nsds,
+                                              imdiffs,
                                               verbose = verbose)
                          .self$Grid <- .grid[1:2]
                          .self$GridDetails <- .grid[[3]]
                          ## generate a proper detail grid - new v 0.7.2
-                         .nc <- ncol(.grid[[1]])
-                         .nr <- nrow(.grid[[1]])
-                         .gdet <- matrix(sapply(.self$GridDetails,
-                                                function(.x) {
-                                                  .x1 <- ifelse(is.na(.x["1"]) , 0, .x["1"])
-                                                  .x2 <- ifelse(is.na(.x["-1"]), 0, .x["-1"])
-                                                  ans <- .x1/(.x1 + .x2)
-                                                  if (is.na(ans))
-                                                    ans <- 0
-                                                  return(ans)
-                                                }),
-                                         ncol = .nc,
-                                         nrow = .nr,
-                                         byrow = TRUE)
-                         rownames(.gdet) <- rownames(.grid[[1]])
-                         colnames(.gdet) <- colnames(.grid[[1]])
-                         .self$Grid[[3]] <- .gdet
+                         .nd <- dim(.grid[[1]])
+                         .dd <- do.call(rbind, .grid[[3]])
+                         .dd[is.na(.dd)] <- 0
+                         .prec <- .dd[,"1"]/(.dd[,"-1"]+.dd[,"1"])
+                         .self$Grid[[3]] <- aperm(array(.prec,
+                                                        dim=c(
+                                                          length(imdiffs),
+                                                          length(ppms),
+                                                          length(nsds)),
+                                                        dimnames=list(
+                                                          as.character(imdiffs),
+                                                          as.character(ppms),
+                                                          as.character(nsds))),
+                                                  perm=c(3, 2, 1))
                          names(.self$Grid)[3] <- "details"
-                         .self$SynapterLog <- c(.self$SynapterLog,
-                                                .log)
+                         .self$SynapterLog <- c(.self$SynapterLog, .log)
                        },
                        getBestGridValue = function() {
                          'Retieves the highest grid value.'
@@ -517,24 +536,28 @@
                          return(ans)
                        },
                        getBestGridParams = function() {
-                         'Retrieves the best grid search (ppm, nsd) pair(s).'
+                         'Retrieves the best grid search (ppm, nsd, imdiff) triple(s).'
                          if ( length(.self$Grid) == 0 )
                            stop("No grid search result found.")
                          .getBestParams <- function(x) {
                            k <- arrayInd(which( x == max(x) ),
                                          dim(x),
                                          useNames = TRUE)
+                           .dn <- dimnames(x)
                            k <- apply(k, 1,
-                                      function(i)
-                                      as.numeric(c(colnames(x)[i["col"]], rownames(x)[i["row"]])))
-                           rownames(k) <- c("ppm", "nsd")
+                                      function(i) {
+                                      as.numeric(c(.dn[[1]][i[1]],
+                                                   .dn[[2]][i[2]],
+                                                   .dn[[3]][i[3]]))
+                                      })
+                           rownames(k) <- c("nsd", "ppm", "imdiff")
                            return(t(k))
                          }
                          ans <- lapply(.self$Grid, .getBestParams)
                          return(ans)
                        },
                        setBestGridParams = function(what) {
-                         'Sets best grid search (ppm, nsd) pair.'
+                         'Sets best grid search (ppm, nsd, imdiff) triple.'
                          i <- 1 ## take first parameter pair by default
                          if (what == "auto") {
                            x <- .self$getBestGridParams()[["prcntModel"]]
@@ -542,17 +565,21 @@
                              y <- .self$getBestGridParams()[["details"]]
                              ppm_i <- x[, "ppm"] %in% y[, "ppm"]
                              nsd_i <- x[, "nsd"] %in% y[, "nsd"]
-                             if (any(ppm_i & nsd_i)) {
+                             imdiff_i <- x[, "imdiff"] %in% y[, "imdiff"]
+                             if (any(ppm_i & nsd_i & imdiff_i)) {
                                ## (1) first ppm and nsd match
-                               i <- which(ppm_i & nsd_i)[1]
+                               i <- which(ppm_i & nsd_i & imdiff_i)[1]
                              } else if (any(ppm_i)) {
                                ## (2) first ppm match
                                i <- which(ppm_i)[1]
-                             } else if (any(ppm_i)) {
-                               ## (2) first nsd match
+                             } else if (any(nsd_i)) {
+                               ## (3) first nsd match
                                i <- which(nsd_i)[1]
+                             } else if (any(imdiff_i)) {
+                               ## (4) first imdiff match
+                               i <- which(imdiff_i)[1]
                              }
-                             ## else (4) no match - taking first one
+                             ## else (5) no match - taking first one
                            }
                          } else {
                            x <- switch(what,
@@ -562,10 +589,11 @@
                          }
                          .self$RtNsd <- x[i,"nsd"]
                          .self$PpmError <- x[i,"ppm"]
+                         .self$ImDiff <- x[i,"imdiff"]
                          .self$SynapterLog <- c(.self$SynapterLog,
-                                                paste("Set 'nsd' and 'ppm error' to ",
-                                                      .self$RtNsd, " and ", .self$PpmError,
-                                                      " (best '", what, "')", sep=""))
+                                                paste0("Set 'nsd', 'ppm error' and 'im diff' to ",
+                                                       .self$RtNsd, ", ", .self$PpmError, " and ",
+                                                       .self$ImDiff, " (best '", what, "')"))
                        }))
 
 ## Setters
@@ -624,6 +652,12 @@
                                                 paste("Set nsd to ",
                                                       .self$RtNsd,
                                                       sep=""))
+                       },
+                       setImDiff = function(imdiff = 0.5) {
+                         .self$ImDiff <- imdiff
+                         .self$SynapterLog <- c(.self$SynapterLog,
+                                                paste0("Set imdiff to ",
+                                                       .self$ImDiff))
                        },
                        setCrossMatchingPpmTolerance = function(ppm = 25) {
                          'Sets cross matching mass error tolerance threshold.'

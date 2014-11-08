@@ -2,8 +2,8 @@ Package: synapter
 Type: Package
 Title: Label-free data analysis pipeline for optimal
        identification and quantitation
-Version: 1.7.1
-Author: Laurent Gatto, Nick J. Bond, Pavel V. Shliaha and 
+Version: 1.7.2
+Author: Laurent Gatto, Nick J. Bond, Pavel V. Shliaha and
 	Sebastian Gibb.
 Maintainer: Laurent Gatto <lg390@cam.ac.uk>
 Depends: R (>= 3.1.0), methods, MSnbase (>= 1.13.1)
