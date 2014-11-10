@@ -64,11 +64,10 @@
 }
 
 \author{Pavel V. Shliaha
-  \thanks{\email{pvs22@cam.ac.uk}}
 }
 
 \affil{
-  Cambridge Center for Proteomics\\
+  Computational Proteomics Unit\\
   University of Cambridge
 }
 
@@ -111,13 +110,13 @@ independent acquisition.
 
 <<knitr, include=FALSE, cache=FALSE>>=
 library(knitr)
-opts_chunk$set(fig.align = 'center', 
-               fig.show = 'hold', 
+opts_chunk$set(fig.align = 'center',
+               fig.show = 'hold',
                stop_on_error = 1L,
                par = TRUE,
                prompt = TRUE,
                comment = NA)
-options(replace.assign = TRUE, 
+options(replace.assign = TRUE,
         width = 70)
 @
 
@@ -129,13 +128,13 @@ library(synapterdata)
 ## preparing some data
 data(ups25b) ## from synapterdata
 res <- ups25b ## for synergise and plotRt
-@ 
+@
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% Section
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Introduction}\label{sec:intro} 
+\section{Introduction}\label{sec:intro}
 
 \subsection{Background}\label{sec:bkg}
 
@@ -227,7 +226,7 @@ by preceding it's name with a question mark at the command line
 prompt. For example, to obtain information about the
 \Rpackage{synapter} package, one would type \Rfunction{?synapter}.
 
-\subsection{Installation}\label{sec:install} 
+\subsection{Installation}\label{sec:install}
 
 \Rpackage{synapter} is available through the Bioconductor
 project. Details about the package and the installation procedure can
@@ -237,31 +236,36 @@ installation of the package and all its dependencies should be done
 using the dedicated Bioconductor infrastructure as shown below:
 
 <<install, echo=TRUE, eval=FALSE>>=
-source("http://bioconductor.org/biocLite.R") 
+source("http://bioconductor.org/biocLite.R")
 ## or, if you have already used the above before
 library("BiocInstaller")
 ## and to install the package
 biocLite("synapter")
-@ 
+@
 
-After installation, \Rpackage{synapter} will have to be explicitly loaded with  
+After installation, \Rpackage{synapter} will have to be explicitly loaded with
 
 <<library, echo=TRUE, eval=FALSE>>=
 library(synapter)
-@ 
+@
 
-so that all the package's functionality is available to the user. 
+so that all the package's functionality is available to the user.
 
 
 \subsection{Getting help}\label{sec:help}
 
-There is a general mailing
-list\footnote{\url{https://stat.ethz.ch/mailman/listinfo/bioconductor}}
-for Bioconductor packages. There is also a on-line
-form\footnote{\url{http://bioconductor.org/help/mailing-list/mailform/}}
-if you do not wish to subscribe to the list. You are also welcome to
-contact Laurent Gatto (\url{lg390@cam.ac.uk}) for general questions,
-bugs, comments and suggestions.
+Question should be asked on the Bioconductor support
+forum\footnote{\url{https://support.bioconductor.org}}. Bugs and
+feature requests can also be reported on the github tracker
+\footnote{\url{https://github.com/lgatto/synapter/issues}}.
+
+% There is a general mailing
+% list\footnote{\url{https://stat.ethz.ch/mailman/listinfo/bioconductor}}
+% for Bioconductor packages. There is also a on-line
+% form\footnote{\url{http://bioconductor.org/help/mailing-list/mailform/}}
+% if you do not wish to subscribe to the list. You are also welcome to
+% contact Laurent Gatto (\url{lg390@cam.ac.uk}) for general questions,
+% bugs, comments and suggestions.
 
 \Rpackage{synapter} is an open source initiative and contributions,
 whether new code, documentation bug fixes and new use cases are much
@@ -269,8 +273,8 @@ appreciated. The official source code is available on the Bioconductor
 svn
 server\footnote{\url{http://bioconductor.org/developers/source-control/}}. A
 testing version and easily fork-able source tree is available on
-github\footnote{\url{https://github.com/lgatto/synapter/}}, which also
-allows to report issues (bugs, feature requests, \ldots).
+github\footnote{\url{https://github.com/lgatto/synapter/}}.
+% which also allows to report issues (bugs, feature requests, \ldots).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% Section
@@ -394,7 +398,12 @@ EMRTs applying the following algorithm:
 
 Three different pipeline are available to the user:
 
-\subsubsection{Graphical user interface} 
+\subsubsection{Graphical user interface}
+
+\textbf{The graphical interface is deprecated and will be removed in
+  future versions. We encourage users to utilise the
+  \Rfunction{synergise} instead.}
+
 A simple graphical interface (GUI) can be used to preform a complete
 data analysis. This pipeline is the most accessible for users that do
 not feel comfortable with command line interfaces (see below) and/or
@@ -484,7 +493,7 @@ button in the lower left corner of the GUI starts the
 after each other and a complete report in \texttt{html} as well as
 several result files are created in the respective output folders.
 
-\subsubsection{Wrapper function} 
+\subsubsection{Wrapper function}
 
 The \Rfunction{synergise} function is a high level wrapper that
 implements a suggested analysis to combine two files (see next
@@ -499,7 +508,7 @@ at \url{http://lgatto.github.com/synapter/}.
 
 %% <<rndseed,echo=FALSE,eval=TRUE>>=
 %%   set.seed(123)
-%% @ 
+%% @
 
 <<prepare-synergise, echo=TRUE, eval=TRUE, tidy = FALSE>>=
 library(synapterdata)
@@ -520,24 +529,24 @@ input <- list(identpeptide = hdmsefile,
 ## in the 'output' directory
 output <- tempdir()
 output
-@ 
+@
 
-%% Not evaluating this bit because it increases 
-%% the vignette build/check over the 5 minutes 
+%% Not evaluating this bit because it increases
+%% the vignette build/check over the 5 minutes
 %% Bioconductor limit (build is 5 min, check is 12 min)
 
 <<synergise, echo=TRUE, eval=FALSE>>=
 res <- synergise(filenames = input, outputdir = output)
-@ 
+@
 
-%% res is loaded in the 
+%% res is loaded in the
 <<performance, echo=TRUE>>=
 performance(res)
-@ 
+@
 
 See \Rfunction{?synergise} for details.
 
-\subsubsection{Detailed step-by-step analysis} 
+\subsubsection{Detailed step-by-step analysis}
 
 The user can have detailed control on each step of the analysis by
 executing each low-level function manually. This pipeline, including
@@ -603,7 +612,7 @@ let's consider two extreme cases.
 \end{itemize}
 
 In general, the final false discovery for two files will be
-$$FDR_{master} = \frac{nfd_{1} + nfd_{2}}{union(peptides~HDMS^E_{1}, peptides~HDMS^E_{2})}$$ 
+$$FDR_{master} = \frac{nfd_{1} + nfd_{2}}{union(peptides~HDMS^E_{1}, peptides~HDMS^E_{2})}$$
 
 where $nfd_{i}$ is the number of false discoveries in HDMS$^E$ file
 $i$. Note that we do not make any assumptions about repeated
@@ -617,7 +626,7 @@ non-unique proteotypic peptides.
 
 <<inputfiles, echo=FALSE, eval=TRUE>>=
 inputfiles <- getHDMSeFinalPeptide()
-@ 
+@
 
 The result of \Rfunction{estimateMasterFdr} stores the number of
 unique proteotypic peptides and FDR for all possible
@@ -627,19 +636,19 @@ printed on the console or plotted with \Rfunction{plot(cmb)} (see
 figure \ref{fig:master}).
 
 <<masterFdr, echo=TRUE, eval=TRUE, cache=TRUE, tidy=FALSE>>=
-## using the full set of 6 HDMSe files and a 
+## using the full set of 6 HDMSe files and a
 ## fasta database from the synapterdata package
 inputfiles <- getHDMSeFinalPeptide()
 fasta <- getFasta()
-cmb <- estimateMasterFdr(inputfiles, fasta, masterFdr = 0.02, 
+cmb <- estimateMasterFdr(inputfiles, fasta, masterFdr = 0.02,
                          verbose = FALSE)
 cmb
-@ 
+@
 
 \begin{figure}[!hbt]
 <<estimateFdrPlot, dev='pdf', fig.width=4, fig.height=4>>=
 plot(cmb)
-@ 
+@
 \caption{Figure illustrating the relation between the number of unique
   peptides in the combined HDMS$^E$ file and the resulting false
   discovery rate. The symbols on the figure represent the number of
@@ -656,7 +665,7 @@ function.
 
 <<bestComb, echo=TRUE, eval=TRUE>>=
 bestComb(cmb)
-@ 
+@
 
 See \Rfunction{?estimateMasterFdr} and references therein for more
 details about the function and the returned object.
@@ -678,7 +687,7 @@ as described in section \ref{sec:synapter}.
 <<master, echo=TRUE, eval=TRUE, cache=TRUE>>=
 master <- makeMaster(inputfiles[bestComb(cmb)], verbose = FALSE)
 master
-@ 
+@
 
 More details can be found in the function documentation accessible
 with \Rfunction{?makeMaster}.
@@ -700,7 +709,7 @@ utilise \Rpackage{synapter}'s functionality.
   \Rfunction{synergise}         & Runs the complete identification transfer \\
   \Rfunction{estimateMasterFdr} & Chooses which files to be used to create the \emph{master} IR \\
   \Rfunction{makeMaster}        & Creates the \emph{master} IR \\ \hline
-  
+
 \end{tabular}
 \caption{The \Rpackage{synapter} functions.}
 \label{tab:summary}
@@ -731,7 +740,7 @@ be loaded in your working space with
 
 <<loadups, eval=TRUE, echo=TRUE>>=
 data(ups25a, ups25b, ups25c, ups50a, ups50b, ups50c)
-@ 
+@
 
 \subsection{Applying the \emph{Top 3} approach}\label{sec:top3}
 
@@ -748,7 +757,7 @@ ms25a <- as(ups25a, "MSnSet")
 class(ups25a)[1]
 class(ms25a)[1]
 ms25a
-@ 
+@
 
 It contains quantitation information about \Sexpr{nrow(ms25a)}
 peptides for \Sexpr{ncol(ms25a)} sample. In the code chunk below, we
@@ -759,7 +768,7 @@ meaningful one.
 sampleNames(ms25a)
 sampleNames(ms25a) <- "ups25a"
 sampleNames(ms25a)
-@ 
+@
 
 Quantitative data and meta-data, which has been acquired by
 \Rpackage{synapter}, can be extracted with the \Rfunction{exprs} and
@@ -770,7 +779,7 @@ tail(exprs(ms25a))
 tail(fData(ms25a)[, c(2,9)])
 ## all fetaure metadata
 fvarLabels(ms25a)
-@ 
+@
 
 We will describe a how to process the data using a \textit{Top 3}
 approach, where the 3 most intense peptides of each protein are used
@@ -792,12 +801,12 @@ ms25a <- combineFeatures(ms25a, fData(ms25a)$protein.Accession,
                          "sum", na.rm = TRUE, verbose = FALSE)
 head(exprs(ms25a))
 head(nPeps)
-## scale intensities 
+## scale intensities
 exprs(ms25a) <- exprs(ms25a) * (3/nPeps)
-## NaN result from the division by 0, when 
+## NaN result from the division by 0, when
 ## no peptide was found for that protein
 head(exprs(ms25a))
-@ 
+@
 
 \subsection{Batch processing}\label{sec:batchprocessing}
 
@@ -812,7 +821,7 @@ tmp <- sapply(nms, function(.ups) {
   x <- get(.ups, envir = .GlobalEnv)
   x <- as(x, "MSnSet")
   sampleNames(x) <- .ups
-  ## extract top 3 peptides 
+  ## extract top 3 peptides
   x <- topN(x, groupBy = fData(x)$protein.Accession, n = 3)
   ## calculate the number of peptides that are available
   nPeps <- nQuants(x, fcol = "protein.Accession")
@@ -828,7 +837,7 @@ tmp <- sapply(nms, function(.ups) {
   assign(varnm, x, envir = .GlobalEnv)
   cat("done\n")
 })
-@ 
+@
 
 We now have 6 \Robject{MSnSet} instances, containing protein
 quantitation for the 6 UPS/\textit{E. coli} runs.
@@ -853,7 +862,7 @@ ms25 <- combine(ms25, ms25c)
 dim(ms25)
 ms25 <- filterNA(ms25, pNA = 1/3)
 dim(ms25)
-@ 
+@
 
 Once combined and filtered, the 25 fmol group retains
 \Sexpr{nrow(ms25)} entries with at least 2 out of 3 quantitation
@@ -865,7 +874,7 @@ ms50 <- combine(ms50, ms50c)
 dim(ms50)
 ms50 <- filterNA(ms50, pNA = 1/3)
 dim(ms50)
-@ 
+@
 
 Similarly, the 50 fmol group retains \Sexpr{nrow(ms50)} entries with
 at least 2 out of 3 quantitation values, out of the
@@ -882,7 +891,7 @@ msUps <- combine(ms25, ms50)
 msUps <- filterNA(msUps, pNA = 2/6)
 head(exprs(msUps))
 table(apply(exprs(msUps), 1, function(.x) sum(!is.na(.x))))
-@ 
+@
 
 We obtain a final data set containing \Sexpr{nrow(msUps)}
 proteins. Finally, we normalise protein intensities in each sample to
@@ -892,10 +901,10 @@ background proteins and divide each protein by its respective sample
 mean.
 
 <<scale>>=
-ecoli <- -grep("ups$", featureNames(msUps)) 
+ecoli <- -grep("ups$", featureNames(msUps))
 meds <- apply(exprs(msUps)[ecoli, ], 2, median, na.rm=TRUE)
 exprs(msUps) <- t(apply(exprs(msUps), 1, "/", meds))
-@ 
+@
 
 This same procedure could be applied with a set of constant spikes to
 estimate absolute protein quantities.
@@ -948,7 +957,7 @@ res <- data.frame(cbind(exprs(msUps), pv, qv, lfc))
 ## reorder based on q-values
 res <- res[order(res$qv), ]
 head(round(res, 3))
-@ 
+@
 
 In the above example, quantitation values and statistics data are
 saved in a summary dataframe (\Robject{res}), that can be exported to
@@ -956,7 +965,7 @@ a comma-separated spreadsheet with
 
 <<writecsv, eval=FALSE>>=
 write.csv(res, file = "upsResults.csv")
-@ 
+@
 
 \begin{figure}[!hbt]
 <<volcano, dev='pdf', fig.width=4, fig.height=4, tidy=FALSE>>=
@@ -964,7 +973,7 @@ plot(res$lfc, -log10(res$qv),
      col = ifelse(grepl("ups$", rownames(res)),
        "#4582B3AA",
        "#A1A1A180"),
-     pch = 19, 
+     pch = 19,
      xlab = expression(log[2]~fold-change),
      ylab = expression(-log[10]~q-value))
 grid()
@@ -997,7 +1006,7 @@ heatmap(exprs(msUps)[grep("ups",featureNames(msUps)), ])
 \end{figure}
 
 
-%% <<falseneg, echo=FALSE>>= 
+%% <<falseneg, echo=FALSE>>=
 %% fn <- which(grepl("ups",rownames(res)) & res$qv > 0.06)
 %% @ %%$
 
@@ -1007,7 +1016,7 @@ signms <- rownames(res)[sel1]
 i <- grep("ups", signms)
 n1 <- length(i)
 n2 <- length(signms) - n1
-@ 
+@
 
 
 <<upstab, echo=FALSE, results='asis'>>=
@@ -1017,7 +1026,7 @@ print(xtable(round(res[k, ], 3),
              table.placement = "thb",
              label = "tab:ups"),
       size = "scriptsize")
-@ 
+@
 
 
 A total \Sexpr{n1} proteins show a statistically different pattern
@@ -1026,7 +1035,7 @@ between the two groups, at a false discovery rate of 10\%.  Table
 
 <<echo=FALSE>>=
   dev.off()
-@ 
+@
 
 \clearpage
 
@@ -1034,7 +1043,7 @@ between the two groups, at a false discovery rate of 10\%.  Table
 %% Section
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\section{Session information}\label{sec:sessionInfo} 
+\section{Session information}\label{sec:sessionInfo}
 
 All software and respective versions used to produce this document are
 listed below.
