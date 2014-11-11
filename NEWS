@@ -1,4 +1,13 @@
-CHANGES IN VERSION 1.8.1
+CHANGES IN VERSION 1.9.1
+------------------------
+ o Deprecating synatperGUI [2014-11-10 Mon]
+ o Directing questions to the Bioc support site [2014-11-10 Mon]
+
+CHANGES IN VERSION 1.9.0
+------------------------
+ o new devel version for Bioc 3.1
+
+CHANGES IN VERSION 1.7.0
 ------------------------
  o Deprecating synatperGUI [2014-11-10 Mon]
  o Directing questions to the Bioc support site [2014-11-10 Mon]
