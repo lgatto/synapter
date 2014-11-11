@@ -67,6 +67,10 @@ setGeneric("writeQuantPeptides", function(object, ...) standardGeneric("writeQua
 setGeneric("writeMergedPeptides", function(object, ...) standardGeneric("writeMergedPeptides"))
 setGeneric("writeMatchedEMRTs", function(object, ...) standardGeneric("writeMatchedEMRTs"))
 
+###############################
+## MasterPeptides
+setGeneric("writeMasterPeptides", function(x, file, ...) standardGeneric("writeMasterPeptides"))
+setGeneric("writeFragmentLibrary", function(x, file, ...) standardGeneric("writeFragmentLibrary"))
 
 ###############################
 ## MasterFdrResults

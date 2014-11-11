@@ -49,17 +49,19 @@ setMethod("show", "MasterPeptides",
             invisible(NULL)
           })
 
-
-
-writeMasterPeptides <- function(x, file, ...) {
-  filename <- basename(file)
+setMethod("writeMasterPeptides", c("MasterPeptides", "character"),
+          function(x, file, ...) {
+  filename <- sprintf("%02i-%s", seq_along(x@masters), basename(file))
   path <- dirname(file)
-  file1 <- paste0("01-", filename)
-  file2 <- paste0("02-", filename)
-  write.csv(x@masters[[1]], file = file.path(path, file1), ...)
-  write.csv(x@masters[[2]], file = file.path(path, file2), ...)
-}
+  for (i in seq(along=x@masters)) {
+    write.csv(x@masters[[i]], file = file.path(path, filename[i]), ...)
+  }
+})
 
+setMethod("writeFragmentLibrary", c("MasterPeptides", "character"),
+          function(x, file, ...) {
+  write.csv(x@fragments, file = file, ...)
+})
 
 ##' This function takes all possible combination of \code{pepfiles}
 ##' of length greater or equal than 2 and computes the number of
