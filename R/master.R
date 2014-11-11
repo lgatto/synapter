@@ -79,12 +79,8 @@ writeMasterPeptides <- function(x, file, ...) {
 ##' @param proteotypic Logical. Should number proteotypic peptides be
 ##' used to choose best combination and plot results or total number
 ##' of unique peptides.
-##' @param missedCleavages Number of maximal missed cleavage sites. Default is 0.
+##' @param missedCleavages Number of missed cleavage sites. Default is 0.
 ##' @param verbose Should progress messages be printed?
-##' @param IisL If \code{TRUE} Isoleucin and Leucin are treated as identical.
-##' In this case sequences like "ABCI", "ABCL" are removed because they
-##' are not unqiue. If \code{FALSE} (default) "ABCI" and "ABCL" are reported as
-##' unique.
 ##' @return An instance of class \code{"\linkS4class{MasterFdrResults}"}.
 ##' See details above.
 ##' @author Laurent Gatto
@@ -103,7 +99,6 @@ estimateMasterFdr <- function(pepfiles,
                               fdr = 0.01,
                               proteotypic = TRUE,
                               missedCleavages = 0,
-                              IisL = FALSE,
                               verbose = TRUE) {
     pepfile <- unlist(pepfiles)
     m <- length(pepfiles)
@@ -119,10 +114,7 @@ estimateMasterFdr <- function(pepfiles,
                         verbose = verbose)
     if (verbose)
         message("Generating unique proteotypic peptides...")
-    proteotyptic <- dbUniquePeptideSet(fastafile,
-                                       missedCleavages = missedCleavages,
-                                       IisL = IisL,
-                                       verbose = FALSE)
+    proteotyptic <- dbUniquePeptideSet(fastafile, missedCleavages, verbose = FALSE)      
     if (verbose)
         message("Calculating...")
     uniquePepList <-

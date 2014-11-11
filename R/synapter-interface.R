@@ -62,33 +62,14 @@ setMethod("dim", "Synapter",
             dims
           })
 
-setMethod(inputFiles, "Synapter",
+setMethod(inputFiles, "Synapter", 
           function(object)
           c(identpeptide = object$IdentPeptideFile,
             quantpeptide = object$QuantPeptideFile,
             quantpep3d = object$QuantPep3DFile,
             fasta = object$DbFastaFile))
 
-setMethod(loadSpectrumXmlFiles, "Synapter",
-          function(object, filenames, removePrecursor=TRUE, tolerance=25e-6,
-                   verbose=TRUE) {
-            object$loadSpectrumXmlFiles(filenames=filenames,
-                                        removePrecursor=removePrecursor,
-                                        tolerance=25e-6,
-                                        verbose=verbose)
-          })
-
-setMethod(loadFragmentCsvFiles, "Synapter",
-          function(object, filenames, removeNeutralLoss=TRUE,
-                   removePrecursor=TRUE, tolerance=25e-6, verbose=TRUE) {
-            object$loadFragmentCsvFiles(filenames=filenames,
-                                        removeNeutralLoss=removeNeutralLoss,
-                                        removePrecursor=removePrecursor,
-                                        tolerance=25e-6,
-                                        verbose=verbose)
-          })
-
-setMethod(getLog, "Synapter",
+setMethod(getLog, "Synapter", 
           function(object) object$SynapterLog)
 
 
@@ -127,14 +108,14 @@ setMethod(searchGrid, "Synapter",
                    subset,
                    n,
                    verbose = TRUE) {
-            if (missing(ppms))
+            if (missing(ppms)) 
               ppms <- seq(2, 20, 2)
             names(ppms) <- ppms
-            if (missing(nsds))
+            if (missing(nsds)) 
               nsds <- seq(0.5, 5, 0.5)
             names(nsds) <- nsds
             if (!missing(n) & !missing(subset))
-              stop("Use either 'n' or 'subset', not both.")
+              stop("Use either 'n' or 'subset', not both.")            
             if (missing(n) & missing(subset))
               subset <- 1
             if (!missing(subset) && (subset > 1 | subset <= 0))
@@ -242,12 +223,6 @@ setMethod(getPepNumbers, "Synapter",
             }
           })
 
-setMethod(setCrossMatchingPpmTolerance, "Synapter",
-          function(object, ppm = 25)
-            object$setCrossMatchingPpmTolerance(ppm))
-
-setMethod(getCrossMatchingPpmTolerance, "Synapter",
-          function(object) object$CrossMatchingPpmTolerance)
 
 setMethod(showFdrStats, "Synapter",
           function(object,
@@ -280,30 +255,26 @@ setMethod(filterPeptideLength, "Synapter",
 
 
 setMethod(filterUniqueDbPeptides, "Synapter",
-          function(object, missedCleavages = 0, IisL = FALSE, verbose = TRUE) {
-            object$filterUniqueSeq()
+          function(object, missedCleavages = 0, verbose = TRUE) {
+            object$filterUniqueSeq() 
             object$filterUniqueDbPeptides(object$DbFastaFile,
-                                          what = c("ident", "quant"),
-                                          missedCleavages = missedCleavages,
-                                          IisL = IisL,
+                                          missedCleavages,
                                           verbose = verbose)
           })
 
 setMethod(filterUniqueQuantDbPeptides, "Synapter",
-          function(object, missedCleavages = 0, IisL = FALSE, verbose = TRUE) {
+          function(object, missedCleavages = 0, verbose = TRUE) {
             object$filterUniqueQuantSeq()
             object$filterUniqueQuantDbPeptides(object$DbFastaFile,
-                                               missedCleavages = missedCleavages,
-                                               IisL = IisL,
+                                               missedCleavages,
                                                verbose = verbose)
           })
 
 setMethod(filterUniqueIdentDbPeptides, "Synapter",
-          function(object, missedCleavages = 0, IisL = FALSE, verbose = TRUE) {
-            object$filterUniqueIdentSeq()
+          function(object, missedCleavages = 0, verbose = TRUE) {
+            object$filterUniqueIdentSeq() 
             object$filterUniqueIdentDbPeptides(object$DbFastaFile,
-                                               missedCleavages = missedCleavages,
-                                               IisL = IisL,
+                                               missedCleavages,
                                                verbose = verbose)
           })
 
@@ -312,7 +283,7 @@ setMethod(filterQuantPepScore, "Synapter",
                    method = c("BH", "Bonferroni", "qval")) {
             method <- match.arg(method)
             if (!missing(fdr))
-              object$setPepScoreFdr(fdr)
+              object$setPepScoreFdr(fdr)            
             object$filterQuantPepScore(method)
           })
 
@@ -354,30 +325,10 @@ setMethod(filterQuantPpmError, "Synapter",
             object$filterQuantPpmError()
           })
 
-# filter post merging
-setMethod(filterFragments, "Synapter",
-          function(object, what, minIntensity = NULL, maxNumber = NULL,
-                   verbose = TRUE) {
-            object$filterFragments(what = what,
-                                   minIntensity = minIntensity,
-                                   maxNumber = maxNumber,
-                                   verbose = verbose)
-          })
-
-setMethod(filterUniqueMatches, "Synapter",
-          function(object, minNumber) {
-            object$filterUniqueMatches(minNumber)
-          })
-
-setMethod(filterNonUniqueMatches, "Synapter",
-          function(object, minDelta) {
-            object$filterNonUniqueMatches(minDelta)
-          })
-
 ## Plotting
 setMethod(plotPpmError, "Synapter",
           function(object,
-                   what = c("Quant", "Ident", "both")) {
+                   what = c("Quant", "Ident", "both")) { 
             what <- match.arg(what)
             switch(what,
                    Ident = qPlot(
@@ -413,9 +364,9 @@ setMethod(plotRt, "Synapter",
                    model = plotLowess2(object$MergedFeatures,
                      object$RtModel,
                      nsd,
-                     ...))
+                     ...))            
           })
-
+          
 
 setMethod(plotPepScores, "Synapter",
           function(object) {
@@ -426,13 +377,13 @@ setMethod(plotPepScores, "Synapter",
                           cbind(object$.QuantPeptideScores, data = "Quantitation"))
             }
             p <- (densityplot(~ peptide.score | peptide.matchType * data,
-                              data = xx,
+                              data = xx, 
                               groups = protein.dataBaseType,
                               plot.points = FALSE, ref = TRUE))
             print(p)
             invisible(p)
           })
-
+          
 
 setMethod(plotFdr, "Synapter",
           function(object,
@@ -445,8 +396,8 @@ setMethod(plotFdr, "Synapter",
               qv1 <- qv1[order(pv1)]
               pv2 <- pepdata[pepdata$peptide.matchType == "PepFrag2", "pval"]
               qv2 <- pepdata[pepdata$peptide.matchType == "PepFrag2", method]
-              qv2 <- qv2[order(pv2)]
-              if (min(c(qv1, qv2)) > rng[2])
+              qv2 <- qv2[order(pv2)]                          
+              if (min(c(qv1, qv2)) > rng[2]) 
                 rng <- c(min(c(qv1, qv2)),
                          quantile(c(qv1, pv2), 0.1))
               plot(qv1[qv1 >= rng[1] & qv1 <= rng[2]],
@@ -461,16 +412,16 @@ setMethod(plotFdr, "Synapter",
                      col = c("red", "steelblue"), lty = 1,
                      bty = "n", cex = .6)
               plot((1 + sum(qv1 < rng[1])):sum(qv1 <= rng[2]),
-                   qv1[qv1 >= rng[1] & qv1 <= rng[2]] * (1 + sum(qv1 < rng[1])):sum(qv1 <= rng[2]),
+                   qv1[qv1 >= rng[1] & qv1 <= rng[2]] * (1 + sum(qv1 < rng[1])):sum(qv1 <= rng[2]), 
                    type = "l", xlab = "significant peptides",
                    ylab = "expected false positives",
                    col = "red", ...)
               lines((1 + sum(qv2 < rng[1])):sum(qv2 <= rng[2]),
-                    qv2[qv2 >= rng[1] & qv2 <= rng[2]] * (1 + sum(qv2 < rng[1])):sum(qv2 <= rng[2]),
+                    qv2[qv2 >= rng[1] & qv2 <= rng[2]] * (1 + sum(qv2 < rng[1])):sum(qv2 <= rng[2]), 
                     col = "steelblue")
               legend("topleft", c("PepFrag1", "PepFrag2"),
                      col = c("red", "steelblue"), lty = 1,
-                     bty = "n", cex = 0.6)
+                     bty = "n", cex = 0.6)                                                  
             }
             if (object$Master) {
               par(mfrow=c(1,2))
@@ -504,7 +455,6 @@ setMethod(plotFeatures, "Synapter",
                        object$setRtNsd()
                      }
                      plot.some.features(object$MergedFeatures,
-                                        object$IdentPeptideData,
                                         object$QuantPep3DData,
                                         object$RtModel,
                                         object$IdentPpmError,
@@ -514,40 +464,10 @@ setMethod(plotFeatures, "Synapter",
                    })
           })
 
-setMethod(plotCrossMatching, "Synapter",
-          function(object, key, column="peptide.seq", verbose=TRUE, ...) {
-            if (!nrow(object$CrossMatching)) {
-              stop("You have to run ", sQuote("crossMatching"), " first!")
-            }
-
-            .plotCrossMatching(object, key, column=column, verbose=verbose,
-                               tolerance=object$CrossMatchingPpmTolerance/1e6,
-                               ...)
-          })
-
-setMethod(plotCrossMatchingPerformance, "Synapter",
-          function(object, ...) {
-            if (!nrow(object$CrossMatching)) {
-              stop("You have to run ", sQuote("crossMatching"), " first!")
-            }
-
-            invisible(.plotCrossMatchingPerformance(object$CrossMatching))
-          })
-
-setMethod(plotCumulativeNumberOfFragments, "Synapter",
-          function(object, what = c("spectrum.ident", "spectrum.quant",
-                                    "fragments.ident", "fragments.quant")) {
-            what <- match.arg(what)
-            msexp <- switch(what,
-                            "spectrum.ident" = object$IdentSpectrumData,
-                            "spectrum.quant" = object$QuantSpectrumData,
-                            "fragments.ident" = object$IdentFragmentData,
-                            "fragments.quant" = object$QuantFragmentData)
-            .plotIntensityVsNumber(msexp, what = what)
-          })
 
 setMethod(getEMRTtable, "Synapter",
           function(object) table(object$MatchedEMRTs$Function))
+
 
 setMethod(plotEMRTtable, "Synapter",
           function(object) {
@@ -572,24 +492,24 @@ setMethod(performance, "Synapter",
             nI <- length(I)
             uI <- unique(I)
             ## Quant peptides
-            Q <- object$QuantPeptideData$precursor.leID
+            Q <- object$QuantPeptideData$precursor.leID 
             nQ <- length(Q)
             uQ <- unique(Q)
-
-            e <- 100 * (nS - nQ) / nQ
+            
+            e <- 100 * (nS - nQ) / nQ            
             w <- c(length(setdiff(uQ, uS)),
                    length(setdiff(uS, uQ)),
                    length(intersect(uS, uQ)))
             names(w) <- c("Q", "S", "QS")
-
-            ans <- list(nS, nI, nQ,
-                        w, e)
-            names(ans) <- c("Synapter", "Ident", "Quant",
+            
+            ans <- list(nS, nI, nQ, 
+                        w, e)            
+            names(ans) <- c("Synapter", "Ident", "Quant", 
                             "VennCounts", "Enrichment")
             if (verbose){
               cat("(S) Synapter: ", ans$Synapter, " EMRTs uniquely matched.\n", sep = "")
               cat("(I) Ident: ", ans$Ident, " peptides.\n", sep = "")
-              cat("(Q) Quant: ", ans$Quant, " peptides.\n", sep = "")
+              cat("(Q) Quant:   ", ans$Quant, " peptides.\n", sep = "")
               cat("Enrichment (S/Q): ", round(ans$Enrichment, 2), "%\n", sep = "")
               cat("Overlap:\n")
               print(ans$VennCounts)
@@ -601,7 +521,7 @@ setMethod(performance2, "Synapter",
           function(object, verbose = TRUE) {
               id.source <- object$MatchedEMRTs$idSource
               counts <- object$MatchedEMRTs$Counts
-              na.counts <- is.na(counts)
+              na.counts <- is.na(counts)             
               ans <- table(id.source, na.counts)
               print(ans)
               invisible(list(id.source = id.source, counts = counts))
@@ -628,18 +548,10 @@ setMethod(plotGrid, "Synapter",
             } else {  ## details
               grd <- object$Grid[[3]]
               main <- "Percentage of correct unique assignments."
-            }
+            }            
             p <- levelplot(grd, xlab = "nsd", ylab = "ppm", main = main)
             print(p)
             invisible(p)
-          })
-
-setMethod(crossMatching, "Synapter",
-          function(object, ppm, verbose=TRUE) {
-            if (!missing(ppm)) {
-              setCrossMatchingPpmTolerance(object, ppm)
-            }
-            object$crossMatching(verbose=verbose)
           })
 
 
@@ -691,13 +603,13 @@ setAs("Synapter", "MSnSet",
         cols <- c("peptide.seq",
                   "protein.Accession",
                   "protein.Description",
-                  "protein.falsePositiveRate",
-                  "peptide.matchType",
-                  "peptide.mhp",
-                  "peptide.score",
-                  "precursor.mhp",
-                  "precursor.retT",
-                  "precursor.inten",
+                  "protein.falsePositiveRate", 
+                  "peptide.matchType", 
+                  "peptide.mhp", 
+                  "peptide.score", 
+                  "precursor.mhp", 
+                  "precursor.retT", 
+                  "precursor.inten", 
                   "precursor.Mobility",
                   "spectrumID",
                   "Intensity",
@@ -724,6 +636,6 @@ setAs("Synapter", "MSnSet",
         if (validObject(obj))
           return(obj)
       })
-
+     
 as.MSnSet.Synapter <- function(x) as(x,"MSnSet")
 

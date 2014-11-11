@@ -1,4 +1,4 @@
-filterFunction <- function(x) {
+filterFunction <- function(x) { 
   ## keep only function 1 in Pep3DAMRT
   return(x[x$Function == 1,])
 }
@@ -15,20 +15,20 @@ filterPepScore <- function(dfr,
                            method = c("BH", "qval", "Bonferroni")) {
   method <- match.arg(method)
   ## Assumes that peptide data has been
-  ##
+  ## 
   sel <- vector("logical", length=nrow(dfr))
   sel1 <- dfr$peptide.matchType == "PepFrag1"
   sel2 <- dfr$peptide.matchType == "PepFrag2"
   ## signif1 <- (dfr[sel1, "qval"] <= fdr)
   ## signif2 <- (dfr[sel2, "qval"] <= fdr)
-  ## v 0.7.7 - switching
+  ## v 0.7.7 - switching 
   signif1 <- (dfr[sel1, method] <= fdr)
   signif2 <- (dfr[sel2, method] <= fdr)
-  if (anyNA(signif1) | anyNA(signif2)) {
+  if (any(is.na(signif1)) | any(is.na(signif2))) {
     stop("Filtering NA qvalues out.")
     ## signif1[is.na(signif1)] <- FALSE
     ## signif2[is.na(signif2)] <- FALSE
-  }
+  }    
   sel[sel1] <- signif1
   sel[sel2] <- signif2
   return(dfr[sel,])
@@ -48,6 +48,7 @@ filterCommonSeq <- function(quantpep, identpep) {
               identpep = identpep))
 }
 
+
 filterKeepUniqueSeq <- function(quantpep, identpep) {
   ## DEBUG: some sequences are not unique
   ident2keep <- names(which(table(identpep$peptide.seq)==1))
@@ -58,7 +59,7 @@ filterKeepUniqueSeq <- function(quantpep, identpep) {
   ## write.csv(identpep[!identpep$peptide.seq %in% ident2keep, ],
   ##          file="ident_pep_file_duplicated_entries.csv")
   ## DEBUG: remove these from data
-  identpep <- identpep[identpep$peptide.seq %in% ident2keep, ]
+  identpep <- identpep[identpep$peptide.seq %in% ident2keep, ] 
   quantpep <- quantpep[quantpep$peptide.seq %in% quant2keep, ]
   return(list(quantpep = quantpep,
               identpep = identpep))
@@ -78,7 +79,7 @@ filterKeepUniqueProt <- function(quantpep, identpep) {
   quantpep <-quantpep[!quantpep$peptide.seq %in% quantspecific, ]
   return(list(quantpep = quantpep,
               identpep = identpep))
-}
+}  
 
 
 error.ppm <- function(obs, theo) {
@@ -127,14 +128,14 @@ modelRetTime <- function(xx, span) {
 doHDMSePredictions <- function(identpep, model, nsd) {
   ## changes in v 0.4.6 - if available, ans is retrieved
   ## from the input data.frame, else it is computed using
-  ## the model.
+  ## the model. 
   if (all(c("predictedRt", "sdRt") %in% names(identpep))) {
     ## get from identpep dataframe
     .fitted <- NA
     .predicted <- identpep$predictedRt
     .sd <- identpep$sdRt
   } else {
-    ## compute from model
+    ## compute from model 
     .o <- order(identpep$precursor.retT)
     .allpreds <- predict(model$lo, data.frame(precursor.retT.ident = identpep$precursor.retT), se=TRUE)
     .sd <- .allpreds$se.fit[.o] * sqrt(model$lo$n) ## get sd from se
@@ -168,7 +169,7 @@ findRtIndices <- function(sortedPep3d, lowerHDMSeRt, upperHDMSeRt) {
   ## just to be sure
   lowerIdx <- pmin(lowerIdx, upperIdx)
 
-  ## create matrix with boundaries (col 1 and 2)
+  ## create matrix with boundaries (col 1 and 2) 
   return(cbind(lower=lowerIdx, upper=upperIdx))
 }
 
@@ -191,7 +192,7 @@ calculateGridPerformance <- function(identpep, sortedPep3d, mergedpep, matches) 
   ## BUT there is no guarantee that with *1* unique match,
   ##     we get the correct one, even for those that were
   ##     part of the matched high confidence ident+quant
-  ##     identified subset!
+  ##     identified subset! 
 
   ## #############################################################
 
@@ -206,7 +207,7 @@ calculateGridPerformance <- function(identpep, sortedPep3d, mergedpep, matches) 
 
   spectrumID <- rep(NA, n)
   spectrumID[k1] <- sortedPep3d$spectrumID[unlist(matches[k1])]
-
+  
   multipleMatchedSpectrumIDs <- vector(mode="list", length=n)
   multipleMatchedSpectrumIDs[k2] <- matches[k2]
 
@@ -216,7 +217,7 @@ calculateGridPerformance <- function(identpep, sortedPep3d, mergedpep, matches) 
 
   notNaIdx <- which(!is.na(precursor.leID.quant))
 
-  ## grd2: number of correct matched
+  ## grd2: number of correct matched 
   ## (MSe peptide's leID == MSe Pep3D's spectrumID)
   ## divided by number of features used in model
   ## non-NAs are those used for modelling
@@ -224,7 +225,7 @@ calculateGridPerformance <- function(identpep, sortedPep3d, mergedpep, matches) 
 
   details <- integer(n)
   details[k1] <- ifelse(spectrumID[k1] == precursor.leID.quant[k1], 1, -1)
-  details[k2] <- ifelse(unlist(lapply(k2, function(i) {
+  details[k2] <- ifelse(unlist(lapply(k2, function(i) { 
     precursor.leID.quant[i] %in% multipleMatchedSpectrumIDs[[i]]})), 2, -2)
 
   ## exclude all values where precursor.leID.quant == NA
@@ -236,11 +237,11 @@ calculateGridPerformance <- function(identpep, sortedPep3d, mergedpep, matches) 
   return(list(grd1=grd1, grd2=grd2, details=details))
 }
 
-findMSeEMRTs <- function(identpep,
+findMSeEMRTs <- function(identpep, 
                          pep3d,
                          mergedpep,
                          nsd,
-                         ppmthreshold,
+                         ppmthreshold, 
                          model,
                          mergedEMRTs) {
   sortedPep3d <- pep3d
@@ -251,18 +252,18 @@ findMSeEMRTs <- function(identpep,
   res <- findMSeEMRTMatches(sortedPep3d$mwHPlus, hdmseData$mass, rtIdx,
                             ppmthreshold)
   k <- sapply(res, length)
-
+ 
   ## Those that match *1* spectumIDs will be transferred
   ## BUT there is no guarantee that with *1* unique match,
   ##     we get the correct one, even for those that were
   ##     part of the matched high confidence ident+quant
-  ##     identified subset!
+  ##     identified subset! 
 
   ## #############################################################
 
   n <- length(k)
   m <- ncol(pep3d)
-  ## to initialise the new pep3d2 with with n rows
+  ## to initialise the new pep3d2 with with n rows 
   ## and same nb of columns than pep3d
   pep3d2 <- matrix(NA, nrow=n, ncol=m, dimnames=list(c(), colnames(pep3d)))
   pep3d2[, 1] <- k
@@ -270,43 +271,43 @@ findMSeEMRTs <- function(identpep,
   pep3d2[k1, ] <- unlist(sortedPep3d[unlist(res[k1]), ])
 
   ## #############################################################
-
+  
   ans <- cbind(identpep, pep3d2)
-
+  
   ans$matched.quant.spectrumIDs <- sapply(res, paste, collapse = ",")
-
-  ans$precursor.leID.quant <- NA
+  
+  ans$precursor.leID.quant <- NA  
   idx <- match(mergedpep$precursor.leID.ident, ans$precursor.leID)
-
+  
   ans$precursor.leID.quant[idx] <- mergedpep$precursor.leID.quant
   i <- grep("precursor.leID$", names(ans))
   names(ans)[i] <- "precursor.leID.ident" ## to avoid any confusion
 
   ans$idSource <- "transfer"
-
+  
   if (mergedEMRTs == "rescue") {
     ## these are those that were in the merged data set but that
     ## did NOT get transferred because they did NOT uniquely matched
     ## a pep3D EMRT
     lost <- ans$Function != 1 & ans$precursor.leID.ident %in% mergedpep$precursor.leID.ident
     ## rescue these by adding their quant straight from QuantPeptideData
-    lostids <- ans$precursor.leID.ident[lost]
+    lostids <- ans$precursor.leID.ident[lost]    
     ans[lost, "Counts"] <-
       mergedpep[match(lostids, mergedpep$precursor.leID.ident), "precursor.inten.quant"]
     ans[lost, "idSource"] <- "rescue"
-  } else if (mergedEMRTs == "copy") {
+  } else if (mergedEMRTs == "copy") {    
     allmerged <- ans$precursor.leID.ident %in% mergedpep$precursor.leID.ident
     allmergedids <- ans$precursor.leID.ident[allmerged]
     ans[allmerged, "Counts"] <-
       mergedpep[match(allmergedids, mergedpep$precursor.leID.ident), "precursor.inten.quant"]
     ans[allmerged, "idSource"] <- "copy"
   } ## else if (fromQuant == "transfer") keep as is
-
+  
   ## since v 0.5.0 - removing multiply matched EMRTs
   ## dupIDs <- ans$spectrumID[ans$Function == 1 & duplicated(ans$spectrumID)]
   ## dupRows <- ans$spectrumID %in% dupIDs
-  ## ans[dupRows, (ncol(identpep)+1) : ncol(ans)] <- -1
-
+  ## ans[dupRows, (ncol(identpep)+1) : ncol(ans)] <- -1 
+  
   return(ans)
 }
 
@@ -324,24 +325,24 @@ lightMergedFeatures <- function(x) {
             "protein.Accession.ident",
             "protein.Description.ident",
             "protein.dataBaseType.ident",
-            "protein.falsePositiveRate.ident",
-            "peptide.matchType.ident",
-            "peptide.mhp.ident",
-            "peptide.score.ident",
-            "precursor.mhp.ident",
-            "precursor.retT.ident",
+            "protein.falsePositiveRate.ident", 
+            "peptide.matchType.ident", 
+            "peptide.mhp.ident", 
+            "peptide.score.ident", 
+            "precursor.mhp.ident", 
+            "precursor.retT.ident", 
             "precursor.inten.ident",
             "pval.ident",
             "Bonferroni.ident",
             "BH.ident",
             "qval.ident",
             ## "precursor.Mobility", ## not present in MSe master
-            "peptide.matchType.quant",
-            "peptide.score.quant",
+            "peptide.matchType.quant", 
+            "peptide.score.quant", 
             "precursor.retT.quant",
-            "precursor.inten.quant",
-            "deltaRt",
-            "errorppm.ident",
+            "precursor.inten.quant", 
+            "deltaRt", 
+            "errorppm.ident", 
             "errorppm.quant",
             "pval.quant",
             "Bonferroni.quant",
@@ -355,13 +356,13 @@ lightMatchedEMRTs <- function(x) {
             "protein.Accession",
             "protein.Description",
             "protein.dataBaseType",
-            "protein.falsePositiveRate",
-            "peptide.matchType",
-            "peptide.mhp",
-            "peptide.score",
-            "precursor.mhp",
-            "precursor.retT",
-            "precursor.inten",
+            "protein.falsePositiveRate", 
+            "peptide.matchType", 
+            "peptide.mhp", 
+            "peptide.score", 
+            "precursor.mhp", 
+            "precursor.retT", 
+            "precursor.inten", 
             ## "precursor.Mobility", ## not present in MSe master
             "spectrumID",
             "Intensity",
@@ -385,9 +386,9 @@ gridSearch2 <- function(model,
   ## uniquely matched features; second is percent of
   ## correctly assigned features (based on marged feautres
   ## used to model rt).
-  ##
+  ##  
   n <- length(nsds)
-  m <- length(ppms)
+  m <- length(ppms)  
   grd1 <- grd2 <- outer(nsds, ppms)
   N <- n*m
   details <- vector("list", length=N)
@@ -409,7 +410,7 @@ gridSearch2 <- function(model,
                                     hdmseData$mass,
                                     rtIdx,
                                     ppms[j])
-
+      
       gridDetails <- calculateGridPerformance(identpep, sortedPep3d, mergedPeptides, matches)
       grd1[i, j] <- gridDetails$grd1
       grd2[i, j] <- gridDetails$grd2
@@ -453,7 +454,7 @@ keepUniqueSpectrumIds <- function(pep3d) {
   pep3d[!duplicated(pep3d$spectrumID),]
 }
 
-score2pval <- function(xx) {
+score2pval <- function(xx) {  
   srnd <- xx[xx$protein.dataBaseType == "Random", "peptide.score"]
   sreg <- xx[xx$protein.dataBaseType == "Regular", "peptide.score"]
   nrnd <- length(srnd)
@@ -462,9 +463,9 @@ score2pval <- function(xx) {
 
 getIdStats <- function(pepdata) {
   dbtypes <- sort(unique(pepdata$protein.dataBaseType))
-  if (any(dbtypes != c("Random", "Regular")))
+  if (any(dbtypes != c("Random", "Regular"))) 
     stop("[Regular and Random] not found.")
-  ## new in v 0.8.1 -- keeping only unique (as in unique())
+  ## new in v 0.8.1 -- keeping only unique (as in unique()) 
   ## peptide entries to calculate statistics, to avoid to biasing
   ## towards repeated identical peptides (from different proteins
   ## for instance).
@@ -474,8 +475,8 @@ getIdStats <- function(pepdata) {
                      "peptide.score",
                      "peptide.matchType",
                      "protein.dataBaseType")]
-  rownames(res) <- make.unique(pepseqs)
-  res$pval <- res$qval <- res$Bonferroni <- res$BH <- NA
+  rownames(res) <- make.unique(pepseqs)    
+  res$pval <- res$qval <- res$Bonferroni <- res$BH <- NA  
   ## name subsets
   pf1 <- rownames(res)[res$peptide.matchType == "PepFrag1"]
   pf2 <- rownames(res)[res$peptide.matchType == "PepFrag2"]
@@ -483,128 +484,39 @@ getIdStats <- function(pepdata) {
                           res$protein.dataBaseType == "Regular"]
   pf2reg <- rownames(res)[res$peptide.matchType == "PepFrag2" &
                           res$protein.dataBaseType == "Regular"]
-  ## PepFrag1
+  ## PepFrag1  
   .pv1 <- score2pval(res[pf1, ])
-  res[pf1reg, "pval"] <- .pv1
+  res[pf1reg, "pval"] <- .pv1  
   res[pf1reg, "qval"] <- qvalue(.pv1)$qvalues
   .adj1 <- mt.rawp2adjp(.pv1)
   res[pf1reg, "BH"] <- .adj1$adjp[order(.adj1$index), "BH"]
-  res[pf1reg, "Bonferroni"] <- .adj1$adjp[order(.adj1$index), "Bonferroni"]
+  res[pf1reg, "Bonferroni"] <- .adj1$adjp[order(.adj1$index), "Bonferroni"]    
   ## PepFrag2
   .pv2 <- score2pval(res[pf2, ])
   res[pf2reg, "pval"] <- .pv2
   res[pf2reg, "qval"] <- qvalue(.pv2)$qvalues
   .adj2 <- mt.rawp2adjp(.pv2)
   res[pf2reg, "BH"] <- .adj2$adjp[order(.adj2$index), "BH"]
-  res[pf2reg, "Bonferroni"] <- .adj2$adjp[order(.adj2$index), "Bonferroni"]
+  res[pf2reg, "Bonferroni"] <- .adj2$adjp[order(.adj2$index), "Bonferroni"]    
   ## checking
   testsel <- res$peptide.matchType %in% c("PepFrag1", "PepFrag2") & res$protein.dataBaseType == "Regular"
-  if (anyNA(res[testsel, "pval"]))
+  if (any(is.na(res[testsel, "pval"])))
     stop("NA p-values generated")
-  ##
+  ## 
   ans <- res[, c("pval", "qval", "BH", "Bonferroni")]
   rownames(ans) <- rownames(pepdata)
-  return(ans)
+  return(ans)                             
 }
 
 ## closes #42
 isCorrespondingPep3DataFile <- function(quant, pep3d) {
   idx <- match(quant$precursor.leID, pep3d$spectrumID)
-  return(!anyNA(idx) && all(quant$precursor.inten == pep3d$Counts[idx]))
+  return(all(!is.na(idx)) && all(quant$precursor.inten == pep3d$Counts[idx]))
 }
 
 getExtension <- function (filename) {
   x <- strsplit(filename, "\\.")[[1]]
   ext <- x[length(x)]
   return(ext)
-}
-
-## duplicate rows if the have multiple matched.quant.spectrumIDs
-## adds a columns "gridSearchResult" that could be "unique-true",
-## "unique-false", "non-unique-true", "non-unique-false"
-## please note that it would change the order of the data.frame
-flatMatchedEMRTs <- function(emrts, pep3d, na.rm=TRUE, verbose=TRUE) {
-  if (verbose) {
-    message("create flat EMRT data.frame (one matched EMRT per row)")
-  }
-
-  if (na.rm) {
-    emrts <- emrts[!is.na(emrts$precursor.leID.quant), ]
-  }
-
-  emrts$gridSearchResult <- "no_quant_id"
-
-  ## unique matches
-  k1 <- which(emrts$Function == 1)
-  isCorrectMatch <- as.numeric(emrts$spectrumID[k1]) ==
-                      as.numeric(emrts$precursor.leID.quant[k1])
-  emrts$gridSearchResult[k1] <- ifelse(isCorrectMatch,
-                                       "unique-true", "unique-false")
-  emrts$matched.quant.spectrumIDs[k1] <- emrts$spectrumID[k1]
-
-  ## non-unique matches
-  k2 <- which(emrts$Function > 1)
-  mIds <- matched.quant.spectrumIDs2numeric(emrts$matched.quant.spectrumIDs)
-
-  flatEmrts <- lapply(k2, function(j) {
-    ## duplicated current row
-    curRow <- emrts[rep(j, length(mIds[[j]])), ]
-    ## update matched.quant.spectrumIDs (contain only a single entry now)
-    curRow$matched.quant.spectrumIDs <- mIds[[j]]
-    ## update spectrumID
-    curRow$spectrumID <- curRow$matched.quant.spectrumIDs
-
-    curRow$gridSearchResult <- ifelse(mIds[[j]] %in%
-                                      as.numeric(curRow$precursor.leID.quant),
-                                      "non-unique-true", "non-unique-false")
-    return(curRow)
-  })
-
-  ## build final df
-  flatEmrts <- do.call(rbind, flatEmrts)
-  flatEmrts <- rbind(emrts[k1, ], flatEmrts)
-  flatEmrts$matched.quant.spectrumIDs <-
-    as.numeric(flatEmrts$matched.quant.spectrumIDs)
-  rownames(flatEmrts) <- NULL
-
-  ## refill pep3d information
-  rows <- flatEmrts$matched.quant.spectrumIDs
-
-  ## find corresponding columns (but exclude spectrumID and Function
-  cols <- intersect(colnames(flatEmrts), colnames(pep3d)[-c(1:2)])
-
-  flatEmrts[, cols] <- pep3d[rows, cols]
-
-  return(flatEmrts)
-}
-
-appendCrossMatchingColumns <- function(emrts, cx) {
-  idx <- match(sort(unique(cx$precursor.leID.ident)),
-               emrts$precursor.leID.ident)
-  cols <- c("spectrum.identXfragments.quant",
-            "spectrum.quantXfragments.ident",
-            "fragments.identXfragments.quant")
-  for (j in cols) {
-    emrts[idx, j] <- MSnbase:::utils.list2ssv(
-      split(cx[, j], cx$precursor.leID.ident), sep=",")
-  }
-  return(emrts)
-}
-
-matched.quant.spectrumIDs2numeric <- function(x) {
-  lapply(MSnbase:::utils.ssv2list(x, sep=","), as.numeric)
-}
-
-diagnosticErrors <- function(x) {
-  tp <- x[, "tp"]
-  fp <- x[, "fp"]
-  tn <- x[, "tn"]
-  fn <- x[, "fn"]
-
-  acc <- (tp+tn)/(tp+fp+tn+fn)
-  pre <- tp/(tp+fp)
-  rec <- tp/(tp+fn)
-  f1 <- 2*pre*rec/(pre+rec)
-  return(cbind(accuracy=acc, precision=pre, recall=rec, fdr=1-pre, f1=f1))
 }
 
