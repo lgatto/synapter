@@ -25,10 +25,10 @@ loadIdentOnly <- function(pepfile,
 
 setMethod("show", "MasterPeptides",
           function(object) {
-            if (length(object@masters) == 0) {
-              cat("Empty object of class \"", class(object), "\"\n",sep = "")
-            } else  {
-              cat("Object of class \"", class(object), "\"\n",sep = "")
+            if (!length(object@masters)) {
+              cat("Empty object of class \"", class(object), "\"\n", sep = "")
+            } else {
+              cat("Object of class \"", class(object), "\"\n", sep = "")
               f <- basename(object@pepfiles)[object@orders[[1]]]
               f <- paste0(" [", 1:length(f), "] ", f)
               o1 <- paste(1:length(object@pepfiles), collapse = " ")
@@ -36,6 +36,15 @@ setMethod("show", "MasterPeptides",
               cat(" 1st Master [", o1, "] has", nrow(object@masters[[1]]), "peptides \n")
               cat(" 2nd Master [", o2, "] has", nrow(object@masters[[2]]), "peptides \n")
               cat(paste(f, collapse = "\n"), "\n")
+            }
+
+            if (!length(object@fragmentlibrary)) {
+              cat("\n No fragment library.\n")
+            } else {
+              cat("\n Fragment library contains fragments for ",
+                  length(object@fragmentlibrary), " peptides.\n", sep="")
+              cat(paste0(" [", seq_along(object@fragmentfiles), "] ",
+                         basename(object@fragmentfiles), "\n"), sep="")
             }
             invisible(NULL)
           })
@@ -217,7 +226,9 @@ setMethod("allComb", "MasterFdrResults",
 
 ##' This function combines a list of peptide final peptide files into
 ##' one single \emph{master} file that is obtained by merging
-##' the unique peptides from the filtered original peptide files.
+##' the unique peptides from the filtered original peptide files. \cr
+##' Additionally it can combine multiple final fragment files into a fragment
+##' library.
 ##'
 ##' The merging process is as follows:
 ##' \enumerate{
@@ -247,7 +258,7 @@ setMethod("allComb", "MasterFdrResults",
 ##' \code{\link{Synapter}}, \code{\link{synergise}} or using the GUI
 ##' (\code{\link{synapterGUI}}). To do so, it must be serialised (using the
 ##' \code{saveRDS} function) with a \code{.rds} file
-##' extension, to be recognised (and loded) as a \code{R} object.
+##' extension, to be recognised (and loaded) as a \code{R} object.
 ##'
 ##' When several quantitation (or identification) files are combined as a master set
 ##' to be mapped back against the inidividual final peptide files,
@@ -263,20 +274,50 @@ setMethod("allComb", "MasterFdrResults",
 ##' saved to disk (with \code{save} or \code{saveRDS}) and later reloaded
 ##' (with \code{load} or \code{readRDS}) for further analysis.
 ##'
+##' The fragment library generation works as follows:
+##' \enumerate{
+##' \item Each individual final fragment file is imported and only peptides
+##' present in the \emph{master} dataset are used.
+##'
+##' \item The fragments are combined based on their precursor ions.
+##'
+##' \item The intensities of identical fragments (seen in different runs)
+##' is summed and divided by the summed precursor intensity (of the same
+##' peptide in different runs).
+##'
+##' \item Afterwards the intensities are normalized to the average precursor
+##' intensity of the different runs.
+##'
+##' \item Finally a \code{\linkS4class{MSnExp}} object is created.
+##' }
+##'
+##' The fragment library dataframe can be exported to disk as
+##' \code{csv} file with \code{writeFragmentLibrary}.
+##'
 ##' @title Merges final peptide files
-##' @param pepfiles A \code{list} of peptide final peptide file names
-##' to be merged.
+##' @param pepfiles A \code{character} vector of final peptide file
+##' names to be merged.
+##' @param fragmentfiles A \code{character} vector of final fragment file
+##' names to be combined into an fragment library. These files should be
+##' from the same runs as the final peptide files used in \code{pepfiles}.
 ##' @param fdr A \code{numeric} indicating the preptide false
 ##' discovery  rate limit.
 ##' @param method A \code{character} indicating the p-value adjustment to
 ##' be used. One of \code{BH} (default), \code{Bonferroni} or \code{qval}.
 ##' @param span A \code{numeric} with the loess span parameter value
 ##' to be used for retention time modelling.
-##' @param verbose A \code{logical} indicating information should be
+##' @param removeNeutralLoss A \code{logical}, if \code{TRUE} peptides with
+##' neutral loss are removed from the fragment library.
+##' @param removePrecursor A \code{logical}, if \code{TRUE} precursor ions are
+##' removed from the fragment spectra.
+##' @param tolerance A \code{double} value that determines the tolerance used
+##' to look for the precursor ions.
+##' @param verbose A \code{logical} indicating if information should be
 ##' printed out.
 ##' @return An instance of class \code{"\linkS4class{MasterPeptides}"}.
-##' @author Laurent Gatto
+##' @author Laurent Gatto, Sebastian Gibb
 ##' @aliases writeMasterPeptides
+##' @aliases writeFragmentLibrary
 ##' @references Shliaha P.V., Bond N. J., Lilley K.S. and Gatto L., in prep.
 ##' @seealso See the \code{\link{Synapter}} class manual page for
 ##' detailed information on filtering and modelling and the general
@@ -291,10 +332,14 @@ setMethod("allComb", "MasterFdrResults",
 ##' illustrates a complete pipeline using \code{estimateMasterFdr} and
 ##' \code{makeMaster}.
 makeMaster <- function(pepfiles,
+                       fragmentfiles,
                        fdr = 0.01,
                        ## fpr
                        method = c("BH", "Bonferroni", "qval"),
                        span = 0.05,
+                       removeNeutralLoss = TRUE,
+                       removePrecursor = TRUE,
+                       tolerance = 25e-6,
                        verbose = TRUE) {
   method <- match.arg(method)
   n <- length(pepfiles)
@@ -357,12 +402,35 @@ makeMaster <- function(pepfiles,
     x
   })
 
+  lib <- new("MSnExp")
+
+  ## create fragment library
+  if (length(fragmentfiles)) {
+    if (verbose) {
+      message("Creating fragment library.")
+    }
+
+    fragments <- .createFragmentLibrary(master = mergedList[[1L]],
+                                        files = fragmentfiles,
+                                        removeNeutralLoss = removeNeutralLoss,
+                                        verbose = verbose)
+    lib <- .fragments2spectra(df = master,
+                              fragments = fragments,
+                              file = fragmentfiles,
+                              removePrecursor = removePrecursor,
+                              tolerance = tolerance,
+                              verbose = verbose)
+  }
+
   master <- new("MasterPeptides",
                 masters = mergedList,
                 pepfiles = pepfiles,
                 fdr = fdr,
                 method = method,
-                orders = orders)
+                orders = orders,
+                fragmentfiles = fragmentfiles,
+                fragments = fragments,
+                fragmentlibrary = lib)
   return(master)
 }
 

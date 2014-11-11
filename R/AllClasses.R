@@ -5,16 +5,22 @@ setClass("MasterPeptides",
            ## fpr = "numeric",
            masters = "list",
            pepfiles = "character",
-           orders = "list"),
+           orders = "list",
+           fragmentfiles = "character",
+           fragments = "data.frame",
+           fragmentlibrary = "MSnExp"),
          validity = function(object) {
-           msg <- NULL           
+           msg <- NULL
            if (length(object@masters) != length(object@orders))
              msg <- c(msg, "Master dataframes and orders have different length.")
            if (length(object@orders[[1]]) != length(object@orders[[2]]))
              msg <- c(msg, "Master orders have different length.")
            if (length(object@orders[[1]]) != length(object@pepfiles))
              msg <- c(msg, "Peptides files and orders have different length.")
-           if (is.null(msg)) TRUE           
+           if (length(object@fragmentfiles) &&
+               length(object@fragmentfiles) != length(object@pepfiles))
+             msg <- c(msg, "Peptides and fragment files have different length.")
+           if (is.null(msg)) TRUE
            else msg
          })
 

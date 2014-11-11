@@ -1,30 +1,15 @@
 #' create fragment library out of multiple fragment files
 #'
 #' @param master master data.frame
-#' @param path path to fragment files
+#' @param files path to final_fragment files
 #' @param removeNeutralLoss remove rows with neutral loss != "none"?
 #' @param verbose verbose output?
 #'
 #' @return a fragment library data.frame (similar to the input files but
 #' combined)
 #' @noRd
-.createFragmentLibrary <- function(master, path, removeNeutralLoss=FALSE,
+.createFragmentLibrary <- function(master, files, removeNeutralLoss=FALSE,
                                    verbose=TRUE) {
-  if (!file.exists(path)) {
-    stop("Directory ", sQuote(path), " doesn't exist!")
-  }
-
-  if (!file.info(path)$isdir) {
-    stop(sQuote(path), " is no directory!")
-  }
-
-  files <- list.files(path=path, pattern="^.*final_fragment\\.csv$",
-                      full.names=TRUE, recursive=TRUE, ignore.case=TRUE)
-
-  if (verbose) {
-    message("Found ", length(files), " fragment files.")
-  }
-
   fragments <- lapply(files, function(f) {
     r <- .readFragments(file=f, removeNeutralLoss=removeNeutralLoss,
                         verbose=verbose)
