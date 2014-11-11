@@ -311,7 +311,7 @@
 #' @param maxNumber maximal number of fragments to preserve
 #' @param verbose verbose output?
 #' @return modified MSnExp object
-#' @nRd
+#' @noRd
 .filterIntensity <- function(msexp, minIntensity=NULL, maxNumber=NULL,
                              verbose=TRUE) {
   if(is.null(minIntensity) && is.null(maxNumber)) {
@@ -366,7 +366,7 @@
 }
 
 #' @param msexp MSnExp object to filter
-#' @nRd
+#' @noRd
 .plotIntensityVsNumber <- function(msexp, what) {
   cs <- .cumsumIntensities(msexp)
   plot(as.double(names(cs)), cs, log="x", type="l",
