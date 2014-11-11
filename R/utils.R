@@ -285,7 +285,7 @@ findMSeEMRTs <- function(identpep,
 
   ans <- cbind(identpep, pep3d2)
 
-  ans$matched.quant.spectrumIDs <- sapply(res, paste, collapse = ",")
+  ans$matched.quant.spectrumIDs <- MSnbase:::utils.list2ssv(res, sep=";")
 
   ans$precursor.leID.quant <- NA
   idx <- match(mergedpep$precursor.leID.ident, ans$precursor.leID)
