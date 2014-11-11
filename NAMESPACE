@@ -21,7 +21,6 @@ export(Synapter, ## constructor
        synergise,
        synapterGUI,
        makeMaster,
-       writeMasterPeptides,
        estimateMasterFdr,
        inspectPeptideScores,
        synapterGuide,
@@ -109,4 +108,6 @@ exportMethods(show,
               masterFdr,
               fileNames,
               plot,
-              show)
+              show,
+              writeMasterPeptides,
+              writeFragmentLibrary)

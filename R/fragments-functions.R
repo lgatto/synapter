@@ -56,6 +56,24 @@
                                    tolerance=25e-6, verbose=TRUE) {
   fragments <- .readFragments(file, removeNeutralLoss=removeNeutralLoss,
                               verbose=verbose)
+  .fragments2spectra(df=df, fragments=fragments, file=file, storeAll=storeAll,
+                     removePrecursor=removePrecursor, tolerance=tolerance,
+                     verbose=verbose)
+}
+
+#' create a MSnbase::Spectrum2 objects out of a final_fragments data.frame
+#' @param df corresponding df from the synapter object ({Ident,Quant}PeptideData)
+#' @param fragments final_fragments data.frame
+#' @param file filename (just for the metadata)
+#' @param storeAll should all spectra stored? or only the needed ones?
+#' @param removePrecursor remove precursor ion from fragments
+#' @param tolerance tolerance to look for the precursor ion
+#' @param verbose verbose output
+#' @return modified assaydata
+#' @noRd
+.fragments2spectra <- function(df, fragments, file, storeAll=TRUE,
+                               removePrecursor=TRUE, tolerance=25e-6,
+                               verbose=TRUE) {
 
   assignments <- new.env(hash=TRUE, parent=emptyenv())
   idx <- split(1:nrow(fragments), f=fragments$precursor.leID)
@@ -72,7 +90,7 @@
   }
 
   if (verbose) {
-    message("Convert spectra data.frames to MSnbase::Spectrum2 objects")
+    message("Convert fragment data.frame to MSnbase::Spectrum2 objects")
     pb <- txtProgressBar(0, length(uleID), style=3)
   }
 
