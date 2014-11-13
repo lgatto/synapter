@@ -234,7 +234,6 @@
                                                             "quantspectrum")))
                       filenames <- as.list(filenames)
 
-                      .self <- updateSynapterObject(.self)
                       .self$IdentSpectrumFile <- filenames$identspectrum
                       .self$IdentSpectrumData <-
                         .spectrumXml2spectra(df=.self$IdentPeptideData,
@@ -269,7 +268,6 @@
                                                             "quantfragments")))
                       filenames <- as.list(filenames)
 
-                      .self <- updateSynapterObject(.self)
                       .self$IdentFragmentFile <- filenames$identfragments
                       .self$IdentFragmentData <-
                         .finalFragment2spectra(df=.self$IdentPeptideData,
@@ -460,7 +458,6 @@
                        searchGrid = function(ppms, nsds, imdiffs, subset, n,
                                              verbose = TRUE) {
                          'Performs a grid search in ppm x nsd x imdiff space.'
-                         .self <- updateSynapterObject(.self)
                          .IdentPeptideData <- .self$IdentPeptideData
                          if (!missing(subset)) {
                            if (subset < 1) {
