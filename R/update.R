@@ -12,7 +12,7 @@
 
   if (isOutOfDate && throwError) {
     stop("Your Synapter object is out of date. Please run ",
-         sQuote("obj <- updateObject(obj)"), ".")
+         sQuote("object <- updateObject(object)"), ".")
   }
 
   isOutOfDate

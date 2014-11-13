@@ -676,7 +676,6 @@ setMethod(crossMatching, "Synapter",
             object$crossMatching(verbose=verbose)
           })
 
-
 ## Results to csv
 setMethod(writeIdentPeptides, "Synapter",
           function(object,
@@ -760,4 +759,15 @@ setAs("Synapter", "MSnSet",
       })
 
 as.MSnSet.Synapter <- function(x) as(x,"MSnSet")
+
+## check class version/updates
+setMethod(isSynapterObjectOutOfDate, "Synapter",
+          function(object) {
+            .isSynapterObjectOutOfDate(object)
+          })
+
+setMethod(updateObject, "Synapter",
+          function(object, ..., verbose = TRUE) {
+            .updateSynapterObject(object, ..., verbose=verbose)
+          })
 

@@ -1,6 +1,6 @@
 ###############################
 ## synapter interface generics
-
+setGeneric("isSynapterObjectOutOfDate", function(object, ...) standardGeneric("isSynapterObjectOutOfDate"))
 setGeneric("inputFiles", function(object, ...) standardGeneric("inputFiles"))
 setGeneric("loadSpectrumXmlFiles", function(object, ...) standardGeneric("loadSpectrumXmlFiles"))
 setGeneric("loadFragmentCsvFiles", function(object, ...) standardGeneric("loadFragmentCsvFiles"))

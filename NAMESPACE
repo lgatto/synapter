@@ -24,8 +24,7 @@ export(Synapter, ## constructor
        estimateMasterFdr,
        inspectPeptideScores,
        synapterGuide,
-       synapterTinyData,
-       updateSynapterObject)
+       synapterTinyData)
 
 exportClasses(MasterPeptides,
               MasterFdrResults)
@@ -110,4 +109,6 @@ exportMethods(show,
               plot,
               show,
               writeMasterPeptides,
-              writeFragmentLibrary)
+              writeFragmentLibrary,
+              isSynapterObjectOutOfDate,
+              updateObject)
