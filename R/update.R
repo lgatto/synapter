@@ -25,51 +25,40 @@
 ##' objects.
 ##'
 ##' \describe{
-##'   \item{synapter 1.7.1}{
-##'     Introduce \code{updateSynapterObject} function. \cr
-##'     Add IdentSpectrumFile, IdentSpectrumData, QuantSpectrumFile,
-##'     QuantSpectrumData, IdentFragmentFile, IdentFragmentData,
-##'     QuantFragmentFile, QuantFragmentData, CrossMatching,
-##'     and CrossMatchingTolerance fields to synapter class.}
 ##'   \item{synapter 1.7.2}{
-##'     Add ImDiff field to synapter class.}
+##'     Introduce \code{updateObject} method.\cr}
 ##' }
 ##'
-##' @param obj synapter object
+##' @param object old synapter object
 ##' @param verbose print verbose output
 ##' @return new synapter object
 ##' @seealso \code{\link{Synapter}}
 ##' @examples
 ##' synapterTinyData()
 ##' synapterTiny
-##' newSynapterObj <- updateSynapterObject(synapterTiny)
+##' newSynapterObj <- updateObject(synapterTiny)
 ##' newSynapterObj
 ##'
-updateSynapterObject <- function(obj, verbose=TRUE) {
+##' @noRd
+.updateSynapterObject <- function(object, verbose=TRUE) {
 
-  current <- as.package_version(obj$Version)
+  if (.isSynapterObjectOutOfDate(object, throwError=FALSE)) {
+    newObject <- object$copy()
 
-  ## 1.7.2 adds ImDiff and gridSearch3
-  minimalVersion <- as.package_version("1.7.2")
-
-  isDeprecated <- current < minimalVersion
-
-  if (isDeprecated) {
-    newobj <- obj$copy()
-
-    newobj$Version <- as.character(packageVersion("synapter"))
-    newobj$SynapterLog <- c(newobj$SynapterLog,
-                            paste("Instance updated to synapter",
-                                  newobj$Version, "on", date()))
+    newObject$Version <- as.character(packageVersion("synapter"))
+    newObject$SynapterLog <- c(newObject$SynapterLog,
+                               paste("Instance updated to synapter",
+                                      newObject$Version, "on", date()))
     if (verbose) {
-      message("You are using an old synapter object (", obj$Version, "). ",
+      message("You are using an old synapter object (", object$Version, "). ",
               "There are some internal changes in the definition of synapter ",
-              "objects. Your object is updated to synapter ", newobj$Version,
-              ". Please see ", sQuote("?updateSynapterObject"), " for details.")
+              "objects. Your object is updated to synapter ",
+              newObject$Version, ". ")
     }
-    return(newobj)
+
+    return(newObject)
   }
 
-  return(obj)
+  object
 }
 
