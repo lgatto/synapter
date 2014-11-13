@@ -20,9 +20,9 @@
 \section{Slots}{
   \describe{
     \item{\code{masters}:}{Object of class \code{"list"} storing the 2
-      master \code{data.frame} obejcts. }
+      master \code{data.frame} objects. }
     \item{\code{pepfiles}:}{Object of class \code{"character"} with the
-      list of final peptide iinput files. }
+      list of final peptide input files. }
     \item{\code{fdr}:}{Object of class \code{"numeric"} with the
       peptide false discovery applied when creating the filter. }
     \item{\code{method}:}{Object of class \code{"character"} with the
@@ -32,6 +32,12 @@
       \code{numeric} vectors specifying the order of \code{pepfiles}
       used to generate the respective \code{masters}
       \code{data.frames}. }
+    \item{\code{fragmentfiles}:}{Object of class \code{"character"} with the
+      list of final fragment input files. }
+    \item{\code{fragments}:}{Object of class \code{data.frame} storing the
+      combined final fragment data. }
+    \item{\code{fragmentlibrary}:}{Object of class \code{"MSnExp"} storing
+      the fragment library. }
   }
 }
 
@@ -49,7 +55,7 @@ Journal of Proteome Research, 2013, in press.
 
 The Effects of Travelling Wave Ion Mobility Separation on Data
 Independent Acquisition in Proteomics Studies, P.V. Shliaha, N.J. Bond,
-L. Gatto and K.S. Lilley, Journal of Proteome Research, 2013, in press. 
+L. Gatto and K.S. Lilley, Journal of Proteome Research, 2013, in press.
 }
 
 \author{

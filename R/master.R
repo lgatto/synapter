@@ -319,7 +319,8 @@ setMethod("allComb", "MasterFdrResults",
 ##' @return An instance of class \code{"\linkS4class{MasterPeptides}"}.
 ##' @author Laurent Gatto, Sebastian Gibb
 ##' @aliases writeMasterPeptides
-##' @aliases writeFragmentLibrary
+##' writeMasterPeptides,MasterPeptides,character-method
+##' writeFragmentLibrary writeFragmentLibrary,MasterPeptides,character-method
 ##' @references Shliaha P.V., Bond N. J., Lilley K.S. and Gatto L., in prep.
 ##' @seealso See the \code{\link{Synapter}} class manual page for
 ##' detailed information on filtering and modelling and the general
