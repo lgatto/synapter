@@ -1,6 +1,5 @@
 ###############################
 ## synapter interface generics
-
 setGeneric("inputFiles", function(object, ...) standardGeneric("inputFiles"))
 setGeneric("loadSpectrumXmlFiles", function(object, ...) standardGeneric("loadSpectrumXmlFiles"))
 setGeneric("loadFragmentCsvFiles", function(object, ...) standardGeneric("loadFragmentCsvFiles"))

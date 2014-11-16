@@ -153,6 +153,8 @@
 
 % other
 \alias{as.MSnSet.Synapter}
+\alias{validObject,Synapter-method}
+\alias{updateObject,Synapter-method}
 
 \docType{class}
 \encoding{UTF-8}
@@ -981,6 +983,15 @@ Synapter(filenames, master) ## creates an instance of class 'Synapter'
       \item{as(, "MSnSet")}{\code{signature(x = "Synapter")}: Coerce
 	object from \code{Synapter} to \code{MSnSet} class. }
     }
+    \describe{
+      \item{validObject}{\code{signature(object = "Synapter")}:
+        Test whether a given \code{Synapter} object is valid.}
+    }
+    \describe{
+      \item{updateObject}{\code{signature(object = "Synapter")}: Updates an old
+       \code{Synapter} object.}
+    }
+
   }
 }
 }
