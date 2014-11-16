@@ -153,8 +153,7 @@
 
 % other
 \alias{as.MSnSet.Synapter}
-\alias{isSynapterObjectOutOfDate,Synapter-method}
-\alias{isSynapterObjectOutOfDate}
+\alias{validObject,Synapter-method}
 \alias{updateObject,Synapter-method}
 
 \docType{class}
@@ -985,10 +984,8 @@ Synapter(filenames, master) ## creates an instance of class 'Synapter'
 	object from \code{Synapter} to \code{MSnSet} class. }
     }
     \describe{
-      \item{isSynapterObjectOutOfDate}{\code{signature(object = "Synapter")}:
-        Test whether a given \code{Synapter} object is out of date and needs an
-        update. Throws an error if the object is too old and returns
-        \code{FALSE} if it is an recent object.}
+      \item{validObject}{\code{signature(object = "Synapter")}:
+        Test whether a given \code{Synapter} object is valid.}
     }
     \describe{
       \item{updateObject}{\code{signature(object = "Synapter")}: Updates an old

@@ -12,7 +12,7 @@ importFrom(qvalue, qvalue)
 importFrom(multtest, mt.rawp2adjp)
 importFrom(lattice, levelplot, densityplot, barchart)
 importFrom(RColorBrewer, brewer.pal)
-importFrom(Biobase, addVigs2WinMenu)
+importFrom(Biobase, addVigs2WinMenu, updateObject, validMsg)
 importFrom(Biostrings, readAAStringSet)
 
 export(Synapter, ## constructor
@@ -110,5 +110,4 @@ exportMethods(show,
               show,
               writeMasterPeptides,
               writeFragmentLibrary,
-              isSynapterObjectOutOfDate,
               updateObject)

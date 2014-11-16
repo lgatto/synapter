@@ -1,21 +1,18 @@
 ##' Checks version of an Synapter object
+##'
+##' IMPORTANT: update the minimalVersion value everytime you change
+##' synapter-class.R (regardless if you just change the code in a method or the
+##' complete API).
+##'
 ##' @param object synapter object
-##' @param throwError if TRUE throw an error if version is too old
-##' @return new synapter object
+##' @return TRUE if the object needs to be updated, FALSE otherwise
 ##' @noRd
-.isSynapterObjectOutOfDate <- function(object, throwError=TRUE) {
+.isSynapterObjectOutOfDate <- function(object) {
   minimalVersion <- as.package_version("1.7.2")
 
   version <- as.package_version(object$Version)
 
-  isOutOfDate <- version < minimalVersion
-
-  if (isOutOfDate && throwError) {
-    stop("Your Synapter object is out of date. Please run ",
-         sQuote("object <- updateObject(object)"), ".")
-  }
-
-  isOutOfDate
+  isTRUE(version < minimalVersion)
 }
 
 ##' Updates an old synapter object
@@ -42,7 +39,7 @@
 ##' @noRd
 .updateSynapterObject <- function(object, verbose=TRUE) {
 
-  if (.isSynapterObjectOutOfDate(object, throwError=FALSE)) {
+  if (.isSynapterObjectOutOfDate(object)) {
     newObject <- object$copy()
 
     newObject$Version <- as.character(packageVersion("synapter"))
