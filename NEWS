@@ -8,6 +8,7 @@ CHANGES IN VERSION 1.7.2
  o plotGrid gets a new argument "maindim" to decided which of the three
    dimension should be used. [2014-05-16 Fri]
  o add {set,get}ImDiff [2014-05-16 Fri]
+ o add updateObject and validObject method [2014-11-16 Sun]
 
 CHANGES IN VERSION 1.7.1
 ------------------------
@@ -43,7 +44,6 @@ CHANGES IN VERSION 1.7.1
  o add testthat to Suggests [2014-04-25 Fri]
  o add matchColumn argument to filterMatchedEMRTsByCommonPeaks and
    plotCrossMatchingSummary [2014-04-28 Mon]
- o add updateSynapterObject function [2014-04-23 Wed]
  o fix retention time model calculation in plotFeatures(..., what="some")
    [2014-04-28 Mon]
  o add recommended biocView [2014-06-05 Thu]
