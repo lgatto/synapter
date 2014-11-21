@@ -8,7 +8,6 @@ CHANGES IN VERSION 1.99.0
  o plotGrid gets a new argument "maindim" to decided which of the three
    dimension should be used. [2014-05-16 Fri]
  o add {set,get}ImDiff [2014-05-16 Fri]
- o add updateObject and validObject method [2014-11-16 Sun]
  o add createUniquePeptideDbRds (regards #55) [2014-04-29 Tue]
  o allow to use an RDS instead of a fasta file as 'Unique Peptides Database';
    closes #55 [2014-04-29 Tue]
@@ -48,7 +47,9 @@ CHANGES IN VERSION 1.99.0
    R >= 3.1.0 now [2014-11-01 Sat]
  o Only suggesting tcltk and tcltk2, as gui is now deprecated
    [2014-11-21 Fri]
- 
+ o add updateObject and validObject method [2014-11-16 Sun]
+ o add ClassVersion field to Synapter class [2014-11-21 Fri]
+
 CHANGES IN VERSION 1.7.0
 ------------------------
  o new devel version for Bioc 3.0

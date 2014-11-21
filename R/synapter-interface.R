@@ -29,6 +29,7 @@ setMethod(show, "Synapter",
           function(object) {
             'Textual display of the instance.'
             cat("Object of class", classLabel(class(object)), "\n")
+            cat("Class version", object$ClassVersion, "\n")
             cat("Package version", object$Version, "\n")
             cat("Data files:\n")
             cat(" + Quantitation pep file:",
@@ -761,10 +762,15 @@ setAs("Synapter", "MSnSet",
 as.MSnSet.Synapter <- function(x) as(x,"MSnSet")
 
 ## check class version/updates
+setMethod(isCurrent, "Synapter",
+          function(object) {
+            .isCurrent(object)
+})
+
 .validSynapterObject <- function(object) {
     msg <- NULL
 
-    if (.isSynapterObjectOutOfDate(object)) {
+    if (!isCurrent(object)) {
       msg <- validMsg(msg,
                       paste0("Your Synapter object is out of date. ",
                              "Please run ",

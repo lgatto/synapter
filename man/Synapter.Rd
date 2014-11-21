@@ -153,6 +153,7 @@
 
 % other
 \alias{as.MSnSet.Synapter}
+\alias{isCurrent,Synapter-method}
 \alias{validObject,Synapter-method}
 \alias{updateObject,Synapter-method}
 
