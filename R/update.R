@@ -1,18 +1,18 @@
 ##' Checks version of an Synapter object
 ##'
-##' IMPORTANT: update the minimalVersion value everytime you change
-##' synapter-class.R (regardless if you just change the code in a method or the
-##' complete API).
-##'
 ##' @param object synapter object
-##' @return TRUE if the object needs to be updated, FALSE otherwise
+##' @return FALSE if the object needs to be updated, TRUE otherwise
 ##' @noRd
-.isSynapterObjectOutOfDate <- function(object) {
-  minimalVersion <- as.package_version("1.7.2")
+.isCurrent <- function(object) {
+  ## synpater class version < 2.0.0 does not have a ClassVersion field
+  if (!"ClassVersion" %in% ls(object)) {
+    return(FALSE)
+  }
 
-  version <- as.package_version(object$Version)
+  ## synapter class version >= 2.0.0
+  version <- as.package_version(object$ClassVersion)
 
-  isTRUE(version < minimalVersion)
+  isTRUE(version == .Synapter$new()$ClassVersion)
 }
 
 ##' Updates an old synapter object
@@ -39,15 +39,16 @@
 ##' @noRd
 .updateSynapterObject <- function(object, verbose=TRUE) {
 
-  if (.isSynapterObjectOutOfDate(object)) {
+  if (!isCurrent(object)) {
     newObject <- object$copy()
 
+    newObject$ClassVersion <- .Synapter$new()$ClassVersion
     newObject$Version <- as.character(packageVersion("synapter"))
     newObject$SynapterLog <- c(newObject$SynapterLog,
                                paste("Instance updated to synapter",
                                       newObject$Version, "on", date()))
     if (verbose) {
-      message("You are using an old synapter object (", object$Version, "). ",
+      message("You are using an old synapter object. ",
               "There are some internal changes in the definition of synapter ",
               "objects. Your object is updated to synapter ",
               newObject$Version, ". ")
