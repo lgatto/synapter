@@ -1,8 +1,6 @@
 import(cleaver)
 import(knitr)
 import(hwriter)
-import(tcltk)
-import(tcltk2)
 import(utils)
 import(MSnbase)
 import(methods)

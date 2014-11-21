@@ -1,5 +1,5 @@
-CHANGES IN VERSION 1.7.2
-------------------------
+CHANGES IN VERSION 1.99.0
+-------------------------
  o add 3D grid search (retention time, m/z, ion mobility); set imdiff = Inf to
    get the original 2D grid search; closes #33 [2014-05-16 Fri]
  o getGrid returns an array instead of a matrix [2014-05-16 Fri]
@@ -9,9 +9,6 @@ CHANGES IN VERSION 1.7.2
    dimension should be used. [2014-05-16 Fri]
  o add {set,get}ImDiff [2014-05-16 Fri]
  o add updateObject and validObject method [2014-11-16 Sun]
-
-CHANGES IN VERSION 1.7.1
-------------------------
  o add createUniquePeptideDbRds (regards #55) [2014-04-29 Tue]
  o allow to use an RDS instead of a fasta file as 'Unique Peptides Database';
    closes #55 [2014-04-29 Tue]
@@ -49,7 +46,9 @@ CHANGES IN VERSION 1.7.1
  o add recommended biocView [2014-06-05 Thu]
  o replace `any(is.na(...)` by `anyNA(...)`; synapter depends on
    R >= 3.1.0 now [2014-11-01 Sat]
-
+ o Only suggesting tcltk and tcltk2, as gui is now deprecated
+   [2014-11-21 Fri]
+ 
 CHANGES IN VERSION 1.7.0
 ------------------------
  o new devel version for Bioc 3.0
