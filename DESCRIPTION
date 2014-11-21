@@ -7,10 +7,10 @@ Author: Laurent Gatto, Nick J. Bond and Pavel V. Shliaha
 	and Sebastian Gibb.
 Maintainer: Laurent Gatto <lg390@cam.ac.uk>
 Depends: R (>= 2.15), methods, MSnbase
-Imports: hwriter, tcltk, tcltk2, RColorBrewer, lattice, qvalue,
+Imports: hwriter, RColorBrewer, lattice, qvalue,
         multtest, utils, Biobase, knitr, Biostrings, cleaver, 
 	BiocParallel
-Suggests: synapterdata, xtable
+Suggests: synapterdata, xtable, tcltk, tcltk2
 Description: The synapter package provides functionality to reanalyse
         label-free proteomics data acquired on a Synapt G2 mass
         spectrometer. One or several runs, possibly processed with
