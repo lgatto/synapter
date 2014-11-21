@@ -29,6 +29,6 @@ See also the `synapter` [Bioconductor page](http://bioconductor.org/packages/dev
 
 The code on [github](https://github.com/lgatto/synapter/) is for sharing, testing, issue tracking and forking/pulling purposes. Although it should be in sync with the code on the [Bioconductor svn server](https://hedgehog.fhcrc.org/bioconductor/trunk/madman/Rpacks/), the latter is the official repository for the working source code. Get is with
 
-    svn co https://hedgehog.fhcrc.org/bioconductor/trunk/madman/Rpacks/rols
+    svn co https://hedgehog.fhcrc.org/bioconductor/trunk/madman/Rpacks/synapter
 
 (user name: `readonly`, password: `readonly`)
