@@ -8,6 +8,7 @@ CHANGES IN VERSION 1.7.2
  o plotGrid gets a new argument "maindim" to decided which of the three
    dimension should be used. [2014-05-16 Fri]
  o add {set,get}ImDiff [2014-05-16 Fri]
+ o add ClassVersion field to Synapter class [2014-11-21 Fri]
 
 CHANGES IN VERSION 1.7.1
 ------------------------

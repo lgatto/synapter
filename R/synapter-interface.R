@@ -29,6 +29,7 @@ setMethod(show, "Synapter",
           function(object) {
             'Textual display of the instance.'
             cat("Object of class", classLabel(class(object)), "\n")
+            cat("Class version", object$ClassVersion, "\n")
             cat("Package version", object$Version, "\n")
             cat("Data files:\n")
             cat(" + Quantitation pep file:",
