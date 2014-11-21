@@ -43,10 +43,6 @@
                     ## cross matching stuff
                     QuantSpectrumFile = "character",
                     QuantSpectrumData = "MSnExp",
-                    IdentSpectrumFile = "character",
-                    IdentSpectrumData = "MSnExp",
-                    QuantFragmentFile = "character",
-                    QuantFragmentData = "MSnExp",
                     IdentFragmentFile = "character",
                     IdentFragmentData = "MSnExp",
                     CrossMatching = "data.frame",
