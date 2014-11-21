@@ -34,6 +34,8 @@ synapterGUI <- function(n = 1) {
     .Deprecated("synergise", package = "synapter",
                 msg = c("The synapterGUI() interface is deprecated.\n",
                     "Please consider using synergise() instead."))
+    if (!require("tcltk") | !require("tcltk2"))
+        stop("The gui requires the 'tcltk' and 'txltk2' packages.")
     if (n < 1)
         stop("You must provide at least one set of files.")
     gui_output <- NULL
