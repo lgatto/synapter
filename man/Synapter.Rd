@@ -135,10 +135,10 @@
 \alias{plotCumulativeNumberOfFragments}
 
 % importers
-\alias{loadSpectrumXmlFiles,Synapter-method}
-\alias{loadSpectrumXmlFiles}
-\alias{loadFragmentCsvFiles,Synapter-method}
-\alias{loadFragmentCsvFiles}
+\alias{loadIdentificationFragments,Synapter-method}
+\alias{loadIdentificationFragments}
+\alias{loadQuantitationSpectra,Synapter-method}
+\alias{loadQuantitationSpectra}
 
 % exporters
 \alias{writeMatchedEMRTs,Synapter-method}
@@ -385,9 +385,11 @@ Synapter(filenames, master) ## creates an instance of class 'Synapter'
     and Venn counts.
   }
 
-  \subsection{Importing Spectra and Fragments Data}{
-    \dQuote{Spectrum.xml} and \dQuote{final_fragment.csv} files could be
-    imported via \code{loadSpectrumXmlFiles} respective \code{loadFragmentCsvFiles}.
+  \subsection{Importing Fragments and Spectra Data}{
+    The identification fragments data (\dQuote{final_fragment.csv} file) and
+    the quantiation spectra data (\dQuote{Spectrum.xml} file) could be
+    imported via \code{loadIdentificationFragments} respective
+    \code{loadQuantitationSpectra}.
   }
 
   \subsection{Remove Less Intense Peaks}{
@@ -921,33 +923,30 @@ Synapter(filenames, master) ## creates an instance of class 'Synapter'
 \subsection{Importers}{
 
     \describe{
-      \item{loadSpectrumXmlFiles}{\code{signature(object="Synapter",
-          filenames = "list", removePrecursor = "logical",
-          tolerance = "numeric", verbose = "logcial")}:
-        Imports \sQuote{Spectrum.xml} files. The file path has to be given as
-        named list (\code{filenames}). The names have to be
-        \code{identspectrum} and \code{quantspectrum} for the identification and
-        the quantitation spectrum file.
-        If \code{removePrecursor} is \code{TRUE} (default) the precursor ion is
-        removed from the fragment spectrum. Use \code{tolerance} to adjust the
-        sensitivity (default is \code{25e-6} = 25 ppm).
-        If \code{verbose} is \code{TRUE}
-        (default) a progress bar is shown.
-      }
-      \item{loadFragmentCsvFiles}{\code{signature(object="Synapter",
-          filenames = "list", removeNeutralLoss = "logical",
+      \item{loadIdentificationFragments}{\code{signature(object="Synapter",
+          filename = "character", removeNeutralLoss = "logical",
           removePrecursor = "logical", tolerance = "numeric",
           verbose = "logcial")}:
-        Imports \sQuote{final_fragment.csv} files. The file path has to be given
-        as named list (\code{filenames}). The names have to be
-        \code{identfragments} and \code{quantfragments} for the identification
-        and the quantitation fragment file. In the default setting rows
-        with a neutrol loss value not equal to \sQuote{none} are removed.
+        Imports the identification \sQuote{final_fragment.csv} file.
+        \code{filename} has to be the file path to the corresponding file.
+        In the default setting rows with a neutral loss value not equal to
+        \sQuote{none} are removed.
         To keep these rows you have to set \code{removeNeutralLoss = FALSE}.
         If \code{removePrecursor} is \code{TRUE} (default) the precursor ion is
         removed from the fragment spectrum. Use \code{tolerance} to adjust the
         sensitivity (default is \code{25e-6} = 25 ppm).
         If \code{verbose} is \code{TRUE} (default) a progress bar is shown.
+      }
+      \item{loadQuantitationSpectra}{\code{signature(object="Synapter",
+          filename = "character", removePrecursor = "logical",
+          tolerance = "numeric", verbose = "logcial")}:
+        Imports the quantitation \sQuote{Spectrum.xml} file.
+        \code{filename} has to be the file path to the corresponding file.
+        If \code{removePrecursor} is \code{TRUE} (default) the precursor ion is
+        removed from the fragment spectrum. Use \code{tolerance} to adjust the
+        sensitivity (default is \code{25e-6} = 25 ppm).
+        If \code{verbose} is \code{TRUE}
+        (default) a progress bar is shown.
       }
     }
   }

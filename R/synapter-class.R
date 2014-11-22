@@ -230,49 +230,12 @@
                         message("Computing identification statistics...")
                         .self$addIdStats()
                     },
-                    loadSpectrumXmlFiles = function(filenames,
-                                                    removePrecursor=TRUE,
-                                                    tolerance=25e-6,
-                                                    verbose=TRUE) {
-                      stopifnot(all(names(filenames) %in% c("identspectrum",
-                                                            "quantspectrum")))
-                      filenames <- as.list(filenames)
-
-                      .self$IdentSpectrumFile <- filenames$identspectrum
-                      .self$IdentSpectrumData <-
-                        .spectrumXml2spectra(df=.self$IdentPeptideData,
-                                             file=.self$IdentSpectrumFile,
-                                             storeAll=FALSE,
-                                             removePrecursor=removePrecursor,
-                                             tolerance=tolerance,
-                                             verbose=verbose)
-                      .self$SynapterLog <-
-                        c(.self$SynapterLog,
-                          paste0("Read identification spectra [",
-                                 length(.self$IdentSpectrumData), "]"))
-                      .self$QuantSpectrumFile <- filenames$quantspectrum
-                      .self$QuantSpectrumData <-
-                        .spectrumXml2spectra(df=.self$QuantPeptideData,
-                                             file=.self$QuantSpectrumFile,
-                                             storeAll=TRUE,
-                                             removePrecursor=removePrecursor,
-                                             tolerance=tolerance,
-                                             verbose=verbose)
-                      .self$SynapterLog <-
-                        c(.self$SynapterLog,
-                          paste0("Read quantitation spectra [",
-                                 length(.self$QuantSpectrumData), "]"))
-                    },
-                    loadFragmentCsvFiles = function(filenames,
-                                                    removeNeutralLoss=TRUE,
-                                                    removePrecursor=TRUE,
-                                                    tolerance=25e-6,
-                                                    verbose=TRUE) {
-                      stopifnot(all(names(filenames) %in% c("identfragments",
-                                                            "quantfragments")))
-                      filenames <- as.list(filenames)
-
-                      .self$IdentFragmentFile <- filenames$identfragments
+                    loadIdentificationFragments = function(filename,
+                                                           removeNeutralLoss=TRUE,
+                                                           removePrecursor=TRUE,
+                                                           tolerance=25e-6,
+                                                           verbose=TRUE) {
+                      .self$IdentFragmentFile <- filename
                       .self$IdentFragmentData <-
                         .finalFragment2spectra(df=.self$IdentPeptideData,
                                                file=.self$IdentFragmentFile,
@@ -285,20 +248,23 @@
                         c(.self$SynapterLog,
                           paste0("Read identification fragment data [",
                                  length(.self$IdentFragmentData), "]"))
-
-                      .self$QuantFragmentFile <- filenames$quantfragments
-                      .self$QuantFragmentData <-
-                        .finalFragment2spectra(df=.self$QuantPeptideData,
-                                               file=.self$QuantFragmentFile,
-                                               storeAll=TRUE,
-                                               removeNeutralLoss=removeNeutralLoss,
-                                               removePrecursor=removePrecursor,
-                                               tolerance=tolerance,
-                                               verbose=verbose)
+                    },
+                    loadQuantitationSpectra = function(filename,
+                                                       removePrecursor=TRUE,
+                                                       tolerance=25e-6,
+                                                       verbose=TRUE) {
+                      .self$QuantSpectrumFile <- filename
+                      .self$QuantSpectrumData <-
+                        .spectrumXml2spectra(df=.self$QuantPeptideData,
+                                             file=.self$QuantSpectrumFile,
+                                             storeAll=TRUE,
+                                             removePrecursor=removePrecursor,
+                                             tolerance=tolerance,
+                                             verbose=verbose)
                       .self$SynapterLog <-
                         c(.self$SynapterLog,
-                          paste0("Read quantitation fragment data [",
-                                 length(.self$QuantFragmentData), "]"))
+                          paste0("Read quantitation spectra [",
+                                 length(.self$QuantSpectrumData), "]"))
                     },
                     getMaster = function() {
                         ' Gets Master field.'
@@ -428,10 +394,8 @@
 
                       .self$CrossMatching <-
                         crossmatching(flatEmrts=emrts,
-                                      spectra=list(.self$IdentSpectrumData,
-                                                   .self$QuantSpectrumData,
-                                                   .self$IdentFragmentData,
-                                                   .self$QuantFragmentData),
+                                      spectra=list(ident=.self$IdentFragmentData,
+                                                   quant=.self$QuantSpectrumData),
                                       tolerance=.self$CrossMatchingPpmTolerance/1e6,
                                       verbose=verbose)
                       .self$SynapterLog <-
@@ -923,14 +887,11 @@
                                                   maxNumber = NULL, verbose = TRUE) {
                          'Filters spectra/fragments using a minimal intensity or a maximal number of fragments as threshold.'
 
-                         what <- match.arg(what, choices = c(
-                                            "spectrum.ident", "spectrum.quant",
-                                            "fragments.ident", "fragments.quant"))
+                         what <- match.arg(what, choices = c("fragments.ident",
+                                                             "spectrum.quant"))
                          msexp <- switch(what,
-                            "spectrum.ident" = .self$IdentSpectrumData,
-                            "spectrum.quant" = .self$QuantSpectrumData,
                             "fragments.ident" = .self$IdentFragmentData,
-                            "fragments.quant" = .self$QuantFragmentData)
+                            "spectrum.quant" = .self$QuantSpectrumData)
 
                          if (!length(msexp)) {
                            stop("You have to import the ", sQuote(what),
@@ -938,24 +899,6 @@
                          }
 
                          msg <- "Filtered "
-
-                         if (what == "spectrum.ident") {
-                           .self$IdentSpectrumData <-
-                             .filterIntensity(msexp,
-                                              minIntensity = minIntensity,
-                                              maxNumber = maxNumber,
-                                              verbose = verbose)
-                           msg <- paste0("identification spectra")
-                         }
-
-                         if (what == "spectrum.quant") {
-                           .self$QuantSpectrumData <-
-                             .filterIntensity(msexp,
-                                              minIntensity = minIntensity,
-                                              maxNumber = maxNumber,
-                                              verbose = verbose)
-                           msg <- paste0("quantitation spectra")
-                         }
 
                          if (what == "fragments.ident") {
                            .self$IdentFragmentData <-
@@ -966,13 +909,13 @@
                            msg <- paste0("identification fragment data")
                          }
 
-                         if (what == "fragments.quant") {
-                           .self$QuantFragmentData <-
+                         if (what == "spectrum.quant") {
+                           .self$QuantSpectrumData <-
                              .filterIntensity(msexp,
                                               minIntensity = minIntensity,
                                               maxNumber = maxNumber,
                                               verbose = verbose)
-                           msg <- paste0("quantitation fragment data")
+                           msg <- paste0("quantitation spectra")
                          }
 
                          msg <- paste0(" using a ",

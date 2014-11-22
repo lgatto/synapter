@@ -70,23 +70,22 @@ setMethod(inputFiles, "Synapter",
             quantpep3d = object$QuantPep3DFile,
             fasta = object$DbFastaFile))
 
-setMethod(loadSpectrumXmlFiles, "Synapter",
-          function(object, filenames, removePrecursor=TRUE, tolerance=25e-6,
-                   verbose=TRUE) {
-            object$loadSpectrumXmlFiles(filenames=filenames,
-                                        removePrecursor=removePrecursor,
-                                        tolerance=25e-6,
-                                        verbose=verbose)
+setMethod(loadIdentificationFragments, "Synapter",
+          function(object, filename, removeNeutralLoss=TRUE,
+                   removePrecursor=TRUE, tolerance=25e-6, verbose=TRUE) {
+            object$loadIdentificationFragments(filename=filename,
+                                               removeNeutralLoss=removeNeutralLoss,
+                                               removePrecursor=removePrecursor,
+                                               tolerance=25e-6,
+                                               verbose=verbose)
           })
 
-setMethod(loadFragmentCsvFiles, "Synapter",
-          function(object, filenames, removeNeutralLoss=TRUE,
-                   removePrecursor=TRUE, tolerance=25e-6, verbose=TRUE) {
-            object$loadFragmentCsvFiles(filenames=filenames,
-                                        removeNeutralLoss=removeNeutralLoss,
-                                        removePrecursor=removePrecursor,
-                                        tolerance=25e-6,
-                                        verbose=verbose)
+setMethod(loadQuantitationSpectra, "Synapter",
+          function(object, filename, removePrecursor=TRUE, tolerance=25e-6,
+                   verbose=TRUE) {
+            object$loadQuantitationSpectra(filename=filename,
+                                           removePrecursor=removePrecursor,
+                                           tolerance=25e-6, verbose=verbose)
           })
 
 setMethod(getLog, "Synapter",
@@ -554,14 +553,12 @@ setMethod(plotCrossMatchingPerformance, "Synapter",
           })
 
 setMethod(plotCumulativeNumberOfFragments, "Synapter",
-          function(object, what = c("spectrum.ident", "spectrum.quant",
-                                    "fragments.ident", "fragments.quant")) {
+          function(object, what = c("fragments.ident",
+                                    "spectrum.quant")) {
             what <- match.arg(what)
             msexp <- switch(what,
-                            "spectrum.ident" = object$IdentSpectrumData,
-                            "spectrum.quant" = object$QuantSpectrumData,
                             "fragments.ident" = object$IdentFragmentData,
-                            "fragments.quant" = object$QuantFragmentData)
+                            "spectrum.quant" = object$QuantSpectrumData)
             .plotIntensityVsNumber(msexp, what = what)
           })
 

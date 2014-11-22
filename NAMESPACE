@@ -92,8 +92,8 @@ exportMethods(show,
               plotCrossMatchingPerformance,
               plotCumulativeNumberOfFragments,
               ## importers
-              loadSpectrumXmlFiles,
-              loadFragmentCsvFiles,
+              loadIdentificationFragments,
+              loadQuantitationSpectra,
               ## exporters
               writeMergedPeptides,
               writeMatchedEMRTs,

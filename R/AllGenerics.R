@@ -1,8 +1,8 @@
 ###############################
 ## synapter interface generics
 setGeneric("inputFiles", function(object, ...) standardGeneric("inputFiles"))
-setGeneric("loadSpectrumXmlFiles", function(object, ...) standardGeneric("loadSpectrumXmlFiles"))
-setGeneric("loadFragmentCsvFiles", function(object, ...) standardGeneric("loadFragmentCsvFiles"))
+setGeneric("loadQuantitationSpectra", function(object, ...) standardGeneric("loadQuantitationSpectra"))
+setGeneric("loadIdentificationFragments", function(object, ...) standardGeneric("loadIdentificationFragments"))
 setGeneric("getLog", function(object, ...) standardGeneric("getLog"))
 setGeneric("mergePeptides", function(object, ...) standardGeneric("mergePeptides"))
 setGeneric("modelRt", function(object, ...) standardGeneric("modelRt"))
