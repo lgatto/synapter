@@ -110,51 +110,33 @@
 }
 
 #' crossmatching, workhorse function
-#' compares ident fragments vs quant product spectrum and
-#' quant fragments vs ident product spectrum
+#' compares ident fragments vs quant product spectrum
 #' @param flatEmrts flattened EMRTs (see flatMatchedEMRTs)
-#' @param spectra list of 4 MSnExp containing the spectra and fragment spectra
+#' @param identFragments MSnExp of the identification fragments
+#' @param quantSpectra MSnExp of the quantitation spectra
 #' @param tolerance double, allowed deviation to consider a m/z as equal
 #' @param verbose verbose output?
 #' @return data.frame, extend/flatted matchedEmrts df with additional columns:
-#' gridSearchResult,
-#' spectrum.identXfragments.ident, spectrum.quantXfragments.quant,
-#' spectrum.identXfragments.quant, spectrum.quantXfragments.ident
-#' sorry for the names
+#' gridSearchResult, CrossMatching
 #' @noRd
-crossmatching <- function(flatEmrts, spectra, tolerance=25e-6, verbose=TRUE) {
-  prefixes <- paste(rep(c("spectrum", "fragments"), each=2),
-                    rep(c("ident", "quant"), times=2), sep=".")
-  # "spectrum.ident"   "spectrum.quant"   "fragments.ident" "fragments.quant"
-
-  keys <- as.character(rep(unlist(flatEmrts[, c("precursor.leID.ident",
-                                                "matched.quant.spectrumIDs")]),
-                           times=2))
-  keysm <- matrix(keys, ncol=4)
-
-  #cmb <- list(c(1, 3), c(2, 4),
-  #            c(1, 4), c(2, 3))
-  cmb <- list(c(1, 4), c(2, 3), c(3, 4))
-
-  cols <- sapply(cmb, function(x)paste0(prefixes[x], collapse="X"))
-  # "spectrum.identXfragments.ident" ...
-
+crossmatching <- function(flatEmrts, identFragments, quantSpectra,
+                          tolerance=25e-6, verbose=TRUE) {
   if (verbose) {
     message("Look for common peaks")
-    pb <- txtProgressBar(0, length(cmb)*nrow(flatEmrts), style=3)
+    pb <- txtProgressBar(0, nrow(flatEmrts), style=3)
   }
 
-  flatEmrts[, cols] <- lapply(cmb, function(i) {
-    apply(keysm[, i], 1, function(k) {
-      if (verbose) {
-        setTxtProgressBar(pb, pb$getVal()+1)
-      }
+  for (i in 1:nrow(flatEmrts)) {
+    flatEmrts[i, "CrossMatching"] <-
       MSnbase:::numberOfCommonPeaks(
-        .getSpectrum(k[1], spectra[[i[1]]]),
-        .getSpectrum(k[2], spectra[[i[2]]]),
+        .getSpectrum(flatEmrts$precursor.leID.ident[i], identFragments),
+        .getSpectrum(flatEmrts$matched.quant.spectrumIDs[i], quantSpectra),
         tolerance=tolerance)
-    })
-  })
+
+    if (verbose) {
+      setTxtProgressBar(pb, i)
+    }
+  }
 
   if (verbose) {
     close(pb)
@@ -169,29 +151,21 @@ crossmatching <- function(flatEmrts, spectra, tolerance=25e-6, verbose=TRUE) {
 #' calculate difference between first highest and second highest number of
 #' common peaks in a non-unique match group
 #' @param cx data.frame
-#' @param mcol column name of the matching results (e.g.
-#' fragments.identXfragments.quant)
 #' @return modified cx data.frame
 #' @noRd
-.crossMatchingDifferences <- function(cx,
-                                      mcol="spectrum.quantXfragments.ident") {
+.crossMatchingDifferences <- function(cx) {
   # use only non-unique matches
   idx <- grep("^non-unique", cx$gridSearchResult)
 
-  dcol <- paste0(mcol, ".diff")
-  rcol <- paste0(mcol, ".rank")
-  cx[, dcol] <- NA
-  cx[, rcol] <- NA
-  ## we use the second argument (precursor.leID.quant) is just needed to allow a
-  ## return value with 2 columns
-  cx[idx, c(dcol, rcol)] <- ave(cx[idx, c("precursor.leID.quant", mcol)],
-                                cx$precursor.leID.ident[idx],
-                                FUN=function(x) {
-    sorted <- sort(x[, 2], decreasing=TRUE)
-    r <- rank(-x[,2])
-    d <- diff(sorted[2:1])
-    cbind(d, r)
-  })
+  cx$CrossMatchingRank <- cx$CrossMatchingDiff <- NA
+
+  cx$CrossMatchingRank[idx] <- ave(cx$CrossMatching[idx],
+                                   cx$precursor.leID.ident[idx],
+                                   FUN=function(x)rank(-x))
+
+  cx$CrossMatchingDiff[idx] <- ave(cx$CrossMatching[idx],
+                                   cx$precursor.leID.ident[idx],
+                                   FUN=function(x)diff(sort(x, decreasing=TRUE)[2:1]))
 
   return(cx)
 }

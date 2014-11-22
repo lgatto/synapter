@@ -382,6 +382,12 @@
                         stop("You have to run ", sQuote("findEMRTs"),
                              " first!")
                       }
+                      if ("CrossMatching" %in% colnames(.self$MatchedEMRTs)) {
+                        ## remove previous cx results
+                        .self$MatchedEMRTs$CrossMatching <-
+                        .self$MatchedEMRTs$CrossMatchingDiff <-
+                        .self$MatchedEMRTs$CrossMatchingRank <- NULL
+                      }
                       emrts <- flatMatchedEMRTs(.self$MatchedEMRTs,
                                                 .self$QuantPep3DData,
                                                 na.rm=FALSE,
@@ -394,8 +400,8 @@
 
                       .self$CrossMatching <-
                         crossmatching(flatEmrts=emrts,
-                                      spectra=list(ident=.self$IdentFragmentData,
-                                                   quant=.self$QuantSpectrumData),
+                                      identFragments=.self$IdentFragmentData,
+                                      quantSpectra=.self$QuantSpectrumData,
                                       tolerance=.self$CrossMatchingPpmTolerance/1e6,
                                       verbose=verbose)
                       .self$SynapterLog <-
@@ -406,7 +412,7 @@
                                  "ppm [",
                                  paste0(dim(.self$CrossMatching), collapse=","),
                                  "]"))
-                      .self$MatchedEMRTs <- appendCrossMatchingColumns(
+                      .self$MatchedEMRTs <- .appendCrossMatchingColumn(
                         .self$MatchedEMRTs, .self$CrossMatching)
 
                       .self$SynapterLog <-
