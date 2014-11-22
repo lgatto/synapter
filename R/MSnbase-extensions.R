@@ -20,10 +20,6 @@
   }
 }
 
-.getSpectra <- function(keys, spectralist) {
-  mapply(.getSpectrum, keys, spectralist)
-}
-
 .sumAllPeakCounts <- function(msexp) {
   sum(unlist(peaksCount(msexp)))
 }

@@ -1,20 +1,26 @@
-#' @param spectra list, 4 MSnbase::Spectrum2 objects
-#' @param sequences list, 4 character vectors containing the peptide sequences
+#' @param spectra list, 2 MSnbase::Spectrum2 objects
+#' @param sequences list, 2 character vectors containing the peptide sequences
 #' for spectra and fragments
-#' @param fragments list, 2 character vectors containing the fragment.str
+#' @param fragments, characters vector containing the fragment.str
 #' @param tolerance double, allowed deviation
 #' @param ... passed to MSnbase:::.plotSingleSpectrum
 #' @noRd
-.plotSpectraVsFragments <- function(spectra, sequences, fragments,
+.plotFragmentsVsSpectrum <- function(spectra, sequences, fragments,
                                     tolerance=25e-6, ...) {
   spectra <- lapply(spectra, normalize, method="precursor")
 
   if (missing(sequences)) {
-    sequences <- character(4)
+    sequences <- character(2)
   }
 
   mass <- unlist(lapply(spectra, mz))
-  xlim <- c(min(mass, na.rm=TRUE), max(mass, na.rm=TRUE))
+
+  ## if both spectra are removed because of NeutralLoss=TRUE
+  if (length(mass)) {
+    xlim <- c(min(mass, na.rm=TRUE), max(mass, na.rm=TRUE))
+  } else {
+    xlim <- c(0, 0)
+  }
 
   inten <- unlist(lapply(spectra, intensity))
   maxInten <- max(c(0, inten), na.rm=TRUE)
@@ -22,36 +28,22 @@
 
   oldPar <- par(no.readonly=TRUE)
   on.exit(par(oldPar))
-  par(mfrow=c(1, 2))
 
   par(mar=c(2, 2, 2, 0.5)) #c(bottom, left, top, right)
   .plotSpectrumVsSpectrum(
-    spectra[1:2],
-    sequences=unlist(sequences[1:2]),
+    spectra,
+    sequences=unlist(sequences),
     common=list(MSnbase:::commonPeaks(spectra[[1]],
-                                      spectra[[4]],
+                                      spectra[[2]],
                                       tolerance=tolerance),
                 MSnbase:::commonPeaks(spectra[[2]],
-                                      spectra[[3]],
+                                      spectra[[1]],
                                       tolerance=tolerance)),
-    fragments=list(data.frame(), data.frame()),
-    main="spectra", xlim=xlim, ylim=ylim, ...)
-  par(mar=c(2, 0.5, 2, 2)) #c(bottom, left, top, right)
-  .plotSpectrumVsSpectrum(
-    spectra[3:4],
-    sequences=unlist(sequences[3:4]),
-    common=list(MSnbase:::commonPeaks(spectra[[3]],
-                                      spectra[[4]],
-                                      tolerance=tolerance),
-                MSnbase:::commonPeaks(spectra[[4]],
-                                      spectra[[3]],
-                                      tolerance=tolerance)),
-    fragments=list(data.frame(mz=mz(spectra[[3]]), ion=fragments[[1]],
+    fragments=list(data.frame(mz=mz(spectra[[1]]), ion=fragments,
                               stringsAsFactors=FALSE),
-                   data.frame(mz=mz(spectra[[4]]), ion=fragments[[2]],
-                              stringsAsFactors=FALSE)),
-    main="fragments", xlim=xlim, ylim=ylim, yaxt="n", ...)
-  axis(4)
+                   data.frame()),
+    main="Identification Fragments vs Quantitation Spectrum",
+    xlim=xlim, ylim=ylim, ...)
 }
 
 #' plot spectrum1 vs spectrum2
@@ -204,10 +196,8 @@ crossmatching <- function(flatEmrts, identFragments, quantSpectra,
 
   for (i in 1:nrow(cx)) {
     .plotCxRow(cxrow=cx[i, ],
-               spectra=list(obj$IdentSpectrumData,
-                            obj$QuantSpectrumData,
-                            obj$IdentFragmentData,
-                            obj$QuantFragmentData),
+               identFragments=obj$IdentFragmentData,
+               quantSpectra=obj$QuantSpectrumData,
                ...)
 
    if (verbose) {
@@ -221,35 +211,37 @@ crossmatching <- function(flatEmrts, identFragments, quantSpectra,
 }
 
 #' @param cxrow a single row of the crossmatching df
-#' @param spectra list of 4 MSnExp containing the spectra and fragment spectra
+#' @param identFragments MSnExp of the identification fragments
+#' @param quantSpectra MSnExp of the quantitation spectra
 #' @param legend.cex cex for legend text
 #' @param fragments.cex cex for fragment text
 #' @noRd
-.plotCxRow <- function(cxrow, spectra,
+.plotCxRow <- function(cxrow, identFragments, quantSpectra,
                        legend.cex=0.6, fragments.cex=0.5,
                        ...) {
-  keys <- as.character(rep(c(cxrow$precursor.leID.ident,
-                             cxrow$matched.quant.spectrumIDs), times=2))
+
+  keys <- unlist(cxrow[,c("precursor.leID.ident", "matched.quant.spectrumIDs")])
+  spectra <- list(ident=.getSpectrum(keys[1], identFragments),
+                  quant=.getSpectrum(keys[2], quantSpectra))
+
   sequences <- mapply(function(x, k) {
     ## avoid partial matching of rows
     ## ( [.data.frame always use partial match for rows; exact=TRUE works only
     ## for column names)
     return(fData(x)[match(k, rownames(fData(x))), "peptide.seq"])
-  }, x=spectra, k=keys, SIMPLIFY=FALSE, USE.NAMES=FALSE)
+  }, x=list(identFragments, quantSpectra), k=keys,
+  SIMPLIFY=FALSE, USE.NAMES=FALSE)
 
-  fragments <- mapply(function(x, k) {
-    ## avoid partial matching (see above)
-    fragment.str <- fData(x)[match(k, rownames(fData(x))), "fragment.str"]
-    return(na.omit(MSnbase:::utils.ssv2vec(fragment.str)))
-  }, x=spectra[3:4], k=keys[3:4], SIMPLIFY=FALSE, USE.NAMES=FALSE)
+  fragments <- na.omit(MSnbase:::utils.ssv2vec(
+    fData(identFragments)[match(keys[1], rownames(fData(identFragments))), "fragment.str"]))
 
-  .plotSpectraVsFragments(spectra=.getSpectra(keys, spectralist=spectra),
-                          sequences=sequences,
-                          fragments=fragments,
-                          gridSearchResult=cxrow$gridSearchResult,
-                          legend.cex=legend.cex,
-                          fragments.cex=fragments.cex,
-                          ...)
+  .plotFragmentsVsSpectrum(spectra=spectra,
+                           sequences=sequences,
+                           fragments=fragments,
+                           gridSearchResult=cxrow$gridSearchResult,
+                           legend.cex=legend.cex,
+                           fragments.cex=fragments.cex,
+                           ...)
 }
 
 #' plot cx performance
