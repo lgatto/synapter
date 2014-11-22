@@ -49,6 +49,8 @@ CHANGES IN VERSION 1.99.0
    [2014-11-21 Fri]
  o add updateObject and validObject method [2014-11-16 Sun]
  o add ClassVersion field to Synapter class [2014-11-21 Fri]
+ o add Versioned class as parent class to MasterPeptides and MasterFdrResults
+   [2014-11-22 Sat]
 
 CHANGES IN VERSION 1.7.0
 ------------------------
