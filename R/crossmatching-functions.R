@@ -331,12 +331,9 @@ crossmatching <- function(flatEmrts, identFragments, quantSpectra,
 #' filter unique matches
 #' @param obj synapter object
 #' @param mincommon a correct match must have at least "mincommon" common peaks
-#' @param mcol column name of the matching results (e.g.
-#' fragments.identXfragments.quant)
 #' @return filtered emrts data.frame
 #' @noRd
-.filterUniqueMatches <- function(obj, mincommon,
-                                 mcol="spectrum.quantXfragments.ident") {
+.filterUniqueMatches <- function(obj, mincommon) {
   emrts <- obj$MatchedEMRTs
   cx <- obj$CrossMatching
 
@@ -348,7 +345,7 @@ crossmatching <- function(flatEmrts, identFragments, quantSpectra,
   cx <- cx[cx$precursor.leID.ident %in% emrts$precursor.leID.ident &
            cx$Function == 1, ]
 
-  keep <- cx[, mcol] >= mincommon
+  keep <- cx$CrossMatching >= mincommon
 
   if (!any(keep)) {
     stop("No EMRT match your criteria! Try a lower threshold")
@@ -374,12 +371,9 @@ crossmatching <- function(flatEmrts, identFragments, quantSpectra,
 #' filter nonunique matches
 #' @param obj synapter object
 #' @param mindelta a correct match must have at least "nmin" common peaks
-#' @param mcol column name of the matching results (e.g.
-#' fragments.identXfragments.quant)
 #' @return filtered emrts data.frame
 #' @noRd
-.filterNonUniqueMatches <- function(obj, mindelta,
-                                    mcol="spectrum.quantXfragments.ident") {
+.filterNonUniqueMatches <- function(obj, mindelta) {
   emrts <- obj$MatchedEMRTs
   cx <- obj$CrossMatching
 
@@ -388,13 +382,10 @@ crossmatching <- function(flatEmrts, identFragments, quantSpectra,
             "original ", sQuote("Function"), " column.", immediate.=TRUE)
   }
 
-  rcol <- paste0(mcol, ".rank")
-  mcol <- paste0(mcol, ".diff")
-
   cx <- cx[cx$precursor.leID.ident %in% emrts$precursor.leID.ident &
            cx$Function > 1, ]
 
-  keep <- cx[, mcol] >= mindelta & cx[, rcol] == 1
+  keep <- cx$CrossMatchingDiff >= mindelta & cx$CrossMatchingRank == 1
 
   if (!any(keep)) {
     stop("No EMRT match your criteria! Try a lower threshold")
