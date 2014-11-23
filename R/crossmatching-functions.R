@@ -248,15 +248,14 @@ crossmatching <- function(flatEmrts, identFragments, quantSpectra,
 #' @param cx cx data.frame
 #' @return invisible list with two elements (unique,nonunique) each containing a
 #' matrix of 3 columns threshold, true, false
-.plotCrossMatchingPerformance <- function(cx,
-                                          mcol="spectrum.quantXfragments.ident") {
+.plotCrossMatchingPerformance <- function(cx) {
   l <- setNames(vector(mode="list", length=2), c("unique", "nonunique"))
   what <- c("unique", "non-unique")
   xlab <- c("# of common peaks", "delta common peaks")
 
   par(mfcol=c(1, 2))
   for (i in seq(along=l)) {
-    l[[i]] <- .crossMatchingContingencyMatrix(cx, what=what[i], mcol=mcol)
+    l[[i]] <- .crossMatchingContingencyMatrix(cx, what=what[i])
 
     ylim <- range(l[[i]][, c("tp", "fp")])
     plot(l[[i]][, 1], l[[i]][, "tp"],
@@ -276,22 +275,20 @@ crossmatching <- function(flatEmrts, identFragments, quantSpectra,
 
 #' @param cx cross matching df, result of cross matching
 #' @param what character unique/non-unique
-#' @param mcol column name of the matching results (e.g.
-#' fragments.identXfragments.quant)
 #' @return matrix with cols threshold,
 #' @noRd
-.crossMatchingConfusionMatrix <- function(cx, what=c("unique", "non-unique"),
-                                          mcol) {
+.crossMatchingConfusionMatrix <- function(cx, what=c("unique", "non-unique")) {
   what <- match.arg(what)
 
   cx <- cx[grep(paste0("^", what), cx$gridSearchResult), ]
 
-  rcol <- paste0(mcol, ".rank")
+  rcol <- "CrossMatchingRank"
 
   if (what == "unique") {
     cx[, rcol] <- 1
+    mcol <- "CrossMatching"
   } else {
-    mcol <- paste0(mcol, ".diff")
+    mcol <- "CrossMatchingDiff"
   }
 
   train <- tapply(1:nrow(cx), cx$precursor.leID.ident, function(i) {
@@ -326,8 +323,8 @@ crossmatching <- function(flatEmrts, identFragments, quantSpectra,
 #' fragments.identXfragments.quant)
 #' @return matrix with cols tp, fp, tn, fn
 #' @noRd
-.crossMatchingContingencyMatrix <- function(cx, what, mcol) {
-  confusion <- .crossMatchingConfusionMatrix(cx, what, mcol)
+.crossMatchingContingencyMatrix <- function(cx, what) {
+  confusion <- .crossMatchingConfusionMatrix(cx, what)
   return(cbind(confusion, fdr=diagnosticErrors(confusion)[, "fdr"]))
 }
 
