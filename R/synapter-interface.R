@@ -554,11 +554,11 @@ setMethod(plotCrossMatchingPerformance, "Synapter",
 
 setMethod(plotCumulativeNumberOfFragments, "Synapter",
           function(object, what = c("fragments.ident",
-                                    "spectrum.quant")) {
+                                    "spectra.quant")) {
             what <- match.arg(what)
             msexp <- switch(what,
                             "fragments.ident" = object$IdentFragmentData,
-                            "spectrum.quant" = object$QuantSpectrumData)
+                            "spectra.quant" = object$QuantSpectrumData)
             .plotIntensityVsNumber(msexp, what = what)
           })
 

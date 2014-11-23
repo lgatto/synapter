@@ -894,10 +894,10 @@
                          'Filters spectra/fragments using a minimal intensity or a maximal number of fragments as threshold.'
 
                          what <- match.arg(what, choices = c("fragments.ident",
-                                                             "spectrum.quant"))
+                                                             "spectra.quant"))
                          msexp <- switch(what,
                             "fragments.ident" = .self$IdentFragmentData,
-                            "spectrum.quant" = .self$QuantSpectrumData)
+                            "spectra.quant" = .self$QuantSpectrumData)
 
                          if (!length(msexp)) {
                            stop("You have to import the ", sQuote(what),
@@ -915,7 +915,7 @@
                            msg <- paste0("identification fragment data")
                          }
 
-                         if (what == "spectrum.quant") {
+                         if (what == "spectra.quant") {
                            .self$QuantSpectrumData <-
                              .filterIntensity(msexp,
                                               minIntensity = minIntensity,
