@@ -88,7 +88,7 @@
   This vignette describes how to apply fragment matching to
   MS$^E$/HDMS$^E$ data using the \Rpackage{synapter} package. The
   fragment matching feature allows one to rescue non unique matches
-  and remove falsely assigned unique matches as well. 
+  and remove falsely assigned unique matches as well.
 \end{abstract}
 
 \textit{Keywords}: Mass Spectrometry (MS), proteomics, bioinformatics,
@@ -143,8 +143,8 @@ improves the matching of identification and the quantitation
 features. After applying the usual \Rfunction{synergise} workflow (see
 \Rfunction{?synergise} and \Rfunction{?Synapter} for details) a number
 of multiple matches and possible false unique matches remain that can
-be deconvoluted by comparing common peaks in the quantitation fragment
-peaks and the identification spectrum.
+be deconvoluted by comparing common peaks in the identification fragment
+peaks and the quantitation spectra.
 
 The example data \Robject{synobj2} used throughout this document is
 available in the \Rpackage{synapterdata} package and can be directly
@@ -166,7 +166,7 @@ functionality.
 
 One has to run the \Rfunction{synergise} workflow before fragment
 matching can be applied. Please read the general \Rpackage{synapter}
-vignette for the general use of \Rfunction{synergise}. 
+vignette for the general use of \Rfunction{synergise}.
 
 <<create-synobj2, cache=FALSE, eval=TRUE, echo=FALSE>>=
 cat(readLines(system.file(file.path("scripts", "create_synobj2.R"),
@@ -174,11 +174,11 @@ cat(readLines(system.file(file.path("scripts", "create_synobj2.R"),
     sep = "\n")
 @
 
-\section{Loading the spectrum  and fragment data}\label{sec:spec}
+\section{Loading the fragment and spectra data}\label{sec:spec}
 
 The data needed for the fragment matching procedure are a
-\code{Spectrum.xml} and a \code{final\_fragment.csv} file for the
-identification and the quantitation run.
+\code{final\_fragment.csv} file for the identification run and
+a \code{Spectrum.xml} file for the quantitation run.
 
 <<prepare-loadspectra, echo=FALSE, eval=TRUE, tidy=FALSE>>=
 cat(readLines(system.file(file.path("scripts", "create_synobj2.R"),
@@ -194,42 +194,28 @@ fragment matches. Prior to filtering, the \\
 \Rfunction{plotCumulativeNumberOfFragments} function can be use to
 visualise the intensity of all fragments. Both functions have a
 \code{what} argument to decide what spectra/fragments to
-filter/plot. Choose \code{spectrum.ident} for the identification
-spectra, \code{spectrum.quant} for the quantitation spectra,
-\code{fragments.ident} for the identification fragments and
-\code{fragment.quant} for the quantitation fragments.
+filter/plot. Choose \code{fragments.ident} for the identification
+fragments and \code{spectra.quant} for the quantitation fragments.
 
 <<filterfragmentsplot>>=
-plotCumulativeNumberOfFragments(synobj2, what = "spectrum.quant")
 plotCumulativeNumberOfFragments(synobj2, what = "fragments.ident")
+plotCumulativeNumberOfFragments(synobj2, what = "spectra.quant")
 @
 
 <<filterfragments, cache=TRUE>>=
-filterFragments(synobj2, what = "spectrum.quant", minIntensity = 70,
-                verbose = FALSE)
 filterFragments(synobj2, what = "fragments.ident", minIntensity = 70,
+                verbose = FALSE)
+filterFragments(synobj2, what = "spectra.quant", minIntensity = 70,
                 verbose = FALSE)
 @
 
 
 \section{Cross matching}\label{sec:crossm}
 
-This method compares, named \Rfunction{crossMatching} performs
+This method compares, named \Rfunction{crossMatching} performs the matching of
+the identification fragments vs the quantitation spectra and counts the number
+of identical peaks for each combination.
 multiple comparisons:
-
-\begin{itemize}
-
-\item identification spectra vs the quantitation fragments (results
-  stored as \\ \code{spectrum.identXfragments.quant}),
-
-\item the quantitation spectra vs the identification fragments
-  (results stored as \\ \code{spectrum.quantXfragments.ident}), 
-
-\item the identification vs the quantitation fragments
-  (results stored as \\ \code{fragments.identXfragments.quant}).
-
-\end{itemize}
-
 
 Because the peaks/fragments in the spectra of one run will never be
 numerically identical to these in another, a tolerance parameter has
@@ -254,19 +240,13 @@ common peaks, e.g. 28 common peaks:
   \begin{center}
 <<plotcx22, dev ='pdf', fig.widht=10, fig.height=5>>=
 plotCrossMatching(synobj2, key = 28,
-                  column = "spectrum.quantXfragments.ident",
+                  column = "CrossMatching",
                   verbose = FALSE)
 @
 \caption{Fragment matching for cases with 28 common fragments. The
-  identification (top, blue) and quantitation (bottom, red) low energy
-  spectra are shown on the left. The high energy identification (top,
-  blue) and quantitation (bottom, red) fragments are show on the
-  right. Common peaks between the identification spectrum and
-  quantitation fragments, quantitation spectrum and identification
-  fragments and identification and quantitation fragments that are
-  shared are displayed in darker colours and highlighted by full
-  points on the identification spectrum, quantitation spectrum and
-  fragment spectra respectively. }
+  identification data are shown on the top (blue) and the quantitation
+  data are on the bottom (red). Common peaks are displayed in darker colours
+  and highlighted by full points.}
     \label{fig:xm1}
   \end{center}
 \end{figure}
@@ -310,7 +290,7 @@ filtering procedure (see below) based on the number of common
 peaks. This function invisibly returns a list with matrices containing
 true positive, false positive, true negative and false negative
 matches for the unique and non unique matches EMRT matches, as
-illustrated in tables \ref{tab:unique} and \ref{tab:multiple}. 
+illustrated in tables \ref{tab:unique} and \ref{tab:multiple}.
 
 \begin{figure}[!hbt]
   \begin{center}
@@ -397,15 +377,13 @@ Like in the initial \Rpackage{synapter} workflow, it is possible to
 export the \code{MatchedEMRT} results using the
 \Rfunction{writeMatchedEMRTs} function.  The table has some new
 columns that correspond to the cross matching procedure,
-e.g. \code{spectrum.identXfragments.quant},
-\code{spectrum.quantXfragments.ident},
-\code{fragments.identXfragments.quant}, \ldots.  
+e.g. \code{CrossMatching}, \ldots.
 
 <<export, eval=FALSE>>=
 writeMatchedEMRTs(synobj2, file = "MatchedEMRTs.csv", what = "full")
 @
 
-\clearpage 
+\clearpage
 
 \section{Session information}\label{sec:sessionInfo}
 
