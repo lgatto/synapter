@@ -400,22 +400,19 @@ Synapter(filenames, master) ## creates an instance of class 'Synapter'
     below a specified threshold via the \code{minIntensity} argument. Set the
     \code{maxNumber} argument to keep only the \code{maxNumber} highest
     peaks/fragments. The \code{what} argument controls the data on which the
-    filter is applied. Use \code{what = "spectrum.ident"} for the
-    identification spectra, \code{what = "spectrum.quant"} for the
-    quantiation spectra, \code{what = "fragments.ident"} for the identification
-    fragment data and \code{what = "fragments.quant"} for the quantiation
-    fragment data.
+    filter is applied. Use \code{what = "fragments.ident"} for the
+    identification fragments and \code{what = "spectra.quant"} for the
+    quantiation spectra data.
   }
 
   \subsection{Cross Matching}{
-    After importing spectra and fragment data peaks that matching between
-    identification fragments and quantitation fragments, between
-    identification spectrum and quantitation fragments, and between
-    quantitation spectrum and identification fragments using the
-    \code{crossMatching} method. Use \code{setCrossMatchingPpmTolerance} to set
+    After importing fragment and spectra data it is possible to
+    match peaks between the identification fragments and the quantitation
+    spectra using the \code{crossMatching} method.
+    Use \code{setCrossMatchingPpmTolerance} to set
     the maximal allowed tolerance for considering a peak as identical.
     There are two different methods to visualise the results of the cross
-    matching procedure. \code{plotCrossMatching} plots the spectra and fragments
+    matching procedure. \code{plotCrossMatching} plots the fragments and spectra
     for each considered cross matching pair.
     \code{plotCrossMatchingPerformance} draws two plots. On the left panel you
     could see the performance of different thresholds for the number of common
@@ -754,8 +751,7 @@ Synapter(filenames, master) ## creates an instance of class 'Synapter'
 	\code{filterQuantPpmError}, but for identification peptides.  }
 
     \item{filterFragments}{\code{signature(object = "Synapter",
-        what = c("spectrum.ident", "spectrum.quant",
-                 "fragments.ident", "fragments.quant"),
+        what = c("fragments.ident", "spectra.quant"),
         minIntensity = "numeric", maxNumber = "numeric", verbose = "logical")}:
       Filters the spectra/fragment data using a minimal intensity threshold
       (\code{minIntensity}) or a maximal number of peaks/fragments threshold
@@ -764,10 +760,8 @@ Synapter(filenames, master) ## creates an instance of class 'Synapter'
       specified by \code{maxNumber}.
       If both arguments are given, the more aggressive one is chosen.
       Use the \code{what} argument to specify the data that should be filtered.
-      Set \code{what = "spectrum.ident"} for the identification spectra,
-      \code{what = "spectrum.quant"} for the quantiation spectra,
-      \code{what = "fragments.ident"} for the identification fragment data and
-      \code{what = "fragments.quant"} for the quantiation fragment data.
+      Set \code{what = "fragments.ident"} for the identification fragment data
+      or \code{what = "spectra.quant"} for the quantiation spectra.
       If \code{verbose} is \code{TRUE} (default) a progress bar is shown.
     }
 
@@ -908,14 +902,11 @@ Synapter(filenames, master) ## creates an instance of class 'Synapter'
     }
 
     \item{plotCumulativeNumberOfFragments}{\code{signature(object = "Synapter",
-        what = c("spectrum.ident", "spectrum.quant",
-                 "fragments.ident", "fragments.quant"))}:
+        what = c("fragments.ident", "spectra.quant"))}:
     Plots the cumulative number of the fragments/peaks vs their intensity (log10
     scaled). Use the \code{what} argument to create this plot for the
-    identification spectra (\code{what = "spectrum.ident"}),
-    the quantitation spectra (\code{what = "spectrum.quant"}),
-    the identification fragments (\code{what = "fragments.quant"}) or the
-    quantitation fragments (\code{what = "fragments.ident"}).
+    identification fragments (\code{what = "fragments.quant"}) or the
+    the quantitation spectra (\code{what = "spectra.quant"}).
     }
   }
 }
