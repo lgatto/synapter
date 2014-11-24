@@ -159,8 +159,7 @@ In sections \ref{sec:synergise} and \ref{sec:spec}, we describe how
 \Robject{synobj2} was generated. The test files used in this vignette
 can be downloaded from
 \url{http://proteome.sysbiol.cam.ac.uk/lgatto/synapter/data/}. The
-following sections then describe the new peak cross matching
-functionality.
+following sections then describe the new fragment matching functionality.
 
 \section{Running \Rfunction{synergise}}\label{sec:synergise}
 
@@ -210,37 +209,36 @@ filterFragments(synobj2, what = "spectra.quant", minIntensity = 70,
 @
 
 
-\section{Cross matching}\label{sec:crossm}
+\section{Fragment matching}\label{sec:fragmentmatching}
 
-This method compares, named \Rfunction{crossMatching} performs the matching of
+This method, named \Rfunction{fragmentMatching}, performs the matching of
 the identification fragments vs the quantitation spectra and counts the number
 of identical peaks for each combination.
-multiple comparisons:
 
 Because the peaks/fragments in the spectra of one run will never be
 numerically identical to these in another, a tolerance parameter has
-to be set using the \Rfunction{setCrossMatchingPpmTolerance}
+to be set using the \Rfunction{setFragmentMatchingPpmTolerance}
 function. Peaks/Fragments within this tolerance are treated as
 identical.
 
 <<cx>>=
-setCrossMatchingPpmTolerance(synobj2, 25)
-crossMatching(synobj2, verbose = FALSE)
+setFragmentMatchingPpmTolerance(synobj2, 25)
+fragmentMatching(synobj2, verbose = FALSE)
 @
 
-The \Rfunction{plotCrossMatching} function illustrates the details of
-this cross matching procedure. If it is called without any additional
-argument every cross matching is plotted. One can use the \code{key}
-argument to select a special value in a column (defined by the
-\code{column} argument) of the \code{MatchedEMRTs} data.frame. E.g. if
-one wants to select the cross matching results with a high number of
+The \Rfunction{plotFragmentMatching} function illustrates the details of
+this fragment matching procedure. If it is called without any additional
+argument every matched pair (fragment vs spectrum) is plotted.
+One can use the \code{key} argument to select a special value in a column
+(defined by the \code{column} argument) of the \code{MatchedEMRTs} data.frame.
+E.g. if one wants to select the fragment matching results with a high number of
 common peaks, e.g. 28 common peaks:
 
 \begin{figure}[!hbt]
   \begin{center}
 <<plotcx22, dev ='pdf', fig.widht=10, fig.height=5>>=
-plotCrossMatching(synobj2, key = 28,
-                  column = "CrossMatching",
+plotFragmentMatching(synobj2, key = 28,
+                  column = "FragmentMatching",
                   verbose = FALSE)
 @
 \caption{Fragment matching for cases with 28 common fragments. The
@@ -258,7 +256,7 @@ sequence \code{"TALIDGLAQR"}.
 \begin{figure}[!hbt]
   \begin{center}
 <<plotcxseq, dev ='pdf', fig.widht=10, fig.height=5>>=
-plotCrossMatching(synobj2,
+plotFragmentMatching(synobj2,
                   key = "TALIDGLAQR", column = "peptide.seq",
                   verbose = FALSE)
 @
@@ -272,7 +270,7 @@ Maybe the peptide with a special precursor ID looks interesting.
 \begin{figure}[!hbt]
   \begin{center}
 <<plotcxid, dev ='pdf', fig.widht=10, fig.height=5>>=
-plotCrossMatching(synobj2,
+plotFragmentMatching(synobj2,
                   key = 12589, column = "precursor.leID.ident",
                   verbose = FALSE)
 @
@@ -284,8 +282,8 @@ plotCrossMatching(synobj2,
 
 \section{Plot distribution of common peaks}\label{sec:plotperf}
 
-The \Rfunction{plotCrossMatchingPerformance} function can be used to
-assess the performance of the cross matching and the result of the
+The \Rfunction{plotFragmentMatchingPerformance} function can be used to
+assess the performance of the fragment matching and the result of the
 filtering procedure (see below) based on the number of common
 peaks. This function invisibly returns a list with matrices containing
 true positive, false positive, true negative and false negative
@@ -295,7 +293,7 @@ illustrated in tables \ref{tab:unique} and \ref{tab:multiple}.
 \begin{figure}[!hbt]
   \begin{center}
 <<plotcxperformance, dev='pdf', fig.widht=8, fig.height=4>>=
-m <- plotCrossMatchingPerformance(synobj2)
+m <- plotFragmentMatchingPerformance(synobj2)
 @
 \caption{Number of true/false match peptides for different peak
   matching thresholds and difference in number of peaks between the
@@ -342,7 +340,7 @@ getEMRTtable(synobj2)
 
 \section{Filtering non-unique matches}\label{sec:multiple}
 
-The largest benefit of cross matching peaks is for non unique
+The largest benefit of fragment matching is for non unique
 matches. If we assume that true match have a highest number of common
 peaks/fragments, we can distinguish correct matches among multiple
 possible matches that could not resolved before (c.f. section
@@ -376,8 +374,8 @@ getEMRTtable(synobj2)
 Like in the initial \Rpackage{synapter} workflow, it is possible to
 export the \code{MatchedEMRT} results using the
 \Rfunction{writeMatchedEMRTs} function.  The table has some new
-columns that correspond to the cross matching procedure,
-e.g. \code{CrossMatching}, \ldots.
+columns that correspond to the fragment matching procedure,
+e.g. \code{FragmentMatching}, \ldots.
 
 <<export, eval=FALSE>>=
 writeMatchedEMRTs(synobj2, file = "MatchedEMRTs.csv", what = "full")

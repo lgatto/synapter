@@ -600,12 +600,12 @@ flatMatchedEMRTs <- function(emrts, pep3d, na.rm=TRUE, verbose=TRUE) {
   return(flatEmrts)
 }
 
-.appendCrossMatchingColumn <- function(emrts, cx) {
-  idx <- match(sort(unique(cx$precursor.leID.ident)),
+.appendFragmentMatchingColumn <- function(emrts, fm) {
+  idx <- match(sort(unique(fm$precursor.leID.ident)),
                emrts$precursor.leID.ident)
 
-  emrts[idx, "CrossMatching"] <- MSnbase:::utils.list2ssv(
-    split(cx[, "CrossMatching"], cx$precursor.leID.ident))
+  emrts[idx, "FragmentMatching"] <- MSnbase:::utils.list2ssv(
+    split(fm[, "FragmentMatching"], fm$precursor.leID.ident))
 
   return(emrts)
 }

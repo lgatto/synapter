@@ -49,6 +49,9 @@ CHANGES IN VERSION 1.99.0
    [2014-11-21 Fri]
  o add updateObject and validObject method [2014-11-16 Sun]
  o add ClassVersion field to Synapter class [2014-11-21 Fri]
+ o reduce CrossMatching (2x2) to FragmentMatching (1x1); rename all
+   functions/methods/variables from *CrossMatching to *FragmentMatching
+   [2014-11-24 Mon]
 
 CHANGES IN VERSION 1.7.0
 ------------------------

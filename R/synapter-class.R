@@ -40,13 +40,13 @@
                     RtNsd = "numeric",
                     ImDiff = "numeric",
                     MatchedEMRTs = "data.frame",
-                    ## cross matching stuff
+                    ## FragmentMatching
                     QuantSpectrumFile = "character",
                     QuantSpectrumData = "MSnExp",
                     IdentFragmentFile = "character",
                     IdentFragmentData = "MSnExp",
-                    CrossMatching = "data.frame",
-                    CrossMatchingPpmTolerance = "numeric"),
+                    FragmentMatching = "data.frame",
+                    FragmentMatchingPpmTolerance = "numeric"),
                 methods = list(
                     initialize = function() {
                         ## IMPORTANT: always increase the ClassVersion field if
@@ -377,47 +377,47 @@
                                                      "] (", mergedEMRTs, ")",
                                                      sep = ""))
                     },
-                    crossMatching = function(verbose=TRUE) {
+                    fragmentMatching = function(verbose=TRUE) {
                       if (!nrow(.self$MatchedEMRTs)) {
                         stop("You have to run ", sQuote("findEMRTs"),
                              " first!")
                       }
-                      if ("CrossMatching" %in% colnames(.self$MatchedEMRTs)) {
-                        ## remove previous cx results
-                        .self$MatchedEMRTs$CrossMatching <-
-                        .self$MatchedEMRTs$CrossMatchingDiff <-
-                        .self$MatchedEMRTs$CrossMatchingRank <- NULL
+                      if ("FragmentMatching" %in% colnames(.self$MatchedEMRTs)) {
+                        ## remove previous FragmentMatching results
+                        .self$MatchedEMRTs$FragmentMatching <-
+                        .self$MatchedEMRTs$FragmentMatchingDiff <-
+                        .self$MatchedEMRTs$FragmentMatchingRank <- NULL
                       }
                       emrts <- flatMatchedEMRTs(.self$MatchedEMRTs,
                                                 .self$QuantPep3DData,
                                                 na.rm=FALSE,
                                                 verbose=verbose)
-                      if (!length(.self$CrossMatchingPpmTolerance)) {
-                        warning("Crossmatching ppm tolerance undefined. ",
+                      if (!length(.self$FragmentMatchingPpmTolerance)) {
+                        warning("FragmentMatching ppm tolerance undefined. ",
                                 "Setting to default value.")
-                        .self$setCrossMatchingPpmTolerance()
+                        .self$setFragmentMatchingPpmTolerance()
                       }
 
-                      .self$CrossMatching <-
-                        crossmatching(flatEmrts=emrts,
-                                      identFragments=.self$IdentFragmentData,
-                                      quantSpectra=.self$QuantSpectrumData,
-                                      tolerance=.self$CrossMatchingPpmTolerance/1e6,
-                                      verbose=verbose)
+                      .self$FragmentMatching <-
+                        .fragmentMatching(flatEmrts=emrts,
+                                          identFragments=.self$IdentFragmentData,
+                                          quantSpectra=.self$QuantSpectrumData,
+                                          tolerance=.self$FragmentMatchingPpmTolerance/1e6,
+                                          verbose=verbose)
                       .self$SynapterLog <-
                         c(.self$SynapterLog,
-                          paste0("Crossmatching identification and ",
-                                 "quantitation data at ",
-                                 .self$CrossMatchingPpmTolerance,
+                          paste0("FragmentMatching of identification fragments ",
+                                 "and quantitation spectra data at ",
+                                 .self$FragmentMatchingPpmTolerance,
                                  "ppm [",
-                                 paste0(dim(.self$CrossMatching), collapse=","),
+                                 paste0(dim(.self$FragmentMatching), collapse=","),
                                  "]"))
-                      .self$MatchedEMRTs <- .appendCrossMatchingColumn(
-                        .self$MatchedEMRTs, .self$CrossMatching)
+                      .self$MatchedEMRTs <- .appendFragmentMatchingColumn(
+                        .self$MatchedEMRTs, .self$FragmentMatching)
 
                       .self$SynapterLog <-
                         c(.self$SynapterLog,
-                          paste0("Append crossmatching results to ",
+                          paste0("Append FragmentMatching results to ",
                                  "MatchedEMRTs [",
                                  paste0(dim(.self$MatchedEMRTs), collapse=","),
                                  "]"))
@@ -630,12 +630,12 @@
                                                 paste0("Set imdiff to ",
                                                        .self$ImDiff))
                        },
-                       setCrossMatchingPpmTolerance = function(ppm = 25) {
-                         'Sets cross matching mass error tolerance threshold.'
-                         .self$CrossMatchingPpmTolerance <- ppm
+                       setFragmentMatchingPpmTolerance = function(ppm = 25) {
+                         'Sets FragmentMatching mass error tolerance threshold.'
+                         .self$FragmentMatchingPpmTolerance <- ppm
                          .self$SynapterLog <-
                            c(.self$SynapterLog,
-                             paste0("Set cross matching ppm error to ", ppm))
+                             paste0("Set FragmentMatching ppm error to ", ppm))
                        }))
 
 ## GLOBAL FILTERS
@@ -936,10 +936,10 @@
                        },
 
                        filterUniqueMatches = function(minNumber) {
-                         'Filters unique matches using cross matching results.'
+                         'Filters unique matches using FragmentMatching results.'
 
-                         if (!nrow(.self$CrossMatching)) {
-                           stop("You have to run ", sQuote("crossMatching"),
+                         if (!nrow(.self$FragmentMatching)) {
+                           stop("You have to run ", sQuote("fragmentMatching"),
                                 " first!")
                          }
 
@@ -955,10 +955,10 @@
                        },
 
                        filterNonUniqueMatches = function(minDelta) {
-                         'Filters non unique matches using cross matching results.'
+                         'Filters non unique matches using FragmentMatching results.'
 
-                         if (!nrow(.self$CrossMatching)) {
-                           stop("You have to run ", sQuote("crossMatching"),
+                         if (!nrow(.self$FragmentMatching)) {
+                           stop("You have to run ", sQuote("fragmentMatching"),
                                 " first!")
                          }
 

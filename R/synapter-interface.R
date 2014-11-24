@@ -258,12 +258,12 @@ setMethod(getPepNumbers, "Synapter",
             }
           })
 
-setMethod(setCrossMatchingPpmTolerance, "Synapter",
+setMethod(setFragmentMatchingPpmTolerance, "Synapter",
           function(object, ppm = 25)
-            object$setCrossMatchingPpmTolerance(ppm))
+            object$setFragmentMatchingPpmTolerance(ppm))
 
-setMethod(getCrossMatchingPpmTolerance, "Synapter",
-          function(object) object$CrossMatchingPpmTolerance)
+setMethod(getFragmentMatchingPpmTolerance, "Synapter",
+          function(object) object$FragmentMatchingPpmTolerance)
 
 setMethod(showFdrStats, "Synapter",
           function(object,
@@ -532,24 +532,24 @@ setMethod(plotFeatures, "Synapter",
                    })
           })
 
-setMethod(plotCrossMatching, "Synapter",
+setMethod(plotFragmentMatching, "Synapter",
           function(object, key, column="peptide.seq", verbose=TRUE, ...) {
-            if (!nrow(object$CrossMatching)) {
-              stop("You have to run ", sQuote("crossMatching"), " first!")
+            if (!nrow(object$FragmentMatching)) {
+              stop("You have to run ", sQuote("fragmentMatching"), " first!")
             }
 
-            .plotCrossMatching(object, key, column=column, verbose=verbose,
-                               tolerance=object$CrossMatchingPpmTolerance/1e6,
+            .plotFragmentMatching(object, key, column=column, verbose=verbose,
+                               tolerance=object$FragmentMatchingPpmTolerance/1e6,
                                ...)
           })
 
-setMethod(plotCrossMatchingPerformance, "Synapter",
+setMethod(plotFragmentMatchingPerformance, "Synapter",
           function(object, ...) {
-            if (!nrow(object$CrossMatching)) {
-              stop("You have to run ", sQuote("crossMatching"), " first!")
+            if (!nrow(object$FragmentMatching)) {
+              stop("You have to run ", sQuote("fragmentMatching"), " first!")
             }
 
-            invisible(.plotCrossMatchingPerformance(object$CrossMatching))
+            invisible(.plotFragmentMatchingPerformance(object$FragmentMatching))
           })
 
 setMethod(plotCumulativeNumberOfFragments, "Synapter",
@@ -666,12 +666,12 @@ setMethod(plotGrid, "Synapter",
             invisible(p)
           })
 
-setMethod(crossMatching, "Synapter",
+setMethod(fragmentMatching, "Synapter",
           function(object, ppm, verbose=TRUE) {
             if (!missing(ppm)) {
-              setCrossMatchingPpmTolerance(object, ppm)
+              setFragmentMatchingPpmTolerance(object, ppm)
             }
-            object$crossMatching(verbose=verbose)
+            object$fragmentMatching(verbose=verbose)
           })
 
 ## Results to csv

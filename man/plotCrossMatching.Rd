@@ -1,13 +1,13 @@
-\name{plotCrossMatching}
-\alias{plotCrossMatching}
-\alias{plotCrossMatching,Synapter-method}
+\name{plotFragmentMatching}
+\alias{plotFragmentMatching}
+\alias{plotFragmentMatching,Synapter-method}
 \docType{methods}
 
-\title{Plot cross matching results.}
+\title{Plot fragment matching results.}
 
 \description{
-  This method plot the results of the cross matching procedure
-  (\code{\link{crossMatching}}). A single plot contains two pnaels. The upper
+  This method plots the results of the fragment matching procedure
+  (\code{\link{fragmentMatching}}). A single plot contains two panels. The upper
   panel shows the identification fragments and the lower one the MS2 spectrum of
   the quantitation run. Common peaks are drawn in a slightly darker colour and
   with a point on the top.
@@ -17,7 +17,7 @@
   \item{object}{ Object of class \code{"\link{Synapter}"} .}
   \item{key}{ \code{character}, value to look for. }
   \item{column}{ \code{character}, name of the column in which
-    \code{plotCrossMatching} looks for \code{key}.}
+    \code{plotFragmentMatching} looks for \code{key}.}
   \item{\dots}{Further arguments passed to internal functions.}
 }
 
@@ -40,7 +40,7 @@
 }
 
 \seealso{
-  \code{\link{crossMatching}}
+  \code{\link{fragmentMatching}}
 }
 
 \author{

@@ -101,7 +101,7 @@
   }
 }
 
-#' crossmatching, workhorse function
+#' fragment matching workhorse function
 #' compares ident fragments vs quant product spectrum
 #' @param flatEmrts flattened EMRTs (see flatMatchedEMRTs)
 #' @param identFragments MSnExp of the identification fragments
@@ -109,17 +109,17 @@
 #' @param tolerance double, allowed deviation to consider a m/z as equal
 #' @param verbose verbose output?
 #' @return data.frame, extend/flatted matchedEmrts df with additional columns:
-#' gridSearchResult, CrossMatching
+#' gridSearchResult, FragmentMatching
 #' @noRd
-crossmatching <- function(flatEmrts, identFragments, quantSpectra,
-                          tolerance=25e-6, verbose=TRUE) {
+.fragmentMatching <- function(flatEmrts, identFragments, quantSpectra,
+                              tolerance=25e-6, verbose=TRUE) {
   if (verbose) {
     message("Look for common peaks")
     pb <- txtProgressBar(0, nrow(flatEmrts), style=3)
   }
 
   for (i in 1:nrow(flatEmrts)) {
-    flatEmrts[i, "CrossMatching"] <-
+    flatEmrts[i, "FragmentMatching"] <-
       MSnbase:::numberOfCommonPeaks(
         .getSpectrum(flatEmrts$precursor.leID.ident[i], identFragments),
         .getSpectrum(flatEmrts$matched.quant.spectrumIDs[i], quantSpectra),
@@ -135,47 +135,47 @@ crossmatching <- function(flatEmrts, identFragments, quantSpectra,
     message("Calculate Differences")
   }
 
-  flatEmrts <- .crossMatchingDifferences(flatEmrts)
+  flatEmrts <- .fragmentMatchingDifferences(flatEmrts)
 
   return(flatEmrts)
 }
 
 #' calculate difference between first highest and second highest number of
 #' common peaks in a non-unique match group
-#' @param cx data.frame
-#' @return modified cx data.frame
+#' @param fm data.frame
+#' @return modified fm data.frame
 #' @noRd
-.crossMatchingDifferences <- function(cx) {
+.fragmentMatchingDifferences <- function(fm) {
   # use only non-unique matches
-  idx <- grep("^non-unique", cx$gridSearchResult)
+  idx <- grep("^non-unique", fm$gridSearchResult)
 
-  cx$CrossMatchingRank <- cx$CrossMatchingDiff <- NA
+  fm$FragmentMatchingRank <- fm$FragmentMatchingDiff <- NA
 
-  cx$CrossMatchingRank[idx] <- ave(cx$CrossMatching[idx],
-                                   cx$precursor.leID.ident[idx],
+  fm$FragmentMatchingRank[idx] <- ave(fm$FragmentMatching[idx],
+                                   fm$precursor.leID.ident[idx],
                                    FUN=function(x)rank(-x))
 
-  cx$CrossMatchingDiff[idx] <- ave(cx$CrossMatching[idx],
-                                   cx$precursor.leID.ident[idx],
+  fm$FragmentMatchingDiff[idx] <- ave(fm$FragmentMatching[idx],
+                                   fm$precursor.leID.ident[idx],
                                    FUN=function(x)diff(sort(x, decreasing=TRUE)[2:1]))
 
-  return(cx)
+  return(fm)
 }
 
-#' plot crossmatching
+#' plot FragmentMatching
 #' @param obj synapter object
 #' @param key all rows with a matching "key" in "column" are plotted.
 #' If missing everything is plotted.
 #' @param column in which column we should look for "key"
 #' @param verbose verbose output?
 #' @noRd
-.plotCrossMatching <- function(obj, key, column="peptide.seq", verbose=TRUE,
+.plotFragmentMatching <- function(obj, key, column="peptide.seq", verbose=TRUE,
                               ...) {
-  cx <- obj$CrossMatching
+  fm <- obj$FragmentMatching
 
-  if (!column %in% colnames(cx)) {
+  if (!column %in% colnames(fm)) {
     stop(sQuote("column"), "=", column, " is not a valid column of the ",
-         "cross matching data.frame!")
+         "FragmentMatching data.frame!")
   }
 
   if (missing(key) && verbose) {
@@ -183,19 +183,19 @@ crossmatching <- function(flatEmrts, identFragments, quantSpectra,
   }
 
   if (!missing(key)) {
-    cx <- cx[which(cx[, column] %in% key), ]
+    fm <- fm[which(fm[, column] %in% key), ]
 
-    if (!nrow(cx)) {
+    if (!nrow(fm)) {
       stop("No row matches your criteria!")
     }
   }
 
   if (verbose) {
-    pb <- txtProgressBar(0, nrow(cx), style=3)
+    pb <- txtProgressBar(0, nrow(fm), style=3)
   }
 
-  for (i in 1:nrow(cx)) {
-    .plotCxRow(cxrow=cx[i, ],
+  for (i in 1:nrow(fm)) {
+    .plotCxRow(fmrow=fm[i, ],
                identFragments=obj$IdentFragmentData,
                quantSpectra=obj$QuantSpectrumData,
                ...)
@@ -210,17 +210,17 @@ crossmatching <- function(flatEmrts, identFragments, quantSpectra,
   }
 }
 
-#' @param cxrow a single row of the crossmatching df
+#' @param fmrow a single row of the FragmentMatching df
 #' @param identFragments MSnExp of the identification fragments
 #' @param quantSpectra MSnExp of the quantitation spectra
 #' @param legend.cex cex for legend text
 #' @param fragments.cex cex for fragment text
 #' @noRd
-.plotCxRow <- function(cxrow, identFragments, quantSpectra,
+.plotCxRow <- function(fmrow, identFragments, quantSpectra,
                        legend.cex=0.6, fragments.cex=0.5,
                        ...) {
 
-  keys <- unlist(cxrow[,c("precursor.leID.ident", "matched.quant.spectrumIDs")])
+  keys <- unlist(fmrow[,c("precursor.leID.ident", "matched.quant.spectrumIDs")])
   spectra <- list(ident=.getSpectrum(keys[1], identFragments),
                   quant=.getSpectrum(keys[2], quantSpectra))
 
@@ -238,24 +238,24 @@ crossmatching <- function(flatEmrts, identFragments, quantSpectra,
   .plotFragmentsVsSpectrum(spectra=spectra,
                            sequences=sequences,
                            fragments=fragments,
-                           gridSearchResult=cxrow$gridSearchResult,
+                           gridSearchResult=fmrow$gridSearchResult,
                            legend.cex=legend.cex,
                            fragments.cex=fragments.cex,
                            ...)
 }
 
-#' plot cx performance
-#' @param cx cx data.frame
+#' plot fm performance
+#' @param fm fm data.frame
 #' @return invisible list with two elements (unique,nonunique) each containing a
 #' matrix of 3 columns threshold, true, false
-.plotCrossMatchingPerformance <- function(cx) {
+.plotFragmentMatchingPerformance <- function(fm) {
   l <- setNames(vector(mode="list", length=2), c("unique", "nonunique"))
   what <- c("unique", "non-unique")
   xlab <- c("# of common peaks", "delta common peaks")
 
   par(mfcol=c(1, 2))
   for (i in seq(along=l)) {
-    l[[i]] <- .crossMatchingContingencyMatrix(cx, what=what[i])
+    l[[i]] <- .fragmentMatchingContingencyMatrix(fm, what=what[i])
 
     ylim <- range(l[[i]][, c("tp", "fp")])
     plot(l[[i]][, 1], l[[i]][, "tp"],
@@ -273,27 +273,27 @@ crossmatching <- function(flatEmrts, identFragments, quantSpectra,
   invisible(l)
 }
 
-#' @param cx cross matching df, result of cross matching
+#' @param fm FragmentMatching df, result of .fragmentMatching
 #' @param what character unique/non-unique
 #' @return matrix with cols threshold,
 #' @noRd
-.crossMatchingConfusionMatrix <- function(cx, what=c("unique", "non-unique")) {
+.fragmentMatchingConfusionMatrix <- function(fm, what=c("unique", "non-unique")) {
   what <- match.arg(what)
 
-  cx <- cx[grep(paste0("^", what), cx$gridSearchResult), ]
+  fm <- fm[grep(paste0("^", what), fm$gridSearchResult), ]
 
-  rcol <- "CrossMatchingRank"
+  rcol <- "FragmentMatchingRank"
 
   if (what == "unique") {
-    cx[, rcol] <- 1
-    mcol <- "CrossMatching"
+    fm[, rcol] <- 1
+    mcol <- "FragmentMatching"
   } else {
-    mcol <- "CrossMatchingDiff"
+    mcol <- "FragmentMatchingDiff"
   }
 
-  train <- tapply(1:nrow(cx), cx$precursor.leID.ident, function(i) {
-    ytrain <- any(grepl("true$", cx$gridSearchResult[i]) & cx[i, rcol] == 1)
-    xtrain <- cx[i[which.min(cx[i, rcol])], mcol]
+  train <- tapply(1:nrow(fm), fm$precursor.leID.ident, function(i) {
+    ytrain <- any(grepl("true$", fm$gridSearchResult[i]) & fm[i, rcol] == 1)
+    xtrain <- fm[i[which.min(fm[i, rcol])], mcol]
     cbind(xtrain, ytrain)
   }, simplify=FALSE)
   train <- do.call(rbind, train)
@@ -317,14 +317,14 @@ crossmatching <- function(flatEmrts, identFragments, quantSpectra,
   return(confusion)
 }
 
-#' @param cx cross matching df, result of crossmatching
+#' @param fm FragmentMatching df, result of .fragmentMatching
 #' @param what character unique/non-unique
 #' @param mcol column name of the matching results (e.g.
 #' fragments.identXfragments.quant)
 #' @return matrix with cols tp, fp, tn, fn
 #' @noRd
-.crossMatchingContingencyMatrix <- function(cx, what) {
-  confusion <- .crossMatchingConfusionMatrix(cx, what)
+.fragmentMatchingContingencyMatrix <- function(fm, what) {
+  confusion <- .fragmentMatchingConfusionMatrix(fm, what)
   return(cbind(confusion, fdr=diagnosticErrors(confusion)[, "fdr"]))
 }
 
@@ -335,23 +335,23 @@ crossmatching <- function(flatEmrts, identFragments, quantSpectra,
 #' @noRd
 .filterUniqueMatches <- function(obj, mincommon) {
   emrts <- obj$MatchedEMRTs
-  cx <- obj$CrossMatching
+  fm <- obj$FragmentMatching
 
   if ("Function.1" %in% colnames(emrts)) {
     warning("This function should not used multiple times. It removes your ",
             "original ", sQuote("Function"), " column.", immediate.=TRUE)
   }
 
-  cx <- cx[cx$precursor.leID.ident %in% emrts$precursor.leID.ident &
-           cx$Function == 1, ]
+  fm <- fm[fm$precursor.leID.ident %in% emrts$precursor.leID.ident &
+           fm$Function == 1, ]
 
-  keep <- cx$CrossMatching >= mincommon
+  keep <- fm$FragmentMatching >= mincommon
 
   if (!any(keep)) {
     stop("No EMRT match your criteria! Try a lower threshold")
   }
 
-  rows <- match(cx$precursor.leID.ident, emrts$precursor.leID.ident)
+  rows <- match(fm$precursor.leID.ident, emrts$precursor.leID.ident)
 
   exclude <- rows[!keep]
 
@@ -375,23 +375,23 @@ crossmatching <- function(flatEmrts, identFragments, quantSpectra,
 #' @noRd
 .filterNonUniqueMatches <- function(obj, mindelta) {
   emrts <- obj$MatchedEMRTs
-  cx <- obj$CrossMatching
+  fm <- obj$FragmentMatching
 
   if ("Function.2" %in% colnames(emrts)) {
     warning("This function should not used multiple times. It removes your ",
             "original ", sQuote("Function"), " column.", immediate.=TRUE)
   }
 
-  cx <- cx[cx$precursor.leID.ident %in% emrts$precursor.leID.ident &
-           cx$Function > 1, ]
+  fm <- fm[fm$precursor.leID.ident %in% emrts$precursor.leID.ident &
+           fm$Function > 1, ]
 
-  keep <- cx$CrossMatchingDiff >= mindelta & cx$CrossMatchingRank == 1
+  keep <- fm$FragmentMatchingDiff >= mindelta & fm$FragmentMatchingRank == 1
 
   if (!any(keep)) {
     stop("No EMRT match your criteria! Try a lower threshold")
   }
 
-  rows <- match(cx$precursor.leID.ident, emrts$precursor.leID.ident)
+  rows <- match(fm$precursor.leID.ident, emrts$precursor.leID.ident)
 
   exclude <- rows[!keep]
 
@@ -400,13 +400,13 @@ crossmatching <- function(flatEmrts, identFragments, quantSpectra,
 
   if (length(exclude)) {
     cols <- c("matched.quant.spectrumIDs", "precursor.leID.quant", "spectrumID")
-    emrts[rows, cols] <- cx[, cols]
+    emrts[rows, cols] <- fm[, cols]
     # comment the next line and uncomment the over next line to *not* remove the
     # filtered emrts
     #emrts <- emrts[-exclude, ]
 
     ## this order is important because include could contain row numbers that
-    ## are present in keep as well (because cx has many duplicated
+    ## are present in keep as well (because fm has many duplicated
     ## precursor.leID.idents)
     emrts$Function[exclude] <- -2
     emrts$Function[rows[keep]] <- 1
