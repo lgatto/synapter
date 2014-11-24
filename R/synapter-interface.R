@@ -70,23 +70,22 @@ setMethod(inputFiles, "Synapter",
             quantpep3d = object$QuantPep3DFile,
             fasta = object$DbFastaFile))
 
-setMethod(loadSpectrumXmlFiles, "Synapter",
-          function(object, filenames, removePrecursor=TRUE, tolerance=25e-6,
-                   verbose=TRUE) {
-            object$loadSpectrumXmlFiles(filenames=filenames,
-                                        removePrecursor=removePrecursor,
-                                        tolerance=25e-6,
-                                        verbose=verbose)
+setMethod(loadIdentificationFragments, "Synapter",
+          function(object, filename, removeNeutralLoss=TRUE,
+                   removePrecursor=TRUE, tolerance=25e-6, verbose=TRUE) {
+            object$loadIdentificationFragments(filename=filename,
+                                               removeNeutralLoss=removeNeutralLoss,
+                                               removePrecursor=removePrecursor,
+                                               tolerance=25e-6,
+                                               verbose=verbose)
           })
 
-setMethod(loadFragmentCsvFiles, "Synapter",
-          function(object, filenames, removeNeutralLoss=TRUE,
-                   removePrecursor=TRUE, tolerance=25e-6, verbose=TRUE) {
-            object$loadFragmentCsvFiles(filenames=filenames,
-                                        removeNeutralLoss=removeNeutralLoss,
-                                        removePrecursor=removePrecursor,
-                                        tolerance=25e-6,
-                                        verbose=verbose)
+setMethod(loadQuantitationSpectra, "Synapter",
+          function(object, filename, removePrecursor=TRUE, tolerance=25e-6,
+                   verbose=TRUE) {
+            object$loadQuantitationSpectra(filename=filename,
+                                           removePrecursor=removePrecursor,
+                                           tolerance=25e-6, verbose=verbose)
           })
 
 setMethod(getLog, "Synapter",
@@ -259,12 +258,12 @@ setMethod(getPepNumbers, "Synapter",
             }
           })
 
-setMethod(setCrossMatchingPpmTolerance, "Synapter",
+setMethod(setFragmentMatchingPpmTolerance, "Synapter",
           function(object, ppm = 25)
-            object$setCrossMatchingPpmTolerance(ppm))
+            object$setFragmentMatchingPpmTolerance(ppm))
 
-setMethod(getCrossMatchingPpmTolerance, "Synapter",
-          function(object) object$CrossMatchingPpmTolerance)
+setMethod(getFragmentMatchingPpmTolerance, "Synapter",
+          function(object) object$FragmentMatchingPpmTolerance)
 
 setMethod(showFdrStats, "Synapter",
           function(object,
@@ -533,35 +532,33 @@ setMethod(plotFeatures, "Synapter",
                    })
           })
 
-setMethod(plotCrossMatching, "Synapter",
+setMethod(plotFragmentMatching, "Synapter",
           function(object, key, column="peptide.seq", verbose=TRUE, ...) {
-            if (!nrow(object$CrossMatching)) {
-              stop("You have to run ", sQuote("crossMatching"), " first!")
+            if (!nrow(object$FragmentMatching)) {
+              stop("You have to run ", sQuote("fragmentMatching"), " first!")
             }
 
-            .plotCrossMatching(object, key, column=column, verbose=verbose,
-                               tolerance=object$CrossMatchingPpmTolerance/1e6,
+            .plotFragmentMatching(object, key, column=column, verbose=verbose,
+                               tolerance=object$FragmentMatchingPpmTolerance/1e6,
                                ...)
           })
 
-setMethod(plotCrossMatchingPerformance, "Synapter",
+setMethod(plotFragmentMatchingPerformance, "Synapter",
           function(object, ...) {
-            if (!nrow(object$CrossMatching)) {
-              stop("You have to run ", sQuote("crossMatching"), " first!")
+            if (!nrow(object$FragmentMatching)) {
+              stop("You have to run ", sQuote("fragmentMatching"), " first!")
             }
 
-            invisible(.plotCrossMatchingPerformance(object$CrossMatching))
+            invisible(.plotFragmentMatchingPerformance(object$FragmentMatching))
           })
 
 setMethod(plotCumulativeNumberOfFragments, "Synapter",
-          function(object, what = c("spectrum.ident", "spectrum.quant",
-                                    "fragments.ident", "fragments.quant")) {
+          function(object, what = c("fragments.ident",
+                                    "spectra.quant")) {
             what <- match.arg(what)
             msexp <- switch(what,
-                            "spectrum.ident" = object$IdentSpectrumData,
-                            "spectrum.quant" = object$QuantSpectrumData,
                             "fragments.ident" = object$IdentFragmentData,
-                            "fragments.quant" = object$QuantFragmentData)
+                            "spectra.quant" = object$QuantSpectrumData)
             .plotIntensityVsNumber(msexp, what = what)
           })
 
@@ -669,12 +666,12 @@ setMethod(plotGrid, "Synapter",
             invisible(p)
           })
 
-setMethod(crossMatching, "Synapter",
+setMethod(fragmentMatching, "Synapter",
           function(object, ppm, verbose=TRUE) {
             if (!missing(ppm)) {
-              setCrossMatchingPpmTolerance(object, ppm)
+              setFragmentMatchingPpmTolerance(object, ppm)
             }
-            object$crossMatching(verbose=verbose)
+            object$fragmentMatching(verbose=verbose)
           })
 
 ## Results to csv

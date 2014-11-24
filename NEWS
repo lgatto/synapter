@@ -51,6 +51,9 @@ CHANGES IN VERSION 1.99.0
  o add ClassVersion field to Synapter class [2014-11-21 Fri]
  o add Versioned class as parent class to MasterPeptides and MasterFdrResults
    [2014-11-22 Sat]
+ o reduce CrossMatching (2x2) to FragmentMatching (1x1); rename all
+   functions/methods/variables from *CrossMatching to *FragmentMatching
+   [2014-11-24 Mon]
 
 CHANGES IN VERSION 1.7.0
 ------------------------

@@ -21,8 +21,8 @@
 \alias{findEMRTs}
 \alias{searchGrid,Synapter-method}
 \alias{searchGrid}
-\alias{crossMatching,Synapter-method}
-\alias{crossMatching}
+\alias{fragmentMatching,Synapter-method}
+\alias{fragmentMatching}
 
 % setters and getters
 \alias{getGrid,Synapter-method}
@@ -75,10 +75,10 @@
 \alias{getProtFpr}
 \alias{getEMRTtable,Synapter-method}
 \alias{getEMRTtable}
-\alias{setCrossMatchingPpmTolerance,Synapter-method}
-\alias{setCrossMatchingPpmTolerance}
-\alias{getCrossMatchingPpmTolerance,Synapter-method}
-\alias{getCrossMatchingPpmTolerance}
+\alias{setFragmentMatchingPpmTolerance,Synapter-method}
+\alias{setFragmentMatchingPpmTolerance}
+\alias{getFragmentMatchingPpmTolerance,Synapter-method}
+\alias{getFragmentMatchingPpmTolerance}
 \alias{performance,Synapter-method}
 \alias{performance2,Synapter-method}
 \alias{performance}
@@ -129,16 +129,16 @@
 \alias{plotRt}
 \alias{plotRtDiffs,Synapter-method}
 \alias{plotRtDiffs}
-\alias{plotCrossMatchingPerformance,Synapter-method}
-\alias{plotCrossMatchingPerformance}
+\alias{plotFragmentMatchingPerformance,Synapter-method}
+\alias{plotFragmentMatchingPerformance}
 \alias{plotCumulativeNumberOfFragments,Synapter-method}
 \alias{plotCumulativeNumberOfFragments}
 
 % importers
-\alias{loadSpectrumXmlFiles,Synapter-method}
-\alias{loadSpectrumXmlFiles}
-\alias{loadFragmentCsvFiles,Synapter-method}
-\alias{loadFragmentCsvFiles}
+\alias{loadIdentificationFragments,Synapter-method}
+\alias{loadIdentificationFragments}
+\alias{loadQuantitationSpectra,Synapter-method}
+\alias{loadQuantitationSpectra}
 
 % exporters
 \alias{writeMatchedEMRTs,Synapter-method}
@@ -385,9 +385,11 @@ Synapter(filenames, master) ## creates an instance of class 'Synapter'
     and Venn counts.
   }
 
-  \subsection{Importing Spectra and Fragments Data}{
-    \dQuote{Spectrum.xml} and \dQuote{final_fragment.csv} files could be
-    imported via \code{loadSpectrumXmlFiles} respective \code{loadFragmentCsvFiles}.
+  \subsection{Importing Fragments and Spectra Data}{
+    The identification fragments data (\dQuote{final_fragment.csv} file) and
+    the quantiation spectra data (\dQuote{Spectrum.xml} file) could be
+    imported via \code{loadIdentificationFragments} respective
+    \code{loadQuantitationSpectra}.
   }
 
   \subsection{Remove Less Intense Peaks}{
@@ -398,27 +400,24 @@ Synapter(filenames, master) ## creates an instance of class 'Synapter'
     below a specified threshold via the \code{minIntensity} argument. Set the
     \code{maxNumber} argument to keep only the \code{maxNumber} highest
     peaks/fragments. The \code{what} argument controls the data on which the
-    filter is applied. Use \code{what = "spectrum.ident"} for the
-    identification spectra, \code{what = "spectrum.quant"} for the
-    quantiation spectra, \code{what = "fragments.ident"} for the identification
-    fragment data and \code{what = "fragments.quant"} for the quantiation
-    fragment data.
+    filter is applied. Use \code{what = "fragments.ident"} for the
+    identification fragments and \code{what = "spectra.quant"} for the
+    quantiation spectra data.
   }
 
-  \subsection{Cross Matching}{
-    After importing spectra and fragment data peaks that matching between
-    identification fragments and quantitation fragments, between
-    identification spectrum and quantitation fragments, and between
-    quantitation spectrum and identification fragments using the
-    \code{crossMatching} method. Use \code{setCrossMatchingPpmTolerance} to set
+  \subsection{Fragment Matching}{
+    After importing fragment and spectra data it is possible to
+    match peaks between the identification fragments and the quantitation
+    spectra using the \code{fragmentMatching} method.
+    Use \code{setFragmentMatchingPpmTolerance} to set
     the maximal allowed tolerance for considering a peak as identical.
-    There are two different methods to visualise the results of the cross
-    matching procedure. \code{plotCrossMatching} plots the spectra and fragments
-    for each considered cross matching pair.
-    \code{plotCrossMatchingPerformance} draws two plots. On the left panel you
-    could see the performance of different thresholds for the number of common
-    peaks for unique matches.  The right panel visualizes the performance of
-    different differences (delta) of common peaks between the best match
+    There are two different methods to visualise the results of the fragment
+    matching procedure. \code{plotFragmentMatching} plots the fragments and
+    spectra for each considered pair.
+    \code{plotFragmentMatchingPerformance} draws two plots. On the left panel
+    you could see the performance of different thresholds for the number of
+    common peaks for unique matches.  The right panel visualizes the performance
+    of different differences (delta) of common peaks between the best match
     (highest number of common peaks) and the second best match in each non
     unique match group.
     Use \code{filterUniqueMatches} and \code{filterNonUniqueMatches} to remove
@@ -499,9 +498,9 @@ Synapter(filenames, master) ## creates an instance of class 'Synapter'
 	\code{findEMRTs} for details).
       }
 
-      \item{crossMatching}{\code{signature(object="Synapter",
+      \item{fragmentMatching}{\code{signature(object="Synapter",
       ppm = "numeric", verbose = "logical"}:
-      Performs a cross matching between spectra and fragment data.
+      Performs a fragment matching between spectra and fragment data.
       The \code{ppm} argument controls the tolerance that is used to consider
       two peaks (MZ values) as identical.  If \code{verbose} is \code{TRUE}
       (default) a progress bar is shown.  }
@@ -651,13 +650,13 @@ Synapter(filenames, master) ## creates an instance of class 'Synapter'
 	respect with the confidence of the random scores distribution.
       }
 
-      \item{setCrossMatchingPpmTolerance}{\code{signature(object="Synapter",
-        ppm = "numeric")}: Sets the cross matching mass tolerance \code{ppm}
+      \item{setFragmentMatchingPpmTolerance}{\code{signature(object="Synapter",
+        ppm = "numeric")}: Sets the fragment matching mass tolerance \code{ppm}
         (default is 25).
       }
 
-      \item{getCrossMatchingPpmTolerance}{\code{signature(object="Synapter")}:
-        Returns the cross matching mass tolerance in ppm.
+      \item{getFragmentMatchingPpmTolerance}{\code{signature(object="Synapter")}:
+        Returns the fragment matching mass tolerance in ppm.
       }
 
       \item{showFdrStats}{\code{signature(object="Synapter", k =
@@ -752,8 +751,7 @@ Synapter(filenames, master) ## creates an instance of class 'Synapter'
 	\code{filterQuantPpmError}, but for identification peptides.  }
 
     \item{filterFragments}{\code{signature(object = "Synapter",
-        what = c("spectrum.ident", "spectrum.quant",
-                 "fragments.ident", "fragments.quant"),
+        what = c("fragments.ident", "spectra.quant"),
         minIntensity = "numeric", maxNumber = "numeric", verbose = "logical")}:
       Filters the spectra/fragment data using a minimal intensity threshold
       (\code{minIntensity}) or a maximal number of peaks/fragments threshold
@@ -762,17 +760,15 @@ Synapter(filenames, master) ## creates an instance of class 'Synapter'
       specified by \code{maxNumber}.
       If both arguments are given, the more aggressive one is chosen.
       Use the \code{what} argument to specify the data that should be filtered.
-      Set \code{what = "spectrum.ident"} for the identification spectra,
-      \code{what = "spectrum.quant"} for the quantiation spectra,
-      \code{what = "fragments.ident"} for the identification fragment data and
-      \code{what = "fragments.quant"} for the quantiation fragment data.
+      Set \code{what = "fragments.ident"} for the identification fragment data
+      or \code{what = "spectra.quant"} for the quantiation spectra.
       If \code{verbose} is \code{TRUE} (default) a progress bar is shown.
     }
 
     \item{filterUniqueMatches}{\code{signature(object="Synapter", minNumber =
         "numeric")}:
       Removes all unique matches that have less than \code{minNumber} of
-      peaks/fragments in common. Use \code{plotCrossMatchingPerformance}
+      peaks/fragments in common. Use \code{plotFragmentMatchingPerformance}
       (left panel) to find an ideal threshold.
     }
 
@@ -784,7 +780,7 @@ Synapter(filenames, master) ## creates an instance of class 'Synapter'
       peaks/fragments) less than \code{minDelta}. For the matches above the
       threshold only the one with the highest number of common peaks/fragments
       in each match group is kept.
-      Use \code{plotCrossMatchingPerformance} (right panel) to find an ideal
+      Use \code{plotFragmentMatchingPerformance} (right panel) to find an ideal
       threshold.
     }
 
@@ -874,14 +870,14 @@ Synapter(filenames, master) ## creates an instance of class 'Synapter'
       figure allows to visualise the EMRT matching.
     }
 
-    \item{plotCrossMatching}{\code{signature(object = "Synapter",
+    \item{plotFragmentMatching}{\code{signature(object = "Synapter",
         key = "character", column = "character",
         verbose = "logical", \dots)}:
       Plots two spectra and fragments against each other. Please see
-      \code{\link{plotCrossMatching}} for details.
+      \code{\link{plotFragmentMatching}} for details.
     }
 
-    \item{plotCrossMatchingPerformance}{\code{signature(object = "Synapter",
+    \item{plotFragmentMatchingPerformance}{\code{signature(object = "Synapter",
         matchColumn = "spectrum.quantXfragments.ident")}:
     Creates two plots. The left panel shows the performance of filtering the
     unique matches using a different number of common peaks. The right panel
@@ -899,21 +895,18 @@ Synapter(filenames, master) ## creates an instance of class 'Synapter'
     \code{fp}, true negatives \code{tn}, false negatives \code{fn} and FDR
     \code{fdr} for the current threshold (in that row).
     }
-    \item{plotCrossMatchingDiff}{\code{signature(object = "Synapter",
+    \item{plotFragmentMatchingDiff}{\code{signature(object = "Synapter",
         matchColumn = "spectrum.quantXfragments.ident")}:
     Shows a boxplot for the differences of the first highest number of common
     peaks to the second one for true and false matches in each match group.
     }
 
     \item{plotCumulativeNumberOfFragments}{\code{signature(object = "Synapter",
-        what = c("spectrum.ident", "spectrum.quant",
-                 "fragments.ident", "fragments.quant"))}:
+        what = c("fragments.ident", "spectra.quant"))}:
     Plots the cumulative number of the fragments/peaks vs their intensity (log10
     scaled). Use the \code{what} argument to create this plot for the
-    identification spectra (\code{what = "spectrum.ident"}),
-    the quantitation spectra (\code{what = "spectrum.quant"}),
-    the identification fragments (\code{what = "fragments.quant"}) or the
-    quantitation fragments (\code{what = "fragments.ident"}).
+    identification fragments (\code{what = "fragments.quant"}) or the
+    the quantitation spectra (\code{what = "spectra.quant"}).
     }
   }
 }
@@ -921,33 +914,30 @@ Synapter(filenames, master) ## creates an instance of class 'Synapter'
 \subsection{Importers}{
 
     \describe{
-      \item{loadSpectrumXmlFiles}{\code{signature(object="Synapter",
-          filenames = "list", removePrecursor = "logical",
-          tolerance = "numeric", verbose = "logcial")}:
-        Imports \sQuote{Spectrum.xml} files. The file path has to be given as
-        named list (\code{filenames}). The names have to be
-        \code{identspectrum} and \code{quantspectrum} for the identification and
-        the quantitation spectrum file.
-        If \code{removePrecursor} is \code{TRUE} (default) the precursor ion is
-        removed from the fragment spectrum. Use \code{tolerance} to adjust the
-        sensitivity (default is \code{25e-6} = 25 ppm).
-        If \code{verbose} is \code{TRUE}
-        (default) a progress bar is shown.
-      }
-      \item{loadFragmentCsvFiles}{\code{signature(object="Synapter",
-          filenames = "list", removeNeutralLoss = "logical",
+      \item{loadIdentificationFragments}{\code{signature(object="Synapter",
+          filename = "character", removeNeutralLoss = "logical",
           removePrecursor = "logical", tolerance = "numeric",
           verbose = "logcial")}:
-        Imports \sQuote{final_fragment.csv} files. The file path has to be given
-        as named list (\code{filenames}). The names have to be
-        \code{identfragments} and \code{quantfragments} for the identification
-        and the quantitation fragment file. In the default setting rows
-        with a neutrol loss value not equal to \sQuote{none} are removed.
+        Imports the identification \sQuote{final_fragment.csv} file.
+        \code{filename} has to be the file path to the corresponding file.
+        In the default setting rows with a neutral loss value not equal to
+        \sQuote{none} are removed.
         To keep these rows you have to set \code{removeNeutralLoss = FALSE}.
         If \code{removePrecursor} is \code{TRUE} (default) the precursor ion is
         removed from the fragment spectrum. Use \code{tolerance} to adjust the
         sensitivity (default is \code{25e-6} = 25 ppm).
         If \code{verbose} is \code{TRUE} (default) a progress bar is shown.
+      }
+      \item{loadQuantitationSpectra}{\code{signature(object="Synapter",
+          filename = "character", removePrecursor = "logical",
+          tolerance = "numeric", verbose = "logcial")}:
+        Imports the quantitation \sQuote{Spectrum.xml} file.
+        \code{filename} has to be the file path to the corresponding file.
+        If \code{removePrecursor} is \code{TRUE} (default) the precursor ion is
+        removed from the fragment spectrum. Use \code{tolerance} to adjust the
+        sensitivity (default is \code{25e-6} = 25 ppm).
+        If \code{verbose} is \code{TRUE}
+        (default) a progress bar is shown.
       }
     }
   }

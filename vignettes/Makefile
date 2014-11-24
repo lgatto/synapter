@@ -9,7 +9,7 @@ LATEXFILES = *.aux\
         *.aux\
         synapter.tex\
         ionmobility.tex\
-        crossmatching.tex\
+        fragmentmatching.tex\
 	Rplots.pdf\
 	*.dvi\
 	*.map\
@@ -23,7 +23,7 @@ LATEXFILES = *.aux\
 
 all:
 	make synapter
-	make crossmatching
+	make fragmentmatching
 	make ionmobility
 	make clean
 
@@ -32,26 +32,26 @@ ifeq (${R_HOME},)
 R_HOME=	$(shell R RHOME)
 endif
 
-synapter: 
+synapter:
 	"$(R_HOME)/bin/R" --vanilla -e "library(knitr); knit('synapter.Rnw');"
 	"$(R_HOME)/bin/R" CMD pdflatex synapter.tex
 	bibtex synapter
 	"$(R_HOME)/bin/R" CMD pdflatex synapter.tex
 	"$(R_HOME)/bin/R" CMD pdflatex synapter.tex
 
-ionmobility: 
+ionmobility:
 	"$(R_HOME)/bin/R" --vanilla -e "library(knitr); knit('ionmobility.Rnw');"
 	"$(R_HOME)/bin/R" CMD pdflatex ionmobility.tex
 	bibtex ionmobility
 	"$(R_HOME)/bin/R" CMD pdflatex ionmobility.tex
 	"$(R_HOME)/bin/R" CMD pdflatex ionmobility.tex
 
-crossmatching: 
-	"$(R_HOME)/bin/R" --vanilla -e "library(knitr); knit('crossmatching.Rnw');"
-	"$(R_HOME)/bin/R" CMD pdflatex crossmatching.tex
-	bibtex crossmatching
-	"$(R_HOME)/bin/R" CMD pdflatex crossmatching.tex
-	"$(R_HOME)/bin/R" CMD pdflatex crossmatching.tex
+fragmentmatching:
+	"$(R_HOME)/bin/R" --vanilla -e "library(knitr); knit('fragmentmatching.Rnw');"
+	"$(R_HOME)/bin/R" CMD pdflatex fragmentmatching.tex
+	bibtex fragmentmatching
+	"$(R_HOME)/bin/R" CMD pdflatex fragmentmatching.tex
+	"$(R_HOME)/bin/R" CMD pdflatex fragmentmatching.tex
 
 clean:
 	rm -f $(LATEXFILES)
@@ -60,13 +60,13 @@ clean:
 	rm -f .build.timestamp
 	rm -f .Rhistory
 
-clean2: 
+clean2:
 	make clean
 	rm -rf figure
 	rm -rf cache
 
-pdfclean: 
-	rm -f crossmatching.pdf
+pdfclean:
+	rm -f fragmentmatching.pdf
 	rm -f synapter.pdf
 	rm -f ionmobility.pdf
 

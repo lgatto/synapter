@@ -9,15 +9,15 @@
 #' @return Spectrum2
 #' @noRd
 .getSpectrum <- function(key, msnexp) {
+  if (!is.character(key)) {
+    key <- as.character(key)
+  }
+
   if (exists(key, envir=assayData(msnexp))) {
     return(msnexp[[key]])
   } else {
     return(.createEmptyMsnbaseSpectrum2(key=key))
   }
-}
-
-.getSpectra <- function(keys, spectralist) {
-  mapply(.getSpectrum, keys, spectralist)
 }
 
 .sumAllPeakCounts <- function(msexp) {
