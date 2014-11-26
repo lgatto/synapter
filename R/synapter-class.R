@@ -624,7 +624,7 @@
                           stop("It seems that all IDs are correct but ",
                                "there are not any matching intensity values.")
                         }
-                        if (nMismatch != length(idx)) {
+                        if (nMismatch) {
                           warning("Filtering ", nMismatch, " (of ", length(idx), " total) ",
                                   "entries of the quantitation final peptide and Pep3D file because ",
                                   "they differ in their intensity values.")
