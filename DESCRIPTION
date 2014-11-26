@@ -5,7 +5,8 @@ Title: Label-free data analysis pipeline for optimal
 Version: 1.9.3
 Author: Laurent Gatto, Nick J. Bond and Pavel V. Shliaha
 	and Sebastian Gibb.
-Maintainer: Laurent Gatto <lg390@cam.ac.uk>
+Maintainer: Laurent Gatto <lg390@cam.ac.uk> and
+	    Sebastian Gibb <mail@sebastiangibb.de>
 Depends: R (>= 2.15), methods, MSnbase
 Imports: hwriter, RColorBrewer, lattice, qvalue,
         multtest, utils, Biobase, knitr, Biostrings, cleaver, 
