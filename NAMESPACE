@@ -10,7 +10,7 @@ importFrom(qvalue, qvalue)
 importFrom(multtest, mt.rawp2adjp)
 importFrom(lattice, levelplot, densityplot, barchart)
 importFrom(RColorBrewer, brewer.pal)
-importFrom(Biobase, addVigs2WinMenu, updateObject, validMsg)
+importFrom(Biobase, addVigs2WinMenu, isCurrent, updateObject, validMsg)
 importFrom(Biostrings, readAAStringSet)
 
 export(Synapter, ## constructor
@@ -34,7 +34,7 @@ exportMethods(show,
               modelRt,
               findEMRTs,
               searchGrid,
-              crossMatching,
+              fragmentMatching,
               ## getters and setters
               getGrid,
               getGridDetails,
@@ -61,8 +61,8 @@ exportMethods(show,
               getPepNumbers,
               showFdrStats,
               getEMRTtable,
-              setCrossMatchingPpmTolerance,
-              getCrossMatchingPpmTolerance,
+              setFragmentMatchingPpmTolerance,
+              getFragmentMatchingPpmTolerance,
               performance,
               performance2,
               ## filtering prior to merging
@@ -88,12 +88,12 @@ exportMethods(show,
               plotEMRTtable,
               plotGrid,
               plotFeatures,
-              plotCrossMatching,
-              plotCrossMatchingPerformance,
+              plotFragmentMatching,
+              plotFragmentMatchingPerformance,
               plotCumulativeNumberOfFragments,
               ## importers
-              loadSpectrumXmlFiles,
-              loadFragmentCsvFiles,
+              loadIdentificationFragments,
+              loadQuantitationSpectra,
               ## exporters
               writeMergedPeptides,
               writeMatchedEMRTs,

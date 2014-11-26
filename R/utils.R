@@ -600,21 +600,18 @@ flatMatchedEMRTs <- function(emrts, pep3d, na.rm=TRUE, verbose=TRUE) {
   return(flatEmrts)
 }
 
-appendCrossMatchingColumns <- function(emrts, cx) {
-  idx <- match(sort(unique(cx$precursor.leID.ident)),
+.appendFragmentMatchingColumn <- function(emrts, fm) {
+  idx <- match(sort(unique(fm$precursor.leID.ident)),
                emrts$precursor.leID.ident)
-  cols <- c("spectrum.identXfragments.quant",
-            "spectrum.quantXfragments.ident",
-            "fragments.identXfragments.quant")
-  for (j in cols) {
-    emrts[idx, j] <- MSnbase:::utils.list2ssv(
-      split(cx[, j], cx$precursor.leID.ident), sep=",")
-  }
+
+  emrts[idx, "FragmentMatching"] <- MSnbase:::utils.list2ssv(
+    split(fm[, "FragmentMatching"], fm$precursor.leID.ident))
+
   return(emrts)
 }
 
 matched.quant.spectrumIDs2numeric <- function(x) {
-  lapply(MSnbase:::utils.ssv2list(x, sep=","), as.numeric)
+  lapply(MSnbase:::utils.ssv2list(x), as.numeric)
 }
 
 diagnosticErrors <- function(x) {

@@ -1,8 +1,12 @@
+##' IMPORTANT: update the initialization value of the ClassVersion field
+##' everytime you change this file! (regardless if you just change the code in
+##' a method or the complete API).
 .Synapter <-
     setRefClass("Synapter",
                 fields = list(
                     ## introspection
                     Version = "character",
+                    ClassVersion = "character",
                     SynapterLog = "character",
                     Master = "logical",
                     used2 = "logical",
@@ -36,19 +40,19 @@
                     RtNsd = "numeric",
                     ImDiff = "numeric",
                     MatchedEMRTs = "data.frame",
-                    ## cross matching stuff
+                    ## FragmentMatching
                     QuantSpectrumFile = "character",
                     QuantSpectrumData = "MSnExp",
-                    IdentSpectrumFile = "character",
-                    IdentSpectrumData = "MSnExp",
-                    QuantFragmentFile = "character",
-                    QuantFragmentData = "MSnExp",
                     IdentFragmentFile = "character",
                     IdentFragmentData = "MSnExp",
-                    CrossMatching = "data.frame",
-                    CrossMatchingPpmTolerance = "numeric"),
+                    FragmentMatching = "data.frame",
+                    FragmentMatchingPpmTolerance = "numeric"),
                 methods = list(
                     initialize = function() {
+                        ## IMPORTANT: always increase the ClassVersion field if
+                        ## you change anything in this file!
+                        .self$ClassVersion <- "2.0.0"
+
                         .self$Version <- as.character(packageVersion("synapter"))
                         .self$SynapterLog <- c(.self$SynapterLog,
                                                paste("Instance created on ", date(), sep=""))
@@ -226,49 +230,12 @@
                         message("Computing identification statistics...")
                         .self$addIdStats()
                     },
-                    loadSpectrumXmlFiles = function(filenames,
-                                                    removePrecursor=TRUE,
-                                                    tolerance=25e-6,
-                                                    verbose=TRUE) {
-                      stopifnot(all(names(filenames) %in% c("identspectrum",
-                                                            "quantspectrum")))
-                      filenames <- as.list(filenames)
-
-                      .self$IdentSpectrumFile <- filenames$identspectrum
-                      .self$IdentSpectrumData <-
-                        .spectrumXml2spectra(df=.self$IdentPeptideData,
-                                             file=.self$IdentSpectrumFile,
-                                             storeAll=FALSE,
-                                             removePrecursor=removePrecursor,
-                                             tolerance=tolerance,
-                                             verbose=verbose)
-                      .self$SynapterLog <-
-                        c(.self$SynapterLog,
-                          paste0("Read identification spectra [",
-                                 length(.self$IdentSpectrumData), "]"))
-                      .self$QuantSpectrumFile <- filenames$quantspectrum
-                      .self$QuantSpectrumData <-
-                        .spectrumXml2spectra(df=.self$QuantPeptideData,
-                                             file=.self$QuantSpectrumFile,
-                                             storeAll=TRUE,
-                                             removePrecursor=removePrecursor,
-                                             tolerance=tolerance,
-                                             verbose=verbose)
-                      .self$SynapterLog <-
-                        c(.self$SynapterLog,
-                          paste0("Read quantitation spectra [",
-                                 length(.self$QuantSpectrumData), "]"))
-                    },
-                    loadFragmentCsvFiles = function(filenames,
-                                                    removeNeutralLoss=TRUE,
-                                                    removePrecursor=TRUE,
-                                                    tolerance=25e-6,
-                                                    verbose=TRUE) {
-                      stopifnot(all(names(filenames) %in% c("identfragments",
-                                                            "quantfragments")))
-                      filenames <- as.list(filenames)
-
-                      .self$IdentFragmentFile <- filenames$identfragments
+                    loadIdentificationFragments = function(filename,
+                                                           removeNeutralLoss=TRUE,
+                                                           removePrecursor=TRUE,
+                                                           tolerance=25e-6,
+                                                           verbose=TRUE) {
+                      .self$IdentFragmentFile <- filename
                       .self$IdentFragmentData <-
                         .finalFragment2spectra(df=.self$IdentPeptideData,
                                                file=.self$IdentFragmentFile,
@@ -281,20 +248,23 @@
                         c(.self$SynapterLog,
                           paste0("Read identification fragment data [",
                                  length(.self$IdentFragmentData), "]"))
-
-                      .self$QuantFragmentFile <- filenames$quantfragments
-                      .self$QuantFragmentData <-
-                        .finalFragment2spectra(df=.self$QuantPeptideData,
-                                               file=.self$QuantFragmentFile,
-                                               storeAll=TRUE,
-                                               removeNeutralLoss=removeNeutralLoss,
-                                               removePrecursor=removePrecursor,
-                                               tolerance=tolerance,
-                                               verbose=verbose)
+                    },
+                    loadQuantitationSpectra = function(filename,
+                                                       removePrecursor=TRUE,
+                                                       tolerance=25e-6,
+                                                       verbose=TRUE) {
+                      .self$QuantSpectrumFile <- filename
+                      .self$QuantSpectrumData <-
+                        .spectrumXml2spectra(df=.self$QuantPeptideData,
+                                             file=.self$QuantSpectrumFile,
+                                             storeAll=TRUE,
+                                             removePrecursor=removePrecursor,
+                                             tolerance=tolerance,
+                                             verbose=verbose)
                       .self$SynapterLog <-
                         c(.self$SynapterLog,
-                          paste0("Read quantitation fragment data [",
-                                 length(.self$QuantFragmentData), "]"))
+                          paste0("Read quantitation spectra [",
+                                 length(.self$QuantSpectrumData), "]"))
                     },
                     getMaster = function() {
                         ' Gets Master field.'
@@ -407,43 +377,47 @@
                                                      "] (", mergedEMRTs, ")",
                                                      sep = ""))
                     },
-                    crossMatching = function(verbose=TRUE) {
+                    fragmentMatching = function(verbose=TRUE) {
                       if (!nrow(.self$MatchedEMRTs)) {
                         stop("You have to run ", sQuote("findEMRTs"),
                              " first!")
+                      }
+                      if ("FragmentMatching" %in% colnames(.self$MatchedEMRTs)) {
+                        ## remove previous FragmentMatching results
+                        .self$MatchedEMRTs$FragmentMatching <-
+                        .self$MatchedEMRTs$FragmentMatchingDiff <-
+                        .self$MatchedEMRTs$FragmentMatchingRank <- NULL
                       }
                       emrts <- flatMatchedEMRTs(.self$MatchedEMRTs,
                                                 .self$QuantPep3DData,
                                                 na.rm=FALSE,
                                                 verbose=verbose)
-                      if (!length(.self$CrossMatchingPpmTolerance)) {
-                        warning("Crossmatching ppm tolerance undefined. ",
+                      if (!length(.self$FragmentMatchingPpmTolerance)) {
+                        warning("FragmentMatching ppm tolerance undefined. ",
                                 "Setting to default value.")
-                        .self$setCrossMatchingPpmTolerance()
+                        .self$setFragmentMatchingPpmTolerance()
                       }
 
-                      .self$CrossMatching <-
-                        crossmatching(flatEmrts=emrts,
-                                      spectra=list(.self$IdentSpectrumData,
-                                                   .self$QuantSpectrumData,
-                                                   .self$IdentFragmentData,
-                                                   .self$QuantFragmentData),
-                                      tolerance=.self$CrossMatchingPpmTolerance/1e6,
-                                      verbose=verbose)
+                      .self$FragmentMatching <-
+                        .fragmentMatching(flatEmrts=emrts,
+                                          identFragments=.self$IdentFragmentData,
+                                          quantSpectra=.self$QuantSpectrumData,
+                                          tolerance=.self$FragmentMatchingPpmTolerance/1e6,
+                                          verbose=verbose)
                       .self$SynapterLog <-
                         c(.self$SynapterLog,
-                          paste0("Crossmatching identification and ",
-                                 "quantitation data at ",
-                                 .self$CrossMatchingPpmTolerance,
+                          paste0("FragmentMatching of identification fragments ",
+                                 "and quantitation spectra data at ",
+                                 .self$FragmentMatchingPpmTolerance,
                                  "ppm [",
-                                 paste0(dim(.self$CrossMatching), collapse=","),
+                                 paste0(dim(.self$FragmentMatching), collapse=","),
                                  "]"))
-                      .self$MatchedEMRTs <- appendCrossMatchingColumns(
-                        .self$MatchedEMRTs, .self$CrossMatching)
+                      .self$MatchedEMRTs <- .appendFragmentMatchingColumn(
+                        .self$MatchedEMRTs, .self$FragmentMatching)
 
                       .self$SynapterLog <-
                         c(.self$SynapterLog,
-                          paste0("Append crossmatching results to ",
+                          paste0("Append FragmentMatching results to ",
                                  "MatchedEMRTs [",
                                  paste0(dim(.self$MatchedEMRTs), collapse=","),
                                  "]"))
@@ -656,12 +630,12 @@
                                                 paste0("Set imdiff to ",
                                                        .self$ImDiff))
                        },
-                       setCrossMatchingPpmTolerance = function(ppm = 25) {
-                         'Sets cross matching mass error tolerance threshold.'
-                         .self$CrossMatchingPpmTolerance <- ppm
+                       setFragmentMatchingPpmTolerance = function(ppm = 25) {
+                         'Sets FragmentMatching mass error tolerance threshold.'
+                         .self$FragmentMatchingPpmTolerance <- ppm
                          .self$SynapterLog <-
                            c(.self$SynapterLog,
-                             paste0("Set cross matching ppm error to ", ppm))
+                             paste0("Set FragmentMatching ppm error to ", ppm))
                        }))
 
 ## GLOBAL FILTERS
@@ -919,14 +893,11 @@
                                                   maxNumber = NULL, verbose = TRUE) {
                          'Filters spectra/fragments using a minimal intensity or a maximal number of fragments as threshold.'
 
-                         what <- match.arg(what, choices = c(
-                                            "spectrum.ident", "spectrum.quant",
-                                            "fragments.ident", "fragments.quant"))
+                         what <- match.arg(what, choices = c("fragments.ident",
+                                                             "spectra.quant"))
                          msexp <- switch(what,
-                            "spectrum.ident" = .self$IdentSpectrumData,
-                            "spectrum.quant" = .self$QuantSpectrumData,
                             "fragments.ident" = .self$IdentFragmentData,
-                            "fragments.quant" = .self$QuantFragmentData)
+                            "spectra.quant" = .self$QuantSpectrumData)
 
                          if (!length(msexp)) {
                            stop("You have to import the ", sQuote(what),
@@ -934,24 +905,6 @@
                          }
 
                          msg <- "Filtered "
-
-                         if (what == "spectrum.ident") {
-                           .self$IdentSpectrumData <-
-                             .filterIntensity(msexp,
-                                              minIntensity = minIntensity,
-                                              maxNumber = maxNumber,
-                                              verbose = verbose)
-                           msg <- paste0("identification spectra")
-                         }
-
-                         if (what == "spectrum.quant") {
-                           .self$QuantSpectrumData <-
-                             .filterIntensity(msexp,
-                                              minIntensity = minIntensity,
-                                              maxNumber = maxNumber,
-                                              verbose = verbose)
-                           msg <- paste0("quantitation spectra")
-                         }
 
                          if (what == "fragments.ident") {
                            .self$IdentFragmentData <-
@@ -962,13 +915,13 @@
                            msg <- paste0("identification fragment data")
                          }
 
-                         if (what == "fragments.quant") {
-                           .self$QuantFragmentData <-
+                         if (what == "spectra.quant") {
+                           .self$QuantSpectrumData <-
                              .filterIntensity(msexp,
                                               minIntensity = minIntensity,
                                               maxNumber = maxNumber,
                                               verbose = verbose)
-                           msg <- paste0("quantitation fragment data")
+                           msg <- paste0("quantitation spectra")
                          }
 
                          msg <- paste0(" using a ",
@@ -983,10 +936,10 @@
                        },
 
                        filterUniqueMatches = function(minNumber) {
-                         'Filters unique matches using cross matching results.'
+                         'Filters unique matches using FragmentMatching results.'
 
-                         if (!nrow(.self$CrossMatching)) {
-                           stop("You have to run ", sQuote("crossMatching"),
+                         if (!nrow(.self$FragmentMatching)) {
+                           stop("You have to run ", sQuote("fragmentMatching"),
                                 " first!")
                          }
 
@@ -1002,10 +955,10 @@
                        },
 
                        filterNonUniqueMatches = function(minDelta) {
-                         'Filters non unique matches using cross matching results.'
+                         'Filters non unique matches using FragmentMatching results.'
 
-                         if (!nrow(.self$CrossMatching)) {
-                           stop("You have to run ", sQuote("crossMatching"),
+                         if (!nrow(.self$FragmentMatching)) {
+                           stop("You have to run ", sQuote("fragmentMatching"),
                                 " first!")
                          }
 
