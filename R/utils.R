@@ -511,7 +511,13 @@ getIdStats <- function(pepdata) {
 ## closes #42
 isCorrespondingPep3DataFile <- function(quant, pep3d) {
   idx <- match(quant$precursor.leID, pep3d$spectrumID)
-  return(all(!is.na(idx)) && all(quant$precursor.inten == pep3d$Counts[idx]))
+
+  ## We disable the comparison of the intensity values for the file check
+  ## temporarly because some files exist that have entries with different
+  ## intensity values.
+  ## See https://github.com/lgatto/synapter/issues/42 for details
+  return(!anyNA(idx))
+#  return(!anyNA(idx) && all(quant$precursor.inten == pep3d$Counts[idx]))
 }
 
 getExtension <- function (filename) {
