@@ -146,6 +146,8 @@
                         .self$QuantPeptideData$protein.falsePositiveRate <- 
                             .self$QuantPeptideData$protein.falsePositiveRate / 100
                         message("Filtering...")
+                        ## affects #42
+                        .self$filterMismatchingQuantIntensities()
                         .self$filterQuantMatchType() ## Quant only
                         .self$filterQuantFunction()
                         .self$filterDuplicatedQuantSpectrumIds()
@@ -208,6 +210,8 @@
                         .self$IdentPeptideData$protein.falsePositiveRate <- 
                             .self$IdentPeptideData$protein.falsePositiveRate / 100 
                         message("Filtering...")
+                        ## affects #42
+                        .self$filterMismatchingQuantIntensities()
                         .self$filterMatchType()
                         .self$filterQuantFunction()
                         .self$filterDuplicatedQuantSpectrumIds()
@@ -603,7 +607,40 @@
                        filterRandomEntries = function() {
                          .self$filterIdentRandomEntries()
                          .self$filterQuantRandomEntries()
-                       }))
+                       },
+                       filterMismatchingQuantIntensities = function() {
+                        ## this method should not be necessary; a mismatch
+                        ## between intensity values should never happen.
+                        ## See https://github.com/lgatto/synapter/issues/42
+                        ## for details
+                        idx <- match(.self$QuantPeptideData$precursor.leID,
+                                     .self$QuantPep3DData$spectrumID)
+
+                        iMismatch <- which(.self$QuantPeptideData$precursor.inten !=
+                                           .self$QuantPep3DData$Counts[idx])
+                        nMismatch <- length(iMismatch)
+
+                        if (nMismatch == length(idx)) {
+                          stop("It seems that all IDs are correct but ",
+                               "there are not any matching intensity values.")
+                        }
+                        if (nMismatch) {
+                          warning("Filtering ", nMismatch, " (of ", length(idx), " total) ",
+                                  "entries of the quantitation final peptide and Pep3D file because ",
+                                  "they differ in their intensity values.")
+                          .self$QuantPeptideData <- .self$QuantPeptideData[-iMismatch, ]
+                          .self$QuantPep3DData <- .self$QuantPep3DData[-idx[iMismatch], ]
+                          .self$SynapterLog <- c(.self$SynapterLog,
+                                                 paste0("Filtered ", nMismatch,
+                                                        " quantitation final peptide data entries because of intensity mismatch [",
+                                                        paste(dim(.self$QuantPeptideData), collapse = ","), "]"))
+                          .self$SynapterLog <- c(.self$SynapterLog,
+                                                 paste0("Filtered ", nMismatch,
+                                                        " quantitation Pep3D data entries because of intensity mismatch [",
+                                                       paste(dim(.self$QuantPep3DData), collapse = ","), "]"))
+                        }
+                       }
+                       ))
 
 
 ## PEPTIDE DATA FILTER
