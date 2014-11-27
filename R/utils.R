@@ -39,48 +39,6 @@ filterProtFpr <- function(pepdata, fpr) {
   pepdata[pepdata$protein.falsePositiveRate < fpr, ]
 }
 
-filterCommonSeq <- function(quantpep, identpep) {
-  ## keep common sequences
-  cmnseq <- intersect(quantpep$peptide.seq, identpep$peptide.seq)
-  quantpep <- quantpep[quantpep$peptide.seq %in% cmnseq, ]
-  identpep <- identpep[identpep$peptide.seq %in% cmnseq, ]
-  return(list(quantpep = quantpep,
-              identpep = identpep))
-}
-
-filterKeepUniqueSeq <- function(quantpep, identpep) {
-  ## DEBUG: some sequences are not unique
-  ident2keep <- names(which(table(identpep$peptide.seq)==1))
-  quant2keep   <- names(which(table(quantpep$peptide.seq)==1))
-  ## DEBUD: save csv for diagnostic
-  ## write.csv(quantpep[!quantpep$peptide.seq %in% quant2keep, ],
-  ##          file="quant_pep_file_duplicated_entries.csv")
-  ## write.csv(identpep[!identpep$peptide.seq %in% ident2keep, ],
-  ##          file="ident_pep_file_duplicated_entries.csv")
-  ## DEBUG: remove these from data
-  identpep <- identpep[identpep$peptide.seq %in% ident2keep, ]
-  quantpep <- quantpep[quantpep$peptide.seq %in% quant2keep, ]
-  return(list(quantpep = quantpep,
-              identpep = identpep))
-}
-
-
-filterKeepUniqueProt <- function(quantpep, identpep) {
-  ## DEBUG: there is still one protein that is
-  ##        not common and unique in each data set
-  ## if (debug) {
-  ##   venn <- Venn(list(quant = quantpep$peptide.seq,
-  ##                     ident = identpep$peptide.seq))
-  ##   return(venn)
-  ## }
-  quantspecific <- setdiff(quantpep$peptide.seq, identpep$peptide.seq)
-  identpep <- identpep[!identpep$peptide.seq %in% quantspecific, ]
-  quantpep <-quantpep[!quantpep$peptide.seq %in% quantspecific, ]
-  return(list(quantpep = quantpep,
-              identpep = identpep))
-}
-
-
 error.ppm <- function(obs, theo) {
   ## Estimating MS mass accuracy
   ## Error(ppm) = 1e6 * (observed m/z - exact m/z) / (exact m/z)

@@ -54,6 +54,8 @@ CHANGES IN VERSION 1.99.0
  o reduce CrossMatching (2x2) to FragmentMatching (1x1); rename all
    functions/methods/variables from *CrossMatching to *FragmentMatching
    [2014-11-24 Mon]
+ o remove unused internal functions: filterCommonSeq, filterKeepUniqueSeq,
+   filterKeepUniqueProt [2014-11-27 Thu]
 
 CHANGES IN VERSION 1.7.0
 ------------------------
