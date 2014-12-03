@@ -405,10 +405,8 @@ makeMaster <- function(pepfiles,
     x
   })
 
-  lib <- new("MSnExp")
-
   ## create fragment library
-  if (length(fragmentfiles)) {
+  if (!missing(fragmentfiles)) {
     if (verbose) {
       message("Creating fragment library.")
     }
@@ -423,6 +421,10 @@ makeMaster <- function(pepfiles,
                               removePrecursor = removePrecursor,
                               tolerance = tolerance,
                               verbose = verbose)
+  } else {
+    lib <- new("MSnExp")
+    fragmentfiles <- character()
+    fragments <- data.frame()
   }
 
   master <- new("MasterPeptides",
