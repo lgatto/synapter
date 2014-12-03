@@ -126,6 +126,16 @@
                                                           paste(dim(.self$IdentPeptideData), collapse = ","), "]"))
                             .self$PepScoreFdr <- numeric() ## re-initialise
                             .self$QuantPeptideData <- .QuantPeptideData
+
+                            if (length(masterpeps@fragmentlibrary)) {
+                              .self$IdentFragmentFile <- .self$IdentPeptideFile
+                              .self$IdentFragmentData <- masterpeps@fragmentlibrary
+                              .self$SynapterLog <-
+                                c(.self$SynapterLog,
+                                  paste0("Read master identification fragment data [",
+                                         length(.self$IdentFragmentData), "]"))
+
+                            }
                         } else {
                             stop("Master peptide file extention not recognised. Must be 'csv' or 'rds'.")
                         }
