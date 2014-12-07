@@ -5,8 +5,8 @@ Synapter <- function(filenames, master = FALSE) {
   if (missing(filenames)) {
     xx$loadFiles()
   } else {
-    if (!all(names(filenames) %in% c("identpeptide", "quantpeptide", "quantpep3d", "fasta")))
-      stop("File names must be provided as a named list with names 'identpeptide','quantpeptide', 'quantpep3d' and 'fasta'.")
+    if (!all(names(filenames) %in% c("identpeptide", "quantpeptide", "quantpep3d", "fasta", "identfragments", "quantspectra")))
+      stop("File names must be provided as a named list with names 'identpeptide','quantpeptide', 'quantpep3d' and 'fasta' [optional 'identfragments' and 'quantspectra'].")
     flength <- sapply(filenames, length)
     if (!all(flength == 1))
         stop("This interface only accepts single MSe/HDMSe files as input. See '?synapterGUI' and '?synergise' for alternative interfaces.")
@@ -18,6 +18,8 @@ Synapter <- function(filenames, master = FALSE) {
     xx$QuantPeptideFile <- filenames$quantpeptide
     xx$QuantPep3DFile <- filenames$quantpep3d
     xx$DbFastaFile <- filenames$fasta
+    xx$IdentFragmentFile <- filenames$identfragments
+    xx$QuantSpectrumFile <- filenames$quantspectra
   }
   ifelse(xx$Master,
          xx$loadMasterData(),
@@ -68,7 +70,9 @@ setMethod(inputFiles, "Synapter",
           c(identpeptide = object$IdentPeptideFile,
             quantpeptide = object$QuantPeptideFile,
             quantpep3d = object$QuantPep3DFile,
-            fasta = object$DbFastaFile))
+            fasta = object$DbFastaFile,
+            identfragments = object$IdentFragmentFile,
+            quantspectra = object$QuantSpectrumFile))
 
 setMethod(loadIdentificationFragments, "Synapter",
           function(object, filename, removeNeutralLoss=TRUE,

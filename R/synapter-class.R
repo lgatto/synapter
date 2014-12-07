@@ -76,6 +76,14 @@
                             tk_choose.files("",
                                             caption = "Select fasta file",
                                             multi = FALSE)
+                        .self$IdentFragmentFile <-
+                            tk_choose.files("",
+                                            caption = "Select identification fragments file",
+                                            multi = FALSE)
+                        .self$QuantSpectrumFile <-
+                            tk_choose.files("",
+                                            caption = "Select quantitation spectra file",
+                                            multi = FALSE)
                     },
                     loadMasterData = function() {
                         message("Reading quantitation final peptide file...")
@@ -87,6 +95,10 @@
                                                paste("Read quantitation peptide data [",
                                                      paste(dim(.self$QuantPeptideData), collapse = ","),
                                                      "]", sep=""))
+
+                        if (!is.null(.self$QuantSpectrumFile)) {
+                          loadQuantitationSpectra(.self$QuantSpectrumFile)
+                        }
                         if (!.self$Master)
                             stop("Identification final peptide is not a master file")
                         message("Reading master identification peptide file...")
@@ -98,6 +110,9 @@
                                                    paste("Read master identification peptide (csv) data [",
                                                          paste(dim(.self$IdentPeptideData), collapse = ","),
                                                          "]", sep=""))
+                            if (!is.null(.self$IdentFragmentFile)) {
+                              loadIdentificationFragments(.self$IdentFragmentFile)
+                            }
                         } else if (tolower(ext) == "rds") {
                             masterpeps <- readRDS(.self$IdentPeptideFile)
                             ## testing if masterpeps@masters[[1]] or [[2]] to be used
@@ -135,6 +150,9 @@
                                   paste0("Read master identification fragment data [",
                                          length(.self$IdentFragmentData), "]"))
 
+                            } else if (!length(masterpeps@fragmentlibrary) &&
+                                       !is.null(.self$IdentFragmentFile)) {
+                              loadIdentificationFragments(.self$IdentFragmentFile)
                             }
                         } else {
                             stop("Master peptide file extention not recognised. Must be 'csv' or 'rds'.")
@@ -239,6 +257,13 @@
                         .self$filterDuplicatedQuantSpectrumIds()
                         message("Computing identification statistics...")
                         .self$addIdStats()
+
+                        if (!is.null(.self$IdentFragmentFile)) {
+                          loadIdentificationFragments(.self$IdentFragmentFile)
+                        }
+                        if (!is.null(.self$QuantSpectrumFile)) {
+                          loadQuantitationSpectra(.self$QuantSpectrumFile)
+                        }
                     },
                     loadIdentificationFragments = function(filename,
                                                            removeNeutralLoss=TRUE,
