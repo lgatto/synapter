@@ -58,6 +58,10 @@ CHANGES IN VERSION 1.99.0
    filterKeepUniqueProt [2014-11-27 Thu]
  o loading identification fragments and quantitation spectra via Synapter
    constructor [2014-12-07 Sun]
+ o remove loadIdentificationFragments/loadQuantitationSpectra methods, use
+   'Synapter(filenames = c(..., identfragments = "fragments.csv",
+                           quantspectra = "Spectrum.xml"))' instead.
+   [2014-12-07 Sun]
 
 CHANGES IN VERSION 1.7.0
 ------------------------

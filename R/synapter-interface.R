@@ -74,24 +74,6 @@ setMethod(inputFiles, "Synapter",
             identfragments = object$IdentFragmentFile,
             quantspectra = object$QuantSpectrumFile))
 
-setMethod(loadIdentificationFragments, "Synapter",
-          function(object, filename, removeNeutralLoss=TRUE,
-                   removePrecursor=TRUE, tolerance=25e-6, verbose=TRUE) {
-            object$loadIdentificationFragments(filename=filename,
-                                               removeNeutralLoss=removeNeutralLoss,
-                                               removePrecursor=removePrecursor,
-                                               tolerance=25e-6,
-                                               verbose=verbose)
-          })
-
-setMethod(loadQuantitationSpectra, "Synapter",
-          function(object, filename, removePrecursor=TRUE, tolerance=25e-6,
-                   verbose=TRUE) {
-            object$loadQuantitationSpectra(filename=filename,
-                                           removePrecursor=removePrecursor,
-                                           tolerance=25e-6, verbose=verbose)
-          })
-
 setMethod(getLog, "Synapter",
           function(object) object$SynapterLog)
 
