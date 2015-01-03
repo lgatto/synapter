@@ -561,35 +561,28 @@ flatMatchedEMRTs <- function(emrts, pep3d, na.rm=TRUE, verbose=TRUE) {
 ## see issue 73 for details
 ## https://github.com/lgatto/synapter/issues/73
 .findSynapterPlgsAgreement <- function(emrts) {
-  ## TODO: maybe we should use a similar approach in fragment matching instead
-  ## of flatEMRTs
-  matchedQuantSpectrumIds <-
-    matched.quant.spectrumIDs2numeric(emrts$matched.quant.spectrumIDs)
-  nMatches <- sapply(matchedQuantSpectrumIds, length)
+  ## no match
+  k0 <- emrts$Function == 0
+  ## single match
+  k1 <- emrts$Function == 1
 
-  matchedQuantSpectrumIds[nMatches == 0] <- NA
-  nMatches[nMatches == 0] <- 1
+  k1Idx <- which(k1)
 
-  quantId <- rep.int(emrts$precursor.leID.quant, nMatches)
-  matchedQuantSpectrumIds <- unlist(matchedQuantSpectrumIds)
-
-  result <- quantId == matchedQuantSpectrumIds
-  aggreement <- character(length(result))
+  agreement <- rep.int("no_synapter_transfer", nrow(emrts))
 
   ## agree (same EMRT by database search and synapter)
-  aggreement[result] <- "agree"
   ## disagree (different EMRT by database search and synapter)
-  aggreement[!result] <- "disagree"
-  ## no_synapter_transfer (ided by PLGS, but not transferred by synapter)
-  aggreement[is.na(matchedQuantSpectrumIds)] <- "no_synapter_transfer"
-  ## no_plgs_id (transferred by synapter not ided by PLGS)
-  aggreement[is.na(quantId)] <- "no_plgs_id"
-  ## no_id_or_transfer (not transferred by synapter not ided by PLGS)
-  aggreement[is.na(matchedQuantSpectrumIds) & is.na(quantId)] <- "no_id_or_transfer"
+  agreement[k1Idx] <- ifelse(as.numeric(emrts$matched.quant.spectrumIDs[k1Idx]) ==
+                             as.numeric(emrts$precursor.leID.quant[k1Idx]),
+                             "agree", "disagree")
 
-  emrts$synapterPlgsAgreement[order(emrts$precursor.leID.ident)] <- MSnbase:::utils.list2ssv(
-    split(aggreement, rep.int(emrts$precursor.leID.ident, nMatches)))
-  emrts
+  ## no_plgs_id (transferred by synapter not ided by PLGS)
+  agreement[is.na(emrts$precursor.leID.quant)] <- "no_plgs_id"
+  ## no_id_or_transfer (not transferred by synapter not ided by PLGS)
+  agreement[(is.na(emrts$precursor.leID.quant) &
+             is.na(emrts$matched.quant.spectrumIDs)) | k0 ] <- "no_id_or_transfer"
+
+  agreement
 }
 
 .appendFragmentMatchingColumn <- function(emrts, fm) {
