@@ -558,6 +558,40 @@ flatMatchedEMRTs <- function(emrts, pep3d, na.rm=TRUE, verbose=TRUE) {
   return(flatEmrts)
 }
 
+## see issue 73 for details
+## https://github.com/lgatto/synapter/issues/73
+.findSynapterPlgsAgreement <- function(emrts) {
+  ## TODO: maybe we should use a similar approach in fragment matching instead
+  ## of flatEMRTs
+  matchedQuantSpectrumIds <-
+    matched.quant.spectrumIDs2numeric(emrts$matched.quant.spectrumIDs)
+  nMatches <- sapply(matchedQuantSpectrumIds, length)
+
+  matchedQuantSpectrumIds[nMatches == 0] <- NA
+  nMatches[nMatches == 0] <- 1
+
+  quantId <- rep.int(emrts$precursor.leID.quant, nMatches)
+  matchedQuantSpectrumIds <- unlist(matchedQuantSpectrumIds)
+
+  result <- quantId == matchedQuantSpectrumIds
+  aggreement <- character(length(result))
+
+  ## agree (same EMRT by database search and synapter)
+  aggreement[result] <- "agree"
+  ## disagree (different EMRT by database search and synapter)
+  aggreement[!result] <- "disagree"
+  ## no_synapter_transfer (ided by PLGS, but not transferred by synapter)
+  aggreement[is.na(matchedQuantSpectrumIds)] <- "no_synapter_transfer"
+  ## no_plgs_id (transferred by synapter not ided by PLGS)
+  aggreement[is.na(quantId)] <- "no_plgs_id"
+  ## no_id_or_transfer (not transferred by synapter not ided by PLGS)
+  aggreement[is.na(matchedQuantSpectrumIds) & is.na(quantId)] <- "no_id_or_transfer"
+
+  emrts$synapterPlgsAgreement[order(emrts$precursor.leID.ident)] <- MSnbase:::utils.list2ssv(
+    split(aggreement, rep.int(emrts$precursor.leID.ident, nMatches)))
+  emrts
+}
+
 .appendFragmentMatchingColumn <- function(emrts, fm) {
   idx <- match(sort(unique(fm$precursor.leID.ident)),
                emrts$precursor.leID.ident)
