@@ -96,7 +96,7 @@
                                                      paste(dim(.self$QuantPeptideData), collapse = ","),
                                                      "]", sep=""))
 
-                        if (!is.null(.self$QuantSpectrumFile)) {
+                        if (length(.self$QuantSpectrumFile)) {
                           loadQuantitationSpectra(.self$QuantSpectrumFile)
                         }
                         if (!.self$Master)
@@ -110,7 +110,7 @@
                                                    paste("Read master identification peptide (csv) data [",
                                                          paste(dim(.self$IdentPeptideData), collapse = ","),
                                                          "]", sep=""))
-                            if (!is.null(.self$IdentFragmentFile)) {
+                            if (length(.self$IdentFragmentFile)) {
                               loadIdentificationFragments(.self$IdentFragmentFile)
                             }
                         } else if (tolower(ext) == "rds") {
@@ -151,7 +151,7 @@
                                          length(.self$IdentFragmentData), "]"))
 
                             } else if (!length(masterpeps@fragmentlibrary) &&
-                                       !is.null(.self$IdentFragmentFile)) {
+                                       length(.self$IdentFragmentFile)) {
                               loadIdentificationFragments(.self$IdentFragmentFile)
                             }
                         } else {
@@ -258,10 +258,10 @@
                         message("Computing identification statistics...")
                         .self$addIdStats()
 
-                        if (!is.null(.self$IdentFragmentFile)) {
+                        if (length(.self$IdentFragmentFile)) {
                           loadIdentificationFragments(.self$IdentFragmentFile)
                         }
-                        if (!is.null(.self$QuantSpectrumFile)) {
+                        if (length(.self$QuantSpectrumFile)) {
                           loadQuantitationSpectra(.self$QuantSpectrumFile)
                         }
                     },
@@ -271,35 +271,41 @@
                                                            tolerance=25e-6,
                                                            verbose=TRUE) {
                       .self$IdentFragmentFile <- filename
-                      .self$IdentFragmentData <-
-                        .finalFragment2spectra(df=.self$IdentPeptideData,
-                                               file=.self$IdentFragmentFile,
-                                               storeAll=FALSE,
-                                               removeNeutralLoss=removeNeutralLoss,
-                                               removePrecursor=removePrecursor,
-                                               tolerance=tolerance,
-                                               verbose=verbose)
-                      .self$SynapterLog <-
-                        c(.self$SynapterLog,
-                          paste0("Read identification fragment data [",
-                                 length(.self$IdentFragmentData), "]"))
+
+                      if (length(filename)) {
+                        .self$IdentFragmentData <-
+                          .finalFragment2spectra(df=.self$IdentPeptideData,
+                                                 file=.self$IdentFragmentFile,
+                                                 storeAll=FALSE,
+                                                 removeNeutralLoss=removeNeutralLoss,
+                                                 removePrecursor=removePrecursor,
+                                                 tolerance=tolerance,
+                                                 verbose=verbose)
+                        .self$SynapterLog <-
+                          c(.self$SynapterLog,
+                            paste0("Read identification fragment data [",
+                                   length(.self$IdentFragmentData), "]"))
+                      }
                     },
                     loadQuantitationSpectra = function(filename,
                                                        removePrecursor=TRUE,
                                                        tolerance=25e-6,
                                                        verbose=TRUE) {
                       .self$QuantSpectrumFile <- filename
-                      .self$QuantSpectrumData <-
-                        .spectrumXml2spectra(df=.self$QuantPeptideData,
-                                             file=.self$QuantSpectrumFile,
-                                             storeAll=TRUE,
-                                             removePrecursor=removePrecursor,
-                                             tolerance=tolerance,
-                                             verbose=verbose)
-                      .self$SynapterLog <-
-                        c(.self$SynapterLog,
-                          paste0("Read quantitation spectra [",
-                                 length(.self$QuantSpectrumData), "]"))
+
+                      if (length(filename)) {
+                        .self$QuantSpectrumData <-
+                          .spectrumXml2spectra(df=.self$QuantPeptideData,
+                                               file=.self$QuantSpectrumFile,
+                                               storeAll=TRUE,
+                                               removePrecursor=removePrecursor,
+                                               tolerance=tolerance,
+                                               verbose=verbose)
+                        .self$SynapterLog <-
+                          c(.self$SynapterLog,
+                            paste0("Read quantitation spectra [",
+                                   length(.self$QuantSpectrumData), "]"))
+                      }
                     },
                     getMaster = function() {
                         ' Gets Master field.'

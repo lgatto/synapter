@@ -18,12 +18,25 @@ Synapter <- function(filenames, master = FALSE) {
     xx$QuantPeptideFile <- filenames$quantpeptide
     xx$QuantPep3DFile <- filenames$quantpep3d
     xx$DbFastaFile <- filenames$fasta
-    xx$IdentFragmentFile <- filenames$identfragments
-    xx$QuantSpectrumFile <- filenames$quantspectra
+
+    ## add optional Fragment/Spectra files
+    if (length(filenames$identfragments)) {
+      xx$IdentFragmentFile <- filenames$identfragments
+    } else {
+      xx$IdentFragmentFile <- character()
+    }
+    if (length(filenames$quantspectra)) {
+      xx$QuantSpectrumFile <- filenames$quantspectra
+    } else {
+      xx$QuantSpectrumFile <- character()
+    }
   }
-  ifelse(xx$Master,
-         xx$loadMasterData(),
-         xx$loadData())
+
+  if (xx$Master) {
+    xx$loadMasterData()
+  } else {
+    xx$loadData()
+  }
   return(xx)
 }
 
