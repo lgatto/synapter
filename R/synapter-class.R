@@ -412,6 +412,8 @@
                                                            .self$ImDiff,
                                                            .self$RtModel,
                                                            mergedEMRTs)
+                        .self$MatchedEMRTs$synapterPlgsAgreement <-
+                          .findSynapterPlgsAgreement(.self$MatchedEMRTs)
                         .self$SynapterLog <- c(.self$SynapterLog,
                                                paste("Matched identification peptides and quantitation EMRTs [",
                                                      paste(dim(.self$MatchedEMRTs), collapse = ","),
@@ -987,6 +989,8 @@
                          .self$MatchedEMRTs <-
                            .filterUniqueMatches(obj = .self,
                                                 mincommon = minNumber)
+                         .self$MatchedEMRTs$synapterPlgsAgreement <-
+                           .findSynapterPlgsAgreement(.self$MatchedEMRTs)
                          .self$SynapterLog <- c(.self$SynapterLog,
                                                 paste0("Filtered unique matched EMRTs ",
                                                        "(minimal number of common peaks: ",
@@ -1006,6 +1010,8 @@
                          .self$MatchedEMRTs <-
                            .filterNonUniqueMatches(obj = .self,
                                                    mindelta = minDelta)
+                         .self$MatchedEMRTs$synapterPlgsAgreement <-
+                           .findSynapterPlgsAgreement(.self$MatchedEMRTs)
                          .self$SynapterLog <- c(.self$SynapterLog,
                                                 paste0("Filtered non unique matched EMRTs ",
                                                        "(minimal delta of common peaks: ",

@@ -579,8 +579,8 @@ flatMatchedEMRTs <- function(emrts, pep3d, na.rm=TRUE, verbose=TRUE) {
   ## no_plgs_id (transferred by synapter not ided by PLGS)
   agreement[is.na(emrts$precursor.leID.quant)] <- "no_plgs_id"
   ## no_id_or_transfer (not transferred by synapter not ided by PLGS)
-  agreement[(is.na(emrts$precursor.leID.quant) &
-             is.na(emrts$matched.quant.spectrumIDs)) | k0 ] <- "no_id_or_transfer"
+  agreement[(is.na(emrts$precursor.leID.quant) & is.na(emrts$matched.quant.spectrumIDs)) |
+            (!k1 & is.na(emrts$precursor.leID.quant))] <- "no_id_or_transfer"
 
   agreement
 }

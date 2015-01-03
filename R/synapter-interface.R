@@ -737,7 +737,8 @@ setAs("Synapter", "MSnSet",
                   "pval",
                   "Bonferroni",
                   "BH",
-                  "qval")
+                  "qval",
+                  "synapterPlgsAgreement")
         eset <- matrix(from$MatchedEMRTs$Counts)
         colnames(eset) <- "Synapter1"
         obj <- new("MSnSet",
