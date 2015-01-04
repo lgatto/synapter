@@ -159,6 +159,7 @@
                         }
                         message("Reading quantitation Pep3D file...")
                         .self$QuantPep3DData <- read.csv(.self$QuantPep3DFile, stringsAsFactors = FALSE)
+                        .self$QuantPep3DData$isotopicDistr <- .catIsotopeDistr(.self$QuantPep3DData)
                         .self$SynapterLog <- c(.self$SynapterLog,
                                                paste("Read quantitation Pep3D data [",
                                                      paste(dim(.self$QuantPep3DData), collapse = ","),
@@ -219,6 +220,7 @@
                                                      "]", sep=""))
                         message("Reading quantitation Pep3D file...")
                         .self$QuantPep3DData <- read.csv(.self$QuantPep3DFile, stringsAsFactors = FALSE)
+                        .self$QuantPep3DData$isotopicDistr <- .catIsotopeDistr(.self$QuantPep3DData)
                         .self$SynapterLog <- c(.self$SynapterLog,
                                                paste("Read quantitation Pep3D data [",
                                                      paste(dim(.self$QuantPep3DData), collapse = ","),

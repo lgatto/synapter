@@ -33,6 +33,11 @@
   ## convert non-ascii characters to _
   df$fragment.str <- iconv(x=df$fragment.str, to="ASCII", sub="_")
 
+  df$fragmentDistr <- .catIsotopeDistr(df, idcol="precursor.leID",
+                                       zcol="product.z",
+                                       isocol="fragment.str",
+                                       intcol="product.inten")
+
   if (removeNeutralLoss) {
     return(.filterNeutralLoss(df))
   } else {

@@ -237,6 +237,10 @@ findMSeEMRTs <- function(identpep,
   pep3d2 <- matrix(NA, nrow=n, ncol=m, dimnames=list(c(), colnames(pep3d)))
   pep3d2[, 1] <- k
   k1 <- which(k == 1)
+  ## convert to data.frame first to avoid conversion of matrix to character
+  ## matrix (because of the new isotopicDistr column) that results in a
+  ## data.frame full of factors
+  pep3d2 <- as.data.frame(pep3d2, stringsAsFactors = FALSE)
   pep3d2[k1, ] <- unlist(sortedPep3d[unlist(res[k1]), ])
 
   ## #############################################################
@@ -610,5 +614,24 @@ diagnosticErrors <- function(x) {
   rec <- tp/(tp+fn)
   f1 <- 2*pre*rec/(pre+rec)
   return(cbind(accuracy=acc, precision=pre, recall=rec, fdr=1-pre, f1=f1))
+}
+
+# concatenate isotope distribution information
+# @param df data.frame (e.g. pep3d data)
+# @param idcol id column (e.g. "spectrumID")
+# @param zcol charge column name (e.g. "ion_z")
+# @param isocol isotope column name (e.g. "ion_iso")
+# @param intcol intensity column name (e.g. "ion_counts")
+# @return a character vector of length == nrow(df)
+# @noRd
+.catIsotopeDistr <- function(df,
+                             idcol = "spectrumID",
+                             zcol = "ion_z",
+                             isocol = "ion_iso",
+                             intcol = "ion_counts") {
+  ## cat each row
+  r <- paste(df[, zcol], df[, isocol], df[, intcol], sep=",")
+  ## combine rows with equal ids
+  ave(r, df[, idcol], FUN=function(x)paste0(x, collapse=";"))
 }
 
