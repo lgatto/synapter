@@ -4,7 +4,6 @@ import(hwriter)
 import(utils)
 import(MSnbase)
 import(methods)
-import(BiocParallel)
 
 importFrom(qvalue, qvalue)
 importFrom(multtest, mt.rawp2adjp)
