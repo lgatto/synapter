@@ -102,7 +102,7 @@
                         if (!.self$Master)
                             stop("Identification final peptide is not a master file")
                         message("Reading master identification peptide file...")
-                        ext <- getExtension(.self$IdentPeptideFile)
+                        ext <- file_ext(.self$IdentPeptideFile)
                         if (tolower(ext) == "csv") {
                             .self$IdentPeptideData <- read.csv(.self$IdentPeptideFile,
                                                                stringsAsFactors = FALSE)
