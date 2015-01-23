@@ -1,79 +1,28 @@
-%\VignetteEngine{knitr}
+%\VignetteEngine{knitr::knitr}
 %\VignetteIndexEntry{Combining HDMSe/MSe data using 'synapter' to optimise identification and quantitation}
 %\VignetteKeywords{Mass Spectrometry, Proteomics, Bioinformatics, quantitative, Ion mobility, label-free}
 %\VignettePackage{synapter}
 
-\documentclass[12pt,a4paper,english]{scrartcl}
-\usepackage{amsmath,amsfonts,amssymb}
-\usepackage{tikz}
-\usepackage{hyperref}
-\usepackage[authoryear,round]{natbib}
-\usepackage[auth-sc]{authblk}
-\usepackage{setspace}
-\onehalfspacing
+\documentclass[12pt, oneside]{article}
 
-% caption formatting
-\setcapindent{0em}
-\setkomafont{captionlabel}{\sffamily\bfseries}
-\setkomafont{caption}{\sffamily}
+<<style, eval=TRUE, echo=FALSE, results="asis">>=
+BiocStyle::latex()
+@
 
-\renewcommand\Authands{ and }
-
-\newcommand{\R}{\texttt{R} }
-\newcommand{\code}[1]{{\texttt{#1}}}
-\newcommand{\Rfunction}[1]{{\texttt{#1}}}
-\newcommand{\Robject}[1]{{\texttt{#1}}}
-\newcommand{\Rpackage}[1]{{\mbox{\normalfont\textsf{#1}}}}
-\newcommand{\email}[1]{\href{mailto:#1}{\normalfont\texttt{#1}}}
-%% colors
-\definecolor{Red}{rgb}{0.7,0,0}
-\definecolor{Blue}{rgb}{0,0,0.8}
-
-\usepackage{geometry}
-\geometry{verbose,
-  tmargin = 2.5cm,
-  bmargin = 2.5cm,
-  lmargin = 3.0cm,
-  rmargin = 3.0cm}
-
-\usepackage{hyperref}
-\usepackage{breakurl}
-\hypersetup{%
-  pdfusetitle,
-  bookmarks = {true},
-  bookmarksnumbered = {true},
-  bookmarksopen = {true},
-  bookmarksopenlevel = 2,
-  unicode = {true},
-  breaklinks = {false},
-  hyperindex = {true},
-  colorlinks = {true},
-  linktocpage = {true},
-  plainpages = {false},
-  linkcolor = {Blue},
-  citecolor = {Blue},
-  urlcolor = {Red},
-  pdfstartview = {Fit},
-  pdfpagemode = {UseOutlines},
-  pdfview = {XYZ null null null}
-}
+\bioctitle[The \Biocpkg{synapter} package]{Optimising identification
+  and quantitation by combining data using the \Biocpkg{synapter}
+  package}
 
 
 \author{Laurent Gatto%
-  \thanks{\email{lg390@cam.ac.uk}}
+  \footnote{\email{lg390@cam.ac.uk}}~,
+    Pavel V. Shliaha and 
+    Sebastian Gibb
 }
 
-\author{Pavel V. Shliaha
-}
-
-\affil{
-  Computational Proteomics Unit\\
-  University of Cambridge
-}
 
 \begin{document}
 
-\title{Optimising identification and quantitation by combining data using the \Rpackage{synapter} package}
 
 \maketitle
 
@@ -82,7 +31,7 @@
 \hrule
 \begin{abstract}
   This vignette describes the functionality implemented in the
-  \Rpackage{synapter} package. It allows to re-analyse label-free
+  \Biocpkg{synapter} package. It allows to re-analyse label-free
   quantitative proteomics data obtained on a Synapt G2 instrument to
   optimise quantitation and identification. Several combination
   strategies are possible and described. Typically, a user can combine
@@ -138,7 +87,7 @@ res <- ups25b ## for synergise and plotRt
 
 \subsection{Background}\label{sec:bkg}
 
-The main functionality of \Rpackage{synapter} is to combine proteomics
+The main functionality of \Biocpkg{synapter} is to combine proteomics
 data acquired under different mass spectrometry settings or with
 different samples to (i) optimise the respective qualities of the two
 data sets or (ii) increase the number of identifications, thereby
@@ -160,7 +109,7 @@ combine data obtained on a Synapt G2 instrument:
 The former is data is called \emph{identification peptides} and the
 latter \emph{quantitation peptides}, irrespective of the acquisition
 mode (HDMS$^E$ or MS$^E$). This HDMS$^E$/MS$^E$ design is used in this
-document to illustrate the \Rpackage{synapter} package.
+document to illustrate the \Biocpkg{synapter} package.
 
 However, although HDMS$^E$ mode possesses superior identification and
 MS$^E$ mode superior quantitation capabilities and transferring
@@ -168,13 +117,13 @@ identifications from HDMS$^E$ to MS$^E$ is a priori the most efficient
 setup, identifications can be transferred between any runs,
 independently of the acquisition mode. This allows to reduce the
 number of missing values, one of the primary limitation of label-free
-proteomics. Thus users will benefit from \Rpackage{synapter}'s
+proteomics. Thus users will benefit from \Biocpkg{synapter}'s
 functionality even if they run their instruments in a single mode
 (HDMS$^E$ or MS$^E$ only).
 
 However, as will be shown in section \ref{sec:analysis}, transferring
 identifications from multiple runs to each other increases analysis
-time and peptide FDR within the analysis. \Rpackage{synapter} allows
+time and peptide FDR within the analysis. \Biocpkg{synapter} allows
 to minimise these effects to acceptable degree by choosing runs to
 transfer identifications from and merging them in the \emph{master}
 HDMS$^E$ file.
@@ -189,25 +138,25 @@ merged identification data files into one \emph{master} set. This
 functionality is described in section \ref{sec:master}.
 
 Finally, section \ref{sec:msnbase} illustrates a complete pipeline
-including \Rpackage{synapter} and \Rpackage{MSnbase} \citep{Gatto2012}
+including \Biocpkg{synapter} and \Biocpkg{MSnbase} \cite{Gatto2012}
 packages to perform protein label-free quantitation: how to combine
-multiple \Rpackage{synapter} results to represent the complete
+multiple \Biocpkg{synapter} results to represent the complete
 experimental design under study and further explore the data,
 normalise it and perform robust statistical data analysis inside the
 \R environment.
 
 \bigskip
 
-The rationale underlying \Rpackage{synapter}'s functionality are
+The rationale underlying \Biocpkg{synapter}'s functionality are
 described in \cite{Shliaha2013} and \cite{Bond2013}.  The first
 reference describes the benefits of ion mobility separation on
 identification and the effects on quantitation, that led to the
-development of \Rpackage{synapter}, which in described and
+development of \Biocpkg{synapter}, which in described and
 demonstrated in \cite{Bond2013}.
 
 \bigskip
 
-\Rpackage{synapter} is written for \R \citep{R}, an open source, cross
+\Biocpkg{synapter} is written for \R~\cite{R}, an open source, cross
 platform, freely available statistical computing environment and
 programming
 language\footnote{\url{http://www.r-project.org/}}. Functionality
@@ -216,19 +165,19 @@ packages. Thousands of developers have contributed packages that are
 distributed via the Comprehensive R Archive Network (CRAN) or through
 specific initiatives like the
 Bioconductor\footnote{\url{http://www.bioconductor.org/}} project
-\citep{Gentleman2004}, focusing on the analysis and comprehension of
+\cite{Gentleman2004}, focusing on the analysis and comprehension of
 high-throughput biological data.
 
-\Rpackage{synapter} is such an \R package dedicated to the analysis of
+\Biocpkg{synapter} is such an \R package dedicated to the analysis of
 label-free proteomics data. To obtain detailed information about any
 function in the package, it is possible to access it's documentation
 by preceding it's name with a question mark at the command line
 prompt. For example, to obtain information about the
-\Rpackage{synapter} package, one would type \Rfunction{?synapter}.
+\Biocpkg{synapter} package, one would type \Rfunction{?synapter}.
 
 \subsection{Installation}\label{sec:install}
 
-\Rpackage{synapter} is available through the Bioconductor
+\Biocpkg{synapter} is available through the Bioconductor
 project. Details about the package and the installation procedure can
 be found on its
 page\footnote{\url{http://bioconductor.org/packages/devel/bioc/html/synapter.html}}. Briefly,
@@ -243,7 +192,7 @@ library("BiocInstaller")
 biocLite("synapter")
 @
 
-After installation, \Rpackage{synapter} will have to be explicitly loaded with
+After installation, \Biocpkg{synapter} will have to be explicitly loaded with
 
 <<library, echo=TRUE, eval=FALSE>>=
 library(synapter)
@@ -267,7 +216,7 @@ feature requests can also be reported on the github tracker
 % contact Laurent Gatto (\url{lg390@cam.ac.uk}) for general questions,
 % bugs, comments and suggestions.
 
-\Rpackage{synapter} is an open source initiative and contributions,
+\Biocpkg{synapter} is an open source initiative and contributions,
 whether new code, documentation bug fixes and new use cases are much
 appreciated. The official source code is available on the Bioconductor
 svn
@@ -276,21 +225,22 @@ testing version and easily fork-able source tree is available on
 github\footnote{\url{https://github.com/lgatto/synapter/}}.
 % which also allows to report issues (bugs, feature requests, \ldots).
 
+\clearpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% Section
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Data analysis using \Rpackage{synapter}}\label{sec:analysis}
+\section{Data analysis using \Biocpkg{synapter}}\label{sec:analysis}
 
 \subsection{Preparing the input data}\label{sec:input}
 
-Preparation of the data for \Rpackage{synapter} requires the
+Preparation of the data for \Biocpkg{synapter} requires the
 \texttt{.raw} data first to be processed with Waters' ProteinLynx
 Global Serve (PLGS) software. The PLGS result is then exported as
 \texttt{csv} spreadsheet files in user specified folders. These
-\texttt{csv} files can then be used as input for \Rpackage{synapter}.
+\texttt{csv} files can then be used as input for \Biocpkg{synapter}.
 
 We also highly recommend users to acquaint themselves with the PLGS
-search algorithm for data independent acquisitions \citep{PLGS2009}.
+search algorithm for data independent acquisitions \cite{PLGS2009}.
 
 First the user has to specify the output folders for files to be used
 in synapter analysis as demonstrated in figure \ref{fig:plgs1}. After
@@ -313,7 +263,7 @@ based on user specified preferences called \textit{processing
 discriminating between noise peaks and peptide and fragment ion peaks
 in high and low energy functions of an acquisition. The optimal value
 of these parameters is sample dependant and different between MS$^E$
-and HDMS$^E$ modes. For \Rpackage{synapter} to function properly all
+and HDMS$^E$ modes. For \Biocpkg{synapter} to function properly all
 acquisitions in the analysis have to be processed with the same
 thresholds, optimal for the mode identifications are transferred from
 (typically HDMS$^E$ mode). The user is expected to identify optimal
@@ -326,7 +276,7 @@ into a single entity called EMRT (exact mass retention time pair). The
 EMRTs in low energy function represent unidentified peptides and are
 assigned peptides sequences during database search. The total list of
 EMRTs can be found in the \texttt{pep3DAMRT.csv} file and it is one of
-the \Rpackage{synapter} input files for the runs used for quantitation
+the \Biocpkg{synapter} input files for the runs used for quantitation
 (typically MS$^E$ mode)
 
 Prior to the database search, randomised entries are added to the
@@ -334,7 +284,7 @@ database to allow PLGS to compute \textit{protein false positive
   rate}. The randomised entries can either be added automatically or
 manually, using the \textit{Randomise Databank} function in the
 \textit{Databank admin tool}. To properly prepare the files for
-\Rpackage{synapter}, the user has to add randomised entries manually
+\Biocpkg{synapter}, the user has to add randomised entries manually
 via \textit{Databank admin tool}, since only then randomised entries
 identified in the database search will be displayed in the
 \textit{csv} output. Figure \ref{fig:plgs2} demonstrates how to create
@@ -370,7 +320,7 @@ peptides from the randomised part of the database, needed to estimate
 peptide identifications statistics. The total list of identified
 peptides is given in \texttt{final\_peptide.csv} files. A single
 \texttt{final\_peptide.csv} file has to be supplied to
-\Rpackage{synapter} for every run in the analysis (for both
+\Biocpkg{synapter} for every run in the analysis (for both
 identification and quantitation runs).
 
 More details and screenshots are available in a separate document
@@ -463,11 +413,12 @@ simply \Rfunction{synapterGUI(3)}.
   a curve through deviation of retention time vs retention time plot.
 
 \begin{figure}[!hbt]
-<<plotRt, dev='pdf', fig.width=4, fig.height=4>>=
+\centering
+<<plotRt, dev='pdf', fig.width=5.5, fig.height=5>>=
 plotRt(ups25b, what = "model", nsd = 1)
 @
 \caption{Figure illustrating retention time modelling between two runs
-  in \Rpackage{synapter}, as generated by the \Rfunction{plotRt}
+  in \Biocpkg{synapter}, as generated by the \Rfunction{plotRt}
   function.}
 \label{fig:rtmodel}
 \end{figure}
@@ -489,7 +440,7 @@ pipeline, see the documentation of the \Rfunction{synergise} function.
 
 Once all the input has been specified, pressing the \texttt{Run}
 button in the lower left corner of the GUI starts the
-\Rpackage{synapter} run: all \Robject{n} analyses are executed one
+\Biocpkg{synapter} run: all \Robject{n} analyses are executed one
 after each other and a complete report in \texttt{html} as well as
 several result files are created in the respective output folders.
 
@@ -502,7 +453,7 @@ sensible defaults are provided. While the analysis is executed, a html
 report is created, including all result files in text spreadsheet
 (\texttt{csv} format) and binary \R output. This level allows easy
 scripting for automated batch analysis. Using data from the
-\Rpackage{synapterdata} package, the following code chunk illustrates
+\Biocexptpkg{synapterdata} package, the following code chunk illustrates
 the \Rfunction{synergise} usage. An example report can be found online
 at \url{http://lgatto.github.com/synapter/}.
 
@@ -575,7 +526,7 @@ section \ref{sec:whichhdmse}). Such \emph{master} HDMS$^E$ files can
 be readily created with the \Rfunction{makeMaster} function, as
 described in section \ref{sec:makeMaster}.
 
-We will use data from the \Rpackage{synapterdata} to illustrate how to
+We will use data from the \Biocexptpkg{synapterdata} to illustrate how to
 create \emph{master} files.
 
 
@@ -646,7 +597,8 @@ cmb
 @
 
 \begin{figure}[!hbt]
-<<estimateFdrPlot, dev='pdf', fig.width=4, fig.height=4>>=
+\centering
+<<estimateFdrPlot, dev='pdf', fig.width=5, fig.height=5>>=
 plot(cmb)
 @
 \caption{Figure illustrating the relation between the number of unique
@@ -698,7 +650,7 @@ Two functions are needed to choose a set of IR files and create the
 \emph{master} IR. One function enables to perform a complete
 identification transfer, eiter through a command line or graphical
 interface. Table \ref{tab:summary} summarises all there is to know to
-utilise \Rpackage{synapter}'s functionality.
+utilise \Biocpkg{synapter}'s functionality.
 
 \begin{table}[!h]
 \centering
@@ -711,10 +663,9 @@ utilise \Rpackage{synapter}'s functionality.
   \Rfunction{makeMaster}        & Creates the \emph{master} IR \\ \hline
 
 \end{tabular}
-\caption{The \Rpackage{synapter} functions.}
+\caption{The \Biocpkg{synapter} functions.}
 \label{tab:summary}
 \end{table}
-
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -724,14 +675,14 @@ utilise \Rpackage{synapter}'s functionality.
 
 
 The functionality described in this section relies on the
-\Rpackage{MSnbase} package \citep{Gatto2012}, which is installed by
-default with \Rpackage{synapter}. Please refer to the
-\Rpackage{MSnbase} Bioconductor web
+\Biocpkg{MSnbase} package \cite{Gatto2012}, which is installed by
+default with \Biocpkg{synapter}. Please refer to the
+\Biocpkg{MSnbase} Bioconductor web
 page\footnote{\url{http://bioconductor.org/packages/release/bioc/html/MSnbase.html}},
 the associated vignettes and the respective manual pages for more
 details.
 
-The \Rpackage{synapterdata} already provides preprocessed PLGS
+The \Biocexptpkg{synapterdata} already provides preprocessed PLGS
 data. Six \Robject{Synapter} instances are available: 3 replicates
 (labelled \texttt{a}, \texttt{b} and \texttt{c}) of the Universal
 Proteomics Standard (UPS1) 48 protein mix at 25 fmol and 3 replicates
@@ -747,8 +698,8 @@ data(ups25a, ups25b, ups25c, ups50a, ups50b, ups50c)
 We will start by describing the analysis of \Robject{ups25a} in
 details, and then show how to analyse all the runs using more compact
 code. The first step of our analysis is to convert the
-\Rpackage{synapter} object output (a \Robject{Synapter} instance),
-into a \Rpackage{MSnbase}-compatible object, called an
+\Biocpkg{synapter} object output (a \Robject{Synapter} instance),
+into a \Biocpkg{MSnbase}-compatible object, called an
 \Robject{MSnSet}, that we will name \Robject{ms25a}. We can obtain a
 description of the \Robject{MSnSet} object by typing its name.
 
@@ -771,7 +722,7 @@ sampleNames(ms25a)
 @
 
 Quantitative data and meta-data, which has been acquired by
-\Rpackage{synapter}, can be extracted with the \Rfunction{exprs} and
+\Biocpkg{synapter}, can be extracted with the \Rfunction{exprs} and
 \Rfunction{fData} methods.
 
 <<accessor>>=
@@ -925,13 +876,13 @@ powerful statistical analysis. In this document, we will apply a
 standard t-test on $log_2$ transformed data for convenience, to
 calculate p-value for individual proteins (\Robject{pv} variable
 below). For best performance with small number of samples and more
-complex designs, we recommend the Bioconductor \Rpackage{limma}
+complex designs, we recommend the Bioconductor \Biocpkg{limma}
 package
-\citep{limma}\footnote{\url{http://www.bioconductor.org/packages/release/bioc/html/limma.html}}. We
+\cite{limma}\footnote{\url{http://www.bioconductor.org/packages/release/bioc/html/limma.html}}. We
 then perform multiple comparison adjustment using the
-\Rfunction{qvalue} from the \Rpackage{qvalue} package, that implements
-the method from \citep{Storey2003} (\Robject{qv} variable below). The
-\Rpackage{multtest} package provides several other p-value adjustment
+\Rfunction{qvalue} from the \Biocpkg{qvalue} package, that implements
+the method from \cite{Storey2003} (\Robject{qv} variable below). The
+\Biocpkg{multtest} package provides several other p-value adjustment
 methods. We will also compute $log_2$ fold-changes and illustrate the
 results on a volcano plot (figure \ref{fig:volcano}). Figure
 \ref{fig:hmap} illustrates the UPS1 proteins and samples on a
@@ -968,7 +919,8 @@ write.csv(res, file = "upsResults.csv")
 @
 
 \begin{figure}[!hbt]
-<<volcano, dev='pdf', fig.width=4, fig.height=4, tidy=FALSE>>=
+\centering
+<<volcano, dev='pdf', fig.width=5, fig.height=5, tidy=FALSE>>=
 plot(res$lfc, -log10(res$qv),
      col = ifelse(grepl("ups$", rownames(res)),
        "#4582B3AA",
@@ -1052,7 +1004,6 @@ listed below.
 toLatex(sessionInfo())
 @
 
-\bibliographystyle{plainnat}
 \bibliography{synapter}
 
 \end{document}
