@@ -364,6 +364,8 @@
     # filtered emrts
     #emrts <- emrts[-exclude, ]
     emrts$Function[exclude] <-  -1
+    # set Counts to NA; see https://github.com/lgatto/synapter/issues/85
+    emrts$Counts[exclude] <- NA
   }
   return(emrts)
 }
@@ -409,6 +411,8 @@
     ## are present in keep as well (because fm has many duplicated
     ## precursor.leID.idents)
     emrts$Function[exclude] <- -2
+    # set Counts to NA; see https://github.com/lgatto/synapter/issues/85
+    emrts$Counts[exclude] <- NA
     emrts$Function[rows[keep]] <- 1
   }
   return(emrts)

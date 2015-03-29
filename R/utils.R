@@ -497,12 +497,6 @@ isCorrespondingPep3DataFile <- function(quant, pep3d) {
   return(!anyNA(idx) && all(quant$precursor.inten == pep3d$Counts[idx]))
 }
 
-getExtension <- function (filename) {
-  x <- strsplit(filename, "\\.")[[1]]
-  ext <- x[length(x)]
-  return(ext)
-}
-
 ## duplicate rows if the have multiple matched.quant.spectrumIDs
 ## adds a columns "gridSearchResult" that could be "unique-true",
 ## "unique-false", "non-unique-true", "non-unique-false"

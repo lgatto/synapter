@@ -1,6 +1,6 @@
 dbUniquePeptideSet <- function(file, missedCleavages = 0,
                                IisL = FALSE, verbose = TRUE) {
-  if (tolower(getExtension(file)) == "rds") {
+  if (tolower(file_ext(file)) == "rds") {
     peptides <- readRDS(file)
 
     noeffectMsg <- paste0("\nYour current setting has not any effect! ",
@@ -111,7 +111,7 @@ createUniquePeptideDbRds <- function(fastaFile,
     stop("File ", sQuote(fastaFile), " does not exists!")
   }
 
-  if (tolower(getExtension(outputFile)) != "rds") {
+  if (tolower(file_ext(outputFile)) != "rds") {
     stop("outputFile must have the file extention .rds!")
   }
 
