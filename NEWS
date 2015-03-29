@@ -1,5 +1,7 @@
 CHANGES IN VERSION 1.99.0
 -------------------------
+ o set Counts of filtered (non-)unique matches to NA;
+   closes #85 [2015-03-29 Sun]
  o add 3D grid search (retention time, m/z, ion mobility); set imdiff = Inf to
    get the original 2D grid search; closes #33 [2014-05-16 Fri]
  o getGrid returns an array instead of a matrix [2014-05-16 Fri]
