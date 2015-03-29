@@ -738,6 +738,7 @@ setAs("Synapter", "MSnSet",
                   "Bonferroni",
                   "BH",
                   "qval",
+                  "isotopicDistr",
                   "synapterPlgsAgreement")
         eset <- matrix(from$MatchedEMRTs$Counts)
         colnames(eset) <- "Synapter1"
