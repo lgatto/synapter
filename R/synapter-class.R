@@ -159,7 +159,6 @@
                         }
                         message("Reading quantitation Pep3D file...")
                         .self$QuantPep3DData <- read.csv(.self$QuantPep3DFile, stringsAsFactors = FALSE)
-                        .self$QuantPep3DData$isotopicDistr <- .catIsotopeDistr(.self$QuantPep3DData)
                         .self$SynapterLog <- c(.self$SynapterLog,
                                                paste("Read quantitation Pep3D data [",
                                                      paste(dim(.self$QuantPep3DData), collapse = ","),
@@ -193,6 +192,9 @@
                         message("Filtering...")
                         .self$filterQuantMatchType() ## Quant only
                         .self$filterQuantFunction()
+                        ## must be before duplicated ids are removed and after
+                        ## Function filtering
+                        .self$QuantPep3DData$isotopicDistr <- .catIsotopeDistr(.self$QuantPep3DData)
                         .self$filterDuplicatedQuantSpectrumIds()
                         message("Computing quantitation identification statistics...")
                         .self$addQuantIdStats() ## Quant only
@@ -220,7 +222,6 @@
                                                      "]", sep=""))
                         message("Reading quantitation Pep3D file...")
                         .self$QuantPep3DData <- read.csv(.self$QuantPep3DFile, stringsAsFactors = FALSE)
-                        .self$QuantPep3DData$isotopicDistr <- .catIsotopeDistr(.self$QuantPep3DData)
                         .self$SynapterLog <- c(.self$SynapterLog,
                                                paste("Read quantitation Pep3D data [",
                                                      paste(dim(.self$QuantPep3DData), collapse = ","),
@@ -256,6 +257,9 @@
                         message("Filtering...")
                         .self$filterMatchType()
                         .self$filterQuantFunction()
+                        ## must be before duplicated ids are removed and after
+                        ## Function filtering
+                        .self$QuantPep3DData$isotopicDistr <- .catIsotopeDistr(.self$QuantPep3DData)
                         .self$filterDuplicatedQuantSpectrumIds()
                         message("Computing identification statistics...")
                         .self$addIdStats()
