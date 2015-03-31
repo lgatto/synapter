@@ -624,7 +624,7 @@ diagnosticErrors <- function(x) {
                              isocol = "ion_iso",
                              intcol = "ion_counts") {
   ## cat each row
-  r <- paste(df[, zcol], df[, isocol], df[, intcol], sep=",")
+  r <- paste0(df[, zcol], "_", df[, isocol], ":",  df[, intcol])
   ## combine rows with equal ids
   ave(r, df[, idcol], FUN=function(x)paste0(x, collapse=";"))
 }
