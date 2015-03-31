@@ -1,15 +1,15 @@
 Package: synapter
 Type: Package
-Title: Label-free data analysis pipeline for optimal 
+Title: Label-free data analysis pipeline for optimal
        identification and quantitation
-Version: 1.9.4
+Version: 1.9.5
 Author: Laurent Gatto, Nick J. Bond and Pavel V. Shliaha
 	and Sebastian Gibb.
 Maintainer: Laurent Gatto <lg390@cam.ac.uk> and
 	    Sebastian Gibb <mail@sebastiangibb.de>
 Depends: R (>= 2.15), methods, MSnbase
 Imports: hwriter, RColorBrewer, lattice, qvalue,
-        multtest, utils, Biobase, knitr, Biostrings, cleaver, 
+        multtest, utils, Biobase, knitr, Biostrings, cleaver,
 	BiocParallel
 Suggests: synapterdata, xtable, tcltk, tcltk2, BiocStyle
 Description: The synapter package provides functionality to reanalyse
