@@ -4,7 +4,7 @@ test_that("flatMatchedEMRTs", {
   df <- data.frame(Function=c(1, 1, 2, 2, 1),
                    spectrumID=1:5,
                    precursor.leID.quant=c(1, 3, 3, 9, NA),
-                   matched.quant.spectrumIDs=c("1", "3", "3,4", "3,4", ""),
+                   matched.quant.spectrumIDs=c("1", "3", "3;4", "3;4", ""),
                    ion_z=c(1, 1, NA, NA, 1),
                    stringsAsFactors=FALSE)
   pep3d <- data.frame(spectrumID=1:4,
