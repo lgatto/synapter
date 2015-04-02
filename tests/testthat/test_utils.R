@@ -31,3 +31,12 @@ test_that("matched.quant.spectrumIDs2numeric", {
                list(1, 1:4, numeric(0)))
 })
 
+test_that(".splitIsotopicDistr", {
+  iso <- c("4_0:5;4_1:20;4_2:30",
+           "4_0:10;4_1:20;4_4:30;1_1:0",
+           "4_0:8;4_2:30")
+  r <- list(setNames(c(5, 20, 30), c("4_0", "4_1", "4_2")),
+            setNames(c(10, 20, 30, 0), c("4_0", "4_1", "4_4", "1_1")),
+            setNames(c(8, 30), c("4_0", "4_2")))
+  expect_equal(synapter:::.splitIsotopicDistr(iso), r)
+})
