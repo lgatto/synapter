@@ -241,7 +241,7 @@ findMSeEMRTs <- function(identpep,
   ## matrix (because of the new isotopicDistr column) that results in a
   ## data.frame full of factors
   pep3d2 <- as.data.frame(pep3d2, stringsAsFactors = FALSE)
-  pep3d2[k1, ] <- unlist(sortedPep3d[unlist(res[k1]), ])
+  pep3d2[k1, ] <- sortedPep3d[unlist(res[k1]), ]
 
   ## #############################################################
 
