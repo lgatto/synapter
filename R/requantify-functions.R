@@ -1,5 +1,5 @@
 requantify <- function(msnset, saturationThreshold,
-                       method=c("peptides", "th.mean", "th.median", "th.weighted.mean")) {
+                       method=c("sum", "th.mean", "th.median", "th.weighted.mean")) {
   cn <- fvarLabels(msnset)
   i <- grep("isotopicDistr", cn)
 
@@ -12,8 +12,8 @@ requantify <- function(msnset, saturationThreshold,
 
   method <- match.arg(method)
 
-  if (method == "peptides") {
-    e <- t(apply(f, 1, .requantifyPeptides,
+  if (method == "sum") {
+    e <- t(apply(f, 1, .requantifySum,
                  saturationThreshold=saturationThreshold))
   } else {
     if (!requireNamespace("BRAIN")) {
@@ -35,7 +35,7 @@ requantify <- function(msnset, saturationThreshold,
   msnset
 }
 
-.requantifyPeptides <- function(x, saturationThreshold=Inf) {
+.requantifySum <- function(x, saturationThreshold=Inf) {
   x <- .splitIsotopicDistr(unlist(x))
   commonnm <- .commonIsotopes(x, saturationThreshold)
 
