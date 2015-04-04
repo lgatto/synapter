@@ -38,5 +38,10 @@ test_that(".splitIsotopicDistr", {
   r <- list(setNames(c(5, 20, 30), c("4_0", "4_1", "4_2")),
             setNames(c(10, 20, 30, 0), c("4_0", "4_1", "4_4", "1_1")),
             setNames(c(8, 30), c("4_0", "4_2")))
+  isoNA <- c("4_0:5;4_1:20;4_2:30", NA)
+  rNA <- list(setNames(c(5, 20, 30), c("4_0", "4_1", "4_2")),
+              setNames(NA_integer_, NA_character_))
+
   expect_equal(synapter:::.splitIsotopicDistr(iso), r)
+  expect_equal(synapter:::.splitIsotopicDistr(isoNA), rNA)
 })

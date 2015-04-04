@@ -637,6 +637,7 @@ diagnosticErrors <- function(x) {
   nm <- names(x)
   x <- strsplit(x, ":|;")
   n <- length(x)
+  x <- lapply(x, function(y) { if(anyNA(y)) { y <- rep.int(NA, 2) }; y})
   ne <- sapply(x, length)
   nall <- sum(ne)
   x <- unlist(x)
