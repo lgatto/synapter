@@ -55,6 +55,9 @@ requantify <- function(msnset, saturationThreshold,
   if (length(commonnm)) {
     distr <- lapply(x, function(y).sumIsotopes(y[commonnm]))
     n <- max(sapply(distr, length))
+    if (!n) {
+      return(rep.int(NA, length(distr)))
+    }
     props <- BRAIN::calculateIsotopicProbabilities(BRAIN::getAtomsFromSeq(sequence),
                                                    nrPeaks=n)
     distr <- lapply(distr, function(y)y/props)
