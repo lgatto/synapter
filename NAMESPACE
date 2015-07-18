@@ -12,6 +12,7 @@ importFrom(RColorBrewer, brewer.pal)
 importFrom(Biobase, addVigs2WinMenu, isCurrent, updateObject, validMsg)
 importFrom(Biostrings, readAAStringSet)
 importFrom(tools, file_ext)
+importFrom(readr, read_csv)
 
 export(Synapter, ## constructor
        as.MSnSet.Synapter,
