@@ -34,5 +34,5 @@ test_that("createReadrColTypes", {
 
   expect_equal(synapter:::readcsv(f, keepCols=c("Protein Key" = "c",
                                                 "intensity" = "d")), df)
-  #unlink(f)
+  unlink(f)
 })
