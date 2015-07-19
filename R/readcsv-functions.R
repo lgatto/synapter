@@ -5,7 +5,7 @@
 #' @noRd
 fetchColnames <- function(file, sep = ",") {
   header <- scan(file, what = character(), nlines = 1L, quiet = TRUE)
-  unlist(strsplit(paste0(header, collapse=""), split=sep))
+  trimws(unlist(strsplit(paste(header, collapse=" "), split=sep)))
 }
 
 #' create col_types argument for readr::read_csv
@@ -30,10 +30,10 @@ createReadrColTypes <- function(file, keepCols) {
 #' @param keepCols named character vector for columns of interest
 #' @return tbl_df
 #' @examples
-#'  createReadrColTypes("final_peptide.csv", c("peptide.seq" = "c",
-#'                                             "peptide.score" = "d",
-#'                                             "peptide.matchType" = "c",
-#'                                             "protein.dataBaseType" = "c"))
+#'  readcsv("final_peptide.csv", c("peptide.seq" = "c",
+#'                                 "peptide.score" = "d",
+#'                                 "peptide.matchType" = "c",
+#'                                 "protein.dataBaseType" = "c"))
 #' @noRd
 readcsv <- function(file, keepCols) {
   read_csv(file, col_types = createReadrColTypes(file, keepCols))
