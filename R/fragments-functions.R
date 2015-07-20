@@ -31,7 +31,11 @@
                                    "peptide.seq" = "c",
                                    "fragment.str" = "c",
                                    "precursor.mhp" = "d",
+                                   "precursor.inten" = "d",
+                                   "precursor.retT" = "d",
+                                   "precursor.z" = "d",
                                    "product.mhp" = "d",
+                                   "product.inten" = "d",
                                    "Neutral.LossType" = "c"))
   df <- .filterEmptyFragments(df)
 
