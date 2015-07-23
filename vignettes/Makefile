@@ -8,7 +8,6 @@ LATEXFILES = *.aux\
         *.toc\
         *.aux\
         synapter.tex\
-        ionmobility.tex\
         fragmentmatching.tex\
 	Rplots.pdf\
 	*.dvi\
@@ -24,7 +23,6 @@ LATEXFILES = *.aux\
 all:
 	make synapter
 	make fragmentmatching
-	make ionmobility
 	make clean
 
 setvars:
@@ -38,13 +36,6 @@ synapter:
 	bibtex synapter
 	"$(R_HOME)/bin/R" CMD pdflatex synapter.tex
 	"$(R_HOME)/bin/R" CMD pdflatex synapter.tex
-
-ionmobility:
-	"$(R_HOME)/bin/R" --vanilla -e "library(knitr); knit('ionmobility.Rnw');"
-	"$(R_HOME)/bin/R" CMD pdflatex ionmobility.tex
-	bibtex ionmobility
-	"$(R_HOME)/bin/R" CMD pdflatex ionmobility.tex
-	"$(R_HOME)/bin/R" CMD pdflatex ionmobility.tex
 
 fragmentmatching:
 	"$(R_HOME)/bin/R" --vanilla -e "library(knitr); knit('fragmentmatching.Rnw');"
@@ -68,7 +59,6 @@ clean2:
 pdfclean:
 	rm -f fragmentmatching.pdf
 	rm -f synapter.pdf
-	rm -f ionmobility.pdf
 
 all-clean:
 	make clean2
