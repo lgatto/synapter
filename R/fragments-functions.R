@@ -3,7 +3,7 @@
 #' @return a data.frame that contains only rows with Neutral.LossType == "None"
 #' @noRd
 .filterNeutralLoss <- function(df) {
-  return(df[which(df$Neutral.LossType == "None"), ])
+  df[which(df$Neutral.LossType == "None"), ]
 }
 
 #' filter empty fragments
@@ -11,7 +11,7 @@
 #' @return a data.frame that contains only rows with Neutral.LossType != ""
 #' @noRd
 .filterEmptyFragments <- function(df) {
-  return(df[which(nchar(df$Neutral.LossType) > 0), ])
+  df[which(nchar(df$Neutral.LossType) > 0), ]
 }
 
 #' read final_fragments.csv
@@ -27,7 +27,16 @@
     message("Reading ", file)
   }
 
-  df <- read.csv(file, stringsAsFactors=FALSE)
+  df <- readcsv(file, keepCols = c("precursor.leID" = "d",
+                                   "peptide.seq" = "c",
+                                   "fragment.str" = "c",
+                                   "precursor.mhp" = "d",
+                                   "precursor.inten" = "d",
+                                   "precursor.retT" = "d",
+                                   "precursor.z" = "d",
+                                   "product.mhp" = "d",
+                                   "product.inten" = "d",
+                                   "Neutral.LossType" = "c"), verbose=verbose)
   df <- .filterEmptyFragments(df)
 
   ## convert non-ascii characters to _

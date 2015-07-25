@@ -87,7 +87,7 @@
                     },
                     loadMasterData = function() {
                         message("Reading quantitation final peptide file...")
-                        .self$QuantPeptideData <- read.csv(.self$QuantPeptideFile, stringsAsFactors = FALSE)
+                        .self$QuantPeptideData <- readFinalPeptides(.self$QuantPeptideFile)
                         .self$QuantPeptideData$errorppm <-
                             error.ppm(obs = .self$QuantPeptideData$precursor.mhp,
                                       theo = .self$QuantPeptideData$peptide.mhp)
@@ -104,8 +104,7 @@
                         message("Reading master identification peptide file...")
                         ext <- file_ext(.self$IdentPeptideFile)
                         if (tolower(ext) == "csv") {
-                            .self$IdentPeptideData <- read.csv(.self$IdentPeptideFile,
-                                                               stringsAsFactors = FALSE)
+                            .self$IdentPeptideData <- readFinalPeptides(.self$IdentPeptideFile)
                             .self$SynapterLog <- c(.self$SynapterLog,
                                                    paste("Read master identification peptide (csv) data [",
                                                          paste(dim(.self$IdentPeptideData), collapse = ","),
@@ -158,7 +157,7 @@
                             stop("Master peptide file extention not recognised. Must be 'csv' or 'rds'.")
                         }
                         message("Reading quantitation Pep3D file...")
-                        .self$QuantPep3DData <- read.csv(.self$QuantPep3DFile, stringsAsFactors = FALSE)
+                        .self$QuantPep3DData <- readPep3D(.self$QuantPep3DFile)
                         .self$SynapterLog <- c(.self$SynapterLog,
                                                paste("Read quantitation Pep3D data [",
                                                      paste(dim(.self$QuantPep3DData), collapse = ","),
@@ -203,7 +202,7 @@
                         if (.self$Master)
                             stop("Identification final peptide is a master file")
                         message("Reading identification final peptide file...")
-                        .self$IdentPeptideData <- read.csv(.self$IdentPeptideFile, stringsAsFactors = FALSE)
+                        .self$IdentPeptideData <- readFinalPeptides(.self$IdentPeptideFile)
                         .self$IdentPeptideData$errorppm <-
                             error.ppm(obs = .self$IdentPeptideData$precursor.mhp,
                                       theo = .self$IdentPeptideData$peptide.mhp)
@@ -212,7 +211,7 @@
                                                      paste(dim(.self$IdentPeptideData), collapse = ","),
                                                      "]", sep=""))
                         message("Reading quantitation final peptide file...")
-                        .self$QuantPeptideData <- read.csv(.self$QuantPeptideFile, stringsAsFactors = FALSE)
+                        .self$QuantPeptideData <- readFinalPeptides(.self$QuantPeptideFile)
                         .self$QuantPeptideData$errorppm <-
                             error.ppm(obs = .self$QuantPeptideData$precursor.mhp,
                                       theo = .self$QuantPeptideData$peptide.mhp)
@@ -221,7 +220,7 @@
                                                      paste(dim(.self$QuantPeptideData), collapse = ","),
                                                      "]", sep=""))
                         message("Reading quantitation Pep3D file...")
-                        .self$QuantPep3DData <- read.csv(.self$QuantPep3DFile, stringsAsFactors = FALSE)
+                        .self$QuantPep3DData <- readPep3D(.self$QuantPep3DFile)
                         .self$SynapterLog <- c(.self$SynapterLog,
                                                paste("Read quantitation Pep3D data [",
                                                      paste(dim(.self$QuantPep3DData), collapse = ","),

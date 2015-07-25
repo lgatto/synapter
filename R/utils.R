@@ -1,6 +1,7 @@
 filterFunction <- function(x) {
   ## keep only function 1 in Pep3DAMRT
-  return(x[x$Function == 1,])
+  ## was Function column before (see issue #67)
+  return(x[x$matchedEMRTs == 1,])
 }
 
 filterPeptideMatchType <- function(x) {
@@ -159,14 +160,14 @@ calculateGridPerformance <- function(identpep, sortedPep3d, mergedpep, matches) 
 
   n <- length(matches)
   k <- sapply(matches, length)
-  k1 <- which(k == 1)
-  k2 <- which(k > 1)
+  k1 <- which(k == 1L)
+  k2 <- which(k > 1L)
 
   idx <- match(mergedpep$precursor.leID.ident, identpep$precursor.leID)
-  precursor.leID.quant <- rep(NA, n)
+  precursor.leID.quant <- rep(NA_real_, n)
   precursor.leID.quant[idx] <- mergedpep$precursor.leID.quant
 
-  spectrumID <- rep(NA, n)
+  spectrumID <- rep(NA_real_, n)
   spectrumID[k1] <- sortedPep3d$spectrumID[unlist(matches[k1])]
 
   multipleMatchedSpectrumIDs <- vector(mode="list", length=n)
@@ -174,7 +175,7 @@ calculateGridPerformance <- function(identpep, sortedPep3d, mergedpep, matches) 
 
   ## grd1: number of unique matches divided by total number of matches
   ## => sum(k==1)/length(k) == mean(k==1)
-  grd1 <- mean(k == 1)
+  grd1 <- mean(k == 1L)
 
   notNaIdx <- which(!is.na(precursor.leID.quant))
 
@@ -185,9 +186,11 @@ calculateGridPerformance <- function(identpep, sortedPep3d, mergedpep, matches) 
   grd2 <- sum(precursor.leID.quant == spectrumID, na.rm=TRUE)/length(notNaIdx)
 
   details <- integer(n)
-  details[k1] <- ifelse(spectrumID[k1] == precursor.leID.quant[k1], 1, -1)
-  details[k2] <- ifelse(unlist(lapply(k2, function(i) {
-    precursor.leID.quant[i] %in% multipleMatchedSpectrumIDs[[i]]})), 2, -2)
+  details[k1] <- -1L
+  details[k1][spectrumID[k1] == precursor.leID.quant[k1]] <- 1L
+  details[k2] <- -2L
+  details[k2][unlist(lapply(k2, function(i) {
+    precursor.leID.quant[i] %in% multipleMatchedSpectrumIDs[[i]]}))] <- 2L
 
   ## exclude all values where precursor.leID.quant == NA
   details <- details[notNaIdx]
@@ -220,7 +223,7 @@ findMSeEMRTs <- function(identpep,
   res <- findImIndices(sortedPep3d$clust_drift, identpep$precursor.Mobility,
                        mzIdx, imdiff)
 
-  k <- sapply(res, length)
+  k <- lengths(res)
 
   ## Those that match *1* spectumIDs will be transferred
   ## BUT there is no guarantee that with *1* unique match,
@@ -234,7 +237,7 @@ findMSeEMRTs <- function(identpep,
   m <- ncol(pep3d)
   ## to initialise the new pep3d2 with with n rows
   ## and same nb of columns than pep3d
-  pep3d2 <- matrix(NA, nrow=n, ncol=m, dimnames=list(c(), colnames(pep3d)))
+  pep3d2 <- matrix(NA_real_, nrow=n, ncol=m, dimnames=list(c(), colnames(pep3d)))
   pep3d2[, 1] <- k
   k1 <- which(k == 1)
   ## convert to data.frame first to avoid conversion of matrix to character
@@ -249,7 +252,7 @@ findMSeEMRTs <- function(identpep,
 
   ans$matched.quant.spectrumIDs <- MSnbase:::utils.list2ssv(res, sep=";")
 
-  ans$precursor.leID.quant <- NA
+  ans$precursor.leID.quant <- NA_real_
   idx <- match(mergedpep$precursor.leID.ident, ans$precursor.leID)
 
   ans$precursor.leID.quant[idx] <- mergedpep$precursor.leID.quant
@@ -262,7 +265,7 @@ findMSeEMRTs <- function(identpep,
     ## these are those that were in the merged data set but that
     ## did NOT get transferred because they did NOT uniquely matched
     ## a pep3D EMRT
-    lost <- ans$Function != 1 & ans$precursor.leID.ident %in% mergedpep$precursor.leID.ident
+    lost <- ans$matchedEMRTs != 1 & ans$precursor.leID.ident %in% mergedpep$precursor.leID.ident
     ## rescue these by adding their quant straight from QuantPeptideData
     lostids <- ans$precursor.leID.ident[lost]
     ans[lost, "Counts"] <-
@@ -513,7 +516,7 @@ flatMatchedEMRTs <- function(emrts, pep3d, na.rm=TRUE, verbose=TRUE) {
   emrts$gridSearchResult <- "no_quant_id"
 
   ## unique matches
-  k1 <- which(emrts$Function == 1)
+  k1 <- which(emrts$matchedEMRTs == 1)
   isCorrectMatch <- as.numeric(emrts$spectrumID[k1]) ==
                       as.numeric(emrts$precursor.leID.quant[k1])
   emrts$gridSearchResult[k1] <- ifelse(isCorrectMatch,
@@ -521,7 +524,7 @@ flatMatchedEMRTs <- function(emrts, pep3d, na.rm=TRUE, verbose=TRUE) {
   emrts$matched.quant.spectrumIDs[k1] <- emrts$spectrumID[k1]
 
   ## non-unique matches
-  k2 <- which(emrts$Function > 1)
+  k2 <- which(emrts$matchedEMRTs > 1)
   mIds <- matched.quant.spectrumIDs2numeric(emrts$matched.quant.spectrumIDs)
 
   flatEmrts <- lapply(k2, function(j) {
@@ -560,9 +563,9 @@ flatMatchedEMRTs <- function(emrts, pep3d, na.rm=TRUE, verbose=TRUE) {
 ## https://github.com/lgatto/synapter/issues/73
 .findSynapterPlgsAgreement <- function(emrts) {
   ## no match
-  k0 <- emrts$Function == 0
+  k0 <- emrts$matchedEMRTs == 0
   ## single match
-  k1 <- emrts$Function == 1
+  k1 <- emrts$matchedEMRTs == 1
 
   k1Idx <- which(k1)
 

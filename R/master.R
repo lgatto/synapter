@@ -6,7 +6,7 @@ loadIdentOnly <- function(pepfile,
     message("Processing ", basename(pepfile))
   x1 <- .Synapter$new()
   x1$IdentPeptideFile <- pepfile
-  x1$IdentPeptideData <- read.csv(x1$IdentPeptideFile, stringsAsFactors = FALSE)
+  x1$IdentPeptideData <- readFinalPeptides(x1$IdentPeptideFile)
   ## x1$DbFastaFile <- fastafile
   x1$IdentPeptideData$errorppm <-
     error.ppm(obs = x1$IdentPeptideData$precursor.mhp,
