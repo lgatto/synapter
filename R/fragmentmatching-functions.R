@@ -92,8 +92,8 @@
                              ", prec z: ", precursorCharge(spectra[[i]]),
                              ", # common: ", sum(common[[i]]),
                              ", match: ", gridSearchResult)
-      if (nchar(sequences[[i]])) {
-        label <- paste0(label, ",\nseq: ", sequences[[i]])
+      if (isTRUE(nzchar(sequences[i], keepNA=TRUE))) {
+        label <- paste0(label, ",\nseq: ", sequences[i])
       }
     }
 
