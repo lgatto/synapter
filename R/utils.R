@@ -1,6 +1,7 @@
 filterFunction <- function(x) {
   ## keep only function 1 in Pep3DAMRT
-  return(x[x$Function == 1,])
+  ## was Function column before (see issue #67)
+  return(x[x$matchedEMRTs == 1,])
 }
 
 filterPeptideMatchType <- function(x) {
@@ -260,7 +261,7 @@ findMSeEMRTs <- function(identpep,
     ## these are those that were in the merged data set but that
     ## did NOT get transferred because they did NOT uniquely matched
     ## a pep3D EMRT
-    lost <- ans$Function != 1 & ans$precursor.leID.ident %in% mergedpep$precursor.leID.ident
+    lost <- ans$matchedEMRTs != 1 & ans$precursor.leID.ident %in% mergedpep$precursor.leID.ident
     ## rescue these by adding their quant straight from QuantPeptideData
     lostids <- ans$precursor.leID.ident[lost]
     ans[lost, "Counts"] <-
@@ -511,7 +512,7 @@ flatMatchedEMRTs <- function(emrts, pep3d, na.rm=TRUE, verbose=TRUE) {
   emrts$gridSearchResult <- "no_quant_id"
 
   ## unique matches
-  k1 <- which(emrts$Function == 1)
+  k1 <- which(emrts$matchedEMRTs == 1)
   isCorrectMatch <- as.numeric(emrts$spectrumID[k1]) ==
                       as.numeric(emrts$precursor.leID.quant[k1])
   emrts$gridSearchResult[k1] <- ifelse(isCorrectMatch,
@@ -519,7 +520,7 @@ flatMatchedEMRTs <- function(emrts, pep3d, na.rm=TRUE, verbose=TRUE) {
   emrts$matched.quant.spectrumIDs[k1] <- emrts$spectrumID[k1]
 
   ## non-unique matches
-  k2 <- which(emrts$Function > 1)
+  k2 <- which(emrts$matchedEMRTs > 1)
   mIds <- matched.quant.spectrumIDs2numeric(emrts$matched.quant.spectrumIDs)
 
   flatEmrts <- lapply(k2, function(j) {
@@ -558,9 +559,9 @@ flatMatchedEMRTs <- function(emrts, pep3d, na.rm=TRUE, verbose=TRUE) {
 ## https://github.com/lgatto/synapter/issues/73
 .findSynapterPlgsAgreement <- function(emrts) {
   ## no match
-  k0 <- emrts$Function == 0
+  k0 <- emrts$matchedEMRTs == 0
   ## single match
-  k1 <- emrts$Function == 1
+  k1 <- emrts$matchedEMRTs == 1
 
   k1Idx <- which(k1)
 

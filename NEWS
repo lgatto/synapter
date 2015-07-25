@@ -64,6 +64,8 @@ CHANGES IN VERSION 1.99.0
    'Synapter(filenames = c(..., identfragments = "fragments.csv",
                            quantspectra = "Spectrum.xml"))' instead.
    [2014-12-07 Sun]
+ o rename QuantPep3DData$Function column into QuantPep3DData$matchedEMRTs;
+   closes #67 [2015-07-26 Sun]
 
 CHANGES IN VERSION 1.7.0
 ------------------------

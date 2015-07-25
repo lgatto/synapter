@@ -562,11 +562,11 @@ setMethod(plotCumulativeNumberOfFragments, "Synapter",
           })
 
 setMethod(getEMRTtable, "Synapter",
-          function(object) table(object$MatchedEMRTs$Function))
+          function(object) table(object$MatchedEMRTs$matchedEMRTs))
 
 setMethod(plotEMRTtable, "Synapter",
           function(object) {
-            p <- barchart(table(object$MatchedEMRTs$Function), horizontal=FALSE)
+            p <- barchart(table(object$MatchedEMRTs$matchedEMRTs), horizontal=FALSE)
             print(p)
             invisible(p)
           })
@@ -578,7 +578,7 @@ setMethod(performance, "Synapter",
             if (nrow(object$MatchedEMRTs) == 0)
               stop("Matching required before estimating performance.")
             ## synapter results
-            S <- object$MatchedEMRTs[object$MatchedEMRTs$Function == 1,
+            S <- object$MatchedEMRTs[object$MatchedEMRTs$matchedEMRTs == 1,
                                      "spectrumID"]
             nS <- length(S)
             uS <- unique(S)

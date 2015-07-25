@@ -62,19 +62,22 @@ readFinalPeptides <- function(file, verbose=interactive()) {
 
 #' @noRd
 readPep3D <- function(file, verbose=interactive()) {
-  readcsv(file, keepCols=c("Function" = "d",
-                           "spectrumID" = "d",
-                           "rt_min" = "d",
-                           "mwHPlus" = "d",
-                           "charge" = "d",
-                           "Intensity" = "d",
-                           "Counts" = "d",
-                           "clust_drift" = "d",
-                           "isFid" = "d",
-                           "ion_ID" = "d",
-                           "ion_z" = "d",
-                           "ion_iso" = "d",
-                           "ion_area" = "d",
-                           "ion_counts" = "d",
-                           "Model" = "d"), verbose=verbose)
+  pep3d <- readcsv(file, keepCols=c("Function" = "d",
+                                    "spectrumID" = "d",
+                                    "rt_min" = "d",
+                                    "mwHPlus" = "d",
+                                    "charge" = "d",
+                                    "Intensity" = "d",
+                                    "Counts" = "d",
+                                    "clust_drift" = "d",
+                                    "isFid" = "d",
+                                    "ion_ID" = "d",
+                                    "ion_z" = "d",
+                                    "ion_iso" = "d",
+                                    "ion_area" = "d",
+                                    "ion_counts" = "d",
+                                    "Model" = "d"), verbose=verbose)
+  ## rename Function into matchedEMRTs; see issue #67
+  colnames(pep3d)[1L] <- "matchedEMRTs"
+  pep3d
 }

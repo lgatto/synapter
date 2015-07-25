@@ -42,6 +42,10 @@
   if (!isCurrent(object)) {
     newObject <- object$copy()
 
+    ## 1.99 was Function before: see issue #67
+    colnames(newObject$QuantPep3DData)[
+      colnames(newObject$QuantPep3DData) == "Function"] <- "matchedEMRTs"
+
     newObject$ClassVersion <- .Synapter$new()$ClassVersion
     newObject$Version <- as.character(packageVersion("synapter"))
     newObject$SynapterLog <- c(newObject$SynapterLog,
@@ -59,4 +63,3 @@
 
   object
 }
-

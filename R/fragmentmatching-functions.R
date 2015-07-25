@@ -337,13 +337,13 @@
   emrts <- obj$MatchedEMRTs
   fm <- obj$FragmentMatching
 
-  if ("Function.1" %in% colnames(emrts)) {
+  if ("matchedEMRTs.beforeFilterUniqueMatches" %in% colnames(emrts)) {
     warning("This function should not used multiple times. It removes your ",
-            "original ", sQuote("Function"), " column.", immediate.=TRUE)
+            "original ", sQuote("matchedEMRTs"), " column.", immediate.=TRUE)
   }
 
   fm <- fm[fm$precursor.leID.ident %in% emrts$precursor.leID.ident &
-           fm$Function == 1, ]
+           fm$matchedEMRTs == 1, ]
 
   keep <- fm$FragmentMatching >= mincommon
 
@@ -356,14 +356,14 @@
   exclude <- rows[!keep]
 
   ## backup function
-  emrts$Function.1 <- emrts$Function
-  emrts$Function[rows] <- 1
+  emrts$matchedEMRTs.beforeFilterUniqueMatches <- emrts$matchedEMRTs
+  emrts$matchedEMRTs[rows] <- 1
 
   if (length(exclude)) {
     # comment the next line and uncomment the over next line to *not* remove the
     # filtered emrts
     #emrts <- emrts[-exclude, ]
-    emrts$Function[exclude] <-  -1
+    emrts$matchedEMRTs[exclude] <-  -1
     # set Counts to NA; see https://github.com/lgatto/synapter/issues/85
     emrts$Counts[exclude] <- NA
   }
@@ -379,13 +379,13 @@
   emrts <- obj$MatchedEMRTs
   fm <- obj$FragmentMatching
 
-  if ("Function.2" %in% colnames(emrts)) {
+  if ("matchedEMRTs.beforeFilterNonUniqueMatches" %in% colnames(emrts)) {
     warning("This function should not used multiple times. It removes your ",
-            "original ", sQuote("Function"), " column.", immediate.=TRUE)
+            "original ", sQuote("matchedEMRTs"), " column.", immediate.=TRUE)
   }
 
   fm <- fm[fm$precursor.leID.ident %in% emrts$precursor.leID.ident &
-           fm$Function > 1, ]
+           fm$matchedEMRTs > 1, ]
 
   keep <- fm$FragmentMatchingDiff >= mindelta & fm$FragmentMatchingRank == 1
 
@@ -398,7 +398,7 @@
   exclude <- rows[!keep]
 
   ## backup function
-  emrts$Function.2 <- emrts$Function
+  emrts$matchedEMRTs.beforeFilterNonUniqueMatches <- emrts$matchedEMRTs
 
   if (length(exclude)) {
     cols <- c("matched.quant.spectrumIDs", "precursor.leID.quant", "spectrumID")
@@ -410,10 +410,10 @@
     ## this order is important because include could contain row numbers that
     ## are present in keep as well (because fm has many duplicated
     ## precursor.leID.idents)
-    emrts$Function[exclude] <- -2
+    emrts$matchedEMRTs[exclude] <- -2
     # set Counts to NA; see https://github.com/lgatto/synapter/issues/85
     emrts$Counts[exclude] <- NA
-    emrts$Function[rows[keep]] <- 1
+    emrts$matchedEMRTs[rows[keep]] <- 1
   }
   return(emrts)
 }
