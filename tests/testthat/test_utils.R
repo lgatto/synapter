@@ -1,7 +1,30 @@
 context("utils")
 
+test_that(".rescueEMRTS", {
+  MatchedEMRTs <- data.frame(matchedEMRTs=c(1, 2, 1, 1, 2),
+                             Counts=1:5,
+                             precursor.leID.ident=1:5,
+                             idSource="transfer", stringsAsFactors=FALSE)
+  MergedEMRTs <- data.frame(precursor.leID.ident=5:1,
+                            precursor.inten.quant=10:6)
+  rescue <- data.frame(matchedEMRTs=c(1, 2, 1, 1, 2),
+                       Counts=c(1, 7, 3, 4, 10),
+                       precursor.leID.ident=1:5,
+                       idSource=c("transfer", "rescue",
+                                  "transfer", "transfer", "rescue"),
+                       stringsAsFactors=FALSE)
+  copy <- data.frame(matchedEMRTs=c(1, 2, 1, 1, 2),
+                     Counts=6:10,
+                     precursor.leID.ident=1:5,
+                     idSource="copy", stringsAsFactors=FALSE)
+  expect_error(synapter:::.rescueEMRTs(MatchedEMRTs, MergedEMRTs, method="foo"))
+  expect_equal(synapter:::.rescueEMRTs(MatchedEMRTs, MergedEMRTs), rescue)
+  expect_equal(synapter:::.rescueEMRTs(MatchedEMRTs, MergedEMRTs,
+                                       method = "copy"), copy)
+})
+
 test_that("flatMatchedEMRTs", {
-  df <- data.frame(Function=c(1, 1, 2, 2, 1),
+  df <- data.frame(matchedEMRTs=c(1, 1, 2, 2, 1),
                    spectrumID=1:5,
                    precursor.leID.quant=c(1, 3, 3, 9, NA),
                    matched.quant.spectrumIDs=c("1", "3", "3;4", "3;4", ""),
@@ -11,7 +34,7 @@ test_that("flatMatchedEMRTs", {
                       Function=1:4,
                       ion_z=1:4,
                       stringsAsFactors=FALSE)
-  rdf <- data.frame(Function=c(1, 1, 2, 2, 2, 2),
+  rdf <- data.frame(matchedEMRTs=c(1, 1, 2, 2, 2, 2),
                     spectrumID=c(1:4, 3, 4),
                     precursor.leID.quant=c(1, 3, 3, 3, 9, 9),
                     matched.quant.spectrumIDs=c(1:4, 3, 4),

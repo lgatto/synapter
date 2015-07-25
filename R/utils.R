@@ -211,8 +211,7 @@ findMSeEMRTs <- function(identpep,
                          nsd,
                          ppmthreshold,
                          imdiff,
-                         model,
-                         mergedEMRTs) {
+                         model) {
   sortedPep3d <- pep3d
   sortedPep3d <- sortedPep3d[order(pep3d$rt_min),]
 
@@ -261,30 +260,12 @@ findMSeEMRTs <- function(identpep,
 
   ans$idSource <- "transfer"
 
-  if (mergedEMRTs == "rescue") {
-    ## these are those that were in the merged data set but that
-    ## did NOT get transferred because they did NOT uniquely matched
-    ## a pep3D EMRT
-    lost <- ans$matchedEMRTs != 1 & ans$precursor.leID.ident %in% mergedpep$precursor.leID.ident
-    ## rescue these by adding their quant straight from QuantPeptideData
-    lostids <- ans$precursor.leID.ident[lost]
-    ans[lost, "Counts"] <-
-      mergedpep[match(lostids, mergedpep$precursor.leID.ident), "precursor.inten.quant"]
-    ans[lost, "idSource"] <- "rescue"
-  } else if (mergedEMRTs == "copy") {
-    allmerged <- ans$precursor.leID.ident %in% mergedpep$precursor.leID.ident
-    allmergedids <- ans$precursor.leID.ident[allmerged]
-    ans[allmerged, "Counts"] <-
-      mergedpep[match(allmergedids, mergedpep$precursor.leID.ident), "precursor.inten.quant"]
-    ans[allmerged, "idSource"] <- "copy"
-  } ## else if (fromQuant == "transfer") keep as is
-
   ## since v 0.5.0 - removing multiply matched EMRTs
   ## dupIDs <- ans$spectrumID[ans$Function == 1 & duplicated(ans$spectrumID)]
   ## dupRows <- ans$spectrumID %in% dupIDs
   ## ans[dupRows, (ncol(identpep)+1) : ncol(ans)] <- -1
 
-  return(ans)
+  ans
 }
 
 
@@ -649,3 +630,24 @@ diagnosticErrors <- function(x) {
   setNames(split(x, rep(1:n, times=ne/2)), nm)
 }
 
+.rescueEMRTs <- function(matchedEMRTs, mergedFeatures,
+                         method=c("rescue", "copy")) {
+  method <- match.arg(method)
+
+  if (method == "rescue") {
+    ## these are those that were in the merged data set but that
+    ## did NOT get transferred because they did NOT uniquely matched
+    ## a pep3D EMRT
+    i <- matchedEMRTs$matchedEMRTs != 1 &
+         matchedEMRTs$precursor.leID.ident %in%
+           mergedFeatures$precursor.leID.ident
+  } else {
+    i <- matchedEMRTs$precursor.leID.ident %in%
+          mergedFeatures$precursor.leID.ident
+  }
+  ids <- matchedEMRTs$precursor.leID.ident[i]
+  matchedEMRTs$Counts[i] <- mergedFeatures$precursor.inten.quant[
+                              match(ids, mergedFeatures$precursor.leID.ident)]
+  matchedEMRTs$idSource[i] <- method
+  matchedEMRTs
+}

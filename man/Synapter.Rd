@@ -19,6 +19,8 @@
 \alias{modelRt}
 \alias{findEMRTs,Synapter-method}
 \alias{findEMRTs}
+\alias{rescueEMRTs,Synapter-method}
+\alias{rescueEMRTs}
 \alias{searchGrid,Synapter-method}
 \alias{searchGrid}
 \alias{fragmentMatching,Synapter-method}
@@ -447,15 +449,18 @@ Synapter(filenames, master) ## creates an instance of class 'Synapter'
       }
 
       \item{findEMRTs}{\code{signature(object = "Synapter", ppm =
-	  "numeric", nsd = "numeric", imdiff = "numeric",
-    mergedEMRTs = c("rescue", "copy", "transfer"))}:
+	  "numeric", nsd = "numeric", imdiff = "numeric")}:
 	Finds EMRTs matching identification peptides using \code{ppm}
 	mass tolerance, \code{nsd} number of retention time standard
 	deviations and \code{imdiff} difference in ion mobility.
   The last three parameters are optional if previously
 	set with \code{setPpmError}, \code{setRtNsd}, \code{setImDiff},
   or, better, \code{setBestGridParams} (see below).
-  The \code{mergedEMRTs} parameter defined the behaviour for those
+      }
+
+    \item{rescueEMRTs}{\code{signature(object = "Synapter",
+    method = c("rescue", "copy"))}:
+  The \code{method} parameter defined the behaviour for those
   high confidence features that where identified in both identification and
 	quantitation acquisitions and used for the retention time model
 	(see \code{mergePeptides}). Prior to version 1.1.1, these

@@ -393,7 +393,7 @@
                         .self$IdentPeptideData$predictedRt <- newIdentData$predicted
                         .self$IdentPeptideData$sdRt <- newIdentData$sd
                     },
-                    findEMRTs = function(mergedEMRTs) {
+                    findEMRTs = function() {
                         if (length(.self$RtModel) == 0)
                             stop("First build a retention time model using 'modelRt'.")
                         if (length(.self$PpmError) == 0) {
@@ -415,15 +415,22 @@
                                                            .self$RtNsd,
                                                            .self$PpmError,
                                                            .self$ImDiff,
-                                                           .self$RtModel,
-                                                           mergedEMRTs)
+                                                           .self$RtModel)
                         .self$MatchedEMRTs$synapterPlgsAgreement <-
                           .findSynapterPlgsAgreement(.self$MatchedEMRTs)
                         .self$SynapterLog <- c(.self$SynapterLog,
-                                               paste("Matched identification peptides and quantitation EMRTs [",
+                                               paste0("Matched identification peptides and quantitation EMRTs [",
                                                      paste(dim(.self$MatchedEMRTs), collapse = ","),
-                                                     "] (", mergedEMRTs, ")",
-                                                     sep = ""))
+                                                     "]"))
+                    },
+                    rescueEMRTs = function(method) {
+                        .self$MatchedEMRTs <- .rescueEMRTs(.self$MatchedEMRTs,
+                                                           .self$MergedFeatures,
+                                                           method)
+                        .self$SynapterLog <- c(.self$SynapterLog,
+                                               paste0("Rescue EMRTs [",
+                                                     paste(dim(.self$MatchedEMRTs), collapse = ","),
+                                                     "] (", method, ")"))
                     },
                     fragmentMatching = function(verbose=TRUE) {
                       if (!nrow(.self$MatchedEMRTs)) {

@@ -68,6 +68,8 @@ CHANGES IN VERSION 1.99.0
    [2014-12-07 Sun]
  o rename QuantPep3DData$Function column into QuantPep3DData$matchedEMRTs;
    closes #67 [2015-07-26 Sun]
+ o remove "mergedEMRTs" argument from `findEMRTs`. Now `rescueEMRTs` has to be
+   called manually at the end of the processing; close #93 [2015-07-26 Sun]
 
 CHANGES IN VERSION 1.7.0
 ------------------------
