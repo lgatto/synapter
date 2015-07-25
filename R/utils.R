@@ -159,14 +159,14 @@ calculateGridPerformance <- function(identpep, sortedPep3d, mergedpep, matches) 
 
   n <- length(matches)
   k <- sapply(matches, length)
-  k1 <- which(k == 1)
-  k2 <- which(k > 1)
+  k1 <- which(k == 1L)
+  k2 <- which(k > 1L)
 
   idx <- match(mergedpep$precursor.leID.ident, identpep$precursor.leID)
-  precursor.leID.quant <- rep(NA, n)
+  precursor.leID.quant <- rep(NA_real_, n)
   precursor.leID.quant[idx] <- mergedpep$precursor.leID.quant
 
-  spectrumID <- rep(NA, n)
+  spectrumID <- rep(NA_real_, n)
   spectrumID[k1] <- sortedPep3d$spectrumID[unlist(matches[k1])]
 
   multipleMatchedSpectrumIDs <- vector(mode="list", length=n)
@@ -174,7 +174,7 @@ calculateGridPerformance <- function(identpep, sortedPep3d, mergedpep, matches) 
 
   ## grd1: number of unique matches divided by total number of matches
   ## => sum(k==1)/length(k) == mean(k==1)
-  grd1 <- mean(k == 1)
+  grd1 <- mean(k == 1L)
 
   notNaIdx <- which(!is.na(precursor.leID.quant))
 
@@ -185,9 +185,11 @@ calculateGridPerformance <- function(identpep, sortedPep3d, mergedpep, matches) 
   grd2 <- sum(precursor.leID.quant == spectrumID, na.rm=TRUE)/length(notNaIdx)
 
   details <- integer(n)
-  details[k1] <- ifelse(spectrumID[k1] == precursor.leID.quant[k1], 1, -1)
-  details[k2] <- ifelse(unlist(lapply(k2, function(i) {
-    precursor.leID.quant[i] %in% multipleMatchedSpectrumIDs[[i]]})), 2, -2)
+  details[k1] <- -1L
+  details[k1][spectrumID[k1] == precursor.leID.quant[k1]] <- 1L
+  details[k2] <- -2L
+  details[k2][unlist(lapply(k2, function(i) {
+    precursor.leID.quant[i] %in% multipleMatchedSpectrumIDs[[i]]}))] <- 2L
 
   ## exclude all values where precursor.leID.quant == NA
   details <- details[notNaIdx]
@@ -220,7 +222,7 @@ findMSeEMRTs <- function(identpep,
   res <- findImIndices(sortedPep3d$clust_drift, identpep$precursor.Mobility,
                        mzIdx, imdiff)
 
-  k <- sapply(res, length)
+  k <- lengths(res)
 
   ## Those that match *1* spectumIDs will be transferred
   ## BUT there is no guarantee that with *1* unique match,
@@ -234,7 +236,7 @@ findMSeEMRTs <- function(identpep,
   m <- ncol(pep3d)
   ## to initialise the new pep3d2 with with n rows
   ## and same nb of columns than pep3d
-  pep3d2 <- matrix(NA, nrow=n, ncol=m, dimnames=list(c(), colnames(pep3d)))
+  pep3d2 <- matrix(NA_real_, nrow=n, ncol=m, dimnames=list(c(), colnames(pep3d)))
   pep3d2[, 1] <- k
   k1 <- which(k == 1)
   pep3d2[k1, ] <- unlist(sortedPep3d[unlist(res[k1]), ])
@@ -245,7 +247,7 @@ findMSeEMRTs <- function(identpep,
 
   ans$matched.quant.spectrumIDs <- MSnbase:::utils.list2ssv(res, sep=";")
 
-  ans$precursor.leID.quant <- NA
+  ans$precursor.leID.quant <- NA_real_
   idx <- match(mergedpep$precursor.leID.ident, ans$precursor.leID)
 
   ans$precursor.leID.quant[idx] <- mergedpep$precursor.leID.quant
