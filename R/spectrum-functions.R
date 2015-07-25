@@ -7,10 +7,11 @@
 #' @param encoding file encoding, seems to be windows specific
 #' @param verbose verbose output?
 #'
-#' @return a list of length == 3; names: ms1, m2, assignments
+#' @return a list of length == 4; names: ms1, m2, leRows, heRows
 #'  ms1: matrix of ms1 spectra information
 #'  ms2: matrix of ms2 spectra information
-#'  assignments: environment (key == leID), values == he_id
+#'  leRows: environment (key == leID), values == LE_ID row index
+#'  heRows: environment (key == leID), values == HE_ID row index
 #' @noRd
 .readSynapterSpectrumXml <- function(file, ms1=FALSE,
                                      encoding="Windows-1252",
@@ -93,7 +94,7 @@
                        grep("</PRECURSOR_PRODUCT_BIN", content, fixed=TRUE)-1)
 
   if (verbose) {
-    message("Read Assignment Data (", paste(linesMs2, collapse=":"), ")")
+    message("Read Assignment Data (", paste(linesAssignment, collapse=":"), ")")
   }
   range <- seq(linesAssignment[1], linesAssignment[2])
 
