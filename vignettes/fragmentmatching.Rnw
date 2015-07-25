@@ -201,7 +201,7 @@ plotCumulativeNumberOfFragments(synobj2, what = "fragments.ident")
 plotCumulativeNumberOfFragments(synobj2, what = "spectra.quant")
 @
 
-<<filterfragments, cache=TRUE>>=
+<<filterfragments>>=
 filterFragments(synobj2, what = "fragments.ident", minIntensity = 70,
                 verbose = FALSE)
 filterFragments(synobj2, what = "spectra.quant", minIntensity = 70,
