@@ -30,7 +30,6 @@ test_that("createReadrColTypes", {
   df <- data.frame("ProteinKey"=c("A_B", "A_D"), intensity=1:2,
                    stringsAsFactors=FALSE)
   colnames(df) <- c("Protein Key", "intensity")
-  class(df) <- c("tbl_df", "tbl", "data.frame")
 
   expect_equal(synapter:::readcsv(f, keepCols=c("Protein Key" = "c",
                                                 "intensity" = "d")), df)
