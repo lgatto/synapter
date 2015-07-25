@@ -34,6 +34,7 @@ exportMethods(show,
               mergePeptides,
               modelRt,
               findEMRTs,
+              rescueEMRTs,
               searchGrid,
               fragmentMatching,
               ## getters and setters

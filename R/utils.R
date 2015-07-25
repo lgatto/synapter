@@ -211,8 +211,7 @@ findMSeEMRTs <- function(identpep,
                          nsd,
                          ppmthreshold,
                          imdiff,
-                         model,
-                         mergedEMRTs) {
+                         model) {
   sortedPep3d <- pep3d
   sortedPep3d <- sortedPep3d[order(pep3d$rt_min),]
 
@@ -266,7 +265,7 @@ findMSeEMRTs <- function(identpep,
   ## dupRows <- ans$spectrumID %in% dupIDs
   ## ans[dupRows, (ncol(identpep)+1) : ncol(ans)] <- -1
 
-  return(ans)
+  ans
 }
 
 
