@@ -16,6 +16,7 @@ importFrom(readr, read_csv)
 
 export(Synapter, ## constructor
        as.MSnSet.Synapter,
+       createUniquePeptideDbRds,
        synergise,
        synapterGUI,
        makeMaster,

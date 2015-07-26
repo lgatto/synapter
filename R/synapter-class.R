@@ -381,8 +381,12 @@
                     },
                     modelRetentionTime = function(span) {
                         'Models retention time'
-                        if (missing(span))
+
+                        if (missing(span)) {
                             span <- .self$LowessSpan
+                        } else {
+                           .self$LowessSpan <- span
+                        }
                         .self$RtModel <- modelRetTime(.self$MergedFeatures, span = span)
                         .self$SynapterLog <- c(.self$SynapterLog,
                                                paste("Modelled retention time using lowess and span ",
@@ -750,8 +754,8 @@
                                                       "]", sep=""))
                        },
                        filterDuplicatedQuantSpectrumIds = function() {
-                         'Removes duplicated quantitation EMRT spectrum ids (different charge states, isotopes,.. ) keeping the first instance.'
-                         keep <- !duplicated(.self$QuantPep3DData$spectrumID)
+                         'Removes duplicated quantitation EMRT spectrum ids (different charge states, isotopes,.. ) keeping the one with isFid == 1 (is used for identification).'
+                         keep  <- .self$QuantPep3DData$isFid == 1
                          .self$QuantPep3DData <- .self$QuantPep3DData[keep, ]
                          .self$SynapterLog <- c(.self$SynapterLog,
                                                 paste("Kept unique spectrum ids ",
@@ -928,7 +932,7 @@
                                                       "]", sep=""))
                        },
 
-                       filterUniqueQuantDbPeptides = function(filename, missedCleavages = 0, verbose = TRUE) {
+                       filterUniqueQuantDbPeptides = function(filename, missedCleavages = 0,  IisL = FALSE, verbose = TRUE) {
                          'Filters quantitation tryptic peptides that match one and only one protein in the fasta database.'
                          .self$filterUniqueDbPeptides(filename,
                                                       what="quant",

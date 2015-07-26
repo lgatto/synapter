@@ -25,7 +25,7 @@ filterPepScore <- function(dfr,
   ## v 0.7.7 - switching
   signif1 <- (dfr[sel1, method] <= fdr)
   signif2 <- (dfr[sel2, method] <= fdr)
-  if (any(is.na(signif1)) | any(is.na(signif2))) {
+  if (anyNA(signif1) | anyNA(signif2)) {
     stop("Filtering NA qvalues out.")
     ## signif1[is.na(signif1)] <- FALSE
     ## signif2[is.na(signif2)] <- FALSE
@@ -467,7 +467,7 @@ getIdStats <- function(pepdata) {
   res[pf2reg, "Bonferroni"] <- .adj2$adjp[order(.adj2$index), "Bonferroni"]
   ## checking
   testsel <- res$peptide.matchType %in% c("PepFrag1", "PepFrag2") & res$protein.dataBaseType == "Regular"
-  if (any(is.na(res[testsel, "pval"])))
+  if (anyNA(res[testsel, "pval"]))
     stop("NA p-values generated")
   ##
   ans <- res[, c("pval", "qval", "BH", "Bonferroni")]

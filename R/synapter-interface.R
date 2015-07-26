@@ -300,26 +300,30 @@ setMethod(filterPeptideLength, "Synapter",
 
 
 setMethod(filterUniqueDbPeptides, "Synapter",
-          function(object, missedCleavages = 0, verbose = TRUE) {
+          function(object, missedCleavages = 0, IisL = FALSE, verbose = TRUE) {
             object$filterUniqueSeq()
             object$filterUniqueDbPeptides(object$DbFastaFile,
-                                          missedCleavages,
+                                          what = c("ident", "quant"),
+                                          missedCleavages = missedCleavages,
+                                          IisL = IisL,
                                           verbose = verbose)
           })
 
 setMethod(filterUniqueQuantDbPeptides, "Synapter",
-          function(object, missedCleavages = 0, verbose = TRUE) {
+          function(object, missedCleavages = 0, IisL = FALSE, verbose = TRUE) {
             object$filterUniqueQuantSeq()
             object$filterUniqueQuantDbPeptides(object$DbFastaFile,
-                                               missedCleavages,
+                                               missedCleavages = missedCleavages,
+                                               IisL = IisL,
                                                verbose = verbose)
           })
 
 setMethod(filterUniqueIdentDbPeptides, "Synapter",
-          function(object, missedCleavages = 0, verbose = TRUE) {
+          function(object, missedCleavages = 0, IisL = FALSE, verbose = TRUE) {
             object$filterUniqueIdentSeq()
             object$filterUniqueIdentDbPeptides(object$DbFastaFile,
-                                               missedCleavages,
+                                               missedCleavages = missedCleavages,
+                                               IisL = IisL,
                                                verbose = verbose)
           })
 
@@ -368,6 +372,26 @@ setMethod(filterQuantPpmError, "Synapter",
             if (!missing(ppm))
               object$setQuantPpmError(ppm)
             object$filterQuantPpmError()
+          })
+
+# filter post merging
+setMethod(filterFragments, "Synapter",
+          function(object, what, minIntensity = NULL, maxNumber = NULL,
+                   verbose = TRUE) {
+            object$filterFragments(what = what,
+                                   minIntensity = minIntensity,
+                                   maxNumber = maxNumber,
+                                   verbose = verbose)
+          })
+
+setMethod(filterUniqueMatches, "Synapter",
+          function(object, minNumber) {
+            object$filterUniqueMatches(minNumber)
+          })
+
+setMethod(filterNonUniqueMatches, "Synapter",
+          function(object, minDelta) {
+            object$filterNonUniqueMatches(minDelta)
           })
 
 ## Plotting
@@ -502,6 +526,7 @@ setMethod(plotFeatures, "Synapter",
                        object$setRtNsd()
                      }
                      plot.some.features(object$MergedFeatures,
+                                        object$IdentPeptideData,
                                         object$QuantPep3DData,
                                         object$RtModel,
                                         object$IdentPpmError,
@@ -585,7 +610,7 @@ setMethod(performance, "Synapter",
             if (verbose){
               cat("(S) Synapter: ", ans$Synapter, " EMRTs uniquely matched.\n", sep = "")
               cat("(I) Ident: ", ans$Ident, " peptides.\n", sep = "")
-              cat("(Q) Quant:   ", ans$Quant, " peptides.\n", sep = "")
+              cat("(Q) Quant: ", ans$Quant, " peptides.\n", sep = "")
               cat("Enrichment (S/Q): ", round(ans$Enrichment, 2), "%\n", sep = "")
               cat("Overlap:\n")
               print(ans$VennCounts)
