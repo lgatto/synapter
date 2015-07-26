@@ -25,7 +25,7 @@ filterPepScore <- function(dfr,
   ## v 0.7.7 - switching
   signif1 <- (dfr[sel1, method] <= fdr)
   signif2 <- (dfr[sel2, method] <= fdr)
-  if (anyNA(signif1) | anyNA(signif2)) {
+  if (any(is.na(signif1)) | any(is.na(signif2))) {
     stop("Filtering NA qvalues out.")
     ## signif1[is.na(signif1)] <- FALSE
     ## signif2[is.na(signif2)] <- FALSE
@@ -467,7 +467,7 @@ getIdStats <- function(pepdata) {
   res[pf2reg, "Bonferroni"] <- .adj2$adjp[order(.adj2$index), "Bonferroni"]
   ## checking
   testsel <- res$peptide.matchType %in% c("PepFrag1", "PepFrag2") & res$protein.dataBaseType == "Regular"
-  if (anyNA(res[testsel, "pval"]))
+  if (any(is.na(res[testsel, "pval"])))
     stop("NA p-values generated")
   ##
   ans <- res[, c("pval", "qval", "BH", "Bonferroni")]
@@ -478,7 +478,13 @@ getIdStats <- function(pepdata) {
 ## closes #42
 isCorrespondingPep3DataFile <- function(quant, pep3d) {
   idx <- match(quant$precursor.leID, pep3d$spectrumID)
-  return(!anyNA(idx) && all(quant$precursor.inten == pep3d$Counts[idx]))
+
+  ## We disable the comparison of the intensity values for the file check
+  ## temporarly because some files exist that have entries with different
+  ## intensity values.
+  ## See https://github.com/lgatto/synapter/issues/42 for details
+  return(!anyNA(idx))
+#  return(!anyNA(idx) && all(quant$precursor.inten == pep3d$Counts[idx]))
 }
 
 ## duplicate rows if the have multiple matched.quant.spectrumIDs

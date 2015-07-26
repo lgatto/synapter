@@ -71,13 +71,39 @@ CHANGES IN VERSION 1.99.0
  o remove "mergedEMRTs" argument from `findEMRTs`. Now `rescueEMRTs` has to be
    called manually at the end of the processing; close #93 [2015-07-26 Sun]
 
+CHANGES IN VERSION 1.9.5
+------------------------
+ o update cross reference to qvalue::plot.qvalue in Synapter man page;
+   closes #86 [2015-03-31 Tue]
+
+CHANGES IN VERSION 1.9.4
+------------------------
+ o use biocstyle [2015-01-23 Fri]
+ o use requireNamespace [2015-01-23 Fri]
+
+CHANGES IN VERSION 1.9.3
+------------------------
+ o Filter entries in quantiation final peptides and Pep3D data that don't match
+   in their intensity valus; see #42 for details. [2014-11-26 Wed]
+
+CHANGES IN VERSION 1.9.2
+------------------------
+ o Only suggesting tcltk and tcltk2, as gui is now deprecated
+   [2014-11-21 Fri]
+
+CHANGES IN VERSION 1.9.1
+------------------------
+ o Deprecating synatperGUI [2014-11-10 Mon]
+ o Directing questions to the Bioc support site [2014-11-10 Mon]
+
+CHANGES IN VERSION 1.9.0
+------------------------
+ o new devel version for Bioc 3.1
+
 CHANGES IN VERSION 1.7.0
 ------------------------
- o new devel version for Bioc 3.0
-
-CHANGES IN VERSION 1.6.0
-------------------------
- o new release version for Bio 2.14
+ o Deprecating synatperGUI [2014-11-10 Mon]
+ o Directing questions to the Bioc support site [2014-11-10 Mon]
 
 CHANGES IN VERSION 1.5.7
 ------------------------

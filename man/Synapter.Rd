@@ -107,12 +107,6 @@
 \alias{filterIdentProtFpr}
 \alias{filterQuantProtFpr,Synapter-method}
 \alias{filterQuantProtFpr}
-\alias{filterFragments,Synapter-method}
-\alias{filterFragments}
-\alias{filterUniqueMatches,Synapter-method}
-\alias{filterUniqueMatches}
-\alias{filterNonUniqueMatches,Synapter-method}
-\alias{filterNonUniqueMatches}
 
 % plotting
 \alias{plotEMRTtable,Synapter-method}
@@ -687,20 +681,14 @@ Synapter(filenames, master) ## creates an instance of class 'Synapter'
 
     \describe{
 
-      \item{filterUniqueDbPeptides}{\code{signature(object="Synapter",
-          missedCleavages = 0, IisL = TRUE, verbose = TRUE)}:
+      \item{filterUniqueDbPeptides}{\code{signature(object="Synapter")}:
 	This method first digests the fasta database file and keeps
 	unique tryptic peptides. (NOTE: since version 1.5.3, the tryptic
 	digestion uses the \code{cleaver} package, replacing the more
 	simplistic inbuild function. The effect of this change is
-	documented in https://github.com/lgatto/synapter/pull/47).
-  The number of maximal missed cleavages can be set as \code{missedCleavages}
-	(default is 0).
-  If \code{IisL = TRUE} Isoleucin and Leucin are treated as the same aminoacid.
-  In this case sequences like "ABCI", "ABCL" are removed
-  because they are not unqiue anymore. If \code{IisL = FALSE} (default)
-  "ABCI" and "ABCL" are reported as unique.
-  The peptide sequences are then used as a
+	documented in https://github.com/lgatto/synapter/pull/47). The
+	number of missed cleavages can be set as \code{missedCleavages}
+	(default is 0). Those peptide sequences are then used as a
 	filter against the identification and quantitation peptides,
 	where only unique proteotyptic instances (no miscleavage allowed
 	by default) are eventually kept in the \code{object} instance.
@@ -709,11 +697,11 @@ Synapter(filenames, master) ## creates an instance of class 'Synapter'
 	database.  }
 
       \item{filterUniqueQuantDbPeptides}{\code{signature(object="Synapter",
-	  missedCleavages = 0, IisL = TRUE, verbose = TRUE)}: As
+	  missedCleavages = 0, verbose = TRUE)}: As
 	\code{filterUniqueDbPeptides} for quantitation peptides only.  }
 
       \item{filterUniqueIdentDbPeptides}{\code{signature(object="Synapter",
-	  missedCleavages = 0, IisL = TRUE, verbose = TRUE)}: As
+	  missedCleavages = 0, verbose = TRUE)}: As
 	\code{filterUniqueDbPeptides} for identification peptides
 	only. }
 
@@ -825,7 +813,7 @@ Synapter(filenames, master) ## creates an instance of class 'Synapter'
       peptides as a function of the FDR cut-off and the expected false
       number of false positive as a number of significant
       tests. PepFrag 1 and 2 peptides are illustrated on the same
-      figures. These figures are adapted from \link[qvalue]{qplot}.
+      figures. These figures are adapted from \code{\link[qvalue]{plot.qvalue}}.
       \code{method}, one of \code{"BH"}, \code{"Bonferroni"} or
       \code{"qval"}, defines what identification statistics to use.
     }
@@ -952,7 +940,6 @@ Synapter(filenames, master) ## creates an instance of class 'Synapter'
 
   }
 }
-}
 
 
 \references{
@@ -985,29 +972,6 @@ Synapter(filenames, master) ## creates an instance of class 'Synapter'
   The Effects of Travelling Wave Ion Mobility Separation on Data
   Independent Acquisition in Proteomics Studies, P.V. Shliaha, N.J. Bond,
   L. Gatto and K.S. Lilley, Journal of Proteome Research, 2013, in press.
-
-  Trypsin cleavage:
-
-  Glatter, Timo, et al.
-  Large-scale quantitative assessment of different in-solution protein digestion
-  protocols reveals superior cleavage efficiency of tandem Lys-C/trypsin
-  proteolysis over trypsin digestion.
-  Journal of proteome research 11.11 (2012): 5145-5156.
-  \url{http://dx.doi.org/10.1021/pr300273g}
-
-  Rodriguez, Jesse, et al.
-  Does trypsin cut before proline?.
-  Journal of proteome research 7.01 (2007): 300-305.
-  \url{http://dx.doi.org/10.1021/pr0705035}
-
-  Brownridge, Philip, and Robert J. Beynon.
-  The importance of the digest: proteolysis and absolute quantification in
-  proteomics.
-  Methods 54.4 (2011): 351-360.
-  \url{http://dx.doi.org/10.1016/j.ymeth.2011.05.005}
-
-  cleaver's rules are taken from:
-  \url{http://web.expasy.org/peptide_cutter/peptidecutter_enzymes.html#Tryps}
 }
 
 

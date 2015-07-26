@@ -189,6 +189,8 @@
                         .self$QuantPeptideData$protein.falsePositiveRate <-
                             .self$QuantPeptideData$protein.falsePositiveRate / 100
                         message("Filtering...")
+                        ## affects #42
+                        .self$filterMismatchingQuantIntensities()
                         .self$filterQuantMatchType() ## Quant only
                         .self$filterQuantFunction()
                         ## must be before duplicated ids are removed and after
@@ -254,6 +256,8 @@
                         .self$IdentPeptideData$protein.falsePositiveRate <-
                             .self$IdentPeptideData$protein.falsePositiveRate / 100
                         message("Filtering...")
+                        ## affects #42
+                        .self$filterMismatchingQuantIntensities()
                         .self$filterMatchType()
                         .self$filterQuantFunction()
                         ## must be before duplicated ids are removed and after
@@ -377,11 +381,8 @@
                     },
                     modelRetentionTime = function(span) {
                         'Models retention time'
-                        if (missing(span)) {
+                        if (missing(span))
                             span <- .self$LowessSpan
-                        } else {
-                          .self$LowessSpan <- span
-                        }
                         .self$RtModel <- modelRetTime(.self$MergedFeatures, span = span)
                         .self$SynapterLog <- c(.self$SynapterLog,
                                                paste("Modelled retention time using lowess and span ",
@@ -749,10 +750,9 @@
                                                       "]", sep=""))
                        },
                        filterDuplicatedQuantSpectrumIds = function() {
-                         'Removes duplicated quantitation EMRT spectrum ids (different charge states, isotopes,.. ) keeping the one with isFid == 1 (is used for identification).'
-                         keep  <- .self$QuantPep3DData$isFid == 1
+                         'Removes duplicated quantitation EMRT spectrum ids (different charge states, isotopes,.. ) keeping the first instance.'
+                         keep <- !duplicated(.self$QuantPep3DData$spectrumID)
                          .self$QuantPep3DData <- .self$QuantPep3DData[keep, ]
-
                          .self$SynapterLog <- c(.self$SynapterLog,
                                                 paste("Kept unique spectrum ids ",
                                                       "quantitation Pep3D [", paste(dim(.self$QuantPep3DData), collapse=","), "] ",
@@ -798,7 +798,40 @@
                        filterRandomEntries = function() {
                          .self$filterIdentRandomEntries()
                          .self$filterQuantRandomEntries()
-                       }))
+                       },
+                       filterMismatchingQuantIntensities = function() {
+                        ## this method should not be necessary; a mismatch
+                        ## between intensity values should never happen.
+                        ## See https://github.com/lgatto/synapter/issues/42
+                        ## for details
+                        idx <- match(.self$QuantPeptideData$precursor.leID,
+                                     .self$QuantPep3DData$spectrumID)
+
+                        iMismatch <- which(.self$QuantPeptideData$precursor.inten !=
+                                           .self$QuantPep3DData$Counts[idx])
+                        nMismatch <- length(iMismatch)
+
+                        if (nMismatch == length(idx)) {
+                          stop("It seems that all IDs are correct but ",
+                               "there are not any matching intensity values.")
+                        }
+                        if (nMismatch) {
+                          warning("Filtering ", nMismatch, " (of ", length(idx), " total) ",
+                                  "entries of the quantitation final peptide and Pep3D file because ",
+                                  "they differ in their intensity values.")
+                          .self$QuantPeptideData <- .self$QuantPeptideData[-iMismatch, ]
+                          .self$QuantPep3DData <- .self$QuantPep3DData[-idx[iMismatch], ]
+                          .self$SynapterLog <- c(.self$SynapterLog,
+                                                 paste0("Filtered ", nMismatch,
+                                                        " quantitation final peptide data entries because of intensity mismatch [",
+                                                        paste(dim(.self$QuantPeptideData), collapse = ","), "]"))
+                          .self$SynapterLog <- c(.self$SynapterLog,
+                                                 paste0("Filtered ", nMismatch,
+                                                        " quantitation Pep3D data entries because of intensity mismatch [",
+                                                       paste(dim(.self$QuantPep3DData), collapse = ","), "]"))
+                        }
+                       }
+                       ))
 
 
 ## PEPTIDE DATA FILTER
@@ -895,7 +928,7 @@
                                                       "]", sep=""))
                        },
 
-                       filterUniqueQuantDbPeptides = function(filename, missedCleavages = 0,  IisL = FALSE, verbose = TRUE) {
+                       filterUniqueQuantDbPeptides = function(filename, missedCleavages = 0, verbose = TRUE) {
                          'Filters quantitation tryptic peptides that match one and only one protein in the fasta database.'
                          .self$filterUniqueDbPeptides(filename,
                                                       what="quant",
@@ -1031,4 +1064,3 @@
                                                       paste0(dim(.self$MatchedEMRTs),
                                                              collapse=","), "]"))
                        }))
-

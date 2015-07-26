@@ -5,6 +5,9 @@
 ## https://stat.ethz.ch/pipermail/r-sig-mac/2006-October/003301.html
 ## http://stackoverflow.com/questions/6234690/resizeable-tk-windows-done-right
 
+##' Note: The tcltk interface is being deprecated. Please consider
+##' using its underlying \code{synergise()} function instead.
+##'
 ##' This function starts the synapter graphical user interface
 ##' that allows to (1) load \code{n} sets of files to be analyses,
 ##' (2) parameters used for data filtering and retention time
@@ -31,22 +34,22 @@ synapterGUI <- function(n = 1) {
     .Deprecated("synergise", package = "synapter",
                 msg = c("The synapterGUI() interface is deprecated.\n",
                     "Please consider using synergise() instead."))
-    if (!require("tcltk") | !require("tcltk2"))
-        stop("The gui requires the 'tcltk' and 'txltk2' packages.")    
+    if (!requireNamespace("tcltk") | !requireNamespace("tcltk2"))
+        stop("The gui requires the 'tcltk' and 'txltk2' packages.")
     if (n < 1)
         stop("You must provide at least one set of files.")
     gui_output <- NULL
     .GUI(n, e = environment())
     if (!is.null(gui_output)) {
         for (i in 1:n) {
-            sel <- grep(paste0(i, "$"), names(gui_output$filenames))    
+            sel <- grep(paste0(i, "$"), names(gui_output$filenames))
             .filenames <- gui_output$filenames[sel]
             out <- grep(paste0("Out", i), names(.filenames))
             .outputdir <- .filenames[out]
             .filenames <- c(.filenames[-out],
                             gui_output$filenames["fasta"])
             .filenames <- as.list(.filenames)
-            names(.filenames) <- c("quantpep3d", "identpeptide",                           
+            names(.filenames) <- c("quantpep3d", "identpeptide",
                                    "quantpeptide", "fasta")
             message("(", i, ") Processing ", basename(.filenames[[2]]))
             synergise(filenames = .filenames,
@@ -79,7 +82,7 @@ synapterGUI <- function(n = 1) {
     ##  If the window is active,                                           done = 0
     ##  If the window has been closed using the Run button,                done = 1
     ##  If the window has been closed using the Close button or destroyed, done = 2
-    done <- tclVar(0) 
+    done <- tclVar(0)
     fls <- new.env()
     tcltk::tclRequire("BWidget")
     tt <- tktoplevel() ## toplevel windowx
@@ -102,7 +105,7 @@ synapterGUI <- function(n = 1) {
     tb1.upperframe <- tkframe(tb1)
     add <- tk2button(tb1.upperframe,
                      text = "Add",
-                     command = function() {  
+                     command = function() {
                          x <- tclvalue(tcl(treeWidget,"selection","get"))
                          if (x != "" &
                              (length(grep("Quant", x)) == 1 |
@@ -122,7 +125,7 @@ synapterGUI <- function(n = 1) {
                              val <- paste0(x, "Val")
                              tkinsert(treeWidget, "end", x, val, text = f)
                              assign(x, f, envir = fls)
-                         } 
+                         }
                      })
     remove <- tk2button(tb1.upperframe,
                         text = "Remove",
@@ -151,7 +154,7 @@ synapterGUI <- function(n = 1) {
     tkgrid.configure(treeWidget, sticky = "nsew")
     tkgrid.configure(yScr, sticky = "ns")
     tkgrid.columnconfigure(tb1.lowerframe, 0, weight = 1)
-    tkgrid.rowconfigure(tb1.lowerframe, 0, weight = 1) 
+    tkgrid.rowconfigure(tb1.lowerframe, 0, weight = 1)
     tkgrid.configure(xScr, sticky = "wse")
     tkinsert(treeWidget, "end", "root",
              "fasta", text = "fasta")
@@ -167,7 +170,7 @@ synapterGUI <- function(n = 1) {
         tkinsert(treeWidget,"end", rec, quant,  text = "Quant")
         tkinsert(treeWidget,"end", rec, pep3d, text = "Quant Pep3D")
         tkinsert(treeWidget,"end", rec, out, text = "Output folder")
-    })    
+    })
     ## -----------------------------------------------
     tb1.bottomframe <- tkframe(tb1, relief = "groove", borderwidth = 1)
     tkpack(tb1.bottomframe, fill = "both", expand = TRUE, anchor = "s")
@@ -182,7 +185,7 @@ synapterGUI <- function(n = 1) {
     tb2.frame2 <- tkframe(tb2, relief = "groove", borderwidth = 1)
     tkpack(tb2.frame1, expand = TRUE, fill = "both")
     tkpack(tb2.frame2, expand = TRUE, fill = "both")
-    ## -----------------------------------------------  
+    ## -----------------------------------------------
     tkpack(tklabel(tb2.frame1, text = "Filtering"), side = "top",
            anchor = "w", pady = 1)
     .f1 <- tkframe(tb2.frame1)
@@ -217,7 +220,7 @@ synapterGUI <- function(n = 1) {
            anchor = "w", pady = 1)
     .f6 <- tkframe(tb2.frame2)
     span <- tclVar(0.05)
-    entry.span <- tkentry(.f6, textvariable = span, width = 10) 
+    entry.span <- tkentry(.f6, textvariable = span, width = 10)
     tkpack(tklabel(.f6, text = "Loess span ", width = 15),
            entry.span, padx = 5, side = "left")
     tkpack(.f6, side = "top", padx = 1, pady = 1)
@@ -229,14 +232,14 @@ synapterGUI <- function(n = 1) {
     tkpack(tb3.frame1, expand = TRUE, fill = "both")
     tkpack(tb3.frame2, expand = TRUE, fill = "both")
     tkpack(tb3.frame3, expand = TRUE, fill = "both")
-    ## -----------------------------------------------  
+    ## -----------------------------------------------
     tkpack(tklabel(tb3.frame1, text = "Mass tolerance (ppm)"), side = "top",
            anchor = "w", pady = 1)
     .f7 <- tkframe(tb3.frame1)
     ppm.from <- tclVar(5)
     entry.ppm.from <- tkentry(.f7, textvariable = ppm.from, width = 10)
     tkpack(tklabel(.f7, text = "from ", width = 5),
-           entry.ppm.from, padx = 5, side = "left")  
+           entry.ppm.from, padx = 5, side = "left")
     .f8 <- tkframe(tb3.frame1)
     ppm.to <- tclVar(20)
     entry.ppm.to <- tkentry(.f8, textvariable = ppm.to, width = 10)
@@ -246,48 +249,48 @@ synapterGUI <- function(n = 1) {
     ppm.by <- tclVar(2)
     entry.ppm.by <- tkentry(.f9, textvariable = ppm.by, width = 10)
     tkpack(tklabel(.f9, text = "by ", width = 5),
-           entry.ppm.by, padx = 5, side = "left")  
+           entry.ppm.by, padx = 5, side = "left")
     tkpack(.f7, .f8, .f9, side = "top",
            padx = 1, pady = 1)
-    ## -----------------------------------------------  
+    ## -----------------------------------------------
     tkpack(tklabel(tb3.frame2, text = "Retention time (nsd)"), side = "top",
            anchor = "w", pady = 1)
     .f10 <- tkframe(tb3.frame2)
     nsd.from <- tclVar(0.5)
     entry.nsd.from <- tkentry(.f10, textvariable = nsd.from, width = 10)
     tkpack(tklabel(.f10, text = "from ", width = 5),
-           entry.nsd.from, padx = 5, side = "left")  
+           entry.nsd.from, padx = 5, side = "left")
     .f11 <- tkframe(tb3.frame2)
     nsd.to <- tclVar(5)
     entry.nsd.to <- tkentry(.f11, textvariable = nsd.to, width = 10)
     tkpack(tklabel(.f11, text = "to ", width = 5),
-           entry.nsd.to, padx = 5, side = "left")  
+           entry.nsd.to, padx = 5, side = "left")
     .f12 <- tkframe(tb3.frame2)
     nsd.by <- tclVar(0.5)
     entry.nsd.by <- tkentry(.f12, textvariable = nsd.by, width = 10)
     tkpack(tklabel(.f12, text = "by ", width = 5),
-           entry.nsd.by, padx = 5, side = "left")  
+           entry.nsd.by, padx = 5, side = "left")
     tkpack(.f10, .f11, .f12, side = "top",
            padx = 1, pady = 1)
-    ## -----------------------------------------------  
+    ## -----------------------------------------------
     tkpack(tklabel(tb3.frame3, text = "Data subset"),
            side = "top", anchor = "w", pady = 1)
     .f13 <- tkframe(tb3.frame3)
     subset <- tclVar(1)
     entry.subset <- tkentry(.f13, textvariable = subset, width = 10)
     tkpack(tklabel(.f13, text = "percentage ", width = 10),
-           entry.subset, padx = 5, side = "left")  
+           entry.subset, padx = 5, side = "left")
     .f14 <- tkframe(tb3.frame3)
     grid.n <- tclVar(0)
     entry.grid.n <- tkentry(.f14, textvariable = grid.n, width = 10)
     tkpack(tklabel(.f14, text = "absolute  ", width = 10),
-           entry.grid.n, padx = 5, side = "left")  
+           entry.grid.n, padx = 5, side = "left")
     tkpack(.f13, .f14, side = "top",
            padx = 1, pady = 1)
     ## ===============================================
     ## .tt.lowerframe - run/close buttons
     run <- tk2button(lowerframe,
-                     text = "Run",                   
+                     text = "Run",
                      command = function() {
                          if (length(fls) != ((4 * n) + 1)) {
                              message("Not all input files have been provided")
@@ -323,7 +326,7 @@ synapterGUI <- function(n = 1) {
                        text = "Close",
                        command = function() {
                            tclvalue(done) <- 2
-                           tkdestroy(tt)                       
+                           tkdestroy(tt)
                        })
     tkpack(run, side = "left", expand = TRUE)
     tkpack(close, side = "right", expand = TRUE)
