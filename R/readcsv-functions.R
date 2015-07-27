@@ -5,6 +5,7 @@
 #' @noRd
 fetchColnames <- function(file, sep = ",") {
   header <- scan(file, what = character(), nlines = 1L, quiet = TRUE)
+  header <- gsub("\"", "", header)
   trimws(unlist(strsplit(paste(header, collapse=" "), split=sep)))
 }
 
