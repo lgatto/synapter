@@ -3,7 +3,6 @@
 #' Stupid parser for one of the ugliest pseudo-xml formats I have ever seen.
 #'
 #' @param file file path
-#' @param ms1 should we read ms1 spectra?
 #' @param encoding file encoding, seems to be windows specific
 #' @param verbose verbose output?
 #'
@@ -13,9 +12,7 @@
 #'  leRows: environment (key == leID), values == LE_ID row index
 #'  heRows: environment (key == leID), values == HE_ID row index
 #' @noRd
-.readSynapterSpectrumXml <- function(file, ms1=FALSE,
-                                     encoding="Windows-1252",
-                                     verbose=TRUE) {
+.readSynapterSpectrumXml <- function(file, verbose=interactive()) {
   stopifnot(file.exists(file))
 
   ## helper functions
@@ -28,27 +25,30 @@
   .extractHEID <- function(x) {
     gsub("^.*HE_ID=\\\"([[:digit:],]+)\\\".*$", "\\1", x)
   }
-
-  .createMsMatrix <- function(x, header) {
-    ms <- do.call(rbind, strsplit(x, "[[:space:]]+"))
-    ms <- ms[, -1]
-    mode(ms) <- "double"
-    colnames(ms) <- header
-    return(ms)
+  .createMsMatrix <- function(x, header, verbose=interactive()) {
+    x <- paste0(gsub("[[:space:]]+", ",", x), collapse="\n")
+    ms <- as.matrix(readr::read_csv(x, col_names=c("X1", header),
+                                    col_types=paste0("_",
+                                      paste0(rep("d", length(header)),
+                                             collapse="")),
+                                    progress=verbose))
+    ms
   }
 
   if (verbose) {
     message("Reading ", file)
   }
-  content <- readLines(file, encoding=encoding, warn=FALSE)
+  content <- readr::read_lines(file)
 
   if (verbose) {
     message("Search line numbers for Header information")
   }
-  linesField <- grep("<FIELD", content, fixed=TRUE)
-  splitPoint <- which(diff(linesField) > 1)
+  linesField <- grep("<FIELD", content[1L:min(200L, length(content))],
+                     fixed=TRUE)
+  splitPoint <- which(diff(linesField) > 1L)
   linesFieldMs1 <- linesField[1:splitPoint]
   linesFieldMs2 <- linesField[(splitPoint+1):length(linesField)]
+
 
   if (verbose) {
     message("Read Header information")
@@ -57,29 +57,21 @@
   header1 <- .extractName(content[linesFieldMs1])
   header2 <- .extractName(content[linesFieldMs2])
 
-  if (ms1) {
-    if (verbose) {
-      message("Search line numbers for MS1 Data")
-    }
-    linesMs1 <- c(grep("<DATA", content, fixed=TRUE)+1,
-                  grep("</DATA", content, fixed=TRUE)-1)
+  if (verbose) {
+    message("Search line numbers for MS1 Data")
   }
+  linesMs1 <- grep("</?DATA", content)+c(1L, -1L)
 
   if (verbose) {
     message("Search line numbers for MS2 Data")
   }
-  linesMs2 <- c(grep("<HE_DATA", content, fixed=TRUE)+1,
-                grep("</HE_DATA", content, fixed=TRUE)-1)
+  linesMs2 <- grep("</?HE_DATA", content)+c(1L, -1L)
 
-  if (ms1) {
-    if (verbose) {
-      message("Read MS1 Data (", paste(linesMs1, collapse=":"), ")")
-    }
-    range <- seq(linesMs1[1], linesMs1[2])
-    ms1 <- .createMsMatrix(content[range], header1)
-  } else {
-    ms1 <- matrix()
+  if (verbose) {
+    message("Read MS1 Data (", paste(linesMs1, collapse=":"), ")")
   }
+  range <- seq(linesMs1[1], linesMs1[2])
+  ms1 <- .createMsMatrix(content[range], header1)
 
   if (verbose) {
     message("Read MS2 Data (", paste(linesMs2, collapse=":"), ")")
@@ -90,8 +82,7 @@
   if (verbose) {
     message("Search line numbers for MS1 to MS2 assignment")
   }
-  linesAssignment <- c(grep("<PRECURSOR_PRODUCT_BIN", content, fixed=TRUE)+1,
-                       grep("</PRECURSOR_PRODUCT_BIN", content, fixed=TRUE)-1)
+  linesAssignment <- grep("</?PRECURSOR_PRODUCT_BIN", content)+c(1L, -1L)
 
   if (verbose) {
     message("Read Assignment Data (", paste(linesAssignment, collapse=":"), ")")
@@ -127,8 +118,8 @@
 #' @return modified assaydata
 #' @noRd
 .spectrumXml2spectra <- function(df, file, storeAll=TRUE, removePrecursor=TRUE,
-                                 tolerance=25e-6, verbose=TRUE) {
-  xml <- .readSynapterSpectrumXml(file, ms1=TRUE, verbose=verbose)
+                                 tolerance=25e-6, verbose=interactive()) {
+  xml <- .readSynapterSpectrumXml(file, verbose=verbose)
 
   peptideinfo <- df[!duplicated(df$precursor.leID), ]
 
