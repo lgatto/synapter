@@ -401,19 +401,19 @@
   emrts$matchedEMRTs.beforeFilterNonUniqueMatches <- emrts$matchedEMRTs
 
   if (length(exclude)) {
-    cols <- c("matched.quant.spectrumIDs", "precursor.leID.quant", "spectrumID")
-    emrts[rows, cols] <- fm[, cols]
-    # comment the next line and uncomment the over next line to *not* remove the
-    # filtered emrts
-    #emrts <- emrts[-exclude, ]
-
     ## this order is important because include could contain row numbers that
     ## are present in keep as well (because fm has many duplicated
     ## precursor.leID.idents)
+    # see https://github.com/lgatto/synapter/issues/93
     emrts$matchedEMRTs[exclude] <- -2
     # set Counts to NA; see https://github.com/lgatto/synapter/issues/85
     emrts$Counts[exclude] <- NA
+
     emrts$matchedEMRTs[rows[keep]] <- 1
+
+    cols <- c("matched.quant.spectrumIDs", "precursor.leID.quant", "spectrumID",
+              "Counts")
+    emrts[rows[keep], cols] <- fm[keep, cols]
   }
   return(emrts)
 }
