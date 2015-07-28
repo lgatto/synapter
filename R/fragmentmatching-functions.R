@@ -411,8 +411,7 @@
 
     emrts$matchedEMRTs[rows[keep]] <- 1
 
-    cols <- c("matched.quant.spectrumIDs", "precursor.leID.quant", "spectrumID",
-              "Counts")
+    cols <- c("precursor.leID.quant", "spectrumID", "Counts")
     emrts[rows[keep], cols] <- fm[keep, cols]
   }
   return(emrts)
