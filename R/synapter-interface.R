@@ -679,6 +679,16 @@ setMethod(fragmentMatching, "Synapter",
             object$fragmentMatching(verbose=verbose)
           })
 
+setMethod(getIdentificationFragments, "Synapter",
+          function(object) {
+            object$IdentFragmentData
+          })
+
+setMethod(getQuantitationSpectra, "Synapter",
+          function(object) {
+            object$QuantSpectrumData
+          })
+
 ## Results to csv
 setMethod(writeIdentPeptides, "Synapter",
           function(object,

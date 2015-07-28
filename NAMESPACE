@@ -107,4 +107,6 @@ exportMethods(show,
               show,
               writeMasterPeptides,
               writeFragmentLibrary,
+              getIdentificationFragments,
+              getQuantitationSpectra,
               updateObject)

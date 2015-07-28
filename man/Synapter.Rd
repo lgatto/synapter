@@ -85,6 +85,10 @@
 \alias{performance2,Synapter-method}
 \alias{performance}
 \alias{performance2}
+\alias{getIdentificationFragments,Synapter-method}
+\alias{getIdentificationFragments}
+\alias{getQuantitationSpectra,Synapter-method}
+\alias{getQuantitationSpectra}
 
 % filters
 \alias{filterPeptideLength,Synapter-method}
@@ -428,6 +432,10 @@ Synapter(filenames, master) ## creates an instance of class 'Synapter'
     Complete \code{Synapter} instances can be serialised with
     \code{save}, as any R object, and reloaded with \code{load} for
     further analysis.
+
+    It is possible to get the fragment and spectra data from the identification
+    and quantitation run using \code{getIdentificationFragments} respectively
+    \code{getQuantitationSpectra}.
   }
 }
 
@@ -931,6 +939,12 @@ Synapter(filenames, master) ## creates an instance of class 'Synapter'
       \item{writeQuantPeptides}{\code{signature(object="Synapter", file
 	  = "character", ...)}: A above, exporting the quantitation
 	peptide data.
+      }
+      \item{getIdentificationFragments}{\code{signature(object="Synapter")}:
+        returns the identification fragments as \code{\linkS4class{MSnExp}}.
+      }
+      \item{getQuantitationSpectra}{\code{signature(object="Synapter")}:
+        returns the quantitation spectra as \code{\linkS4class{MSnExp}}.
       }
     }
   }

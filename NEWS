@@ -70,6 +70,8 @@ CHANGES IN VERSION 1.99.0
    closes #67 [2015-07-26 Sun]
  o remove "mergedEMRTs" argument from `findEMRTs`. Now `rescueEMRTs` has to be
    called manually at the end of the processing; close #93 [2015-07-26 Sun]
+ o add `getIdentificationFragments` and `getQuantitationSpectra`; close #89
+   [2015-07-28 Tue]
 
 CHANGES IN VERSION 1.9.5
 ------------------------
