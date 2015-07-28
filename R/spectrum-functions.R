@@ -27,10 +27,11 @@
   }
   .createMsMatrix <- function(x, header, verbose=interactive()) {
     x <- paste0(gsub("[[:space:]]+", ",", x), collapse="\n")
-    ms <- as.matrix(readr::read_csv(x, col_names=c("X1", header),
-                                    col_types=paste0("_",
-                                      paste0(rep("d", length(header)),
-                                             collapse="")),
+    col_names <- setNames(rep("_", length(header) + 1), c("X1", header))
+    col_names[names(col_names) %in% c("Mass", "Intensity", "LE_ID", "HE_ID",
+                                      "Z", "RT")] <- "d"
+    ms <- as.matrix(readr::read_csv(x, col_names=names(col_names),
+                                    col_types=paste(col_names, collapse=""),
                                     progress=verbose))
     ms
   }
