@@ -549,8 +549,6 @@ flatMatchedEMRTs <- function(emrts, pep3d, na.rm=TRUE, verbose=TRUE) {
 ## see issue 73 for details
 ## https://github.com/lgatto/synapter/issues/73
 .findSynapterPlgsAgreement <- function(emrts) {
-  ## no match
-  k0 <- emrts$matchedEMRTs == 0
   ## single match
   k1 <- emrts$matchedEMRTs == 1
 
@@ -560,9 +558,8 @@ flatMatchedEMRTs <- function(emrts, pep3d, na.rm=TRUE, verbose=TRUE) {
 
   ## agree (same EMRT by database search and synapter)
   ## disagree (different EMRT by database search and synapter)
-  agreement[k1Idx] <- ifelse(as.numeric(emrts$matched.quant.spectrumIDs[k1Idx]) ==
-                             as.numeric(emrts$precursor.leID.quant[k1Idx]),
-                             "agree", "disagree")
+  mqsid <- lapply(matched.quant.spectrumIDs2numeric(emrts$matched.quant.spectrumIDs[k1Idx]), "[", 1L)
+  agreement[k1Idx] <- ifelse(mqsid == as.numeric(emrts$precursor.leID.quant[k1Idx]), "agree", "disagree")
 
   ## no_plgs_id (transferred by synapter not ided by PLGS)
   agreement[is.na(emrts$precursor.leID.quant)] <- "no_plgs_id"
