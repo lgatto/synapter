@@ -411,7 +411,11 @@
 
     emrts$matchedEMRTs[rows[keep]] <- 1
 
-    cols <- c("precursor.leID.quant", "spectrumID", "Counts")
+    cols <- c("precursor.leID.quant",
+              ## pep3d data
+              "spectrumID", "rt_min", "mwHPlus", "charge", "Intensity",
+              "Counts", "clust_drift", "isFid", "ion_ID", "ion_z", "ion_iso",
+              "ion_area", "ion_counts", "Model", "isotopicDistr", "idSource")
     emrts[rows[keep], cols] <- fm[keep, cols]
   }
   return(emrts)
