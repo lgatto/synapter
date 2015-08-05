@@ -757,7 +757,8 @@ setAs("Synapter", "MSnSet",
                   "isotopicDistr",
                   "synapterPlgsAgreement")
         eset <- matrix(from$MatchedEMRTs$Counts)
-        colnames(eset) <- "Synapter1"
+        colnames(eset) <- sub("_IA_final_peptide.csv$", "",
+                              basename(from$QuantPeptideFile))
         obj <- new("MSnSet",
                    exprs = eset,
                    processingData = new("MSnProcess",
@@ -769,6 +770,7 @@ setAs("Synapter", "MSnSet",
         if (any(duplicated(fnames)))
           fnames <- make.unique(fnames)
         featureNames(obj) <- fnames
+        obj <- updateFvarLabels(obj, sampleNames(obj)[1L])
         if (validObject(obj))
           return(obj)
       })
