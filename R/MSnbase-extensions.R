@@ -43,7 +43,7 @@ synapterPlgsAgreement <- function(msnset) {
 
   ## calculate ratio for easier interpretation
   fData(msnset)$synapterPlgsAgreementRatio <-
-    fData(msnset)$nAgree/fData(msnset)$nIdentified
+    fData(msnset)$nAgree/(fData(msnset)$nAgree + fData(msnset)$nDisagree)
 
   msnset
 }
