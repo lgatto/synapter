@@ -36,10 +36,12 @@ synapterPlgsAgreement <- function(msnset) {
   fData(msnset)$nIdentified <- rowSums(!is.na(exprs(msnset)))
 
   ## metric b: how often PLGS/synapter agree
-  fData(msnset)$nAgree <- rowSums(fData(msnset)[, i] == "agree")
+  fData(msnset)$nAgree <- rowSums(fData(msnset)[, i] == "agree",
+                                  na.rm=TRUE)
 
   ## metric c: how often PLGS/synapter disagree
-  fData(msnset)$nDisagree <- rowSums(fData(msnset)[, i] == "disagree")
+  fData(msnset)$nDisagree <- rowSums(fData(msnset)[, i] == "disagree",
+                                     na.rm=TRUE)
 
   ## calculate ratio for easier interpretation
   fData(msnset)$synapterPlgsAgreementRatio <-
