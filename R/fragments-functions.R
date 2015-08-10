@@ -37,6 +37,7 @@
                                    "product.mhp" = "d",
                                    "product.inten" = "d",
                                    "product.z" = "d",
+                                   "product.rank" = "d",
                                    "Neutral.LossType" = "c"), verbose=verbose)
   df <- .filterEmptyFragments(df)
 
