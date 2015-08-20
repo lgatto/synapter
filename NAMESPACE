@@ -22,6 +22,7 @@ export(Synapter, ## constructor
        makeMaster,
        estimateMasterFdr,
        inspectPeptideScores,
+       requantify,
        synapterGuide,
        synapterPlgsAgreement,
        synapterTinyData)
