@@ -28,6 +28,12 @@ test_that("createReadrColTypes", {
                                               keepCols=c("Protein Key" = "c",
                                                          "intensity" = "d")),
                "c_d")
+  ## ignore non-existing columns
+  expect_equal(synapter:::createReadrColTypes(textConnection(content),
+                                              keepCols=c("Protein Key" = "c",
+                                                         "intensity" = "d",
+                                                         "foobar" = "d")),
+               "c_d")
 })
 
 test_that("createReadrColTypes", {

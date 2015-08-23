@@ -22,6 +22,7 @@ fetchColnames <- function(file, sep = ",") {
 createReadrColTypes <- function(file, keepCols) {
   cols <- fetchColnames(file)
   cols <- setNames(rep("_", length(cols)), cols)
+  keepCols <- keepCols[names(keepCols) %in% names(cols)]
   cols[names(keepCols)] <- keepCols
   paste0(cols, collapse="")
 }
