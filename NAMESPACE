@@ -11,7 +11,7 @@ importFrom(lattice, levelplot, densityplot, barchart)
 importFrom(RColorBrewer, brewer.pal)
 importFrom(Biobase, addVigs2WinMenu, isCurrent, updateObject, validMsg)
 importFrom(Biostrings, readAAStringSet)
-importFrom(tools, file_ext)
+importFrom(tools, file_ext, file_path_sans_ext)
 importFrom(readr, read_csv)
 
 export(Synapter, ## constructor

@@ -757,8 +757,9 @@ setAs("Synapter", "MSnSet",
                   "isotopicDistr",
                   "synapterPlgsAgreement")
         eset <- matrix(from$MatchedEMRTs$Counts)
-        colnames(eset) <- sub("_IA_final_peptide.csv$", "",
-                              basename(from$QuantPeptideFile))
+        colnames(eset) <- sub("_IA_final_peptide$", "",
+                              basename(file_path_sans_ext(from$QuantPeptideFile,
+                                                          compression=TRUE)))
         obj <- new("MSnSet",
                    exprs = eset,
                    processingData = new("MSnProcess",
