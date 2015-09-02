@@ -1,5 +1,5 @@
 requantify <- function(msnset, saturationThreshold,
-                       method=c("sum", "th.mean", "th.median", "th.weighted.mean")) {
+                       method=c("sum", "reference", "th.mean", "th.median", "th.weighted.mean")) {
   cn <- fvarLabels(msnset)
   i <- grep("isotopicDistr", cn)
 
@@ -15,7 +15,10 @@ requantify <- function(msnset, saturationThreshold,
   if (method == "sum") {
     e <- t(apply(f, 1, .requantifySum,
                  saturationThreshold=saturationThreshold))
-  } else {
+  } else if (method == "reference") {
+    e <- t(apply(f, 1, .requantifyReferenceRun,
+                 saturationThreshold=saturationThreshold))
+  }  else {
     if (!requireNamespace("BRAIN")) {
       stop("Please install the BRAIN package via 'biocLite(\"BRAIN\")' to use this method.")
     }
@@ -80,4 +83,27 @@ requantify <- function(msnset, saturationThreshold,
 .sumIsotopes <- function(x) {
   nm <- factor(sapply(strsplit(names(x), "_", fixed=TRUE), "[", 2))
   tapply(x, nm, sum)
+}
+
+.requantifyReferenceRun <- function(x, saturationThreshold=Inf) {
+  x <- .splitIsotopicDistr(unlist(x))
+  isUnsaturated <- lapply(x, "<", saturationThreshold)
+  isRunUnsaturated <- vapply(isUnsaturated, function(x)isTRUE(all(x)), logical(1))
+  intSum <- vapply(x, sum, double(1))
+  refRun <- seq_along(x)[isRunUnsaturated][which.max(intSum[isRunUnsaturated])]
+  if (length(refRun) && sum(!isRunUnsaturated, na.rm=TRUE)) {
+    intSum[!isRunUnsaturated] <-
+      mapply(function(iso, unsat) {
+               .requantifySaturatedRunByReferenceRun(unlist(iso), x[[refRun]],
+                                                     unlist(unsat))
+             }, iso=x[!isRunUnsaturated],
+             unsat=isUnsaturated[!isRunUnsaturated])
+  }
+  intSum
+}
+
+.requantifySaturatedRunByReferenceRun <- function(x, refRun, isUnsaturated) {
+  common <- intersect(names(x)[isUnsaturated], names(refRun))
+  f <- mean(x[common]/refRun[common], na.rm=TRUE)
+  sum(refRun[!isUnsaturated]*f, x[isUnsaturated])
 }
