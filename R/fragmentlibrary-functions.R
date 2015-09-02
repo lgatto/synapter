@@ -59,8 +59,8 @@
   precursor.inten <- ave(fragments$precursor.inten,
                          fragments$peptide.seq, fragments$fragment.str,
                          FUN=sum)
-  ## calculate new intensity and round to nearest integer
-  fragments$product.inten <- round(product.inten / precursor.inten)
+  ## calculate new intensity
+  fragments$product.inten <- product.inten / precursor.inten
 
   ## take only the first occurence of each fragment
   fragments <-
@@ -69,13 +69,13 @@
   ## calculate new precursor intensity for each peptide
   split(fragments$precursor.inten, fragments$peptide.seq) <-
     lapply(split(fragments[c("precursor.inten", "run")], fragments$peptide.seq), function(x) {
-      mean(x$precursor.inten[!duplicated(x$run)])
+      round(mean(x$precursor.inten[!duplicated(x$run)]))
   })
   ## normalize product intensity by new precursor intensity
-  fragments$product.inten <- fragments$precursor.inten * fragments$product.inten
+  ## and round to nearest integer
+  fragments$product.inten <- round(fragments$precursor.inten * fragments$product.inten)
   fragments$product.rank <- ave(fragments$product.rank,
                                 fragments$peptide.seq,
                                 FUN=seq_along)
   fragments
 }
-
