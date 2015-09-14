@@ -620,6 +620,9 @@ setAs("Synapter", "MSnSet",
                   "Bonferroni",
                   "BH",
                   "qval")
+        ## Using those cols that are available in the Synapter object
+        ## see https://support.bioconductor.org/p/71087/
+        cols <- cols[cols %in% colnames(from$MatchedEMRTs[, cols])]
         eset <- matrix(from$MatchedEMRTs$Counts)
         colnames(eset) <- "Synapter1"
         obj <- new("MSnSet",
