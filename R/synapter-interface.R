@@ -755,7 +755,7 @@ setAs("Synapter", "MSnSet",
                   "BH",
                   "qval",
                   "isotopicDistr",
-                  "synapterPlgsAgreement")
+                  "synapterPlgsAgreement",
                   "qval")
         ## Using those cols that are available in the Synapter object
         ## see https://support.bioconductor.org/p/71087/
