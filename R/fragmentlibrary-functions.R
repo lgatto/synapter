@@ -78,5 +78,6 @@
   fragments$product.rank <- ave(fragments$product.rank,
                                 fragments$peptide.seq,
                                 FUN=seq_along)
+  rownames(fragments) <- NULL
   fragments
 }
