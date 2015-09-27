@@ -73,6 +73,12 @@ CHANGES IN VERSION 1.99.0
  o add `getIdentificationFragments` and `getQuantitationSpectra`; close #89
    [2015-07-28 Tue]
 
+CHANGES IN VERSION 1.11.2
+-------------------------
+ o fixing bug introduced in 1.11.1 when coercing from
+   Synapter to MSnSet object - see this post on the support forum for
+   details https://support.bioconductor.org/p/71087/ <2015-09-27 Sun>
+
 CHANGES IN VERSION 1.11.1
 -------------------------
  o avoiding error when some fcols are missing when coercing from
