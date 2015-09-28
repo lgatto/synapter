@@ -1,9 +1,15 @@
+CHANGES IN VERSION 1.11.2
+-------------------------
+ o fixing bug introduced in 1.11.1 when coercing from
+   Synapter to MSnSet object - see this post on the support forum for
+   details https://support.bioconductor.org/p/71087/ <2015-09-27 Sun>
+
 CHANGES IN VERSION 1.11.1
 -------------------------
  o avoiding error when some fcols are missing when coercing from
    Synapter to MSnSet object - see this post on the support forum for
    details https://support.bioconductor.org/p/71087/ <2015-09-07 Mon>
- 
+
 CHANGES IN VERSION 1.9.5
 ------------------------
  o update cross reference to qvalue::plot.qvalue in Synapter man page;
