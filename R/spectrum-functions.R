@@ -26,13 +26,12 @@
     gsub("^.*HE_ID=\\\"([[:digit:],]+)\\\".*$", "\\1", x)
   }
   .createMsMatrix <- function(x, header, verbose=interactive()) {
-    x <- paste0(gsub("[[:space:]]+", ",", x), collapse="\n")
-    col_names <- setNames(rep("_", length(header) + 1), c("X1", header))
-    col_names[names(col_names) %in% c("Mass", "Intensity", "LE_ID", "HE_ID",
-                                      "Z", "RT")] <- "d"
-    ms <- as.matrix(readr::read_csv(x, col_names=names(col_names),
-                                    col_types=paste(col_names, collapse=""),
-                                    progress=verbose))
+    sheader <- paste0(header, collapse=",")
+    x <- paste0(gsub("[[:space:]]+", ",", trimws(c(sheader, x))), collapse="\n")
+    cols <- intersect(header,
+                      c("Mass", "Intensity", "LE_ID", "HE_ID", "Z", "RT"))
+    cols <- setNames(rep("d", length(cols)), cols)
+    ms <- as.matrix(readcsv(x, keepCols=cols, verbose=verbose))
     ms
   }
 
@@ -49,7 +48,6 @@
   splitPoint <- which(diff(linesField) > 1L)
   linesFieldMs1 <- linesField[1:splitPoint]
   linesFieldMs2 <- linesField[(splitPoint+1):length(linesField)]
-
 
   if (verbose) {
     message("Read Header information")
