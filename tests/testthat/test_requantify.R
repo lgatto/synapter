@@ -8,7 +8,7 @@ test_that("requantifyReferenceRun", {
                   stringsAsFactors=FALSE)
 
   int <- setNames(c(1111, 911, 2222, 7111), colnames(f))
-  sat5000_int <- setNames(c(1111, 911, 2222, 11111), colnames(f))
+  sat5000_int <- setNames(c(1111, 911, 2222, 11110), colnames(f))
 
   expect_equal(synapter:::.requantifyReferenceRun(f, Inf), int)
   expect_equal(synapter:::.requantifyReferenceRun(f, 5000), sat5000_int)

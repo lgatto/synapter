@@ -91,7 +91,17 @@ requantify <- function(msnset, saturationThreshold,
   isRunUnsaturated <- vapply(isUnsaturated, function(x)isTRUE(all(x)), logical(1))
   intSum <- vapply(x, sum, double(1))
   refRun <- seq_along(x)[isRunUnsaturated][which.max(intSum[isRunUnsaturated])]
+
   if (length(refRun) && sum(!isRunUnsaturated, na.rm=TRUE)) {
+
+    ## remove isotopes that are not in the reference run
+    refIso <- names(x[[refRun]])
+    x <- lapply(x, function(y)y[names(y) %in% refIso])
+
+    ## recalulate everything
+    isUnsaturated <- lapply(x, "<", saturationThreshold)
+    isRunUnsaturated <- vapply(isUnsaturated, function(x)isTRUE(length(x) && all(x)), logical(1))
+
     intSum[!isRunUnsaturated] <-
       mapply(function(iso, unsat) {
                .requantifySaturatedRunByReferenceRun(unlist(iso), x[[refRun]],
@@ -104,6 +114,10 @@ requantify <- function(msnset, saturationThreshold,
 
 .requantifySaturatedRunByReferenceRun <- function(x, refRun, isUnsaturated) {
   common <- intersect(names(x)[isUnsaturated], names(refRun))
-  f <- mean(x[common]/refRun[common], na.rm=TRUE)
-  sum(refRun[!isUnsaturated]*f, x[isUnsaturated])
+  if (length(common)) {
+    f <- mean(x[common]/refRun[common], na.rm=TRUE)
+    sum(refRun[!isUnsaturated]*f, x[isUnsaturated], na.rm=TRUE)
+  } else {
+    NA_real_
+  }
 }
