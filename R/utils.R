@@ -622,6 +622,9 @@ diagnosticErrors <- function(x) {
 #   colnames: isotopic names
 # @noRd
 .isotopicDistr2matrix <- function(x) {
+  if (is.data.frame(x)) {
+    x <- unlist(x)
+  }
   nm <- names(x)
   n <- length(x)
 
