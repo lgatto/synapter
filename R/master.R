@@ -425,16 +425,15 @@ makeMaster <- function(pepfiles,
     fragments <- data.frame()
   }
 
-  master <- new("MasterPeptides",
-                masters = mergedList,
-                pepfiles = pepfiles,
-                fdr = fdr,
-                method = method,
-                orders = orders,
-                fragmentfiles = fragmentfiles,
-                fragments = fragments,
-                fragmentlibrary = lib)
-  return(master)
+  new("MasterPeptides",
+      masters = mergedList,
+      pepfiles = pepfiles,
+      fdr = fdr,
+      method = method,
+      orders = orders,
+      fragmentfiles = fragmentfiles,
+      fragments = fragments,
+      fragmentlibrary = lib)
 }
 
 # Use the data set with the highest number of peptides for model creation
