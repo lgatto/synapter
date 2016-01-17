@@ -77,10 +77,10 @@ modelRetTime <- function(xx, span) {
   pp <- predict(lo, data.frame(precursor.retT.ident = xx$precursor.retT.ident), se=TRUE)
   sd <- pp$se.fit * sqrt(lo$n) ## get sd from se
   stopifnot(all.equal(pp$fit, fitted(lo), check.attributes = FALSE))
-  return(list(lo = lo,
-              o = o,
-              preds = pp,
-              sd = sd))
+  list(lo = lo,
+       o = o,
+       preds = pp,
+       sd = sd)
 }
 
 doHDMSePredictions <- function(identpep, model, nsd) {
@@ -107,14 +107,13 @@ doHDMSePredictions <- function(identpep, model, nsd) {
   } else {
     .lower <- .upper <- NA
   }
-  ans <- list(fitted = .fitted,
-              predicted = .predicted,
-              lower = .lower,
-              upper = .upper,
-              mass = identpep$peptide.mhp,
-              sd = .sd)
-  stopifnot(length(ans$predicted) == length(ans$sd))
-  return(ans)
+  stopifnot(length(.predicted) == length(.sd))
+  list(fitted = .fitted,
+       predicted = .predicted,
+       lower = .lower,
+       upper = .upper,
+       mass = identpep$peptide.mhp,
+       sd = .sd)
 }
 
 findRtIndices <- function(sortedPep3d, lowerHDMSeRt, upperHDMSeRt) {
