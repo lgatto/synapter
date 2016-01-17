@@ -50,3 +50,21 @@ test_that(".mergeMaster", {
                   synapter:::.mergeMaster(l, verbose = FALSE)), m,
                 tolerance = 0.02)
 })
+
+test_that(".regeneratePrecursorLeId", {
+  l <- list(A=data.frame(peptide.seq = LETTERS[1:10],
+                         precursor.leID = 10:1,
+                         stringsAsFactors = FALSE),
+            B=data.frame(peptide.seq = LETTERS[5:1],
+                         precursor.leID = 1:5,
+                         stringsAsFactors = FALSE))
+  r <- list(A=data.frame(peptide.seq = LETTERS[1:10],
+                         precursor.leID = 1:10,
+                         stringsAsFactors = FALSE),
+            B=data.frame(peptide.seq = LETTERS[5:1],
+                         precursor.leID = 5:1,
+                         stringsAsFactors = FALSE))
+  expect_equal(synapter:::.regeneratePrecursorLeId(l, verbose = FALSE), r)
+  expect_message(synapter:::.regeneratePrecursorLeId(l, verbose = TRUE),
+                 "Regenerate precursor.leIDs")
+})
