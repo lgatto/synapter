@@ -76,3 +76,13 @@ test_that(".splitIsotopicDistr", {
   expect_equal(synapter:::.isotopicDistr2matrix(isodf), m)
   expect_equal(synapter:::.isotopicDistr2matrix(isoNA), mNA)
 })
+
+test_that("modelRetTime", {
+  m <- synapter:::modelRetTime(11:20, 1:10*0.2, 0.75)
+  expect_identical(names(m), c("lo", "o", "preds", "sd"))
+  expect_identical(m$o, 1:10)
+  expect_equal(fitted(m$lo), seq(0.2, 2.0, by=0.2))
+  expect_equal(unname(m$preds$fit), fitted(m$lo))
+  expect_equal(m$preds$df, 6.213695586)
+  expect_identical(length(m$sd), 10L)
+})
