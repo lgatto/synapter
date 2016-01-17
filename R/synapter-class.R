@@ -387,7 +387,9 @@
                         } else {
                            .self$LowessSpan <- span
                         }
-                        .self$RtModel <- modelRetTime(.self$MergedFeatures, span = span)
+                        .self$RtModel <- modelRetTime(.self$MergedFeatures$precursor.retT.ident,
+                                                      .self$MergedFeatures$deltaRt,
+                                                      span = span)
                         .self$SynapterLog <- c(.self$SynapterLog,
                                                paste("Modelled retention time using lowess and span ",
                                                      .self$LowessSpan, sep=""))

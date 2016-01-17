@@ -62,7 +62,7 @@ filter.error.ppm <- function(x, colname, ppm = 2) {
   return(x[sel,])
 }
 
-modelRetTime <- function(xx, span) {
+modelRetTime <- function(retT, deltaRt, span) {
   ## delta = hdmse.rt - mse.rt
   ## hdmse' = mse.rt + delta
   ##        = mse.rt + hdmse.rt - mse.rt
@@ -71,10 +71,10 @@ modelRetTime <- function(xx, span) {
   ##      = hdmse - (hdmse.rt - mse.rt)
   ##      = hdmse - hdmse.rt + mse.rt
   ##      = mse
-  lo <- loess(deltaRt ~ precursor.retT.ident, data = xx, span = span,
-              degree = 1, family = "symmetric", iterations = 4, surface = "direct")
-  o <- order(xx$precursor.retT.ident)
-  pp <- predict(lo, data.frame(precursor.retT.ident = xx$precursor.retT.ident), se=TRUE)
+  lo <- loess(deltaRt ~ retT, span = span, degree = 1, family = "symmetric",
+              iterations = 4, surface = "direct")
+  o <- order(retT)
+  pp <- predict(lo, data.frame(retT = retT), se=TRUE)
   sd <- pp$se.fit * sqrt(lo$n) ## get sd from se
   stopifnot(all.equal(pp$fit, fitted(lo), check.attributes = FALSE))
   list(lo = lo,
@@ -95,7 +95,8 @@ doHDMSePredictions <- function(identpep, model, nsd) {
   } else {
     ## compute from model
     .o <- order(identpep$precursor.retT)
-    .allpreds <- predict(model$lo, data.frame(precursor.retT.ident = identpep$precursor.retT), se=TRUE)
+    .allpreds <- predict(model$lo, data.frame(retT = identpep$precursor.retT),
+                         se=TRUE)
     .sd <- .allpreds$se.fit[.o] * sqrt(model$lo$n) ## get sd from se
     .predicted <- identpep$precursor.retT - .allpreds$fit[.o]
     .fitted <- .allpreds$fit[.o]
@@ -394,9 +395,9 @@ gridSearch3 <- function(model,
                rep(imdiffs, m*n),
                sep=":")
   names(details) <- nms
-  return(list(prcntTotal = grd1,
-              prcntModel = grd2,
-              details = details))
+  list(prcntTotal = grd1,
+       prcntModel = grd2,
+       details = details)
 }
 
 makeFigurePath <- function(dirname, filename) {
