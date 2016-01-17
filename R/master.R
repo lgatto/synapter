@@ -303,12 +303,15 @@ setMethod("allComb", "MasterFdrResults",
 ##' @param fragmentfiles A \code{character} vector of final fragment file
 ##' names to be combined into an fragment library. These files should be
 ##' from the same runs as the final peptide files used in \code{pepfiles}.
-##' @param fdr A \code{numeric} indicating the preptide false
+##' @param fdr A \code{numeric} indicating the peptide false
 ##' discovery  rate limit.
 ##' @param method A \code{character} indicating the p-value adjustment to
 ##' be used. One of \code{BH} (default), \code{Bonferroni} or \code{qval}.
 ##' @param span A \code{numeric} with the loess span parameter value
 ##' to be used for retention time modelling.
+##' @param maxDeltaRt A \code{double} value that sets a maximum limit for
+##' the retention time deviaton between master and slave run to be included
+##  in the retention time modelling.
 ##' @param removeNeutralLoss A \code{logical}, if \code{TRUE} peptides with
 ##' neutral loss are removed from the fragment library.
 ##' @param removePrecursor A \code{logical}, if \code{TRUE} precursor ions are
@@ -341,67 +344,23 @@ makeMaster <- function(pepfiles,
                        ## fpr
                        method = c("BH", "Bonferroni", "qval"),
                        span = 0.05,
+                       maxDeltaRt = Inf,
                        removeNeutralLoss = TRUE,
                        removePrecursor = TRUE,
                        tolerance = 25e-6,
                        verbose = TRUE) {
   method <- match.arg(method)
-  n <- length(pepfiles)
   hdmseList <- lapply(pepfiles, loadIdentOnly,
                       fdr = fdr,
                       method = method,
                       verbose = verbose)
-  orders <- .orderForMasterModels(hdmseList)
-  mergedList <-
-    lapply(orders, function(o) {
-      ._hdmseList <- hdmseList[o]
-      master <- ._hdmseList[[1]]
-      merged <- master$IdentPeptideData
-      if (verbose) {
-        message("Master: ", basename(master$IdentPeptideFile),
-                " (", nrow(master$IdentPeptideData), " peptides)")
-        message(" |--- (1) Merged: ", nrow(merged), " features.")
-      }
-      for (i in 2:n) {
-        slave <- ._hdmseList[[i]]
-        if (verbose)
-          message(" +- Merging master and ", basename(slave$IdentPeptideFile),
-                  " (", nrow(slave$IdentPeptideData), " peptides)")
-        mergedPeptideData <- merge(master$IdentPeptideData,
-                                   slave$IdentPeptideData,
-                                   by.x = "peptide.seq",
-                                   by.y = "peptide.seq",
-                                   suffixes = c(".master", ".slave"))
-        RtModel <- loess(precursor.retT.master ~ precursor.retT.slave, data = mergedPeptideData, span = span)
-        predictedslaveRtime <- predict(RtModel,
-                                       newdata = data.frame(precursor.retT.slave = slave$IdentPeptideData$precursor.retT))
-        slave$IdentPeptideData$precursor.retT <- predictedslaveRtime
-        selPepsToAdd <- !(slave$IdentPeptideData$peptide.seq %in% merged$peptide.seq)
-        merged <- rbind(merged, slave$IdentPeptideData[selPepsToAdd, ])
-        if (verbose) {
-          if (i == n) {
-            message(" \\--- (", i, ") Merged: ", nrow(merged), " features.")
-          } else {
-            message(" |--- (", i, ") Merged: ", nrow(merged), " features.")
-          }
-        }
-      }
-      sel <- is.na(merged$precursor.retT)
-      merged <- merged[!sel, ]
-      return(merged)
-    })
+  mergedList <- lapply(.orderForMasterModels(hdmseList),
+                       function(o).mergeMaster(hdmseList[o],
+                                               maxDeltaRt = maxDeltaRt,
+                                               verbose = verbose))
 
-  ## regenerate precursor.leID
-  if (verbose) {
-    message("Regenerate precursor.leIDs.")
-  }
-  peptide.seqs <- unique(mergedList[[1]]$peptide.seq)
-  precursor.leID <- setNames(seq_along(peptide.seqs), peptide.seqs)
-
-  mergedList <- lapply(mergedList, function(x) {
-    x$precursor.leID <- precursor.leID[x$peptide.seq]
-    x
-  })
+  mergedList <- .regeneratePrecursorLeId(mergedList, .regeneratePrecursorLeId,
+                                         verbose = verbose)
 
   ## create fragment library
   if (!missing(fragmentfiles)) {
