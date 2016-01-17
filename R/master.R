@@ -459,11 +459,18 @@ makeMaster <- function(pepfiles,
                                            slaves[[i]]$IdentPeptideData,
                                            maxDeltaRt = maxDeltaRt,
                                            verbose = verbose)
-    rtModel <- modelRetTime(mergedPeptideData$precursor.retT.master,
-                            mergedPeptideData$deltaRt, span = span)
+    #rtModel <- modelRetTime(mergedPeptideData$precursor.retT.master,
+    #                        mergedPeptideData$deltaRt, span = span)$lo
+    rtModel <- loess(deltaRt ~ retT,
+                     data =
+                       list(deltaRt = mergedPeptideData$deltaRt,
+                            retT = mergedPeptideData$precursor.retT.master),
+                     span = span, degree = 1, family = "symmetric",
+                     iterations = 4, surface = "direct")
+
     slaves[[i]]$IdentPeptideData$precursor.retT <-
       slaves[[i]]$IdentPeptideData$precursor.retT +
-      predict(rtModel$lo, slaves[[i]]$IdentPeptideData$precursor.retT)
+      predict(rtModel, slaves[[i]]$IdentPeptideData$precursor.retT)
 
     isMissing <- !(slaves[[i]]$IdentPeptideData$peptide.seq %in%
                    merged$peptide.seq)
