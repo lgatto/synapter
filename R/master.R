@@ -354,7 +354,8 @@ makeMaster <- function(pepfiles,
                       fdr = fdr,
                       method = method,
                       verbose = verbose)
-  mergedList <- lapply(.orderForMasterModels(hdmseList),
+  orders <- .orderForMasterModels(hdmseList)
+  mergedList <- lapply(orders,
                        function(o).mergeMaster(hdmseList[o],
                                                maxDeltaRt = maxDeltaRt,
                                                verbose = verbose))
