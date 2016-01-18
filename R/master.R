@@ -359,8 +359,7 @@ makeMaster <- function(pepfiles,
                                                maxDeltaRt = maxDeltaRt,
                                                verbose = verbose))
 
-  mergedList <- .regeneratePrecursorLeId(mergedList, .regeneratePrecursorLeId,
-                                         verbose = verbose)
+  mergedList <- .regeneratePrecursorLeId(mergedList, verbose = verbose)
 
   ## create fragment library
   if (!missing(fragmentfiles)) {
