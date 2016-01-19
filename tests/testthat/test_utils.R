@@ -77,6 +77,16 @@ test_that(".splitIsotopicDistr", {
   expect_equal(synapter:::.isotopicDistr2matrix(isoNA), mNA)
 })
 
+test_that("rawRetTimeModel", {
+  retT <- 11:20
+  deltaRt <- 1:10*0.2
+  span <- 0.75
+  expect_equal(rawRetTimeModel(retT, deltaRt, span),
+               loess(deltaRt ~ retT, span = span, degree = 1,
+                     family = "symmetric", iterations = 4,
+                     surface = "direct"))
+})
+
 test_that("modelRetTime", {
   m <- synapter:::modelRetTime(11:20, 1:10*0.2, 0.75)
   expect_identical(names(m), c("lo", "o", "preds", "sd"))
