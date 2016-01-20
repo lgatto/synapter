@@ -463,7 +463,7 @@ makeMaster <- function(pepfiles,
                                mergedPeptideData$deltaRt, span=span)
 
     slaves[[i]]$IdentPeptideData$precursor.retT <-
-      slaves[[i]]$IdentPeptideData$precursor.retT +
+      slaves[[i]]$IdentPeptideData$precursor.retT -
       predict(rtModel, slaves[[i]]$IdentPeptideData$precursor.retT)
 
     isMissing <- !(slaves[[i]]$IdentPeptideData$peptide.seq %in%
