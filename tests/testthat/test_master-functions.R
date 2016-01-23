@@ -22,6 +22,15 @@ test_that(".calculatePeptideFileCombinations", {
                  "4 peptide files available - 6 combinations (limited by maxFileComb=2)*")
 })
 
+test_that(".peptideMatrix", {
+  l <- list(LETTERS[1:5], LETTERS[1:3], LETTERS[3:7])
+  m <- matrix(c(rep(1L, 5), 0L, 0L,
+                rep(1L, 3), rep(0L, 4),
+                0L, 0L, rep(1L, 5)), nrow = 7, ncol = 3,
+              dimnames = list(LETTERS[1:7], 1:3))
+  expect_equal(synapter:::.peptideMatrix(l), m)
+})
+
 test_that(".orderForMasterModels", {
   l <- list(A=list(IdentPeptideData=data.frame(A=1:2)),
             B=list(IdentPeptideData=data.frame(B=3:10)),

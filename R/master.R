@@ -202,6 +202,20 @@ estimateMasterFdr <- function(pepfiles,
   cmbs
 }
 
+#' Create bookholder matrix for unique peptides in specific ident files
+#' @param x list of unique peptides per file (one element per file)
+#' @return matrix, with unique peptides in rows and files in columns
+#' @noRd
+.peptideMatrix <- function(x) {
+  uniquePeptides <- unique(unlist(x))
+
+  l <- lapply(x, "%in%", x=uniquePeptides)
+  m <- do.call(cbind, l)
+  rownames(m) <- uniquePeptides
+  colnames(m) <- seq_along(x)
+  storage.mode(m) <- "integer"
+  m
+}
 
 setMethod("show", "MasterFdrResults",
           function(object) {
