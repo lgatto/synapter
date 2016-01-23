@@ -217,6 +217,33 @@ estimateMasterFdr <- function(pepfiles,
   m
 }
 
+#' Create summary for combinations needed for MasterFdrResults
+#' @param cmbs list of combinations
+#' @param proteotyptic character, proteotypic peptides
+#' @param uniquePeptidesList list of unique peptides per file
+#' (one element per file)
+#' @param fdr fdr
+#' @return data.frame
+#' @noRd
+.masterFdrSummary <- function(cmbs, proteotyptic, uniquePeptidesList, fdr) {
+  contMat <- .peptideMatrix(uniquePeptidesList)
+
+  nIncorrect <- round(colSums(contMat) * fdr, 0L)
+
+  ans <- lapply(cmbs, function(cmb) {
+    uniquePeptides <- unique(unlist(uniquePeptidesList[cmb]))
+    c(incorrect = round(sum(contMat[, cmb]) * fdr, 0L),
+      unique = sum(rowSums(contMat[, cmb]) != 0L),
+      proteotypic = sum(uniquePeptides %in% proteotyptic))
+  })
+
+  ans <- as.data.frame(do.call(rbind, ans))
+  ans$fdr <- ans$incorrect / ans$unique
+  ans$combination <- cmbs
+  ans$nbSample <- lengths(cmbs)
+  ans
+}
+
 setMethod("show", "MasterFdrResults",
           function(object) {
             cat(length(object@files), "files -", nrow(object@all), "combinations\n")

@@ -31,6 +31,20 @@ test_that(".peptideMatrix", {
   expect_equal(synapter:::.peptideMatrix(l), m)
 })
 
+test_that(".masterFdrSummary", {
+  incorrect <- c(4, 5, 4)
+  uni <- c(5, 7, 7)
+  r <- data.frame(incorrect = incorrect, unique = uni,
+                  proteotypic = uni,
+                  fdr = incorrect / uni)
+  r$combination <- list(c(1, 2), c(1, 3), c(2, 3))
+  r$nbSample <- rep(2, 3)
+  expect_equal(synapter:::.masterFdrSummary(r$combination, LETTERS[1:10],
+                                            list(LETTERS[1:5],
+                                                 LETTERS[1:3],
+                                                 LETTERS[3:7]), fdr = 0.5), r)
+})
+
 test_that(".orderForMasterModels", {
   l <- list(A=list(IdentPeptideData=data.frame(A=1:2)),
             B=list(IdentPeptideData=data.frame(B=3:10)),
