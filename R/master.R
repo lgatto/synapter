@@ -95,6 +95,9 @@ setMethod("writeFragmentLibrary", c("MasterPeptides", "character"),
 ##' In this case sequences like "ABCI", "ABCL" are removed because they
 ##' are not unqiue. If \code{FALSE} (default) "ABCI" and "ABCL" are reported as
 ##' unique.
+##' @param maxFileComb A \code{numeric} to limit the accepted file
+##' combinations to reduce computation time. Default is
+##' \code{length(pepfiles)} meaning no limit set.
 ##' @param verbose Should progress messages be printed?
 ##' @return An instance of class \code{"\linkS4class{MasterFdrResults}"}.
 ##' See details above.
@@ -115,6 +118,7 @@ estimateMasterFdr <- function(pepfiles,
                               proteotypic = TRUE,
                               missedCleavages = 0,
                               IisL = FALSE,
+                              maxFileComb = length(pepfiles),
                               verbose = TRUE) {
     pepfile <- unlist(pepfiles)
     m <- length(pepfiles)
@@ -175,6 +179,27 @@ estimateMasterFdr <- function(pepfiles,
                files = pepfiles,
                masterFdr = masterFdr)
     return(ret)
+}
+
+#' Calculate the possible combinations of pepfiles for master creation.
+#' @param n number of files
+#' @param maxFileComb maximal accepted file combinations
+#' @param verbose verbose output?
+#' @return list, with numeric vectors containing all combinations
+#' @noRd
+.calculatePeptideFileCombinations <- function(n, maxFileComb=n,
+                                              verbose=TRUE) {
+  cmbs <- lapply(2:maxFileComb, function(k)combn(n, k, simplify = FALSE))
+  cmbs <- Reduce(c, cmbs)
+
+  if (verbose) {
+    msg <- paste(n, "peptide files available -", length(cmbs), "combinations")
+    if (maxFileComb < n) {
+      msg <- paste0(msg, " (limited by maxFileComb=", maxFileComb, ")")
+    }
+    message(msg)
+  }
+  cmbs
 }
 
 
