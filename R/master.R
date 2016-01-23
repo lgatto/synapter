@@ -65,7 +65,7 @@ setMethod("writeFragmentLibrary", c("MasterPeptides", "character"),
 
 ##' This function takes all possible combination of \code{pepfiles}
 ##' of length greater or equal than 2 and computes the number of
-##' estimated incorrect petides, the number of unique peptides,
+##' estimated incorrect peptides, the number of unique peptides,
 ##' the number of unique protetypic peptides and the
 ##' false discovery rate after merging for each combination.
 ##' The best combination has an fdr lower than \code{masterFdr}
