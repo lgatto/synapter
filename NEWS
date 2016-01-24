@@ -72,6 +72,10 @@ CHANGES IN VERSION 1.99.0
    called manually at the end of the processing; close #93 [2015-07-26 Sun]
  o add `getIdentificationFragments` and `getQuantitationSpectra`; close #89
    [2015-07-28 Tue]
+ o use new loess model in master creation (now based on m-estimator instead of
+   least squares, identical to retention time model in classical synergise
+   workflow; see #107 for details) [2016-01-23 Sat]
+ o use just unique peptides in master creation (see #107) [2016-01-23 Sat]
 
 CHANGES IN VERSION 1.11.2
 -------------------------
