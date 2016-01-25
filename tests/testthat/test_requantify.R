@@ -1,5 +1,11 @@
 context("requantify")
 
+f <- data.frame(isotopicDistr.run1="1_0:1000;1_1:100;1_2:10;1_3:1;",
+                isotopicDistr.run2="1_0:800;1_1:100;1_2:10;1_3:1;",
+                isotopicDistr.run3="1_0:2000;1_1:200;1_2:20;1_3:2;",
+                isotopicDistr.run4="1_0:6000;1_1:1000;1_2:100;1_3:10;1_4:1",
+                stringsAsFactors=FALSE)
+
 im <- matrix(c(1000, 100, 10, 1, NA,
                800, 100, 10, 1, NA,
                2000, 200, 20, 2, NA,
