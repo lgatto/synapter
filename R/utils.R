@@ -154,7 +154,7 @@ findImIndices <- function(pep3dIm, hdmseIm, mzIndices, imthreshold) {
 }
 
 calculateGridPerformance <- function(identpep, sortedPep3d, mergedpep, matches) {
-  ## Those that match *1* spectumIDs will be transferred
+  ## Those that match *1* spectrumIDs will be transferred
   ## BUT there is no guarantee that with *1* unique match,
   ##     we get the correct one, even for those that were
   ##     part of the matched high confidence ident+quant
@@ -228,7 +228,7 @@ findMSeEMRTs <- function(identpep,
 
   k <- lengths(res)
 
-  ## Those that match *1* spectumIDs will be transferred
+  ## Those that match *1* spectrumIDs will be transferred
   ## BUT there is no guarantee that with *1* unique match,
   ##     we get the correct one, even for those that were
   ##     part of the matched high confidence ident+quant
