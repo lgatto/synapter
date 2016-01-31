@@ -4,23 +4,32 @@ test_that(".rescueEMRTS", {
   MatchedEMRTs <- data.frame(matchedEMRTs=c(1, 2, 1, 1, 2),
                              Counts=1:5,
                              precursor.leID.ident=1:5,
+                             isotopicDistr=paste0("iso", 1:5),
                              idSource="transfer", stringsAsFactors=FALSE)
   MergedEMRTs <- data.frame(precursor.leID.ident=5:1,
-                            precursor.inten.quant=10:6)
+                            precursor.leID.quant=16:20)
+  Pep3D <- data.frame(spectrumID=1:20,
+                      Counts=c(rep(0, 15), 10:6),
+                      isotopicDistr=paste0("iso", 1:20),
+                      stringsAsFactors=FALSE)
   rescue <- data.frame(matchedEMRTs=c(1, 2, 1, 1, 2),
                        Counts=c(1, 7, 3, 4, 10),
                        precursor.leID.ident=1:5,
+                       isotopicDistr=paste0("iso", c(1, 19, 3:4, 16)),
                        idSource=c("transfer", "rescue",
                                   "transfer", "transfer", "rescue"),
                        stringsAsFactors=FALSE)
   copy <- data.frame(matchedEMRTs=c(1, 2, 1, 1, 2),
                      Counts=6:10,
                      precursor.leID.ident=1:5,
+                     isotopicDistr=paste0("iso", c(20:16)),
                      idSource="copy", stringsAsFactors=FALSE)
-  expect_error(synapter:::.rescueEMRTs(MatchedEMRTs, MergedEMRTs, method="foo"))
-  expect_equal(synapter:::.rescueEMRTs(MatchedEMRTs, MergedEMRTs), rescue)
-  expect_equal(synapter:::.rescueEMRTs(MatchedEMRTs, MergedEMRTs,
-                                       method = "copy"), copy)
+  expect_error(synapter:::.rescueEMRTs(MatchedEMRTs, MergedEMRTs, Pep3D,
+                                       method="foo"))
+  expect_equal(synapter:::.rescueEMRTs(MatchedEMRTs, MergedEMRTs, Pep3D),
+               rescue)
+  expect_equal(synapter:::.rescueEMRTs(MatchedEMRTs, MergedEMRTs, Pep3D,
+               method = "copy"), copy)
 })
 
 test_that("flatMatchedEMRTs", {
@@ -95,4 +104,14 @@ test_that("modelRetTime", {
   expect_equal(unname(m$preds$fit), fitted(m$lo))
   expect_equal(m$preds$df, 6.213695586)
   expect_identical(length(m$sd), 10L)
+})
+
+test_that(".commonColnames", {
+  x <- data.frame(A=1, B=2, C=3, D=4, E=5)
+  y <- data.frame(C=3, D=4, E=5, F=6, G=7, H=8, I=9, J=10)
+  z <- data.frame(F=6, G=7, H=8, I=9, J=10)
+  expect_identical(synapter:::.commonColnames(x, y), LETTERS[3:5])
+  expect_identical(synapter:::.commonColnames(x, y, exclude = LETTERS[3:4]),
+                   LETTERS[5])
+  expect_identical(synapter:::.commonColnames(x, z), character())
 })

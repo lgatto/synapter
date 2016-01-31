@@ -543,7 +543,8 @@ flatMatchedEMRTs <- function(emrts, pep3d, na.rm=TRUE, verbose=TRUE) {
   rows <- flatEmrts$matched.quant.spectrumIDs
 
   ## find corresponding columns (but exclude spectrumID and Function
-  cols <- intersect(colnames(flatEmrts), colnames(pep3d)[-c(1:2)])
+  cols <- .commonColnames(flatEmrts, pep3d,
+                          exclude = c("matchedEMRTs", "spectrumID"))
 
   flatEmrts[, cols] <- pep3d[rows, cols]
 
@@ -656,7 +657,7 @@ diagnosticErrors <- function(x) {
   m
 }
 
-.rescueEMRTs <- function(matchedEMRTs, mergedFeatures,
+.rescueEMRTs <- function(matchedEMRTs, mergedFeatures, quantPep3d,
                          method=c("rescue", "copy")) {
   method <- match.arg(method)
 
@@ -671,9 +672,23 @@ diagnosticErrors <- function(x) {
     i <- matchedEMRTs$precursor.leID.ident %in%
           mergedFeatures$precursor.leID.ident
   }
-  ids <- matchedEMRTs$precursor.leID.ident[i]
-  matchedEMRTs$Counts[i] <- mergedFeatures$precursor.inten.quant[
-                              match(ids, mergedFeatures$precursor.leID.ident)]
+  quantIds <- mergedFeatures$precursor.leID.quant[
+                              match(matchedEMRTs$precursor.leID.ident[i],
+                                    mergedFeatures$precursor.leID.ident)]
+  ## find corresponding columns (but exclude spectrumID and matchedEMRTs
+  cols <- .commonColnames(matchedEMRTs, quantPep3d,
+                          exclude=c("matchedEMRTs", "spectrumID"))
+  matchedEMRTs[i, cols] <- quantPep3d[quantIds, cols]
   matchedEMRTs$idSource[i] <- method
   matchedEMRTs
+}
+
+# find common columns
+# @param x data.frame
+# @param y data.frame
+# @param exclude character, exclude some of them
+# @return character, common column names
+# @noRd
+.commonColnames <- function(x, y, exclude=character()) {
+  setdiff(intersect(colnames(x), colnames(y)), exclude)
 }

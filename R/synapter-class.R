@@ -433,6 +433,7 @@
                     rescueEMRTs = function(method) {
                         .self$MatchedEMRTs <- .rescueEMRTs(.self$MatchedEMRTs,
                                                            .self$MergedFeatures,
+                                                           .self$QuantPep3DData,
                                                            method)
                         .self$SynapterLog <- c(.self$SynapterLog,
                                                paste0("Rescue EMRTs [",
