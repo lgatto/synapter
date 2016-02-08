@@ -901,11 +901,6 @@ Synapter(filenames, master) ## creates an instance of class 'Synapter'
     \code{fp}, true negatives \code{tn}, false negatives \code{fn} and FDR
     \code{fdr} for the current threshold (in that row).
     }
-    \item{plotFragmentMatchingDiff}{\code{signature(object = "Synapter",
-        matchColumn = "spectrum.quantXfragments.ident")}:
-    Shows a boxplot for the differences of the first highest number of common
-    peaks to the second one for true and false matches in each match group.
-    }
 
     \item{plotCumulativeNumberOfFragments}{\code{signature(object = "Synapter",
         what = c("fragments.ident", "spectra.quant"))}:
