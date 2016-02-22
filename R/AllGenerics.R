@@ -49,6 +49,8 @@ setGeneric("filterQuantPpmError", function(object, ...) standardGeneric("filterQ
 setGeneric("filterFragments", function(object, ...) standardGeneric("filterFragments"))
 setGeneric("filterUniqueMatches", function(object, ...) standardGeneric("filterUniqueMatches"))
 setGeneric("filterNonUniqueMatches", function(object, ...) standardGeneric("filterNonUniqueMatches"))
+setGeneric("filterNonUniqueIdentMatches", function(object) standardGeneric("filterNonUniqueIdentMatches"))
+setGeneric("plotPpmError", function(object, ...) standardGeneric("plotPpmError"))
 setGeneric("plotPpmError", function(object, ...) standardGeneric("plotPpmError"))
 setGeneric("plotRt", function(object, ...) standardGeneric("plotRt"))
 setGeneric("plotPepScores", function(object, ...) standardGeneric("plotPepScores"))

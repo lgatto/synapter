@@ -572,6 +572,11 @@ flatMatchedEMRTs <- function(emrts, pep3d, na.rm=TRUE, verbose=TRUE) {
   agreement[(is.na(emrts$precursor.leID.quant) & is.na(emrts$matched.quant.spectrumIDs)) |
             (!k1 & is.na(emrts$precursor.leID.quant))] <- "no_id_or_transfer"
 
+  ## multiple ident matches
+  if (!is.null(emrts$matchedMultipleIdentEMRTs)) {
+    agreement[emrts$matchedMultipleIdentEMRTs] <- "multiple_ident_matches"
+  }
+
   agreement
 }
 
@@ -699,4 +704,21 @@ diagnosticErrors <- function(x) {
 #' @noRd
 .duplicated2 <- function(x) {
   duplicated(x) | duplicated(x, fromLast=TRUE)
+}
+
+#' filter nonunique ident matches (e.g. two idents vs one quant; fragment
+#' matching handles the other case: one ident vs multiple quants)
+#' see https://github.com/lgatto/synapter/issues/111 for details
+#' @param emrts MatchedEMRTs data.frame
+#' @return filtered matched emrts data.frame with an additional column
+#' `matchedMultipleIdentEMRTs`
+#' @noRd
+.filterNonUniqueIdentMatches <- function(emrts) {
+  k1 <- which(emrts$matchedEMRTs == 1)
+  dup <- which(.duplicated2(emrts$spectrumID[k1]) & !is.na(emrts$spectrumID[k1]))
+  emrts$matchedEMRTs[k1[dup]] <- -2
+  emrts$Counts[k1[dup]] <- NA
+  emrts$matchedMultipleIdentEMRTs <- FALSE
+  emrts$matchedMultipleIdentEMRTs[k1[dup]] <- TRUE
+  emrts
 }

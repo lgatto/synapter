@@ -394,6 +394,11 @@ setMethod(filterNonUniqueMatches, "Synapter",
             object$filterNonUniqueMatches(minDelta)
           })
 
+setMethod(filterNonUniqueIdentMatches, "Synapter",
+          function(object) {
+            object$filterNonUniqueIdentMatches()
+          })
+
 ## Plotting
 setMethod(plotPpmError, "Synapter",
           function(object,

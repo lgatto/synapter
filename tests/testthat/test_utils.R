@@ -120,3 +120,14 @@ test_that(".duplicated2", {
   expect_identical(synapter:::.duplicated2(c(1:4, 1:2)),
                    rep(c(TRUE, FALSE, TRUE), each=2))
 })
+
+test_that(".filterNonUniqueIdentMatches", {
+  emrts <- data.frame(matchedEMRTs = c(1, 1, 1, 1, 1, 2, 2),
+                      spectrumID = c(1, 1, 2, NA, NA, 2, 5),
+                      Counts = 1:7)
+  r <- emrts
+  r$matchedEMRTs[1:2] <- -2
+  r$Counts[1:2] <- NA
+  r$matchedMultipleIdentEMRTs <- c(rep(TRUE, 2), rep(FALSE, 5))
+  expect_equal(synapter:::.filterNonUniqueIdentMatches(emrts), r)
+})

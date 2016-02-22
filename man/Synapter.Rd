@@ -117,6 +117,8 @@
 \alias{filterUniqueMatches}
 \alias{filterNonUniqueMatches,Synapter-method}
 \alias{filterNonUniqueMatches}
+\alias{filterNonUniqueIdentMatches,Synapter-method}
+\alias{filterNonUniqueIdentMatches}
 
 % plotting
 \alias{plotEMRTtable,Synapter-method}
@@ -790,6 +792,13 @@ Synapter(filenames, master) ## creates an instance of class 'Synapter'
       threshold.
     }
 
+    \item{filterNonUniqueIdentMatches}{\code{signature(object="Synapter")}:
+      Removes all non unique identification matches. In rare circumstances (if
+      the grid search parameters are to wide/relaxed or a fragment library is
+      used) it could happen that the \code{searchGrid} methods matches a single
+      quantification EMRT to multiple identification EMRTs. This methods removes
+      all these non unique matches.
+    }
     }
   }
 

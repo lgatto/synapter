@@ -76,6 +76,7 @@ CHANGES IN VERSION 1.99.0
    least squares, identical to retention time model in classical synergise
    workflow; see #107 for details) [2016-01-23 Sat]
  o use just unique peptides in master creation (see #107) [2016-01-23 Sat]
+ o add `filterNonUniqueIdentMatches` (see #111 for details) [2016-02-22 Mon]
 
 CHANGES IN VERSION 1.11.2
 -------------------------

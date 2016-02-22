@@ -1070,4 +1070,17 @@
                                                        minDelta, " [",
                                                       paste0(dim(.self$MatchedEMRTs),
                                                              collapse=","), "]"))
+                       },
+
+                       filterNonUniqueIdentMatches = function() {
+                         'Filters non unique identification matches.'
+
+                         .self$MatchedEMRTs <-
+                           .filterNonUniqueIdentMatches(.self$MatchedEMRTs)
+                         .self$MatchedEMRTs$synapterPlgsAgreement <-
+                           .findSynapterPlgsAgreement(.self$MatchedEMRTs)
+                         .self$SynapterLog <- c(.self$SynapterLog,
+                                                paste0("Filtered non unique matched ident EMRTs ",
+                                                       " [", paste0(dim(.self$MatchedEMRTs),
+                                                             collapse=","), "]"))
                        }))
