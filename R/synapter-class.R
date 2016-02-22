@@ -563,7 +563,7 @@
                          .self$SynapterLog <- c(.self$SynapterLog, .log)
                        },
                        getBestGridValue = function() {
-                         'Retieves the highest grid value.'
+                         'Retrieves the highest grid value.'
                          if ( length(.self$Grid) == 0 )
                            stop("No grid search result found.")
                          ans <- sapply(.self$Grid, max)
