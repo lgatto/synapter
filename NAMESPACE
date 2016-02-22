@@ -83,6 +83,7 @@ exportMethods(show,
               filterUniqueIdentDbPeptides,
               filterUniqueMatches,
               filterNonUniqueMatches,
+              filterNonUniqueIdentMatches,
               ## plotting
               plotPpmError,
               plotRtDiffs,
