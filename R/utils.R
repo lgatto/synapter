@@ -683,12 +683,20 @@ diagnosticErrors <- function(x) {
   matchedEMRTs
 }
 
-# find common columns
-# @param x data.frame
-# @param y data.frame
-# @param exclude character, exclude some of them
-# @return character, common column names
-# @noRd
+#' find common columns
+#' @param x data.frame
+#' @param y data.frame
+#' @param exclude character, exclude some of them
+#' @return character, common column names
+#' @noRd
 .commonColnames <- function(x, y, exclude=character()) {
   setdiff(intersect(colnames(x), colnames(y)), exclude)
+}
+
+#' similar to duplicated but marks also the first occurence as duplicated
+#' @param x vector
+#' @return logical
+#' @noRd
+.duplicated2 <- function(x) {
+  duplicated(x) | duplicated(x, fromLast=TRUE)
 }

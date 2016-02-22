@@ -57,12 +57,10 @@ dbUniquePeptideSet <- function(file, missedCleavages = 0,
   ## where the first ones are NOT unique!
   ## Such cases are handled by filtering duplicates in the peptide data
   if (IisL) {
-    .peptides <- gsub(pattern="[IL]", replacement="-", x=peptides)
-    upeptides <- peptides[!(duplicated(.peptides) |
-                            duplicated(.peptides, fromLast=TRUE))]
+    peptides <- gsub(pattern="[IL]", replacement="-", x=peptides)
+    upeptides <- peptides[!.duplicated2(.peptides)]
   } else {
-    upeptides <- peptides[!(duplicated(peptides) |
-                            duplicated(peptides, fromLast=TRUE))]
+    upeptides <- peptides[!.duplicated2(peptides)]
   }
 
   attr(upeptides, "missedCleavages") <- missedCleavages

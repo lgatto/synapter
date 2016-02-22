@@ -115,3 +115,8 @@ test_that(".commonColnames", {
                    LETTERS[5])
   expect_identical(synapter:::.commonColnames(x, z), character())
 })
+
+test_that(".duplicated2", {
+  expect_identical(synapter:::.duplicated2(c(1:4, 1:2)),
+                   rep(c(TRUE, FALSE, TRUE), each=2))
+})
