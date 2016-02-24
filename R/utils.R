@@ -508,10 +508,6 @@ flatMatchedEMRTs <- function(emrts, pep3d, na.rm=TRUE, verbose=TRUE) {
 
   ## unique matches
   k1 <- which(emrts$matchedEMRTs == 1)
-  isCorrectMatch <- as.numeric(emrts$spectrumID[k1]) ==
-                      as.numeric(emrts$precursor.leID.quant[k1])
-  emrts$gridSearchResult[k1] <- ifelse(isCorrectMatch,
-                                       "unique-true", "unique-false")
   emrts$matched.quant.spectrumIDs[k1] <- emrts$spectrumID[k1]
 
   ## non-unique matches
@@ -526,9 +522,6 @@ flatMatchedEMRTs <- function(emrts, pep3d, na.rm=TRUE, verbose=TRUE) {
     ## update spectrumID
     curRow$spectrumID <- curRow$matched.quant.spectrumIDs
 
-    curRow$gridSearchResult <- ifelse(mIds[[j]] %in%
-                                      as.numeric(curRow$precursor.leID.quant),
-                                      "non-unique-true", "non-unique-false")
     return(curRow)
   })
 
@@ -548,7 +541,16 @@ flatMatchedEMRTs <- function(emrts, pep3d, na.rm=TRUE, verbose=TRUE) {
 
   flatEmrts[, cols] <- pep3d[rows, cols]
 
-  return(flatEmrts)
+  flatEmrts$gridSearchResult <- "no-quant-id"
+
+  isCorrectMatch <- as.numeric(flatEmrts$precursor.leID.quant) == flatEmrts$matched.quant.spectrumIDs
+
+  flatEmrts$gridSearchResult[flatEmrts$matchedEMRTs == 1 & isCorrectMatch] <- "unique-true"
+  flatEmrts$gridSearchResult[flatEmrts$matchedEMRTs == 1 & !isCorrectMatch] <- "unique-false"
+  flatEmrts$gridSearchResult[flatEmrts$matchedEMRTs > 1 & isCorrectMatch] <- "non-unique-true"
+  flatEmrts$gridSearchResult[flatEmrts$matchedEMRTs > 1 & !isCorrectMatch] <- "non-unique-false"
+
+  flatEmrts
 }
 
 ## see issue 73 for details

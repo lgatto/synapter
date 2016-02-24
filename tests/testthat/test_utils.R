@@ -33,15 +33,15 @@ test_that(".rescueEMRTS", {
 })
 
 test_that("flatMatchedEMRTs", {
-  df <- data.frame(matchedEMRTs=c(1, 1, 2, 2, 1),
-                   spectrumID=1:5,
-                   precursor.leID.quant=c(1, 3, 3, 9, NA),
-                   matched.quant.spectrumIDs=c("1", "3", "3;4", "3;4", ""),
-                   ion_z=c(1, 1, NA, NA, 1),
+  df <- data.frame(matchedEMRTs=c(1, 1, 2, 2, 1, 2),
+                   spectrumID=1:6,
+                   precursor.leID.quant=c(1, 3, 3, 9, NA, NA),
+                   matched.quant.spectrumIDs=c("1", "3", "3;4", "3;4", "", "4;5"),
+                   ion_z=c(1, 1, NA, NA, 1, 1),
                    stringsAsFactors=FALSE)
-  pep3d <- data.frame(spectrumID=1:4,
-                      Function=1:4,
-                      ion_z=1:4,
+  pep3d <- data.frame(spectrumID=1:5,
+                      Function=1:5,
+                      ion_z=1:5,
                       stringsAsFactors=FALSE)
   rdf <- data.frame(matchedEMRTs=c(1, 1, 2, 2, 2, 2),
                     spectrumID=c(1:4, 3, 4),
@@ -52,9 +52,21 @@ test_that("flatMatchedEMRTs", {
                                        "non-unique-true",
                                        rep("non-unique-false", 3)),
                     stringsAsFactors=FALSE)
+  rdf2 <- data.frame(matchedEMRTs=c(1, 1, 1, 2, 2, 2, 2, 2, 2),
+                     spectrumID=c(1:2, 5, 3:4, 3:4, 4:5),
+                     precursor.leID.quant=c(1, 3, NA, 3, 3, 9, 9, NA, NA),
+                     matched.quant.spectrumIDs=c(1:2, 5, 3:4, 3:4, 4:5),
+                     ion_z=c(1, 2, 5, 3, 4, 3, 4, 4, 5),
+                     gridSearchResult=c("unique-true", "unique-false",
+                                        "no-quant-id",
+                                        "non-unique-true",
+                                        rep("non-unique-false", 3),
+                                        rep("no-quant-id", 2)),
+                     stringsAsFactors=FALSE)
 
   expect_error(synapter:::flatMatchedEMRTs(df), ".*pep3d.* is missing")
   expect_equal(synapter:::flatMatchedEMRTs(df, pep3d), rdf)
+  expect_equal(synapter:::flatMatchedEMRTs(df, pep3d, na.rm=FALSE), rdf2)
 })
 
 test_that("matched.quant.spectrumIDs2numeric", {
