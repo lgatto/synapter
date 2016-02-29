@@ -1,3 +1,17 @@
+CHANGES IN VERSION 1.13.1
+-------------------------
+ o Update call to nQuants to accomodate changes in MSnbase (see commit
+   #ce637b87e491a2f4c9f93490b2f4c7027cbfce16) <2016-02-29 Mon>
+ o Defunct synapterGUI <2016-02-29 Mon>
+ 
+CHANGES IN VERSION 1.13.0
+-------------------------
+ o Bioc devel 3.2
+ 
+CHANGES IN VERSION 1.12.0
+-------------------------
+ o Bioc release 3.1
+ 
 CHANGES IN VERSION 1.11.2
 -------------------------
  o fixing bug introduced in 1.11.1 when coercing from

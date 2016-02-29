@@ -747,7 +747,7 @@ that have summed. This number of quantified peptides can be calculated
 
 <<dotop3, echo=TRUE, cache=TRUE>>=
 ms25a <- topN(ms25a, groupBy = fData(ms25a)$protein.Accession, n = 3)
-nPeps <- nQuants(ms25a, fcol = "protein.Accession")
+nPeps <- nQuants(ms25a, groupBy = fData(ms25a)$protein.Accession)
 ms25a <- combineFeatures(ms25a, fData(ms25a)$protein.Accession,
                          "sum", na.rm = TRUE, verbose = FALSE)
 head(exprs(ms25a))
@@ -775,7 +775,7 @@ tmp <- sapply(nms, function(.ups) {
   ## extract top 3 peptides
   x <- topN(x, groupBy = fData(x)$protein.Accession, n = 3)
   ## calculate the number of peptides that are available
-  nPeps <- nQuants(x, fcol = "protein.Accession")
+  nPeps <- nQuants(x, fData(x)$protein.Accession)
   ## sum top3 peptides into protein quantitation
   x <- combineFeatures(x, fData(x)$protein.Accession,
                        "sum", na.rm = TRUE, verbose = FALSE)
