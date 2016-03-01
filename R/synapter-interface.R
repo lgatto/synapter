@@ -444,75 +444,77 @@ setMethod(plotRt, "Synapter",
 
 setMethod(plotPepScores, "Synapter",
           function(object) {
-            if (object$Master) {
-              xx <- rbind(cbind(object$.QuantPeptideScores, data = "Quantitation"))
-            } else {
-              xx <- rbind(cbind(object$.IdentPeptideScores, data ="Identification"),
-                          cbind(object$.QuantPeptideScores, data = "Quantitation"))
-            }
-            p <- (densityplot(~ peptide.score | peptide.matchType * data,
-                              data = xx,
-                              groups = protein.dataBaseType,
-                              plot.points = FALSE, ref = TRUE))
-            print(p)
-            invisible(p)
+              protein.dataBaseType <- NULL ## no visible binding note
+              if (object$Master) {
+                  xx <- rbind(cbind(object$.QuantPeptideScores, data = "Quantitation"))
+              } else {
+                  xx <- rbind(cbind(object$.IdentPeptideScores, data ="Identification"),
+                              cbind(object$.QuantPeptideScores, data = "Quantitation"))
+              }
+              p <- (densityplot(~ peptide.score | peptide.matchType * data,
+                                data = xx,
+                                groups = protein.dataBaseType,
+                                plot.points = FALSE, ref = TRUE))
+              print(p)
+              invisible(p)
           })
 
 
 setMethod(plotFdr, "Synapter",
           function(object,
                    method = c("BH", "Bonferroni", "qval")) {
-            ## Graphical display of qvalues (adapted from qvalue package).
-            method <- match.arg(method)
-            .qplot <- function(pepdata, rng = c(0, 0.1), ...) {
-              pv1 <- pepdata[pepdata$peptide.matchType == "PepFrag1", "pval"]
-              qv1 <- pepdata[pepdata$peptide.matchType == "PepFrag1", method]
-              qv1 <- qv1[order(pv1)]
-              pv2 <- pepdata[pepdata$peptide.matchType == "PepFrag2", "pval"]
-              qv2 <- pepdata[pepdata$peptide.matchType == "PepFrag2", method]
-              qv2 <- qv2[order(pv2)]
-              if (min(c(qv1, qv2)) > rng[2])
-                rng <- c(min(c(qv1, qv2)),
-                         quantile(c(qv1, pv2), 0.1))
-              plot(qv1[qv1 >= rng[1] & qv1 <= rng[2]],
-                   (1 + sum(qv1 < rng[1])):sum(qv1 <= rng[2]),
-                   type = "l", xlab = "FDR cut-off",
-                   ylab = "significant peptides",
-                   col = "red", ...)
-              lines(qv2[qv2 >= rng[1] & qv2 <= rng[2]],
-                    (1 + sum(qv2 < rng[1])):sum(qv2 <= rng[2]),
-                    col = "steelblue")
-              legend("bottomright", c("PepFrag1", "PepFrag2"),
-                     col = c("red", "steelblue"), lty = 1,
-                     bty = "n", cex = .6)
-              plot((1 + sum(qv1 < rng[1])):sum(qv1 <= rng[2]),
-                   qv1[qv1 >= rng[1] & qv1 <= rng[2]] * (1 + sum(qv1 < rng[1])):sum(qv1 <= rng[2]),
-                   type = "l", xlab = "significant peptides",
-                   ylab = "expected false positives",
-                   col = "red", ...)
-              lines((1 + sum(qv2 < rng[1])):sum(qv2 <= rng[2]),
-                    qv2[qv2 >= rng[1] & qv2 <= rng[2]] * (1 + sum(qv2 < rng[1])):sum(qv2 <= rng[2]),
-                    col = "steelblue")
-              legend("topleft", c("PepFrag1", "PepFrag2"),
-                     col = c("red", "steelblue"), lty = 1,
-                     bty = "n", cex = 0.6)
-            }
-            if (object$Master) {
-              par(mfrow=c(1,2))
-              .qplot(object$QuantPeptideData,  main="Quantitation")
-              par(mfrow=c(1,1))
-            } else {
-              par(mfrow=c(2,2))
-              .qplot(object$IdentPeptideData, main="Identification")
-              .qplot(object$QuantPeptideData,  main="Quantitation")
-              par(mfrow=c(1,1))
-            }
+              ## Graphical display of qvalues (adapted from qvalue package).
+              method <- match.arg(method)
+              .qplot <- function(pepdata, rng = c(0, 0.1), ...) {
+                  pv1 <- pepdata[pepdata$peptide.matchType == "PepFrag1", "pval"]
+                  qv1 <- pepdata[pepdata$peptide.matchType == "PepFrag1", method]
+                  qv1 <- qv1[order(pv1)]
+                  pv2 <- pepdata[pepdata$peptide.matchType == "PepFrag2", "pval"]
+                  qv2 <- pepdata[pepdata$peptide.matchType == "PepFrag2", method]
+                  qv2 <- qv2[order(pv2)]
+                  if (min(c(qv1, qv2)) > rng[2])
+                      rng <- c(min(c(qv1, qv2)),
+                               quantile(c(qv1, pv2), 0.1))
+                  plot(qv1[qv1 >= rng[1] & qv1 <= rng[2]],
+                  (1 + sum(qv1 < rng[1])):sum(qv1 <= rng[2]),
+                  type = "l", xlab = "FDR cut-off",
+                  ylab = "significant peptides",
+                  col = "red", ...)
+                  lines(qv2[qv2 >= rng[1] & qv2 <= rng[2]],
+                  (1 + sum(qv2 < rng[1])):sum(qv2 <= rng[2]),
+                  col = "steelblue")
+                  legend("bottomright", c("PepFrag1", "PepFrag2"),
+                         col = c("red", "steelblue"), lty = 1,
+                         bty = "n", cex = .6)
+                  plot((1 + sum(qv1 < rng[1])):sum(qv1 <= rng[2]),
+                       qv1[qv1 >= rng[1] & qv1 <= rng[2]] * (1 + sum(qv1 < rng[1])):sum(qv1 <= rng[2]),
+                       type = "l", xlab = "significant peptides",
+                       ylab = "expected false positives",
+                       col = "red", ...)
+                  lines((1 + sum(qv2 < rng[1])):sum(qv2 <= rng[2]),
+                        qv2[qv2 >= rng[1] & qv2 <= rng[2]] * (1 + sum(qv2 < rng[1])):sum(qv2 <= rng[2]),
+                        col = "steelblue")
+                  legend("topleft", c("PepFrag1", "PepFrag2"),
+                         col = c("red", "steelblue"), lty = 1,
+                         bty = "n", cex = 0.6)
+              }
+              if (object$Master) {
+                  par(mfrow=c(1,2))
+                  .qplot(object$QuantPeptideData,  main="Quantitation")
+                  par(mfrow=c(1,1))
+              } else {
+                  par(mfrow=c(2,2))
+                  .qplot(object$IdentPeptideData, main="Identification")
+                  .qplot(object$QuantPeptideData,  main="Quantitation")
+                  par(mfrow=c(1,1))
+              }
           })
 
 setMethod(plotFeatures, "Synapter",
           function(object,
                    what = c("all", "some"),
                    xlim = c(40, 60),
+<<<<<<< HEAD
                    ylim = c(1160, 1165),
                    ionmobility = FALSE) {
             what <- match.arg(what)
@@ -539,6 +541,55 @@ setMethod(plotFeatures, "Synapter",
                                         xlim = xlim,
                                         ylim = ylim)
                    })
+||||||| merged common ancestors
+                   ylim = c(1160, 1165)) {
+            what <- match.arg(what)
+            switch(what,
+                   all = plot.all.features(
+                     object$MergedFeatures,
+                     object$QuantPep3DData),
+                   some = {
+                     if (length(object$PpmError) == 0) {
+                       warning("Ppm error for EMRTs matching is not set. Using default value.")
+                       object$setPpmError()
+                     }
+                     if (length(object$RtNsd) == 0) {
+                       warning("Number of retention time stdevs for EMRTs matching is not set. Using default value.")
+                       object$setRtNsd()
+                     }
+                     plot.some.features(object$MergedFeatures,
+                                        object$QuantPep3DData,
+                                        object$RtModel,
+                                        object$IdentPpmError,
+                                        object$RtNsd,
+                                        xlim = xlim,
+                                        ylim = ylim)
+                   })
+=======
+                   ylim = c(1160, 1165)) {
+              what <- match.arg(what)
+              switch(what,
+                     all = plot.all.features(
+                         object$MergedFeatures,
+                         object$QuantPep3DData),
+                     some = {
+                         if (length(object$PpmError) == 0) {
+                             warning("Ppm error for EMRTs matching is not set. Using default value.")
+                             object$setPpmError()
+                         }
+                         if (length(object$RtNsd) == 0) {
+                             warning("Number of retention time stdevs for EMRTs matching is not set. Using default value.")
+                             object$setRtNsd()
+                         }
+                         plot.some.features(object$MergedFeatures,
+                                            object$QuantPep3DData,
+                                            object$RtModel,
+                                            object$IdentPpmError,
+                                            object$RtNsd,
+                                            xlim = xlim,
+                                            ylim = ylim)
+                     })
+>>>>>>> master
           })
 
 setMethod(plotFragmentMatching, "Synapter",
@@ -577,13 +628,24 @@ setMethod(getEMRTtable, "Synapter",
 
 setMethod(plotEMRTtable, "Synapter",
           function(object) {
+<<<<<<< HEAD
             p <- barchart(table(object$MatchedEMRTs$matchedEMRTs), horizontal=FALSE)
             print(p)
             invisible(p)
+||||||| merged common ancestors
+            p <- barchart(table(object$MatchedEMRTs$Function), horizontal=FALSE)
+            print(p)
+            invisible(p)
+=======
+              p <- barchart(table(object$MatchedEMRTs$Function), horizontal=FALSE)
+              print(p)
+              invisible(p)
+>>>>>>> master
           })
 
 setMethod(performance, "Synapter",
           function(object, verbose = TRUE) {
+<<<<<<< HEAD
             if (nrow(object$MergedFeatures) == 0)
               stop("Merging required before estimating performance.")
             if (nrow(object$MatchedEMRTs) == 0)
@@ -621,6 +683,83 @@ setMethod(performance, "Synapter",
               print(ans$VennCounts)
             }
             invisible(ans)
+||||||| merged common ancestors
+            if (nrow(object$MergedFeatures) == 0)
+              stop("Merging required before estimating performance.")
+            if (nrow(object$MatchedEMRTs) == 0)
+              stop("Matching required before estimating performance.")
+            ## synapter results
+            S <- object$MatchedEMRTs[object$MatchedEMRTs$Function == 1,
+                                     "spectrumID"]
+            nS <- length(S)
+            uS <- unique(S)
+            ## Ident peptides
+            I <- object$IdentPeptideData$precursor.leID
+            nI <- length(I)
+            uI <- unique(I)
+            ## Quant peptides
+            Q <- object$QuantPeptideData$precursor.leID
+            nQ <- length(Q)
+            uQ <- unique(Q)
+
+            e <- 100 * (nS - nQ) / nQ
+            w <- c(length(setdiff(uQ, uS)),
+                   length(setdiff(uS, uQ)),
+                   length(intersect(uS, uQ)))
+            names(w) <- c("Q", "S", "QS")
+
+            ans <- list(nS, nI, nQ,
+                        w, e)
+            names(ans) <- c("Synapter", "Ident", "Quant",
+                            "VennCounts", "Enrichment")
+            if (verbose){
+              cat("(S) Synapter: ", ans$Synapter, " EMRTs uniquely matched.\n", sep = "")
+              cat("(I) Ident: ", ans$Ident, " peptides.\n", sep = "")
+              cat("(Q) Quant:   ", ans$Quant, " peptides.\n", sep = "")
+              cat("Enrichment (S/Q): ", round(ans$Enrichment, 2), "%\n", sep = "")
+              cat("Overlap:\n")
+              print(ans$VennCounts)
+            }
+            invisible(ans)
+=======
+              if (nrow(object$MergedFeatures) == 0)
+                  stop("Merging required before estimating performance.")
+              if (nrow(object$MatchedEMRTs) == 0)
+                  stop("Matching required before estimating performance.")
+              ## synapter results
+              S <- object$MatchedEMRTs[object$MatchedEMRTs$Function == 1,
+                                       "spectrumID"]
+              nS <- length(S)
+              uS <- unique(S)
+              ## Ident peptides
+              I <- object$IdentPeptideData$precursor.leID
+              nI <- length(I)
+              uI <- unique(I)
+              ## Quant peptides
+              Q <- object$QuantPeptideData$precursor.leID
+              nQ <- length(Q)
+              uQ <- unique(Q)
+
+              e <- 100 * (nS - nQ) / nQ
+              w <- c(length(setdiff(uQ, uS)),
+                     length(setdiff(uS, uQ)),
+                     length(intersect(uS, uQ)))
+              names(w) <- c("Q", "S", "QS")
+
+              ans <- list(nS, nI, nQ,
+                          w, e)
+              names(ans) <- c("Synapter", "Ident", "Quant",
+                              "VennCounts", "Enrichment")
+              if (verbose){
+                  cat("(S) Synapter: ", ans$Synapter, " EMRTs uniquely matched.\n", sep = "")
+                  cat("(I) Ident: ", ans$Ident, " peptides.\n", sep = "")
+                  cat("(Q) Quant:   ", ans$Quant, " peptides.\n", sep = "")
+                  cat("Enrichment (S/Q): ", round(ans$Enrichment, 2), "%\n", sep = "")
+                  cat("Overlap:\n")
+                  print(ans$VennCounts)
+              }
+              invisible(ans)
+>>>>>>> master
           })
 
 setMethod(performance2, "Synapter",
@@ -635,11 +774,12 @@ setMethod(performance2, "Synapter",
 
 setMethod(plotRtDiffs, "Synapter",
           function(object, ...) {
-            diffs <- plotRetTimeDiffs(object, plot=TRUE, ...)
-            invisible(diffs)
+              diffs <- plotRetTimeDiffs(object, plot=TRUE, ...)
+              invisible(diffs)
           })
 
 setMethod(plotGrid, "Synapter",
+<<<<<<< HEAD
           function(object, what = c("total", "model", "details"),
                    maindim = c("im", "rt", "mz")) {
             ## Plots the grid search results.
@@ -674,6 +814,45 @@ setMethod(plotGrid, "Synapter",
             p <- levelplot(grd, xlab = xlab, ylab = ylab, main = main)
             print(p)
             invisible(p)
+||||||| merged common ancestors
+          function(object, what = c("total", "model", "details")) {
+            ## Plots the grid search results.
+            if ( length(object$Grid) == 0 )
+              stop("No grid search result to plot.")
+            what <- match.arg(what)
+            if (what == "total") {
+              grd <- object$Grid[[1]]
+              main <- "Percentage of total ident peptides uniquely matched."
+            } else if (what == "model") {
+              grd <- object$Grid[[2]]
+              main <- "Percentage of modelled peptides matched."
+            } else {  ## details
+              grd <- object$Grid[[3]]
+              main <- "Percentage of correct unique assignments."
+            }
+            p <- levelplot(grd, xlab = "nsd", ylab = "ppm", main = main)
+            print(p)
+            invisible(p)
+=======
+          function(object, what = c("total", "model", "details")) {
+              ## Plots the grid search results.
+              if ( length(object$Grid) == 0 )
+                  stop("No grid search result to plot.")
+              what <- match.arg(what)
+              if (what == "total") {
+                  grd <- object$Grid[[1]]
+                  main <- "Percentage of total ident peptides uniquely matched."
+              } else if (what == "model") {
+                  grd <- object$Grid[[2]]
+                  main <- "Percentage of modelled peptides matched."
+              } else {  ## details
+                  grd <- object$Grid[[3]]
+                  main <- "Percentage of correct unique assignments."
+              }
+              p <- levelplot(grd, xlab = "nsd", ylab = "ppm", main = main)
+              print(p)
+              invisible(p)
+>>>>>>> master
           })
 
 setMethod(fragmentMatching, "Synapter",
@@ -699,14 +878,14 @@ setMethod(writeIdentPeptides, "Synapter",
           function(object,
                    file = "Res-IdentPeptides.csv",
                    ...) {
-            write.csv(object$IdentPeptideData, file = file, ...)
+              write.csv(object$IdentPeptideData, file = file, ...)
           })
 
 setMethod(writeQuantPeptides, "Synapter",
           function(object,
                    file = "Res-QuantPeptides.csv",
                    ...) {
-            write.csv(object$QuantPeptideData, file = file, ...)
+              write.csv(object$QuantPeptideData, file = file, ...)
           })
 
 
@@ -715,12 +894,12 @@ setMethod(writeMergedPeptides, "Synapter",
                    file = "Res-MergedPeptides.csv",
                    what = c("light", "full"),
                    ...) {
-            ## Writes merged peptides to a csv file.
-            what <- match.arg(what)
-            switch(what,
-                   full = write.csv(object$MergedFeatures, file = file, ...),
-                   light = write.csv(lightMergedFeatures(object$MergedFeatures),
-                     file = file, ...))
+              ## Writes merged peptides to a csv file.
+              what <- match.arg(what)
+              switch(what,
+                     full = write.csv(object$MergedFeatures, file = file, ...),
+                     light = write.csv(lightMergedFeatures(object$MergedFeatures),
+                                       file = file, ...))
           })
 
 
@@ -729,12 +908,12 @@ setMethod(writeMatchedEMRTs, "Synapter",
                    file = "Res-MatchedEMRTs.csv",
                    what = c("light", "full"),
                    ...) {
-            ## Writes matched EMRTs to a csv file.
-            what <- match.arg(what)
-            switch(what,
-                   full = write.csv(object$MatchedEMRTs, file = file, ...),
-                   light = write.csv(lightMatchedEMRTs(object$MatchedEMRTs),
-                     file = file, ...))
+              ## Writes matched EMRTs to a csv file.
+              what <- match.arg(what)
+              switch(what,
+                     full = write.csv(object$MatchedEMRTs, file = file, ...),
+                     light = write.csv(lightMatchedEMRTs(object$MatchedEMRTs),
+                                       file = file, ...))
           })
 
 setAs("Synapter", "MSnSet",
