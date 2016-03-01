@@ -514,7 +514,6 @@ setMethod(plotFeatures, "Synapter",
           function(object,
                    what = c("all", "some"),
                    xlim = c(40, 60),
-<<<<<<< HEAD
                    ylim = c(1160, 1165),
                    ionmobility = FALSE) {
             what <- match.arg(what)
@@ -541,55 +540,6 @@ setMethod(plotFeatures, "Synapter",
                                         xlim = xlim,
                                         ylim = ylim)
                    })
-||||||| merged common ancestors
-                   ylim = c(1160, 1165)) {
-            what <- match.arg(what)
-            switch(what,
-                   all = plot.all.features(
-                     object$MergedFeatures,
-                     object$QuantPep3DData),
-                   some = {
-                     if (length(object$PpmError) == 0) {
-                       warning("Ppm error for EMRTs matching is not set. Using default value.")
-                       object$setPpmError()
-                     }
-                     if (length(object$RtNsd) == 0) {
-                       warning("Number of retention time stdevs for EMRTs matching is not set. Using default value.")
-                       object$setRtNsd()
-                     }
-                     plot.some.features(object$MergedFeatures,
-                                        object$QuantPep3DData,
-                                        object$RtModel,
-                                        object$IdentPpmError,
-                                        object$RtNsd,
-                                        xlim = xlim,
-                                        ylim = ylim)
-                   })
-=======
-                   ylim = c(1160, 1165)) {
-              what <- match.arg(what)
-              switch(what,
-                     all = plot.all.features(
-                         object$MergedFeatures,
-                         object$QuantPep3DData),
-                     some = {
-                         if (length(object$PpmError) == 0) {
-                             warning("Ppm error for EMRTs matching is not set. Using default value.")
-                             object$setPpmError()
-                         }
-                         if (length(object$RtNsd) == 0) {
-                             warning("Number of retention time stdevs for EMRTs matching is not set. Using default value.")
-                             object$setRtNsd()
-                         }
-                         plot.some.features(object$MergedFeatures,
-                                            object$QuantPep3DData,
-                                            object$RtModel,
-                                            object$IdentPpmError,
-                                            object$RtNsd,
-                                            xlim = xlim,
-                                            ylim = ylim)
-                     })
->>>>>>> master
           })
 
 setMethod(plotFragmentMatching, "Synapter",
@@ -628,24 +578,13 @@ setMethod(getEMRTtable, "Synapter",
 
 setMethod(plotEMRTtable, "Synapter",
           function(object) {
-<<<<<<< HEAD
             p <- barchart(table(object$MatchedEMRTs$matchedEMRTs), horizontal=FALSE)
             print(p)
             invisible(p)
-||||||| merged common ancestors
-            p <- barchart(table(object$MatchedEMRTs$Function), horizontal=FALSE)
-            print(p)
-            invisible(p)
-=======
-              p <- barchart(table(object$MatchedEMRTs$Function), horizontal=FALSE)
-              print(p)
-              invisible(p)
->>>>>>> master
           })
 
 setMethod(performance, "Synapter",
           function(object, verbose = TRUE) {
-<<<<<<< HEAD
             if (nrow(object$MergedFeatures) == 0)
               stop("Merging required before estimating performance.")
             if (nrow(object$MatchedEMRTs) == 0)
@@ -683,83 +622,6 @@ setMethod(performance, "Synapter",
               print(ans$VennCounts)
             }
             invisible(ans)
-||||||| merged common ancestors
-            if (nrow(object$MergedFeatures) == 0)
-              stop("Merging required before estimating performance.")
-            if (nrow(object$MatchedEMRTs) == 0)
-              stop("Matching required before estimating performance.")
-            ## synapter results
-            S <- object$MatchedEMRTs[object$MatchedEMRTs$Function == 1,
-                                     "spectrumID"]
-            nS <- length(S)
-            uS <- unique(S)
-            ## Ident peptides
-            I <- object$IdentPeptideData$precursor.leID
-            nI <- length(I)
-            uI <- unique(I)
-            ## Quant peptides
-            Q <- object$QuantPeptideData$precursor.leID
-            nQ <- length(Q)
-            uQ <- unique(Q)
-
-            e <- 100 * (nS - nQ) / nQ
-            w <- c(length(setdiff(uQ, uS)),
-                   length(setdiff(uS, uQ)),
-                   length(intersect(uS, uQ)))
-            names(w) <- c("Q", "S", "QS")
-
-            ans <- list(nS, nI, nQ,
-                        w, e)
-            names(ans) <- c("Synapter", "Ident", "Quant",
-                            "VennCounts", "Enrichment")
-            if (verbose){
-              cat("(S) Synapter: ", ans$Synapter, " EMRTs uniquely matched.\n", sep = "")
-              cat("(I) Ident: ", ans$Ident, " peptides.\n", sep = "")
-              cat("(Q) Quant:   ", ans$Quant, " peptides.\n", sep = "")
-              cat("Enrichment (S/Q): ", round(ans$Enrichment, 2), "%\n", sep = "")
-              cat("Overlap:\n")
-              print(ans$VennCounts)
-            }
-            invisible(ans)
-=======
-              if (nrow(object$MergedFeatures) == 0)
-                  stop("Merging required before estimating performance.")
-              if (nrow(object$MatchedEMRTs) == 0)
-                  stop("Matching required before estimating performance.")
-              ## synapter results
-              S <- object$MatchedEMRTs[object$MatchedEMRTs$Function == 1,
-                                       "spectrumID"]
-              nS <- length(S)
-              uS <- unique(S)
-              ## Ident peptides
-              I <- object$IdentPeptideData$precursor.leID
-              nI <- length(I)
-              uI <- unique(I)
-              ## Quant peptides
-              Q <- object$QuantPeptideData$precursor.leID
-              nQ <- length(Q)
-              uQ <- unique(Q)
-
-              e <- 100 * (nS - nQ) / nQ
-              w <- c(length(setdiff(uQ, uS)),
-                     length(setdiff(uS, uQ)),
-                     length(intersect(uS, uQ)))
-              names(w) <- c("Q", "S", "QS")
-
-              ans <- list(nS, nI, nQ,
-                          w, e)
-              names(ans) <- c("Synapter", "Ident", "Quant",
-                              "VennCounts", "Enrichment")
-              if (verbose){
-                  cat("(S) Synapter: ", ans$Synapter, " EMRTs uniquely matched.\n", sep = "")
-                  cat("(I) Ident: ", ans$Ident, " peptides.\n", sep = "")
-                  cat("(Q) Quant:   ", ans$Quant, " peptides.\n", sep = "")
-                  cat("Enrichment (S/Q): ", round(ans$Enrichment, 2), "%\n", sep = "")
-                  cat("Overlap:\n")
-                  print(ans$VennCounts)
-              }
-              invisible(ans)
->>>>>>> master
           })
 
 setMethod(performance2, "Synapter",
@@ -779,7 +641,6 @@ setMethod(plotRtDiffs, "Synapter",
           })
 
 setMethod(plotGrid, "Synapter",
-<<<<<<< HEAD
           function(object, what = c("total", "model", "details"),
                    maindim = c("im", "rt", "mz")) {
             ## Plots the grid search results.
@@ -814,45 +675,6 @@ setMethod(plotGrid, "Synapter",
             p <- levelplot(grd, xlab = xlab, ylab = ylab, main = main)
             print(p)
             invisible(p)
-||||||| merged common ancestors
-          function(object, what = c("total", "model", "details")) {
-            ## Plots the grid search results.
-            if ( length(object$Grid) == 0 )
-              stop("No grid search result to plot.")
-            what <- match.arg(what)
-            if (what == "total") {
-              grd <- object$Grid[[1]]
-              main <- "Percentage of total ident peptides uniquely matched."
-            } else if (what == "model") {
-              grd <- object$Grid[[2]]
-              main <- "Percentage of modelled peptides matched."
-            } else {  ## details
-              grd <- object$Grid[[3]]
-              main <- "Percentage of correct unique assignments."
-            }
-            p <- levelplot(grd, xlab = "nsd", ylab = "ppm", main = main)
-            print(p)
-            invisible(p)
-=======
-          function(object, what = c("total", "model", "details")) {
-              ## Plots the grid search results.
-              if ( length(object$Grid) == 0 )
-                  stop("No grid search result to plot.")
-              what <- match.arg(what)
-              if (what == "total") {
-                  grd <- object$Grid[[1]]
-                  main <- "Percentage of total ident peptides uniquely matched."
-              } else if (what == "model") {
-                  grd <- object$Grid[[2]]
-                  main <- "Percentage of modelled peptides matched."
-              } else {  ## details
-                  grd <- object$Grid[[3]]
-                  main <- "Percentage of correct unique assignments."
-              }
-              p <- levelplot(grd, xlab = "nsd", ylab = "ppm", main = main)
-              print(p)
-              invisible(p)
->>>>>>> master
           })
 
 setMethod(fragmentMatching, "Synapter",
