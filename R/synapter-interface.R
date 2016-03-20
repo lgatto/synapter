@@ -781,6 +781,7 @@ setAs("Synapter", "MSnSet",
         if (any(duplicated(fnames)))
           fnames <- make.unique(fnames)
         featureNames(obj) <- fnames
+        obj <- updateFvarLabels(obj, sampleNames(obj)[1L])
         if (validObject(obj))
           return(obj)
       })
