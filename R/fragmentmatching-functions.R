@@ -248,6 +248,7 @@
 #' @param fm fm data.frame
 #' @return invisible list with two elements (unique,nonunique) each containing a
 #' matrix of 3 columns threshold, true, false
+#' @noRd
 .plotFragmentMatchingPerformance <- function(fm) {
   l <- setNames(vector(mode="list", length=2), c("unique", "nonunique"))
   what <- c("unique", "non-unique")

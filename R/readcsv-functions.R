@@ -1,7 +1,7 @@
 #' wrapper around readr::read_csv to read just needed columns
-#' @param file
+#' @param file filename
 #' @param keepCols named character vector for columns of interest
-#' @param verbose
+#' @param verbose verbose output?
 #' @return tbl_df
 #' @examples
 #'  readcsv("final_peptide.csv", c("peptide.seq" = "c",
