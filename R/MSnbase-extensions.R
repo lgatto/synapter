@@ -26,9 +26,11 @@
 
 #' handle plgs/synapter agreement see issue 73:
 #' https://github.com/lgatto/synapter/issues/73
-#' TODO: should be a method for MSnSets in future
 #' @noRd
-synapterPlgsAgreement <- function(msnset) {
+setMethod("synapterPlgsAgreement", signature(object="MSnSet"),
+          function(object, ...) .synapterPlgsAgreement(object))
+
+.synapterPlgsAgreement <- function(msnset) {
 
   i <- grep("synapterPlgsAgreement", colnames(fData(msnset)))
 
@@ -49,4 +51,3 @@ synapterPlgsAgreement <- function(msnset) {
 
   msnset
 }
-

@@ -81,3 +81,7 @@ setGeneric("writeFragmentLibrary", function(x, file, ...) standardGeneric("write
 setGeneric("bestComb", function(object, ...) standardGeneric("bestComb"))
 setGeneric("allComb", function(object, ...) standardGeneric("allComb"))
 setGeneric("masterFdr", function(object, ...) standardGeneric("masterFdr"))
+
+###############################
+## MSnbase extensions: MSnSet
+setGeneric("synapterPlgsAgreement", function(object, ...) standardGeneric("synapterPlgsAgreement"))
