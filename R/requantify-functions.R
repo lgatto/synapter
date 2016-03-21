@@ -118,9 +118,11 @@ requantify <- function(msnset, saturationThreshold,
     BRAIN::getAtomsFromSeq(sequence), nrPeaks=nc)
 
   th <- t(t(x)/props)
+  th[th == 0L] <- NA_real_
 
-  return(switch(match.arg(method),
-                "mean" = rowMeans(th, na.rm=TRUE),
-                "median" = apply(th, 1, median, na.rm=TRUE),
-                "weighted.mean" = apply(th, 1, weighted.mean, w=props, na.rm=TRUE)))
+  switch(match.arg(method),
+         "mean" = rowMeans(th, na.rm=TRUE),
+         "median" = apply(th, 1, median, na.rm=TRUE),
+         "weighted.mean" = apply(th, 1, weighted.mean, w=props,
+                                 na.rm=TRUE))
 }
