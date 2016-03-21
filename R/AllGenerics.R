@@ -85,3 +85,4 @@ setGeneric("masterFdr", function(object, ...) standardGeneric("masterFdr"))
 ###############################
 ## MSnbase extensions: MSnSet
 setGeneric("synapterPlgsAgreement", function(object, ...) standardGeneric("synapterPlgsAgreement"))
+setGeneric("requantify", function(object, ...) standardGeneric("requantify"))

@@ -1,7 +1,71 @@
-requantify <- function(msnset, saturationThreshold,
-                       method=c("sum", "reference",
-                                "th.mean", "th.median", "th.weighted.mean"),
-                       ...) {
+#' Intensity requantification
+#'
+#' This method tries to remove saturation effects from the intensity counts.
+#'
+#' @details
+#' Currently \code{requantify} supports 3 (5) different requantification
+#' methods. \cr
+#'
+#' \code{"sum"} is the simplest requantification method. All ions of a
+#' peptide below the saturation threshold are summed to get the new intensity.
+#' This method accept an additional argument, namely \code{onlyCommonIsotopes}
+#' If \code{onlyCommonIsotopes=TRUE} (default) all ions that are not seen in
+#' all runs are removed and only the common seen ions are summed. In contrast
+#' \code{onlyCommonIsotopes=FALSE} sums all ions regardless they are present
+#' in all runs. \cr
+#'
+#' In \code{"reference"} the run where all ions are unsaturated and has the
+#' highest intensity is used as reference. The other runs are corrected as
+#' follows:
+#' \itemize{
+#'  \item{Find common ions between current and the reference run.}
+#'  \item{Divide the intensities of the common ions and calculate the mean of
+#'  these quotients as a run specific scaling factor.}
+#'  \item{Multiply the unsaturated ions of the current run by the scaling
+#'  factor and replace the saturated ones by the product of the scaling
+#'  factor and the intensities of their corresponding ions in the reference
+#'  run.}
+#'  \item{Sum the rescaled ion intensities.}
+#' }
+#'
+#' The \code{"th.*"} methods are nearly identical. All of them calculate the
+#' theoretical isotopic distribution for the given sequence of the peptide.
+#' Subsequently the unsaturated ions are divided by their theoretical
+#' proportion and the \code{mean}/\code{median}/\code{weighted.mean}
+#' (proportions are used as weights) of these intensities are used as
+#' requantified intensity for this peptide.
+#'
+#' @usage
+#' \S4method{requantify}{MSnSet}(object, saturationThreshold,
+#' method=c("sum", "reference", "th.mean", "th.median",
+#' "th.weighted.mean"), \ldots)
+#'
+#' @param object An \code{\linkS4class{MSnSet}} object.
+#' @param saturationThreshold \code{double}, all intensities above this
+#' threshold are considered as saturated.
+#' @param method \code{character}, requantification method, please see details
+#' section.
+#' @param \ldots further arguments passed to internal functions. Currently just
+#' \code{onlyCommonIsotopes} for \code{method="sum"} is supported.
+#' @return \code{\linkS4class{MSnSet}} where the
+#' \code{assayData} are requantified.
+#'
+#' @author Sebastian Gibb \email{mail@@sebastiangibb.de} and Pavel Shliaha
+#' @references
+#' See discussion on github: \url{https://github.com/lgatto/synapter/issues/39}
+#' @seealso MSnSet documentation: \code{\linkS4class{MSnSet}}
+#' @aliases requantify requantify-method,MSnSet
+#' @rdname requantify
+setMethod("requantify", signature(object="MSnSet"),
+          function(object, saturationThreshold,
+                   method=c("sum", "reference",
+                            "th.mean", "th.median", "th.weighted.mean"),
+                   ...) .requantify(object, ...))
+
+.requantify <- function(msnset, saturationThreshold,
+                        method=c("sum", "reference",
+                                 "th.mean", "th.median", "th.weighted.mean"),
+                        ...) {
   cn <- fvarLabels(msnset)
   i <- grep("isotopicDistr", cn)
 
