@@ -22,9 +22,7 @@ export(Synapter, ## constructor
        makeMaster,
        estimateMasterFdr,
        inspectPeptideScores,
-       requantify,
        synapterGuide,
-       synapterPlgsAgreement,
        synapterTinyData)
 
 exportClasses(MasterPeptides,
@@ -112,4 +110,6 @@ exportMethods(show,
               writeFragmentLibrary,
               getIdentificationFragments,
               getQuantitationSpectra,
-              updateObject)
+              updateObject,
+              requantify,
+              synapterPlgsAgreement)
