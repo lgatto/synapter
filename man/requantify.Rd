@@ -14,8 +14,8 @@ method=c("sum", "reference", "th.mean", "th.median",
 \arguments{
 \item{object}{An \code{\linkS4class{MSnSet}} object.}
 
-\item{saturationThreshold}{\code{double}, all intensities above this
-threshold are considered as saturated.}
+\item{saturationThreshold}{\code{double}, intensity of an ion (isotope of a
+given charge state) at which saturation is starting to occur.}
 
 \item{method}{\code{character}, requantification method, please see details
 section.}

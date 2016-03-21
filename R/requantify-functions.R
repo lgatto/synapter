@@ -41,8 +41,8 @@
 #' "th.weighted.mean"), \ldots)
 #'
 #' @param object An \code{\linkS4class{MSnSet}} object.
-#' @param saturationThreshold \code{double}, all intensities above this
-#' threshold are considered as saturated.
+#' @param saturationThreshold \code{double}, intensity of an ion (isotope of a
+#' given charge state) at which saturation is starting to occur.
 #' @param method \code{character}, requantification method, please see details
 #' section.
 #' @param \ldots further arguments passed to internal functions. Currently just
