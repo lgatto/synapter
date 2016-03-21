@@ -33,7 +33,12 @@
 #' Subsequently the unsaturated ions are divided by their theoretical
 #' proportion and the \code{mean}/\code{median}/\code{weighted.mean}
 #' (proportions are used as weights) of these intensities are used as
-#' requantified intensity for this peptide.
+#' requantified intensity for this peptide. \cr
+#' If \code{requantifyAll=FALSE} (default) just peptides with at least one
+#' saturated ion are requantified (unsaturated peptides are unaffected). If
+#' \code{requantify=TRUE} all peptides even these where all ions are below
+#' \code{saturationThreshold} are requantified by their theoretical
+#' distribution.
 #'
 #' @usage
 #' \S4method{requantify}{MSnSet}(object, saturationThreshold,
@@ -45,8 +50,9 @@
 #' given charge state) at which saturation is starting to occur.
 #' @param method \code{character}, requantification method, please see details
 #' section.
-#' @param \ldots further arguments passed to internal functions. Currently just
-#' \code{onlyCommonIsotopes} for \code{method="sum"} is supported.
+#' @param \ldots further arguments passed to internal functions. Currently
+#' \code{onlyCommonIsotopes} for \code{method="sum"} and \code{requantifyAll}
+#' for \code{method=c("th.mean", "th.median", "th.weighted.mean")} are supported.
 #' @return \code{\linkS4class{MSnSet}} where the
 #' \code{assayData} are requantified.
 #'
@@ -105,7 +111,7 @@ setMethod("requantify", signature(object="MSnSet"),
     for (i in 1:nrow(e)) {
       e[i, ] <- .requantifyTheoreticalDistribution(
         .isotopicDistr2matrix(f[i, ]), sequence=rn[i],
-        saturationThreshold=saturationThreshold, method=method)
+        saturationThreshold=saturationThreshold, method=method, ...)
     }
   }
 
@@ -176,7 +182,8 @@ setMethod("requantify", signature(object="MSnSet"),
 .requantifyTheoreticalDistribution <- function(x, sequence,
                                                saturationThreshold=Inf,
                                                method=c("mean", "median",
-                                                        "weighted.mean")) {
+                                                        "weighted.mean"),
+                                               requantifyAll=FALSE) {
   unsat <- .isUnsaturatedIsotope(x, saturationThreshold=saturationThreshold)
   x <- .sumIsotopes(x * unsat)
   nc <- ncol(x)
@@ -187,9 +194,16 @@ setMethod("requantify", signature(object="MSnSet"),
   th <- t(t(x)/props)
   th[th == 0L] <- NA_real_
 
-  switch(match.arg(method),
-         "mean" = rowMeans(th, na.rm=TRUE),
-         "median" = apply(th, 1, median, na.rm=TRUE),
-         "weighted.mean" = apply(th, 1, weighted.mean, w=props,
-                                 na.rm=TRUE))
+  r <- switch(match.arg(method),
+              "mean" = rowMeans(th, na.rm=TRUE),
+              "median" = apply(th, 1, median, na.rm=TRUE),
+              "weighted.mean" = apply(th, 1, weighted.mean, w=props,
+                                      na.rm=TRUE))
+  if (!requantifyAll) {
+    runUnsat <- which(rowSums(!unsat, na.rm=TRUE) == 0L)
+    if (length(runUnsat)) {
+      r[runUnsat] <- rowSums(x[runUnsat, , drop=FALSE], na.rm=TRUE)
+    }
+  }
+  r
 }
