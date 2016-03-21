@@ -1,6 +1,7 @@
 requantify <- function(msnset, saturationThreshold,
                        method=c("sum", "reference",
-                                "th.mean", "th.median", "th.weighted.mean")) {
+                                "th.mean", "th.median", "th.weighted.mean"),
+                       ...) {
   cn <- fvarLabels(msnset)
   i <- grep("isotopicDistr", cn)
 
@@ -24,7 +25,7 @@ requantify <- function(msnset, saturationThreshold,
     )
     e <- t(apply(f, 1, function(x) {
       fun(.isotopicDistr2matrix(x),
-          saturationThreshold=saturationThreshold)
+          saturationThreshold=saturationThreshold, ...)
     }))
   } else {
     if (!requireNamespace("BRAIN")) {
