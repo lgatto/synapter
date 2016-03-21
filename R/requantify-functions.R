@@ -60,7 +60,10 @@ setMethod("requantify", signature(object="MSnSet"),
           function(object, saturationThreshold,
                    method=c("sum", "reference",
                             "th.mean", "th.median", "th.weighted.mean"),
-                   ...) .requantify(object, ...))
+                   ...) .requantify(object,
+                                    saturationThreshold=saturationThreshold,
+                                    method=method, ...)
+
 
 .requantify <- function(msnset, saturationThreshold,
                         method=c("sum", "reference",
