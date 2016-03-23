@@ -116,7 +116,11 @@ setMethod("requantify", signature(object="MSnSet"),
   }
 
   dimnames(e) <- dimnames(exprs(msnset))
-  exprs(msnset) <- e
+  ## don't introduce new values for missing entries (could happen if there is
+  ## isotopicDistribution but no Counts)
+  ## see https://github.com/lgatto/synapter/issues/39#issuecomment-200355965
+  isNA <- is.na(exprs(msnset))
+  exprs(msnset)[!isNA] <- e[!isNA]
   msnset
 }
 
