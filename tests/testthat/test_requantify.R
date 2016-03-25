@@ -39,18 +39,6 @@ test_that(".isCommonIsotope", {
                           c("1_0", "1_1", "1_2", "1_3", "1_4")))
 })
 
-test_that(".applyByChargeState", {
-  m <- matrix(c(1000, 100, 10, NA, NA,
-                10000, 1000, NA, 800, 100), byrow=TRUE, nrow=2, ncol=5,
-                dimnames=list(c("run1", "run2"),
-                              c("1_0", "1_1", "1_2", "2_0", "2_1")))
-  r <- matrix(c(1110, 0, 11000, 900), byrow=TRUE, nrow=2, ncol=2,
-                dimnames=list(c("run1", "run2"), c("1", "2")))
-  expect_error(synapter:::.applyByChargeState(m, c(1, 1, 2, 2)))
-  expect_equal(synapter:::.applyByChargeState(m, c(1, 1, 1, 2, 2),
-                                              rowSums, na.rm=TRUE), r)
-})
-
 test_that("requantifySum, all isotopes below threshold", {
   int <- setNames(c(1111, 911, 2222, 7111), colnames(f))
   sat5000_int <- setNames(c(111, 111, 222, 1111), colnames(f))
