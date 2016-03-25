@@ -32,8 +32,9 @@
 #' theoretical isotopic distribution for the given sequence of the peptide.
 #' Subsequently the unsaturated ions are divided by their theoretical
 #' proportion and the \code{mean}/\code{median}/\code{weighted.mean}
-#' (proportions are used as weights) of these intensities are used as
-#' requantified intensity for this peptide. \cr
+#' (proportions are used as weights) of these intensities are calculated per
+#' charge state. The sum of the charge state values is used as requantified
+#' intensity for this peptide. \cr
 #' If \code{requantifyAll=FALSE} (default) just peptides with at least one
 #' saturated ion are requantified (unsaturated peptides are unaffected). If
 #' \code{requantify=TRUE} all peptides even these where all ions are below
@@ -148,6 +149,17 @@ setMethod("requantify", signature(object="MSnSet"),
   m
 }
 
+.applyByChargeState <- function(x, charges, fun, ...) {
+  stopifnot(length(charges) == ncol(x))
+  ucharges <- unique(charges)
+  m <- matrix(NA_real_, ncol=length(ucharges), nrow=nrow(x),
+              dimnames=list(rownames(x), ucharges))
+  for (i in seq(along=ucharges)) {
+    m[, i] <- fun(x[, charges == ucharges[i], drop=FALSE], ...)
+  }
+  m
+}
+
 .requantifySum <- function(x, saturationThreshold=Inf,
                            onlyCommonIsotopes=TRUE) {
   i <- .runsUnsaturated(x, saturationThreshold=saturationThreshold)
@@ -189,20 +201,29 @@ setMethod("requantify", signature(object="MSnSet"),
                                                         "weighted.mean"),
                                                requantifyAll=FALSE) {
   unsat <- .isUnsaturatedIsotope(x, saturationThreshold=saturationThreshold)
-  x <- .sumIsotopes(x * unsat)
-  nc <- ncol(x)
+  x <- x * unsat
 
-  props <- BRAIN::calculateIsotopicProbabilities(
-    BRAIN::getAtomsFromSeq(sequence), nrPeaks=nc)
+  cn <- as.numeric(unlist(strsplit(colnames(x), "_", fixed=TRUE)))
+  sel <- as.logical(seq_along(cn) %% 2L)
+  charges <- cn[sel]
+  iIsotopes <- cn[!sel] + 1L
+  nIsotopes <- max(iIsotopes)
 
-  th <- t(t(x)/props)
+  probs <- BRAIN::calculateIsotopicProbabilities(
+    BRAIN::getAtomsFromSeq(sequence), nrPeaks=nIsotopes)
+
+  th <- t(t(x)/probs[iIsotopes])
   th[th == 0L] <- NA_real_
 
   r <- switch(match.arg(method),
-              "mean" = rowMeans(th, na.rm=TRUE),
-              "median" = apply(th, 1, median, na.rm=TRUE),
-              "weighted.mean" = apply(th, 1, weighted.mean, w=props,
-                                      na.rm=TRUE))
+    "mean" = .applyByChargeState(th, charges, rowMeans, na.rm=TRUE),
+    "median" = .applyByChargeState(th, charges, function(x)apply(x, 1, median,
+                                                                 na.rm=TRUE)),
+    "weighted.mean" = .applyByChargeState(th, charges, function(x)apply(x, 1,
+                          function(xx)weighted.mean(xx, w=probs[seq_along(xx)],
+                                                    na.rm=TRUE))))
+  r <- rowSums(r, na.rm=TRUE)
+
   if (!requantifyAll) {
     runUnsat <- which(rowSums(!unsat, na.rm=TRUE) == 0L)
     if (length(runUnsat)) {

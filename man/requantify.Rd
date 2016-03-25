@@ -20,8 +20,9 @@ given charge state) at which saturation is starting to occur.}
 \item{method}{\code{character}, requantification method, please see details
 section.}
 
-\item{\ldots}{further arguments passed to internal functions. Currently just
-\code{onlyCommonIsotopes} for \code{method="sum"} is supported.}
+\item{\ldots}{further arguments passed to internal functions. Currently
+\code{onlyCommonIsotopes} for \code{method="sum"} and \code{requantifyAll}
+for \code{method=c("th.mean", "th.median", "th.weighted.mean")} are supported.}
 }
 \value{
 \code{\linkS4class{MSnSet}} where the
@@ -60,8 +61,14 @@ The \code{"th.*"} methods are nearly identical. All of them calculate the
 theoretical isotopic distribution for the given sequence of the peptide.
 Subsequently the unsaturated ions are divided by their theoretical
 proportion and the \code{mean}/\code{median}/\code{weighted.mean}
-(proportions are used as weights) of these intensities are used as
-requantified intensity for this peptide.
+(proportions are used as weights) of these intensities are calculated per
+charge state. The sum of the charge state values is used as requantified
+intensity for this peptide. \cr
+If \code{requantifyAll=FALSE} (default) just peptides with at least one
+saturated ion are requantified (unsaturated peptides are unaffected). If
+\code{requantify=TRUE} all peptides even these where all ions are below
+\code{saturationThreshold} are requantified by their theoretical
+distribution.
 }
 \author{
 Sebastian Gibb \email{mail@sebastiangibb.de} and Pavel Shliaha
