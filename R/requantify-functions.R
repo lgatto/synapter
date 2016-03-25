@@ -138,17 +138,6 @@ setMethod("requantify", signature(object="MSnSet"),
   colSums(is.na(x)) == 0L
 }
 
-.sumIsotopes <- function(x) {
-  isoNames <- factor(gsub("^[0-9]+_([0-9]+)$", "\\1", colnames(x)))
-  m <- matrix(NA_real_, ncol=length(levels(isoNames)), nrow=nrow(x),
-              dimnames=list(rownames(x), levels(isoNames)))
-  for (i in seq(along=levels(isoNames))) {
-    m[, i] <- rowSums(x[, isoNames == levels(isoNames)[i], drop=FALSE],
-                      na.rm=TRUE)
-  }
-  m
-}
-
 .requantifySum <- function(x, saturationThreshold=Inf,
                            onlyCommonIsotopes=TRUE) {
   i <- .runsUnsaturated(x, saturationThreshold=saturationThreshold)
