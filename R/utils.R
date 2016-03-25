@@ -1,12 +1,12 @@
 filterFunction <- function(x) {
   ## keep only function 1 in Pep3DAMRT
   ## was Function column before (see issue #67)
-  return(x[x$matchedEMRTs == 1,])
+  x[x$matchedEMRTs == 1,]
 }
 
 filterPeptideMatchType <- function(x) {
   ## keep peptide.matchType PepFrag1 or pepFrag2
-  return(x[x$peptide.matchType %in% c("PepFrag1", "PepFrag2"),])
+  x[x$peptide.matchType %in% c("PepFrag1", "PepFrag2"),]
 }
 
 
@@ -32,7 +32,7 @@ filterPepScore <- function(dfr,
   }
   sel[sel1] <- signif1
   sel[sel2] <- signif2
-  return(dfr[sel,])
+  dfr[sel,]
 }
 
 
@@ -59,7 +59,7 @@ filter.error.ppm <- function(x, colname, ppm = 2) {
   if (!colname %in% names(x))
     stop(paste(colname, "not found!"))
   sel <- abs(x[,colname]) < ppm
-  return(x[sel,])
+  x[sel,]
 }
 
 rawRetTimeModel <- function(retT, deltaRt, span) {
@@ -132,7 +132,7 @@ findRtIndices <- function(sortedPep3d, lowerHDMSeRt, upperHDMSeRt) {
   lowerIdx <- pmin(lowerIdx, upperIdx)
 
   ## create matrix with boundaries (col 1 and 2)
-  return(cbind(lower=lowerIdx, upper=upperIdx))
+  cbind(lower=lowerIdx, upper=upperIdx)
 }
 
 findMzIndices <- function(pep3dMz, hdmseMz, rtIndices, ppmthreshold) {
@@ -163,7 +163,7 @@ calculateGridPerformance <- function(identpep, sortedPep3d, mergedpep, matches) 
   ## #############################################################
 
   n <- length(matches)
-  k <- sapply(matches, length)
+  k <- lengths(matches)
   k1 <- which(k == 1L)
   k2 <- which(k > 1L)
 
@@ -206,7 +206,7 @@ calculateGridPerformance <- function(identpep, sortedPep3d, mergedpep, matches) 
   grddetails <- c("-2"=0, "-1"=0, "0"=0, "1"=0, "2"=0)
   grddetails[names(details)] <- details
 
-  return(list(grd1=grd1, grd2=grd2, details=grddetails))
+  list(grd1=grd1, grd2=grd2, details=grddetails)
 }
 
 findMSeEMRTs <- function(identpep,
@@ -277,7 +277,7 @@ estimate.mass.range <- function(Mhdmse, ppmt) {
   mass.ranges <- sapply(Mhdmse, function(m)
                         c(( (ppmt * m) / 1e6) + m,
                           ((-ppmt * m) / 1e6) + m))
-  return(t(mass.ranges))
+  t(mass.ranges)
 }
 
 
@@ -309,7 +309,7 @@ lightMergedFeatures <- function(x) {
             "Bonferroni.quant",
             "BH.quant",
             "qval.quant")
-  return(x[,cols])
+  x[,cols]
 }
 
 lightMatchedEMRTs <- function(x) {
@@ -331,7 +331,7 @@ lightMatchedEMRTs <- function(x) {
             "ion_ID",
             "ion_area",
             "ion_counts")
-  return(x[,cols])
+  x[,cols]
 }
 
 gridSearch3 <- function(model,
@@ -407,13 +407,13 @@ gridSearch3 <- function(model,
 makeFigurePath <- function(dirname, filename) {
   full <- paste(dirname, "/", filename, sep="")
   rel <- filename
-  return(list(full=full, relative=rel))
+  list(full=full, relative=rel)
 }
 
 getQs <- function(x, qtls) {
     xi <- length(x) * qtls
     yi <- quantile(sort(abs(x)), qtls)
-    return(list(x=xi, y=yi))
+    list(x=xi, y=yi)
 }
 
 keepUniqueSpectrumIds <- function(pep3d) {
@@ -476,7 +476,7 @@ getIdStats <- function(pepdata) {
   ##
   ans <- res[, c("pval", "qval", "BH", "Bonferroni")]
   rownames(ans) <- rownames(pepdata)
-  return(ans)
+  ans
 }
 
 ## closes #42
@@ -487,7 +487,7 @@ isCorrespondingPep3DataFile <- function(quant, pep3d) {
   ## temporarly because some files exist that have entries with different
   ## intensity values.
   ## See https://github.com/lgatto/synapter/issues/42 for details
-  return(!anyNA(idx))
+  !anyNA(idx)
 #  return(!anyNA(idx) && all(quant$precursor.inten == pep3d$Counts[idx]))
 }
 
@@ -520,7 +520,7 @@ flatMatchedEMRTs <- function(emrts, pep3d, na.rm=TRUE, verbose=TRUE) {
     ## update spectrumID
     curRow$spectrumID <- curRow$matched.quant.spectrumIDs
 
-    return(curRow)
+    curRow
   })
 
   ## build final df
@@ -587,7 +587,7 @@ flatMatchedEMRTs <- function(emrts, pep3d, na.rm=TRUE, verbose=TRUE) {
   emrts[idx, "FragmentMatching"] <- MSnbase:::utils.list2ssv(
     split(fm[, "FragmentMatching"], fm$precursor.leID.ident))
 
-  return(emrts)
+  emrts
 }
 
 matched.quant.spectrumIDs2numeric <- function(x) {
@@ -604,7 +604,7 @@ diagnosticErrors <- function(x) {
   pre <- tp/(tp+fp)
   rec <- tp/(tp+fn)
   f1 <- 2*pre*rec/(pre+rec)
-  return(cbind(accuracy=acc, precision=pre, recall=rec, fdr=1-pre, f1=f1))
+  cbind(accuracy=acc, precision=pre, recall=rec, fdr=1-pre, f1=f1)
 }
 
 # concatenate isotope distribution information
