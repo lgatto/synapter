@@ -76,15 +76,19 @@ setMethod("requantify", signature(object="MSnSet"),
                         method=c("sum", "reference",
                                  "th.mean", "th.median", "th.weighted.mean"),
                         ...) {
-  cn <- fvarLabels(msnset)
-  i <- grep("isotopicDistr", cn)
+  i <- grep("isotopicDistr", fvarLabels(msnset))
 
   if (!length(i)) {
     stop("Could not find any isotopic distribution information.")
   }
 
-  f <- fData(msnset)[, i]
   e <- exprs(msnset)
+  f <- as.matrix(fData(msnset)[, i])
+  ## don't introduce new values for missing entries (could happen if there is
+  ## isotopicDistribution but no Counts)
+  ## see https://github.com/lgatto/synapter/issues/39#issuecomment-200355965
+  isNA <- is.na(e)
+  f[isNA] <- NA_character_
 
   method <- match.arg(method)
 
@@ -116,11 +120,6 @@ setMethod("requantify", signature(object="MSnSet"),
     }
   }
 
-  dimnames(e) <- dimnames(exprs(msnset))
-  ## don't introduce new values for missing entries (could happen if there is
-  ## isotopicDistribution but no Counts)
-  ## see https://github.com/lgatto/synapter/issues/39#issuecomment-200355965
-  isNA <- is.na(exprs(msnset))
   exprs(msnset)[!isNA] <- e[!isNA]
   msnset
 }
