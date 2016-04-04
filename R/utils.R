@@ -649,7 +649,7 @@ diagnosticErrors <- function(x) {
   x <- unlist(x, use.names=FALSE)
 
   cn <- x[seq(from=1L, to=nall, by=2L)]
-  ucn <- unique(cn)
+  ucn <- sort.int(unique(cn))
 
   m <- matrix(NA_real_, nrow=n, ncol=length(ucn),
               dimnames=list(nm, ucn))
