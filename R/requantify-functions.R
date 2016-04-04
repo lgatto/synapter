@@ -137,6 +137,12 @@ setMethod("requantify", signature(object="MSnSet"),
   colSums(is.na(x)) == 0L
 }
 
+.names2chargesIsotopes <- function(x) {
+  cn <- as.numeric(unlist(strsplit(x, "_", fixed=TRUE)))
+  sel <- seq(1L, length(cn), by=2L)
+  list(charges=cn[sel], isotopes=cn[sel + 1L])
+}
+
 .requantifySum <- function(x, saturationThreshold=Inf,
                            onlyCommonIsotopes=TRUE) {
   i <- .runsUnsaturated(x, saturationThreshold=saturationThreshold)
@@ -180,16 +186,13 @@ setMethod("requantify", signature(object="MSnSet"),
   unsat <- .isUnsaturatedIsotope(x, saturationThreshold=saturationThreshold)
   x <- x * unsat
 
-  cn <- as.numeric(unlist(strsplit(colnames(x), "_", fixed=TRUE)))
-  sel <- as.logical(seq_along(cn) %% 2L)
-  charges <- cn[sel]
-  iIsotopes <- cn[!sel] + 1L
-  nIsotopes <- max(iIsotopes)
+  ci <- .names2chargesIsotopes(colnames(x))
+  ci$isotopes <- ci$isotopes + 1L
 
   probs <- BRAIN::calculateIsotopicProbabilities(
-    BRAIN::getAtomsFromSeq(sequence), nrPeaks=nIsotopes)
+    BRAIN::getAtomsFromSeq(sequence), nrPeaks=max(ci$isotopes))
 
-  th <- t(t(x)/probs[iIsotopes])
+  th <- t(t(x)/probs[ci$isotopes])
   th[th == 0L] <- NA_real_
 
   fun <- switch(match.arg(method),
@@ -198,7 +201,7 @@ setMethod("requantify", signature(object="MSnSet"),
                 "weighted.mean" = function(x)apply(x, 2,
                                     function(xx)weighted.mean(xx, w=probs[seq_along(xx)], na.rm=TRUE)))
 
-  r <- t(MSnbase:::utils.applyColumnwiseByGroup(t(th), groupBy = charges, FUN = fun))
+  r <- t(MSnbase:::utils.applyColumnwiseByGroup(t(th), groupBy = ci$charges, FUN = fun))
   r <- rowSums(r, na.rm=TRUE)
 
   if (!requantifyAll) {

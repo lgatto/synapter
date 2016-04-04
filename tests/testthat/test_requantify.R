@@ -39,6 +39,11 @@ test_that(".isCommonIsotope", {
                           c("1_0", "1_1", "1_2", "1_3", "1_4")))
 })
 
+test_that(".names2chargesIsotopes", {
+    expect_equal(synapter:::.names2chargesIsotopes(c("1_0", "1_1", "2_3")),
+                 list(charges=c(1, 1, 2), isotopes=c(0, 1, 3)))
+})
+
 test_that("requantifySum, all isotopes below threshold", {
   int <- setNames(c(1111, 911, 2222, 7111), colnames(f))
   sat5000_int <- setNames(c(111, 111, 222, 1111), colnames(f))
