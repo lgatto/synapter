@@ -44,6 +44,15 @@ test_that(".names2chargesIsotopes", {
                  list(charges=c(1, 1, 2), isotopes=c(0, 1, 3)))
 })
 
+test_that(".referenceRun", {
+    m <- matrix(c(100, NA, 100,
+                  200, 200, 200,
+                  1e3, 1e3, 1e3,
+                  1e5, 200, 200,
+                  0, 120, 0), nrow=5, byrow=TRUE)
+    expect_identical(synapter:::.referenceRun(m, m <= 1e3), 3L)
+})
+
 test_that("requantifySum, all isotopes below threshold", {
   int <- setNames(c(1111, 911, 2222, 7111), colnames(f))
   sat5000_int <- setNames(c(111, 111, 222, 1111), colnames(f))

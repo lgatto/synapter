@@ -143,6 +143,14 @@ setMethod("requantify", signature(object="MSnSet"),
   list(charges=cn[sel], isotopes=cn[sel + 1L])
 }
 
+.referenceRun <- function(x, unsat) {
+  unsat[is.na(unsat)] <- FALSE
+  ref <- unsat %*% t(unsat)
+  diag(ref) <- NA_real_
+  refrs <- rowSums(ref, na.rm=TRUE)
+  which.max((refrs == max(refrs)) * rowSums(x, na.rm=TRUE))
+}
+
 .requantifySum <- function(x, saturationThreshold=Inf,
                            onlyCommonIsotopes=TRUE) {
   i <- .runsUnsaturated(x, saturationThreshold=saturationThreshold)
@@ -156,11 +164,11 @@ setMethod("requantify", signature(object="MSnSet"),
 .requantifyReferenceRun <- function(x, saturationThreshold=Inf) {
   unsat <- .isUnsaturatedIsotope(x, saturationThreshold=saturationThreshold)
 
+  runSums <- rowSums(x, na.rm=TRUE)
   runSat <- rowSums(!unsat, na.rm=TRUE) == 0L
-  rs <- rowSums(x, na.rm=TRUE)
-  runSums <- rs * runSat
+  runSums[!runSat] <- NA_real_
 
-  ref <- which.max(runSums)
+  ref <- .referenceRun(x, unsat)
 
   for (i in seq(along=runSat)) {
     if (!runSat[i]) {
@@ -170,8 +178,6 @@ setMethod("requantify", signature(object="MSnSet"),
         # use ref run as estimator for saturated intensities
         runSums[i] <- sum(f*x[ref, ]*!unsat[i, ], x[i, ]*unsat[i, ],
                           na.rm=TRUE)
-      } else {
-        return(rep.int(NA_real_, length(runSums)))
       }
     }
   }
