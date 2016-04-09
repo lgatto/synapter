@@ -158,7 +158,9 @@ setMethod("requantify", signature(object="MSnSet"),
   if (onlyCommonIsotopes) {
     i <- i & .isCommonIsotope(x)
   }
-  rowSums(x[, i, drop=FALSE], na.rm=TRUE)
+  rs <- rowSums(x[, i, drop=FALSE], na.rm=TRUE)
+  rs[rs == 0L] <- NA_real_
+  rs
 }
 
 .requantifyReferenceRun <- function(x, saturationThreshold=Inf) {
