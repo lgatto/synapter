@@ -221,3 +221,36 @@ setMethod("requantify", signature(object="MSnSet"),
   }
   r
 }
+
+rescaleForTop3 <- function(before, after, saturationThreshold, onlyForSaturatedRuns=TRUE) {
+  i <- grep("isotopicDistr", fvarLabels(before))
+
+  if (!length(i)) {
+    stop("Could not find any isotopic distribution information.")
+  }
+
+  eBefore <- exprs(before)
+  eAfter <- exprs(after)
+  f <- as.matrix(fData(before)[, i])
+  ## don't introduce new values for missing entries (could happen if there is
+  ## isotopicDistribution but no Counts)
+  ## see https://github.com/lgatto/synapter/issues/39#issuecomment-200355965
+  isNA <- is.na(eBefore)
+  f[isNA] <- NA_character_
+
+
+  if (onlyForSaturatedRuns) {
+    unsat <- t(apply(f, 1, function(x).runsUnsaturated(t(.isotopicDistr2matrix(x)),
+                                                     saturationThreshold=saturationThreshold)))
+    eAfter[unsat] <- eBefore[unsat]
+  }
+
+  prop <- eAfter/rowSums(eAfter, na.rm=TRUE)
+  cf <- eBefore/prop
+  eNew <- rowMeans(cf, na.rm=TRUE) * prop
+  if (onlyForSaturatedRuns) {
+    eNew[unsat] <- eBefore[unsat]
+  }
+  exprs(after) <- eNew
+  after
+}
