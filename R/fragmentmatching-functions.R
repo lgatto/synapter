@@ -147,7 +147,7 @@
 #' @noRd
 .fragmentMatchingDifferences <- function(fm) {
   # use only non-unique matches
-  idx <- grep("^non-unique", fm$gridSearchResult)
+  idx <- fm$matchedEMRTs > 1
 
   fm$FragmentMatchingRank <- fm$FragmentMatchingDiff <- NA
 
