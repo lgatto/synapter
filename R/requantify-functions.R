@@ -238,19 +238,22 @@ rescaleForTop3 <- function(before, after, saturationThreshold, onlyForSaturatedR
   isNA <- is.na(eBefore)
   f[isNA] <- NA_character_
 
+  unsat <- t(apply(f, 1, function(x) {
+    .runsUnsaturated(t(.isotopicDistr2matrix(x)),
+                     saturationThreshold=saturationThreshold)
+  }))
 
-  if (onlyForSaturatedRuns) {
-    unsat <- t(apply(f, 1, function(x).runsUnsaturated(t(.isotopicDistr2matrix(x)),
-                                                     saturationThreshold=saturationThreshold)))
-    eAfter[unsat] <- eBefore[unsat]
-  }
-
+  eNew <- eBefore
+  eNew[is.na(eAfter)] <- NA_real_
   prop <- eAfter/rowSums(eAfter, na.rm=TRUE)
   cf <- eBefore/prop
-  eNew <- rowMeans(cf, na.rm=TRUE) * prop
-  if (onlyForSaturatedRuns) {
-    eNew[unsat] <- eBefore[unsat]
+  cf[unsat] <- NA_real_
+
+  if (!onlyForSaturatedRuns) {
+    unsat[rowSums(!unsat & !is.na(cf), na.rm=TRUE) != 0L, ] <- FALSE
   }
+  eNew[!unsat] <- (rowMeans(cf, na.rm=TRUE) * prop)[!unsat]
+
   exprs(after) <- eNew
   after
 }
