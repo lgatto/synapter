@@ -135,7 +135,11 @@ setMethod("requantify", signature(object="MSnSet"),
 }
 
 .isCommonIsotope <- function(x) {
-  colSums(is.na(x)) == 0L
+  colSums(is.na(x)) == 0L & nrow(x) > 0L
+}
+
+.filterMissingRuns <- function(x) {
+  x[rowSums(!is.na(x)) != 0L,, drop=FALSE]
 }
 
 .names2chargesIsotopes <- function(x) {
@@ -157,7 +161,7 @@ setMethod("requantify", signature(object="MSnSet"),
   i <- .runsUnsaturated(x, saturationThreshold=saturationThreshold)
 
   if (onlyCommonIsotopes) {
-    i <- i & .isCommonIsotope(x)
+    i <- i & .isCommonIsotope(.filterMissingRuns(x))
   }
   rs <- rowSums(x[, i, drop=FALSE], na.rm=TRUE)
   rs[rs == 0L] <- NA_real_

@@ -37,6 +37,14 @@ test_that(".isCommonIsotope", {
     expect_equal(synapter:::.isCommonIsotope(im),
                  setNames(rep(c(TRUE, FALSE), c(4, 1)),
                           c("1_0", "1_1", "1_2", "1_3", "1_4")))
+    expect_equal(synapter:::.isCommonIsotope(im[-(1:4),]),
+                 setNames(rep(FALSE, 5), colnames(im)))
+})
+
+test_that(".filterMissingRuns", {
+    mmissing <- im
+    mmissing[2,] <- NA
+    expect_equal(synapter:::.filterMissingRuns(mmissing), im[-2,])
 })
 
 test_that(".names2chargesIsotopes", {
@@ -68,13 +76,19 @@ test_that("requantifySum, all isotopes below threshold", {
 test_that("requantifySum, only common isotopes", {
   int <- setNames(c(1111, 911, 2222, 7110), colnames(f))
   sat5000_int <- setNames(c(111, 111, 222, 1110), colnames(f))
+  satNA5000_int <- setNames(c(111, NA_real_, 222, 1110), colnames(f))
 
   expect_equal(synapter:::.requantifySum(im, Inf,
-                                         onlyCommonIsotopes = TRUE),
+                                         onlyCommonIsotopes=TRUE),
                int)
   expect_equal(synapter:::.requantifySum(im, 5000,
-                                         onlyCommonIsotopes = TRUE),
+                                         onlyCommonIsotopes=TRUE),
                sat5000_int)
+  NA5000 <- im
+  NA5000[2,] <- NA
+  expect_equal(synapter:::.requantifySum(NA5000, 5000,
+                                         onlyCommonIsotopes=TRUE),
+               satNA5000_int)
 })
 
 test_that("requantifyReferenceRun", {
@@ -92,6 +106,8 @@ test_that("requantifyReferenceRun", {
                                     c("1_0", "1_1", "1_2", "2_0", "2_1")))
   expect_equal(synapter:::.requantifyReferenceRun(notCommon, Inf),
                setNames(c(1110, 900), c("run1", "run2")))
-  expect_equal(synapter:::.requantifyReferenceRun(notCommon, 1000),
-               rep(NA_real_, 2))
+  ## nothing in common, that's why just the first run (the reference) is
+  ## returned
+  expect_equal(synapter:::.requantifyReferenceRun(notCommon, 100),
+               setNames(c(1110, NA_real_), c("run1", "run2")))
 })
