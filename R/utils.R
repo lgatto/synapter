@@ -648,7 +648,11 @@ diagnosticErrors <- function(x) {
   nall <- sum(ne)
   x <- unlist(x, use.names=FALSE)
 
-  cn <- x[seq(from=1L, to=nall, by=2L)]
+  if (nall) {
+    cn <- x[seq(from=1L, to=nall, by=2L)]
+  } else {
+    cn <- "1_0"
+  }
   ucn <- sort.int(unique(cn))
 
   m <- matrix(NA_real_, nrow=n, ncol=length(ucn),
@@ -658,7 +662,9 @@ diagnosticErrors <- function(x) {
   cols <- match(cn, ucn)
   i <- rows + (cols - 1L) * n
 
-  m[i] <- as.double(x[seq(from=2L, to=nall, by=2L)])
+  if (nall) {
+    m[i] <- as.double(x[seq(from=2L, to=nall, by=2L)])
+  }
   m
 }
 

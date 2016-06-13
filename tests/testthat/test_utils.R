@@ -75,7 +75,7 @@ test_that("matched.quant.spectrumIDs2numeric", {
                list(1, 1:4, numeric(0)))
 })
 
-test_that(".splitIsotopicDistr", {
+test_that(".isotopicDistr2matrix", {
   iso <- c(first="4_0:5;4_1:20;4_2:30",
            second="4_0:10;4_1:20;4_4:30;1_1:0",
            third="4_0:8;4_2:30")
@@ -83,6 +83,11 @@ test_that(".splitIsotopicDistr", {
                       second="4_0:10;4_1:20;4_4:30;1_1:0",
                       third="4_0:8;4_2:30",
                       stringsAsFactors=FALSE)
+  isoAllNA <- data.frame(first=NA_character_,
+                         second=NA_character_,
+                         third=NA_character_,
+                         stringsAsFactors=FALSE)
+
   m <- matrix(c(NA, 5, 20, 30, NA,
                 0, 10, 20, NA, 30,
                 NA, 8, NA, 30, NA), byrow=TRUE, nrow=3,
@@ -92,10 +97,13 @@ test_that(".splitIsotopicDistr", {
   mNA <- matrix(c(5, 20, 30, rep(NA, 3), 2, NA, NA), byrow=TRUE, nrow=3,
                 dimnames=list(c("first", "second", "third"),
                               c("4_0", "4_1", "4_2")))
+  mAllNA <- matrix(NA_real_, nrow=3,
+                   dimnames=list(c("first", "second", "third"), c("1_0")))
 
   expect_equal(synapter:::.isotopicDistr2matrix(iso), m)
   expect_equal(synapter:::.isotopicDistr2matrix(isodf), m)
   expect_equal(synapter:::.isotopicDistr2matrix(isoNA), mNA)
+  expect_equal(synapter:::.isotopicDistr2matrix(isoAllNA), mAllNA)
 })
 
 test_that("rawRetTimeModel", {
