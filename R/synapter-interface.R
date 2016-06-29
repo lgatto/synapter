@@ -554,12 +554,12 @@ setMethod(plotFragmentMatching, "Synapter",
           })
 
 setMethod(plotFragmentMatchingPerformance, "Synapter",
-          function(object, ...) {
+          function(object, showAllPeptides=FALSE, ...) {
             if (!nrow(object$FragmentMatching)) {
               stop("You have to run ", sQuote("fragmentMatching"), " first!")
             }
 
-            invisible(.plotFragmentMatchingPerformance(object$FragmentMatching))
+            invisible(.plotFragmentMatchingPerformance(object$FragmentMatching, showAllPeptides=showAllPeptides))
           })
 
 setMethod(plotCumulativeNumberOfFragments, "Synapter",

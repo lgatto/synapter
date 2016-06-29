@@ -246,10 +246,11 @@
 
 #' plot fm performance
 #' @param fm fm data.frame
+#' @param showAllPeptides show all peptides in plot?
 #' @return invisible list with two elements (unique,nonunique) each containing a
 #' matrix of 3 columns threshold, true, false
 #' @noRd
-.plotFragmentMatchingPerformance <- function(fm) {
+.plotFragmentMatchingPerformance <- function(fm, showAllPeptides=FALSE) {
   l <- setNames(vector(mode="list", length=2), c("unique", "nonunique"))
   what <- c("unique", "non-unique")
   xlab <- c("# of common peaks", "delta common peaks")
@@ -258,16 +259,30 @@
   for (i in seq(along=l)) {
     l[[i]] <- .fragmentMatchingContingencyMatrix(fm, what=what[i])
 
-    ylim <- range(l[[i]][, c("tp", "fp")])
-    plot(l[[i]][, 1], l[[i]][, "tp"],
-         type="b", lty=1, pch=ifelse(l[[i]][, "tp"], 19, 1),
-         ylim=ylim, col=4, xlab=xlab[i], ylab="# of peptides",
+    col <- c("#808080", 4, 2)
+    legend <- c("all peptides",
+                "true matches (merged data)",
+                "false matches (merged data)")
+
+    if (showAllPeptides) {
+      ylim <- range(l[[i]][, c("tp", "fp", "all")], na.rm=TRUE)
+    } else {
+      ylim <- range(l[[i]][, c("tp", "fp")], na.rm=TRUE)
+      col <- col[-1]
+      legend <- legend[-1]
+    }
+
+    plot(l[[i]][, 1], l[[i]][, "all"],
+         type=ifelse(showAllPeptides, "b", "n"),
+         lty=1, pch=ifelse(l[[i]][, "all"], 19, 1),
+         ylim=ylim, col="#808080", xlab=xlab[i], ylab="# of peptides",
          main=paste("performance", what[i]))
+    lines(l[[i]][, 1], l[[i]][, "tp"], type="b",
+          pch=ifelse(l[[i]][, "tp"], 19, 1), col=2)
     lines(l[[i]][, 1], l[[i]][, "fp"], type="b",
-          pch=ifelse(l[[i]][, "fp"], 19, 1), col=2)
+          pch=ifelse(l[[i]][, "fp"], 19, 1), col=4)
     grid()
-    legend("topright", legend=c("true matches", "false matches"),
-           col=c(4, 2), lwd=1, pch=19, bty="n")
+    legend("topright", legend=legend, col=col, lwd=1, pch=19, bty="n")
   }
   par(mfcol=c(1, 1))
 
@@ -281,20 +296,21 @@
 .fragmentMatchingConfusionMatrix <- function(fm, what=c("unique", "non-unique")) {
   what <- match.arg(what)
 
-  fm <- fm[grep(paste0("^", what), fm$gridSearchResult), ]
+  fmsub <- fm[grep(paste0("^", what), fm$gridSearchResult), ]
 
   rcol <- "FragmentMatchingRank"
 
   if (what == "unique") {
-    fm[, rcol] <- 1
+    fmsub[, rcol] <- 1
     mcol <- "FragmentMatching"
   } else {
     mcol <- "FragmentMatchingDiff"
   }
 
-  train <- tapply(1:nrow(fm), fm$precursor.leID.ident, function(i) {
-    ytrain <- any(grepl("true$", fm$gridSearchResult[i]) & fm[i, rcol] == 1)
-    xtrain <- fm[i[which.min(fm[i, rcol])], mcol]
+  train <- tapply(1:nrow(fmsub), fmsub$precursor.leID.ident, function(i) {
+    ytrain <- any(grepl("true$", fmsub$gridSearchResult[i]) &
+                  fmsub[i, rcol] == 1)
+    xtrain <- fmsub[i[which.min(fmsub[i, rcol])], mcol]
     cbind(xtrain, ytrain)
   }, simplify=FALSE)
   train <- do.call(rbind, train)
@@ -302,20 +318,24 @@
   ytrain <- train[, 2]
 
   thresholds <- 0:max(xtrain, na.rm=TRUE)
+  allfm <- fm[, mcol]
+  allfm[is.na(allfm)] <- 0
 
   confusion <- t(sapply(thresholds, function(th) {
     tp <- sum(xtrain >= th & ytrain)
     fp <- sum(xtrain >= th & !ytrain)
     tn <- sum(xtrain < th & !ytrain)
     fn <- sum(xtrain < th & ytrain)
-    return(c(tp=tp, fp=fp, tn=tn, fn=fn))
+    al <- sum(allfm >= th)
+    c(tp=tp, fp=fp, tn=tn, fn=fn, all=al)
   }))
+
   confusion <- cbind(thresholds, confusion)
 
   colnames(confusion)[1] <- ifelse(what == "unique", "ncommon", "deltacommon")
   rownames(confusion) <- NULL
 
-  return(confusion)
+  confusion
 }
 
 #' @param fm FragmentMatching df, result of .fragmentMatching
