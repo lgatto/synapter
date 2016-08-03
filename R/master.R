@@ -456,7 +456,7 @@ makeMaster <- function(pepfiles,
   list(o, c(o[-1L], o[1L]))
 }
 
-#' Use the data set with the highest number of peptides for model creation
+#' Merge a peptide data (master and a single slave)
 #' @param master master df
 #' @param slave df that should be merged
 #' @param maxDeltaRt maximal allowed deviation in retTime; see issue #107
