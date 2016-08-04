@@ -468,6 +468,8 @@ makeMaster <- function(pepfiles,
              suffixes = c(".master", ".slave"))
   m$deltaRt <- m$precursor.retT.master - m$precursor.retT.slave
 
+  m$intenRatio <- log2(m$precursor.inten.master / m$precursor.inten.slave)
+
   keep <- abs(m$deltaRt) < maxDeltaRt
 
   if (verbose && sum(!keep)) {
@@ -518,6 +520,13 @@ makeMaster <- function(pepfiles,
     slaves[[i]]$IdentPeptideData$precursor.retT <-
       slaves[[i]]$IdentPeptideData$precursor.retT +
       predict(rtModel, slaves[[i]]$IdentPeptideData$precursor.retT)
+
+    intModel <- loessModel(mergedPeptideData$precursor.retT.slave,
+                           mergedPeptideData$intenRatio, span=span)
+
+    slaves[[i]]$IdentPeptideData$precursor.inten <-
+      slaves[[i]]$IdentPeptideData$precursor.inten *
+      2L^(predict(intModel, slaves[[i]]$IdentPeptideData$precursor.retT))
 
     isMissing <- !(slaves[[i]]$IdentPeptideData$peptide.seq %in%
                    merged$peptide.seq)
