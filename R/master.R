@@ -512,8 +512,8 @@ makeMaster <- function(pepfiles,
                                            slaves[[i]]$IdentPeptideData,
                                            maxDeltaRt = maxDeltaRt,
                                            verbose = verbose)
-    rtModel <- rawRetTimeModel(mergedPeptideData$precursor.retT.master,
-                               mergedPeptideData$deltaRt, span=span)
+    rtModel <- loessModel(mergedPeptideData$precursor.retT.master,
+                          mergedPeptideData$deltaRt, span=span)
 
     slaves[[i]]$IdentPeptideData$precursor.retT <-
       slaves[[i]]$IdentPeptideData$precursor.retT +

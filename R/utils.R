@@ -62,9 +62,8 @@ filter.error.ppm <- function(x, colname, ppm = 2) {
   x[sel,]
 }
 
-rawRetTimeModel <- function(retT, deltaRt, span) {
-  loess(deltaRt ~ retT, span = span, degree = 1, family = "symmetric",
-        iterations = 4, surface = "direct")
+loessModel <- function(x, y, span) {
+  loess(y ~ x, span = span, degree = 1, family = "symmetric", iterations = 4, surface = "direct")
 }
 
 modelRetTime <- function(retT, deltaRt, span) {
@@ -76,7 +75,7 @@ modelRetTime <- function(retT, deltaRt, span) {
   ##      = hdmse - (hdmse.rt - mse.rt)
   ##      = hdmse - hdmse.rt + mse.rt
   ##      = mse
-  lo <- rawRetTimeModel(retT, deltaRt, span)
+  lo <- loessModel(retT, deltaRt, span)
   o <- order(retT)
   pp <- predict(lo, data.frame(retT = retT), se=TRUE)
   sd <- pp$se.fit * sqrt(lo$n) ## get sd from se
