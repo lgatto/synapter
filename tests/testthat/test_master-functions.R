@@ -74,13 +74,19 @@ test_that(".filterDuplicatedPeptideSequences", {
 test_that(".mergePeptideData", {
   l <- list(A=data.frame(peptide.seq = LETTERS[1:5],
                          precursor.retT = 1:5,
+                         precursor.inten = 2*(1:5),
                          stringsAsFactors = FALSE),
             B=data.frame(peptide.seq = LETTERS[c(1:3, 6:10)],
-                         precursor.retT = c(2:3, 10, 1:5)))
+                         precursor.retT = c(2:3, 10, 1:5),
+                         precursor.inten = 1:8,
+                         stringsAsFactors = FALSE))
   m <- data.frame(peptide.seq = LETTERS[1:3],
                   precursor.retT.master = 1:3,
+                  precursor.inten.master = 2*(1:3),
                   precursor.retT.slave = c(2:3, 10),
+                  precursor.inten.slave = 1:3,
                   deltaRt = c(-1, -1, -7),
+                  intenRatio = 1,
                   stringsAsFactors = FALSE)
 
   expect_equal(synapter:::.mergePeptideData(l$A, l$B, verbose = FALSE), m)
@@ -94,17 +100,21 @@ test_that(".mergePeptideData", {
 test_that(".mergeMaster", {
   l <- list(A=list(IdentPeptideData=data.frame(
                peptide.seq = LETTERS[c(1:3, 6:7)],
+               precursor.inten = 2*c(1:3, 6:7),
                precursor.retT = c(0.2, 0.4, 0.6, 1.2, 1.4),
                stringsAsFactors = FALSE)),
             B=list(IdentPeptideData=data.frame(
                peptide.seq = LETTERS[c(1:2, 4)],
+               precursor.inten = c(1:2, 4),
                precursor.retT = c(0.21, 0.41, 0.81),
                stringsAsFactors = FALSE)),
             C=list(IdentPeptideData=data.frame(
                peptide.seq = LETTERS[c(1:2, 5)],
+               precursor.inten = c(1:2, 5),
                precursor.retT = c(0.22, 0.42, 1.02),
                stringsAsFactors = FALSE)))
   m <- data.frame(peptide.seq = LETTERS[c(1:3, 6:7, 4:5)],
+                  precursor.inten = c(2, 4, 6, 12, 14, 4, 5),
                   precursor.retT = c(0.2, 0.4, 0.6, 1.2, 1.4, 0.8, 1.0),
                   stringsAsFactors = FALSE)
   expect_error(synapter:::.mergeMaster(l[1]),

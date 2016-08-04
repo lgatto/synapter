@@ -7,6 +7,7 @@ test_that("readcsv", {
                    stringsAsFactors=FALSE)
   colnames(df) <- c("Protein Key", "intensity")
 
+  readcsv(content, keepCols=c("Protein Key" = "c", "intensity" = "d"))
   expect_equal(synapter:::readcsv(content, keepCols=c("Protein Key" = "c",
-                                                      "intensity" = "d")), df)
+                                                      "intensity" = "d")), df, check.attributes=FALSE)
 })

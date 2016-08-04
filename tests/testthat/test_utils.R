@@ -110,10 +110,10 @@ test_that("rawRetTimeModel", {
   retT <- 11:20
   deltaRt <- 1:10*0.2
   span <- 0.75
-  expect_equal(rawRetTimeModel(retT, deltaRt, span),
+  expect_equal(loessModel(retT, deltaRt, span)$fitted,
                loess(deltaRt ~ retT, span = span, degree = 1,
                      family = "symmetric", iterations = 4,
-                     surface = "direct"))
+                     surface = "direct")$fitted)
 })
 
 test_that("modelRetTime", {
