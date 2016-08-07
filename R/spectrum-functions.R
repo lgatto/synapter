@@ -38,7 +38,7 @@
   if (verbose) {
     message("Reading ", file)
   }
-  content <- readr::read_lines(file)
+  content <- read_lines(file)
 
   if (verbose) {
     message("Search line numbers for Header information")
