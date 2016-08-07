@@ -2,7 +2,7 @@
 #' @param file filename
 #' @param keepCols named character vector for columns of interest
 #' @param verbose verbose output?
-#' @return tbl_df
+#' @return data.frame
 #' @examples
 #'  readcsv("final_peptide.csv", c("peptide.seq" = "c",
 #'                                 "peptide.score" = "d",

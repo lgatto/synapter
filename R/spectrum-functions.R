@@ -26,13 +26,11 @@
     gsub("^.*HE_ID=\\\"([[:digit:],]+)\\\".*$", "\\1", x)
   }
   .createMsMatrix <- function(x, header, verbose=interactive()) {
-    sheader <- paste0(header, collapse=",")
-    x <- paste0(gsub("[[:space:]]+", ",", trimws(c(sheader, x))), collapse="\n")
-    cols <- intersect(header,
-                      c("Mass", "Intensity", "LE_ID", "HE_ID", "Z", "RT"))
-    cols <- setNames(rep("d", length(cols)), cols)
-    ms <- as.matrix(readcsv(x, keepCols=cols, verbose=verbose))
-    ms
+    x <- paste0(gsub("[[:space:]]+", ",", trimws(x)), collapse="\n")
+    cols <- intersect(header, c("Mass", "Intensity", "LE_ID", "HE_ID", "Z", "RT"))
+    as.matrix(read_csv(x, col_names=header,
+                       col_types=do.call(cols_only, as.list(setNames(rep.int("d", length(cols)), cols))),
+                       trim_ws=TRUE, progress=verbose))
   }
 
   if (verbose) {
@@ -57,26 +55,19 @@
   header2 <- .extractName(content[linesFieldMs2])
 
   if (verbose) {
-    message("Search line numbers for MS1 Data")
+    message("Search line numbers for MS Data")
   }
-  linesMs1 <- grep("</?DATA", content)+c(1L, -1L)
+  linesMs <- grep("</?(HE_)?DATA", content)+c(1L, -1L)
 
   if (verbose) {
-    message("Search line numbers for MS2 Data")
+    message("Read MS1 Data (", paste(linesMs[1L:2L], collapse=":"), ")")
   }
-  linesMs2 <- grep("</?HE_DATA", content)+c(1L, -1L)
+  ms1 <- .createMsMatrix(content[linesMs[1L]:linesMs[2L]], header1)
 
   if (verbose) {
-    message("Read MS1 Data (", paste(linesMs1, collapse=":"), ")")
+    message("Read MS2 Data (", paste(linesMs[3L:4L], collapse=":"), ")")
   }
-  range <- seq(linesMs1[1], linesMs1[2])
-  ms1 <- .createMsMatrix(content[range], header1)
-
-  if (verbose) {
-    message("Read MS2 Data (", paste(linesMs2, collapse=":"), ")")
-  }
-  range <- seq(linesMs2[1], linesMs2[2])
-  ms2 <- .createMsMatrix(content[range], header2)
+  ms2 <- .createMsMatrix(content[linesMs[3L:4L]], header2)
 
   if (verbose) {
     message("Search line numbers for MS1 to MS2 assignment")
@@ -86,15 +77,25 @@
   if (verbose) {
     message("Read Assignment Data (", paste(linesAssignment, collapse=":"), ")")
   }
-  range <- seq(linesAssignment[1], linesAssignment[2])
+  range <- linesAssignment[1L]:linesAssignment[2L]
 
+  if (verbose) {
+    message("  extract LE_ID information")
+  }
   le_ids <- .extractLEID(content[range])
+
+  if (verbose) {
+    message("  extract HE_ID information")
+  }
   he_ids <- lapply(MSnbase:::utils.ssv2list(
                      .extractHEID(content[range]), sep=","), as.numeric)
 
   leRows <- new.env(hash=TRUE, parent=emptyenv(), size=length(le_ids))
   heRows <- new.env(hash=TRUE, parent=emptyenv(), size=length(le_ids))
 
+  if (verbose) {
+    message("  match LE_ID and HE_ID information")
+  }
   le_rows <- findInterval(le_ids, ms1[, "LE_ID"])
   he_rows <- relist(findInterval(unlist(he_ids), ms2[, "HE_ID"]), he_ids)
 
@@ -103,7 +104,7 @@
     assign(le_ids[i], he_rows[[i]], envir=heRows)
   }
 
-  return(list(ms1=ms1, ms2=ms2, leRows=leRows, heRows=heRows))
+  list(ms1=ms1, ms2=ms2, leRows=leRows, heRows=heRows)
 }
 
 #' read spectrum.xml and turn data into MSnbase::Spectrum2 objects
@@ -181,7 +182,8 @@
                           phenoData=pdata,
                           featureData=fdata,
                           processingData=process)
-  return(msnexp)
+  if (validObject(msnexp))
+    return(msnexp)
 }
 
 #' create MS2 spectrum from spectrum.xml data
@@ -203,17 +205,17 @@
     lrow <- get(key, envir=leRows)
     hrows <- get(key, envir=heRows)
 
-    return(.createMsnbaseSpectrum2(leID=leID,
-                                   precursor.mhp=ms1[lrow, "Mass"],
-                                   precursor.inten=ms1[lrow, "Intensity"],
-                                   precursor.z=ms1[lrow, "Z"],
-                                   precursor.retT=ms1[lrow, "RT"],
-                                   mass=ms2[hrows, "Mass"],
-                                   intensity=ms2[hrows, "Intensity"],
-                                   removePrecursor=removePrecursor,
-                                   tolerance=tolerance))
+    .createMsnbaseSpectrum2(leID=leID,
+                            precursor.mhp=ms1[lrow, "Mass"],
+                            precursor.inten=ms1[lrow, "Intensity"],
+                            precursor.z=ms1[lrow, "Z"],
+                            precursor.retT=ms1[lrow, "RT"],
+                            mass=ms2[hrows, "Mass"],
+                            intensity=ms2[hrows, "Intensity"],
+                            removePrecursor=removePrecursor,
+                            tolerance=tolerance)
   } else {
-    return(.createEmptyMsnbaseSpectrum2(leID=leID))
+    .createEmptyMsnbaseSpectrum2(leID=leID)
   }
 }
 
@@ -234,17 +236,17 @@
     i <- get(key, envir=assignments)
     j <- i[1]
 
-    return(.createMsnbaseSpectrum2(leID,
-                                   precursor.mhp=fragments$precursor.mhp[j],
-                                   precursor.inten=fragments$precursor.inten[j],
-                                   precursor.z=fragments$precursor.z[j],
-                                   precursor.retT=fragments$precursor.retT[j],
-                                   mass=fragments$product.mhp[i],
-                                   intensity=fragments$product.inten[i],
-                                   removePrecursor=removePrecursor,
-                                   tolerance=25e-6))
+    .createMsnbaseSpectrum2(leID,
+                            precursor.mhp=fragments$precursor.mhp[j],
+                            precursor.inten=fragments$precursor.inten[j],
+                            precursor.z=fragments$precursor.z[j],
+                            precursor.retT=fragments$precursor.retT[j],
+                            mass=fragments$product.mhp[i],
+                            intensity=fragments$product.inten[i],
+                            removePrecursor=removePrecursor,
+                            tolerance=25e-6)
   } else {
-    return(.createEmptyMsnbaseSpectrum2(leID=leID))
+    .createEmptyMsnbaseSpectrum2(leID=leID)
   }
 }
 
