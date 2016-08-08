@@ -67,7 +67,7 @@
   if (verbose) {
     message("Read MS2 Data (", paste(linesMs[3L:4L], collapse=":"), ")")
   }
-  ms2 <- .createMsMatrix(content[linesMs[3L:4L]], header2)
+  ms2 <- .createMsMatrix(content[linesMs[3L]:linesMs[4L]], header2)
 
   if (verbose) {
     message("Search line numbers for MS1 to MS2 assignment")
