@@ -77,7 +77,7 @@ modelRetTime <- function(retT, deltaRt, span) {
   ##      = mse
   lo <- loessModel(retT, deltaRt, span)
   o <- order(retT)
-  pp <- predict(lo, data.frame(retT = retT), se=TRUE)
+  pp <- predict(lo, retT, se=TRUE)
   sd <- pp$se.fit * sqrt(lo$n) ## get sd from se
   stopifnot(all.equal(pp$fit, fitted(lo), check.attributes = FALSE))
   list(lo = lo,
@@ -98,8 +98,7 @@ doHDMSePredictions <- function(identpep, model, nsd) {
   } else {
     ## compute from model
     .o <- order(identpep$precursor.retT)
-    .allpreds <- predict(model$lo, data.frame(retT = identpep$precursor.retT),
-                         se=TRUE)
+    .allpreds <- predict(model$lo, identpep$precursor.retT, se=TRUE)
     .sd <- .allpreds$se.fit[.o] * sqrt(model$lo$n) ## get sd from se
     .predicted <- identpep$precursor.retT - .allpreds$fit[.o]
     .fitted <- .allpreds$fit[.o]
