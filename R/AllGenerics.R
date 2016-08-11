@@ -4,6 +4,7 @@ setGeneric("inputFiles", function(object, ...) standardGeneric("inputFiles"))
 setGeneric("getLog", function(object, ...) standardGeneric("getLog"))
 setGeneric("mergePeptides", function(object, ...) standardGeneric("mergePeptides"))
 setGeneric("modelRt", function(object, ...) standardGeneric("modelRt"))
+setGeneric("modelIntensity", function(object, ...) standardGeneric("modelIntensity"))
 setGeneric("findEMRTs", function(object, ...) standardGeneric("findEMRTs"))
 setGeneric("rescueEMRTs", function(object, ...) standardGeneric("rescueEMRTs"))
 setGeneric("searchGrid", function(object, ...) standardGeneric("searchGrid"))
@@ -85,4 +86,5 @@ setGeneric("masterFdr", function(object, ...) standardGeneric("masterFdr"))
 ###############################
 ## MSnbase extensions: MSnSet
 setGeneric("synapterPlgsAgreement", function(object, ...) standardGeneric("synapterPlgsAgreement"))
+setGeneric("correctIntensity", function(object, ...) standardGeneric("correctIntensity"))
 setGeneric("requantify", function(object, ...) standardGeneric("requantify"))

@@ -66,6 +66,18 @@ loessModel <- function(x, y, span) {
   loess(y ~ x, span = span, degree = 1, family = "symmetric", iterations = 4, surface = "direct")
 }
 
+loessModelPredSd <- function(x, y, span) {
+  lo <- loessModel(x, y, span)
+  o <- order(x)
+  pp <- predict(lo, x, se=TRUE)
+  sd <- pp$se.fit * sqrt(lo$n) ## get sd from se
+  stopifnot(all.equal(pp$fit, fitted(lo), check.attributes = FALSE))
+  list(lo = lo,
+       o = o,
+       preds = pp,
+       sd = sd)
+}
+
 modelRetTime <- function(retT, deltaRt, span) {
   ## delta = hdmse.rt - mse.rt
   ## hdmse' = mse.rt + delta
@@ -75,15 +87,15 @@ modelRetTime <- function(retT, deltaRt, span) {
   ##      = hdmse - (hdmse.rt - mse.rt)
   ##      = hdmse - hdmse.rt + mse.rt
   ##      = mse
-  lo <- loessModel(retT, deltaRt, span)
-  o <- order(retT)
-  pp <- predict(lo, retT, se=TRUE)
-  sd <- pp$se.fit * sqrt(lo$n) ## get sd from se
-  stopifnot(all.equal(pp$fit, fitted(lo), check.attributes = FALSE))
-  list(lo = lo,
-       o = o,
-       preds = pp,
-       sd = sd)
+  loessModelPredSd(retT, deltaRt, span)
+}
+
+.modelIntensity <- function(retT, inten.ident, inten.quant, span) {
+  loessModelPredSd(retT, log2(inten.ident / inten.quant), span)
+}
+
+predictIntensities <- function(emrts, model) {
+  2L^(predict(model$lo, emrts$precursor.retT))
 }
 
 doHDMSePredictions <- function(identpep, model, nsd) {

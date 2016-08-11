@@ -107,6 +107,17 @@ setMethod(modelRt, "Synapter",
             object$modelRetentionTime(span)
           })
 
+setMethod(modelIntensity, "Synapter",
+          function(object, span) {
+            if (missing(span))
+              span <- object$LowessSpan
+            if (length(span) == 0) {
+              object$setLowessSpan()
+              span <- object$LowessSpan
+            }
+            object$modelIntensity(span)
+          })
+
 setMethod(findEMRTs, "Synapter",
           function(object, ppm, nsd, imdiff) {
             if (!missing(ppm))
@@ -762,6 +773,7 @@ setAs("Synapter", "MSnSet",
                   "qval",
                   "isotopicDistr",
                   "synapterPlgsAgreement",
+                  "intensityCorrectionFactor",
                   "qval")
         ## Using those cols that are available in the Synapter object
         ## see https://support.bioconductor.org/p/71087/

@@ -40,3 +40,30 @@ test_that("synapterPlgsAgreement", {
   expect_equal(synapterPlgsAgreement(m), r)
 })
 
+test_that("correctIntensity", {
+  expect_error(correctIntensity(1:3))
+
+  fdata = new("AnnotatedDataFrame",
+              data = data.frame(intensityCorrectionFactor.A = 1:3,
+                                intensityCorrectionFactor.B = 2:4,
+                                intensityCorrectionFactor.C = 3:5,
+                                row.names = paste0("Pep", 1:3),
+                                stringsAsFactors = FALSE))
+
+  eset <- matrix(c(1, 2, NA, 1:3, 1:3), ncol = 3,
+                 dimnames = list(paste0("Pep", 1:3), LETTERS[1:3]))
+  m <- new("MSnSet",
+           exprs = eset,
+           processingData = new("MSnProcess",
+                                processing = "Coerced from a 'Synapter' object."),
+           annotation = "No annotation",
+           featureData = fdata)
+  r <- new("MSnSet",
+           exprs = eset * c(1:3, 2:4, 3:5),
+           processingData = new("MSnProcess",
+                                processing = "Coerced from a 'Synapter' object."),
+           annotation = "No annotation",
+           featureData = fdata)
+  expect_equal(correctIntensity(m), r)
+})
+

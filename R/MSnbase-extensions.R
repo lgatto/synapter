@@ -58,7 +58,7 @@ setMethod("synapterPlgsAgreement", signature(object="MSnSet"),
 
 .synapterPlgsAgreement <- function(msnset) {
 
-  i <- grep("synapterPlgsAgreement", colnames(fData(msnset)))
+  i <- grep("synapterPlgsAgreement", fvarLabels(msnset))
 
   ## metric a: how often identified
   fData(msnset)$nIdentified <- rowSums(!is.na(exprs(msnset)))
@@ -74,6 +74,25 @@ setMethod("synapterPlgsAgreement", signature(object="MSnSet"),
   ## calculate ratio for easier interpretation
   fData(msnset)$synapterPlgsAgreementRatio <-
     fData(msnset)$nAgree/(fData(msnset)$nAgree + fData(msnset)$nDisagree)
+
+  msnset
+}
+
+#' apply intensity correction
+#' TODO: manual page
+#' @noRd
+setMethod("correctIntensity", signature(object="MSnSet"),
+          function(object, ...) .correctIntensity(object))
+
+.correctIntensity <- function(msnset) {
+
+  i <- grep("intensityCorrectionFactor", fvarLabels(msnset))
+
+  if (!length(i)) {
+    stop("No 'intensityCorrectionFactor' found! Did you run 'modelIntensity' on the synapter object?")
+  }
+
+  exprs(msnset) <- exprs(msnset) * as.matrix(fData(msnset)[, i, drop=FALSE])
 
   msnset
 }

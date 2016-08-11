@@ -400,6 +400,23 @@
                         .self$IdentPeptideData$predictedRt <- newIdentData$predicted
                         .self$IdentPeptideData$sdRt <- newIdentData$sd
                     },
+                    modelIntensity = function(span) {
+                        'Models intensity'
+
+                        if (missing(span)) {
+                            span <- .self$LowessSpan
+                        } else {
+                           .self$LowessSpan <- span
+                        }
+                        model <- .modelIntensity(.self$MergedFeatures$precursor.retT.ident,
+                                                 .self$MergedFeatures$precursor.inten.ident,
+                                                 .self$MergedFeatures$precursor.inten.quant,
+                                                 span = span)
+                        .self$SynapterLog <- c(.self$SynapterLog,
+                                               paste0("Modelled intensity using lowess and span ",
+                                                      .self$LowessSpan))
+                        .self$MatchedEMRTs$intensityCorrectionFactor <- predictIntensities(.self$MatchedEMRTs, model)
+                    },
                     findEMRTs = function() {
                         if (length(.self$RtModel) == 0)
                             stop("First build a retention time model using 'modelRt'.")
