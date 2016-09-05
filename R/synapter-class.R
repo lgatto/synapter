@@ -32,6 +32,7 @@
                     ## rt model
                     LowessSpan = "numeric",
                     RtModel = "list",
+                    IntenModel = "list",
                     ## grid search
                     Grid = "list", ## was a "matrix",
                     GridDetails = "list",
@@ -367,6 +368,9 @@
                         .self$MergedFeatures$deltaRt <-
                             .self$MergedFeatures$precursor.retT.ident -
                                 .self$MergedFeatures$precursor.retT.quant
+                        .self$MergedFeatures$intenRatio <- log2(
+                            .self$MergedFeatures$precursor.inten.ident/
+                                .self$MergedFeatures$precursor.inten.quant)
                         if (all(.self$MergedFeatures$deltaRt == 0)) {
                             stop("Merged identification and quantitation data have identical retention times. Modelling not possible")
                         }
@@ -408,14 +412,15 @@
                         } else {
                            .self$LowessSpan <- span
                         }
-                        model <- .modelIntensity(.self$MergedFeatures$precursor.retT.ident,
-                                                 .self$MergedFeatures$precursor.inten.ident,
-                                                 .self$MergedFeatures$precursor.inten.quant,
-                                                 span = span)
+                        .self$IntenModel<- .modelIntensity(.self$MergedFeatures$precursor.retT.ident,
+                                                           .self$MergedFeatures$precursor.inten.ident,
+                                                           .self$MergedFeatures$precursor.inten.quant,
+                                                           span = span)
                         .self$SynapterLog <- c(.self$SynapterLog,
                                                paste0("Modelled intensity using lowess and span ",
                                                       .self$LowessSpan))
-                        .self$MatchedEMRTs$intensityCorrectionFactor <- predictIntensities(.self$MatchedEMRTs, model)
+                        .self$MatchedEMRTs$intensityCorrectionFactor <-
+                          predictIntensities(.self$MatchedEMRTs, .self$IntenModel)
                     },
                     findEMRTs = function() {
                         if (length(.self$RtModel) == 0)

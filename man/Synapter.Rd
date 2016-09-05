@@ -17,6 +17,8 @@
 \alias{mergePeptides}
 \alias{modelRt,Synapter-method}
 \alias{modelRt}
+\alias{modelIntensity,Synapter-method}
+\alias{modelIntensity}
 \alias{findEMRTs,Synapter-method}
 \alias{findEMRTs}
 \alias{rescueEMRTs,Synapter-method}
@@ -135,6 +137,8 @@
 \alias{plotFdr}
 \alias{plotRt,Synapter-method}
 \alias{plotRt}
+\alias{plotIntensity,Synapter-method}
+\alias{plotIntensity}
 \alias{plotRtDiffs,Synapter-method}
 \alias{plotRtDiffs}
 \alias{plotFragmentMatchingPerformance,Synapter-method}
@@ -325,6 +329,22 @@ Synapter(filenames, master) ## creates an instance of class 'Synapter'
     Mention \code{plotFeatures} here.
   }
 
+  \subsection{Intensity modelling}{
+    Systematic differences between intensities of identification features and
+    quantitation features depending on retention times are modelled by
+    fitting a local regression (see the \code{\link{loess}} function for
+    details), using the \code{modelIntensity} method. The smoothing parameter,
+    or number of neighbour data points used the for local fit, is
+    controlled by the \code{span} parameter that can be set in the above
+    method.
+
+    The effect of this parameter can be observed with the \code{plotIntensity}
+    method, specifying \code{what = "data"} as parameters. The resulting
+    model can then be visualised with the above method specifying
+    \code{what = "model"}, specifying up to 3 number of standard
+    deviations to plot.
+  }
+
   \subsection{Grid search to optimise matching tolerances}{
     Matching of identification peptides and quantitation EMRTs is done
     within a mass tolerance in parts per million (ppm) and the modelled
@@ -455,6 +475,12 @@ Synapter(filenames, master) ## creates an instance of class 'Synapter'
       \item{modelRt}{\code{signature(object = "Synapter",
 	  span = "numeric")}: Performs local polynomial regression
 	fitting (see \code{\link{loess}}) retention time alignment using
+	\code{span} parameter value to control the degree of smoothing.
+      }
+
+      \item{modelIntensity}{\code{signature(object = "Synapter",
+	  span = "numeric")}: Performs local polynomial regression
+	fitting (see \code{\link{loess}}) intensity values using
 	\code{span} parameter value to control the degree of smoothing.
       }
 
@@ -822,6 +848,21 @@ Synapter(filenames, master) ## creates an instance of class 'Synapter'
 	function of the Identification retention time. If \code{what} is
 	\code{"data"}, two plots are generated: one ranging the full range
 	of retention time differences and one focusing on the highest data
+	point density and showing models with various \code{span}
+	parameter values, as defined by \code{f} (default is 2/3, 1/2,
+	1/4, 1/10, 1/16, 1/25, 1/50, passed as a numed numeric). If
+	\code{what} is \code{"model"}, a focused plot with the applied
+	span parameter is plotted and areas of \code{nsd} (default is
+	\code{x(1, 3, 5)} number of standard deviations are shaded around
+      the model.
+    }
+
+      \item{plotIntensity}{\code{signature(object="Synapter", what =
+	  "character", f = "numeric", nsd = "numeric")}: Plots the (log2) ratio
+  of Identification and Quantitation intensities as a
+	function of the Identification retention time. If \code{what} is
+	\code{"data"}, two plots are generated: one ranging the full range
+	of ratios and one focusing on the highest data
 	point density and showing models with various \code{span}
 	parameter values, as defined by \code{f} (default is 2/3, 1/2,
 	1/4, 1/10, 1/16, 1/25, 1/50, passed as a numed numeric). If

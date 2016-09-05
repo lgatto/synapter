@@ -445,13 +445,35 @@ setMethod(plotRt, "Synapter",
               warning("Using first 3 nsds.")
             }
             switch(what,
-                   data = plotLowess(object$MergedFeatures, f = f),
-                   model = plotLowess2(object$MergedFeatures,
-                     object$RtModel,
-                     nsd,
-                     ...))
+                   data = plotLowessData(object$MergedFeatures$precursor.retT.ident,
+                                         object$MergedFeatures$deltaRt, f = f, ...),
+                   model = plotLowessModel(object$MergedFeatures$precursor.retT.ident,
+                                           object$MergedFeatures$deltaRt,
+                                           object$RtModel, nsd, ...))
           })
 
+setMethod(plotIntensity, "Synapter",
+          function(object,
+                   what = c("data", "model"),
+                   f = structure( ## for data
+                     c(2/3, 1/2, 1/4, 1/10, 1/16, 1/25, 1/50),
+                     names = c("2/3", "1/2", "1/4", "1/10", "1/16", "1/25", "1/50")),
+                   nsd = c(1, 3, 5), ## for model
+                   ylab = expression(log[2](Identification/Quantitation)),
+                   ... ) {
+            what <- match.arg(what)
+            if (length(nsd) > 3) {
+              nsd <- nsd[1:3]
+              warning("Using first 3 nsds.")
+            }
+            switch(what,
+                   data = plotLowessData(object$MergedFeatures$precursor.retT.ident,
+                                         object$MergedFeatures$intenRatio, f = f, ylab = ylab,
+                                         ...),
+                   model = plotLowessModel(object$MergedFeatures$precursor.retT.ident,
+                                           object$MergedFeatures$intenRatio,
+                                           object$IntenModel, nsd = nsd, ylab = ylab, ...))
+          })
 
 setMethod(plotPepScores, "Synapter",
           function(object) {

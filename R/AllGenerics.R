@@ -54,6 +54,7 @@ setGeneric("filterNonUniqueIdentMatches", function(object) standardGeneric("filt
 setGeneric("plotPpmError", function(object, ...) standardGeneric("plotPpmError"))
 setGeneric("plotPpmError", function(object, ...) standardGeneric("plotPpmError"))
 setGeneric("plotRt", function(object, ...) standardGeneric("plotRt"))
+setGeneric("plotIntensity", function(object, ...) standardGeneric("plotIntensity"))
 setGeneric("plotPepScores", function(object, ...) standardGeneric("plotPepScores"))
 setGeneric("plotFdr", function(object, ...) standardGeneric("plotFdr"))
 setGeneric("plotFeatures", function(object, ...) standardGeneric("plotFeatures"))
