@@ -413,8 +413,7 @@
                            .self$LowessSpan <- span
                         }
                         .self$IntenModel<- .modelIntensity(.self$MergedFeatures$precursor.retT.ident,
-                                                           .self$MergedFeatures$precursor.inten.ident,
-                                                           .self$MergedFeatures$precursor.inten.quant,
+                                                           .self$MergedFeatures$intenRatio,
                                                            span = span)
                         .self$SynapterLog <- c(.self$SynapterLog,
                                                paste0("Modelled intensity using lowess and span ",

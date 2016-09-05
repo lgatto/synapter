@@ -90,8 +90,8 @@ modelRetTime <- function(retT, deltaRt, span) {
   loessModelPredSd(retT, deltaRt, span)
 }
 
-.modelIntensity <- function(retT, inten.ident, inten.quant, span) {
-  loessModelPredSd(retT, log2(inten.ident / inten.quant), span)
+.modelIntensity <- function(retT, intenRatio, span) {
+  loessModelPredSd(retT, intenRatio, span)
 }
 
 predictIntensities <- function(emrts, model) {
