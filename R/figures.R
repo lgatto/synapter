@@ -27,19 +27,22 @@ plotLowessData <- function(x, y,
                            cols = brewer.pal(length(f), "Set1"),
                            xlab = expression(Identification~retention~time),
                            ylab = expression(Identification - Quantitation),
+                           ylim = NULL,
                            legendpos = "bottomright") {
   oldPar <- par(no.readonly=TRUE)
   on.exit(par(oldPar))
 
   par(mfrow=c(1, 2))
-  plot(x, y, col=col, pch = pch, xlab = xlab, ylab = ylab)
+  plot(x, y, col=col, pch = pch, xlab = xlab, ylab = ylab, ylim = ylim[[1]])
   abline(h=0)
   grid()
 
   lws <- lapply(f, lowess, x=x, y=y)
-  ylim <- range(unlist(lapply(lws, function(ll)range(ll$y))))
+  if (is.null(ylim[[2]])) {
+    ylim[[2]] <- range(unlist(lapply(lws, function(ll)range(ll$y))))
+  }
 
-  plot(x, y, col=col, pch = pch, xlab = xlab, ylab = ylab, ylim = ylim)
+  plot(x, y, col=col, pch = pch, xlab = xlab, ylab = ylab, ylim = ylim[[2]])
   abline(h=0)
   grid()
 
@@ -58,6 +61,7 @@ plotLowessModel <- function(x, y, model, nsd,
                             modelcol = "red",
                             xlab = expression(Identification~retention~time),
                             ylab = expression(Identification - Quantitation),
+                            ylim = NULL,
                             legendpos = "bottomright") {
   oldPar <- par(no.readonly=TRUE)
   on.exit(par(oldPar))
@@ -69,7 +73,10 @@ plotLowessModel <- function(x, y, model, nsd,
 
   sdlim1 <- sapply(nsd, function(i) pp$fit[o] - i * sd[o])
   sdlim2 <- sapply(nsd, function(i) pp$fit[o] + i * sd[o])
-  ylim <- range(c(sdlim1, sdlim2))
+
+  if (is.null(ylim)) {
+    ylim <- range(c(sdlim1, sdlim2))
+  }
 
   plot(x, y, type = "n", xlab = xlab, ylab = ylab, ylim = ylim)
   grid()
