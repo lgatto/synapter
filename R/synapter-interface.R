@@ -747,28 +747,16 @@ setMethod(writeQuantPeptides, "Synapter",
 setMethod(writeMergedPeptides, "Synapter",
           function(object,
                    file = "Res-MergedPeptides.csv",
-                   what = c("light", "full"),
                    ...) {
-              ## Writes merged peptides to a csv file.
-              what <- match.arg(what)
-              switch(what,
-                     full = write.csv(object$MergedFeatures, file = file, ...),
-                     light = write.csv(lightMergedFeatures(object$MergedFeatures),
-                                       file = file, ...))
+              write.csv(object$MergedFeatures, file = file, ...)
           })
 
 
 setMethod(writeMatchedEMRTs, "Synapter",
           function(object,
                    file = "Res-MatchedEMRTs.csv",
-                   what = c("light", "full"),
                    ...) {
-              ## Writes matched EMRTs to a csv file.
-              what <- match.arg(what)
-              switch(what,
-                     full = write.csv(object$MatchedEMRTs, file = file, ...),
-                     light = write.csv(lightMatchedEMRTs(object$MatchedEMRTs),
-                                       file = file, ...))
+              write.csv(object$MatchedEMRTs, file = file, ...)
           })
 
 setAs("Synapter", "MSnSet",

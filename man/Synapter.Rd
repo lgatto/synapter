@@ -981,21 +981,18 @@ Synapter(filenames, master) ## creates an instance of class 'Synapter'
       \item{writeMergedPeptides}{\code{signature(object="Synapter", file
 	  = "character", what = "character", ...)}: Exports the merged
 	peptide data to a comma-separated \code{file} (default name is
-	\code{"Res-MergedPeptides.csv"}). \code{what} can be
-	\code{"light"} (default) or \code{"full"} and specifies if the
-	full data or only selected columns are exported. \code{...} are
-	passed to \code{\link{write.csv}}.
+	\code{"Res-MergedPeptides.csv"}).
       }
       \item{writeMatchedEMRTs}{\code{signature(object="Synapter", file =
-	  "character", what = "character", ...)}: As above, saving the
+	  "character", \ldots)}: As above, saving the
 	matched EMRT table.
       }
       \item{writeIdentPeptides}{\code{signature(object="Synapter", file
-	  = "character", ...)}: As above, exporting the identification
+	  = "character", \ldots)}: As above, exporting the identification
 	peptide data.
       }
       \item{writeQuantPeptides}{\code{signature(object="Synapter", file
-	  = "character", ...)}: A above, exporting the quantitation
+	  = "character", \ldots)}: A above, exporting the quantitation
 	peptide data.
       }
       \item{getIdentificationFragments}{\code{signature(object="Synapter")}:
@@ -1177,10 +1174,10 @@ performance(synapterTiny)
 performance2(synapterTiny)
 
 ## (7) Exporting data to csv spreadsheets
-writeMergedPeptides(synapterTiny, what = "light") ## or what="full"
-writeMergedPeptides(synapterTiny, file = "myresults.csv", what="light")
-writeMatchedEMRTs(synapterTiny, what = "light")   ## or what="full"
-writeMatchedEMRTs(synapterTiny, file = "myresults2.csv", what="light")
+writeMergedPeptides(synapterTiny)
+writeMergedPeptides(synapterTiny, file = "myresults.csv")
+writeMatchedEMRTs(synapterTiny)
+writeMatchedEMRTs(synapterTiny, file = "myresults2.csv")
 ## These will export the filter peptide data
 writeIdentPeptides(synapterTiny, file = "myIdentPeptides.csv")
 writeQuantPeptides(synapterTiny, file = "myQuantPeptides.csv")

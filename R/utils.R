@@ -291,59 +291,6 @@ estimate.mass.range <- function(Mhdmse, ppmt) {
 }
 
 
-lightMergedFeatures <- function(x) {
-  cols <- c("peptide.seq",
-            "protein.Accession.ident",
-            "protein.Description.ident",
-            "protein.dataBaseType.ident",
-            "protein.falsePositiveRate.ident",
-            "peptide.matchType.ident",
-            "peptide.mhp.ident",
-            "peptide.score.ident",
-            "precursor.mhp.ident",
-            "precursor.retT.ident",
-            "precursor.inten.ident",
-            "pval.ident",
-            "Bonferroni.ident",
-            "BH.ident",
-            "qval.ident",
-            ## "precursor.Mobility", ## not present in MSe master
-            "peptide.matchType.quant",
-            "peptide.score.quant",
-            "precursor.retT.quant",
-            "precursor.inten.quant",
-            "deltaRt",
-            "errorppm.ident",
-            "errorppm.quant",
-            "pval.quant",
-            "Bonferroni.quant",
-            "BH.quant",
-            "qval.quant")
-  x[,cols]
-}
-
-lightMatchedEMRTs <- function(x) {
-  cols <- c("peptide.seq",
-            "protein.Accession",
-            "protein.Description",
-            "protein.dataBaseType",
-            "protein.falsePositiveRate",
-            "peptide.matchType",
-            "peptide.mhp",
-            "peptide.score",
-            "precursor.mhp",
-            "precursor.retT",
-            "precursor.inten",
-            ## "precursor.Mobility", ## not present in MSe master
-            "spectrumID",
-            "Intensity",
-            "Counts",
-            "ion_ID",
-            "ion_area",
-            "ion_counts")
-  x[,cols]
-}
-
 gridSearch3 <- function(model,
                         identpep,
                         pep3d,

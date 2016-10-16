@@ -456,21 +456,16 @@ synergise <- function(filenames,
   hwrite("Exported result files", p, heading = 2)
 
   ## (7) Exporting data to csv spreadsheets
-  writeMergedPeptides(obj, what = "light", file = paste0(outputdir, "/MergedPeptidesLight.csv"))
-  writeMergedPeptides(obj, what = "full", file = paste0(outputdir, "/MergedPeptidesFull.csv"))
-  writeMatchedEMRTs(obj, what = "light", file = paste0(outputdir, "/MatchedPeptidesLight.csv"))
-  writeMatchedEMRTs(obj, what = "full", file = paste0(outputdir, "/MatchedPeptidesFull.csv"))
-  writeIdentPeptides(obj, file = paste0(outputdir, "/IdentPeptides_filtered.csv"))
+  writeMergedPeptides(obj, file = paste0(outputdir, "/MergedPeptides.csv"))
+  writeMatchedEMRTs(obj, file = paste0(outputdir, "/MatchedPeptides.csv"))
   writeQuantPeptides(obj, file = paste0(outputdir, "/QuantPeptides_filtered.csv"))
 
   hwrite("Identification peptide file (non filtered)", link = "IdentPeptides_nonFiltered.csv", p, br = TRUE)
   hwrite("Quantitation peptide file (non filtered)", link = "QuantPeptides_nonFiltered.csv", p, br = TRUE)
   hwrite("Identification peptide file (filtered)", link = "IdentPeptides_filtered.csv", p, br = TRUE)
   hwrite("Quantitation peptide file (filtered)", link = "QuantPeptides_filtered.csv", p, br = TRUE)
-  hwrite("Merged peptides (light)", link = "MergedPeptidesLight.csv", p, br = TRUE)
-  hwrite("Merged peptides (full)", link = "MergedPeptidesFull.csv", p, br = TRUE)
-  hwrite("Matched peptides (light)", link = "MatchedPeptidesLight.csv", p, br = TRUE)
-  hwrite("Matched peptides (full)", link = "MatchedPeptidesFull.csv", p, br = TRUE)
+  hwrite("Merged peptides", link = "MergedPeptides.csv", p, br = TRUE)
+  hwrite("Matched peptides", link = "MatchedPeptides.csv", p, br = TRUE)
 
   save(obj, file = paste0(outputdir, "/SynapterObject.rda"))
 
@@ -487,5 +482,4 @@ synergise <- function(filenames,
 
   invisible(obj)
 }
-
 
