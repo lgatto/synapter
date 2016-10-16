@@ -46,4 +46,5 @@ synapterTinyData <- function() {
   f <- system.file("extdata", "04_test_database.fasta", package = "synapter")
   data(synapterTiny, envir = .GlobalEnv)
   .GlobalEnv$synapterTiny$DbFastaFile <- f
+  .GlobalEnv$synapterTiny <- updateObject(.GlobalEnv$synapterTiny)
 }
