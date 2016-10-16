@@ -398,14 +398,14 @@ synergise <- function(filenames,
                      width = 300,
                      table = FALSE)
 
-  tab <- hwrite(c(hwrite(getGrid(obj)[[1]], row.bgcolor = '#ffdc98', col.bgcolor = '#ffdc98'),
-                  hwrite(getGrid(obj)[[2]], row.bgcolor = '#ffdc98', col.bgcolor = '#ffdc98'),
-                  hwrite(getGrid(obj)[[3]], row.bgcolor = '#ffdc98', col.bgcolor = '#ffdc98')),
+  tab <- hwrite(c(hwrite(getGrid(obj)[[1]][,,1], row.bgcolor = '#ffdc98', col.bgcolor = '#ffdc98'),
+                  hwrite(getGrid(obj)[[2]][,,1], row.bgcolor = '#ffdc98', col.bgcolor = '#ffdc98'),
+                  hwrite(getGrid(obj)[[3]][,,1], row.bgcolor = '#ffdc98', col.bgcolor = '#ffdc98')),
                 table = FALSE)
 
-  prm <-   hwrite(c(hwrite(getBestGridParams(obj)[[1]], row.bgcolor = '#ffdc98'),
-                    hwrite(getBestGridParams(obj)[[2]], row.bgcolor = '#ffdc98'),
-                    hwrite(getBestGridParams(obj)[[3]], row.bgcolor = '#ffdc98')),
+  prm <-   hwrite(c(hwrite(getBestGridParams(obj)[[1]][,1:2], row.bgcolor = '#ffdc98'),
+                    hwrite(getBestGridParams(obj)[[2]][,1:2], row.bgcolor = '#ffdc98'),
+                    hwrite(getBestGridParams(obj)[[3]][,1:2], row.bgcolor = '#ffdc98')),
                   table = FALSE)
 
   val <-   hwrite(c(hwrite(round(getBestGridValue(obj)[1], 3), row.bgcolor = '#ffdc98'),
@@ -431,8 +431,9 @@ synergise <- function(filenames,
     message("Matching EMRTs...")
 
   ## (6) Matching ident peptides and quant EMRTs
+  findEMRTs(obj)
   mergedEMRTs <- match.arg(mergedEMRTs)
-  findEMRTs(obj, mergedEMRTs = mergedEMRTs)
+  rescueEMRTs(obj, mergedEMRTs)
 
   fig.jpg <- makeFigurePath(outputdir, "Fig-emrt-matching.jpg")
   jpeg(fig.jpg$full)
