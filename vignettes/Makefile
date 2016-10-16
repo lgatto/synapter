@@ -20,14 +20,11 @@ LATEXFILES = *.aux\
 	*-figure*.pdf\
 	*tikzDictionary
 
-all:
-	make synapter
-	make fragmentmatching
-	make clean
+all: synapter fragmentmatching clean
 
 setvars:
 ifeq (${R_HOME},)
-R_HOME=	$(shell R RHOME)
+R_HOME=$(shell R RHOME)
 endif
 
 synapter:
@@ -51,8 +48,7 @@ clean:
 	rm -f .build.timestamp
 	rm -f .Rhistory
 
-clean2:
-	make clean
+clean2: clean
 	rm -rf figure
 	rm -rf cache
 
@@ -60,6 +56,4 @@ pdfclean:
 	rm -f fragmentmatching.pdf
 	rm -f synapter.pdf
 
-all-clean:
-	make clean2
-	make pdfclean
+all-clean: clean2 pdfclean
