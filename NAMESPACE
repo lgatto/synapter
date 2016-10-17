@@ -1,6 +1,5 @@
 import(cleaver)
 import(knitr)
-import(hwriter)
 import(utils)
 import(MSnbase)
 import(methods)
@@ -13,11 +12,15 @@ importFrom(Biobase, addVigs2WinMenu, isCurrent, updateObject, validMsg)
 importFrom(Biostrings, readAAStringSet)
 importFrom(tools, file_ext, file_path_sans_ext)
 importFrom(readr, read_csv, read_tsv, read_lines, cols_only)
+importFrom(rmarkdown, render)
 
 export(Synapter, ## constructor
        as.MSnSet.Synapter,
        createUniquePeptideDbRds,
        synergise,
+       synergise1,
+       synergize,
+       synergize1,
        synapterGUI,
        makeMaster,
        estimateMasterFdr,

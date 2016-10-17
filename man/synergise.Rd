@@ -2,18 +2,22 @@
 % Please edit documentation in R/synergise.R
 \name{synergise}
 \alias{synergise}
+\alias{synergise1}
 \alias{synergize}
+\alias{synergize1}
 \title{Synergise identification and quantitation results}
 \usage{
-synergise(filenames, master = FALSE, object, outputdir, fdr = 0.01,
-  fdrMethod = c("BH", "Bonferroni", "qval"), fpr = 0.01, peplen = 7,
-  missedCleavages = 0, IisL = FALSE, identppm = 20, quantppm = 20,
-  uniquepep = TRUE, span = 0.05, grid.ppm.from = 2, grid.ppm.to = 20,
-  grid.ppm.by = 2, grid.nsd.from = 0.5, grid.nsd.to = 5,
-  grid.nsd.by = 0.5, grid.subset = 1, grid.n = 0,
-  grid.param.sel = c("auto", "model", "total", "details"),
-  mergedEMRTs = c("rescue", "copy", "transfer"), css = NULL,
-  verbose = TRUE)
+synergise(filenames, master = FALSE, object, outputdir,
+  outputfile = paste0("synapter_report_", strftime(Sys.time(),
+  "\%Y\%m\%d-\%H\%M\%S"), ".html"), fdr = 0.01, fdrMethod = c("BH",
+  "Bonferroni", "qval"), fpr = 0.01, peplen = 7, missedCleavages = 0,
+  IisL = FALSE, identppm = 20, quantppm = 20, uniquepep = TRUE,
+  span = 0.05, grid.ppm.from = 2, grid.ppm.to = 20, grid.ppm.by = 2,
+  grid.nsd.from = 0.5, grid.nsd.to = 5, grid.nsd.by = 0.5,
+  grid.subset = 1, grid.n = 0, grid.param.sel = c("auto", "model",
+  "total", "details"), mergedEMRTs = c("rescue", "copy", "transfer"),
+  template = system.file("reports", "synergise1.Rmd", package = "synapter"),
+  verbose = interactive())
 }
 \arguments{
 \item{filenames}{A named \code{list} of file names to be load. The
@@ -37,6 +41,8 @@ checked for equality.}
 
 \item{outputdir}{A \code{character} with the full path to an
 existing directory.}
+
+\item{outputfile}{A \code{character} with the file name for the report.}
 
 \item{fdr}{Peptide false discovery rate. Default is 0.01.}
 
@@ -102,8 +108,7 @@ selection methods.}
 or \code{"transfer"}. See the documentation for the
 \code{findEMRTs} function in \code{\link{Synapter}} for details.}
 
-\item{css}{An optional path to a custom css file. If \code{NULL}
-(default), uses \code{synapter.css}.}
+\item{template}{A \code{character} full path to Rmd template.}
 
 \item{verbose}{A \code{logical} indicating if progress output
 should be printed to the console. Default is \code{TRUE}.}
@@ -171,7 +176,7 @@ browseURL(htmlReport) ## open the report with default browser
 }
 }
 \author{
-Laurent Gatto
+Laurent Gatto, Sebastian Gibb
 }
 \references{
 Bond N. J., Shliaha P.V., Lilley K.S. and Gatto

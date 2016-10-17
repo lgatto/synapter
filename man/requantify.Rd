@@ -43,8 +43,9 @@ all runs are removed and only the common seen ions are summed. In contrast
 \code{onlyCommonIsotopes=FALSE} sums all ions regardless they are present
 in all runs. \cr
 
-In \code{"reference"} the run where all ions are unsaturated and has the
-highest intensity is used as reference. The other runs are corrected as
+In \code{"reference"} the run that has the most unsaturated ions in common
+with all the other runs. If there are more than one run, the most intense is
+used as reference. The other runs are corrected as
 follows:
 \itemize{
  \item{Find common ions between current and the reference run.}

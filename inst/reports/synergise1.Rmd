@@ -1,0 +1,274 @@
+---
+title: "synapter report"
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+output:
+  html_document:
+    mode: selfcontained
+    toc: true
+    toc_float:
+      collapsed: false
+      smooth_scroll: false
+    fig_width: 10
+    fig_height: 8
+    fig_caption: true
+    out_width: 2048px
+    mathjax: null
+---
+
+# Input
+
+## Files
+
+```{r input.files, echo=FALSE, result="asis"}
+inputFiles <-
+    rbind(c("Identification peptide:", basename(obj$IdentPeptideFile), nrow(obj$IdentPeptideData)),
+          c("Quantitation peptide:",   basename(obj$QuantPeptideFile), nrow(obj$QuantPeptideData)),
+          c("Quantitation Pep3D:",     basename(obj$QuantPep3DFile),   nrow(obj$QuantPep3DData)),
+          c("Fasta file:",    basename(obj$DbFastaFile), ""))
+colnames(inputFiles) <- c("", "File name", "Number of features")
+knitr::kable(inputFiles, align="llr")
+```
+
+## General Parameters
+
+```{r input.parameters, echo=FALSE, result="asis"}
+parameters <-
+    rbind(c("Master", master),
+          c("Peptide FDR", fdr),
+          c("Protein FPR", fpr),
+          c("Peptide Length", peplen),
+          c("Missed cleavages", missedCleavages),
+          c("Isoleucin equals Leucin", IisL),
+          c("Identification mass tolerance (ppm)", identppm),
+          c("Quantitation mass tolerance (ppm)", quantppm),
+          c("Loess span (RT modelling)", span),
+          c("Filtering unique peptides", as.character(uniquepep)))
+colnames(parameters) <- c("Parameter name", "Value")
+knitr::kable(parameters, align="lr")
+```
+
+## Grid Search Parameters
+
+```{r input.gridparameters, echo=FALSE, result="asis"}
+gridParameters <-
+    rbind(c("Mass tolerance (ppm) start", grid.ppm.from),
+          c("Mass tolerance (ppm) end", grid.ppm.to),
+          c("Mass tolerance (ppm) by", grid.ppm.by),
+          c("Retention time stdev start", grid.nsd.from),
+          c("Retention time stdev end", grid.nsd.to),
+          c("Retention time stdev by", grid.nsd.by),
+          c("Feature proportion ", grid.subset),
+          c("Number of features", grid.n),
+          c("parameters selection", grid.param.sel))
+colnames(gridParameters) <- c("Grid parameter", "Value")
+knitr::kable(gridParameters, align="lr")
+```
+
+# Filtering
+
+## Peptide False Discovery Rate
+
+### Peptide Scores
+
+```{r filtering.pepScores, echo=FALSE}
+plotPepScores(obj)
+```
+
+### Peptide Numbers
+
+```{r filtering.pepNumbers, echo=FALSE}
+knitr::kable(getPepNumbers(obj))
+```
+
+### Peptide FDR
+
+```{r filtering.fdr, echo=FALSE}
+plotFdr(obj)
+```
+
+```{r filtering.data, echo=FALSE}
+if (uniquepep) {
+    filterUniqueDbPeptides(obj, missedCleavages=missedCleavages,
+                           IisL=IisL, verbose=verbose)
+}
+filterPeptideLength(obj, l=peplen)
+setPepScoreFdr(obj, fdr=fdr)
+filterQuantPepScore(obj, method=fdrMethod)
+  if (!master)
+    filterIdentPepScore(obj, method=fdrMethod)
+```
+
+## Mass tolerance
+
+```{r filtering.ppmErrorPre, echo=FALSE}
+par(mfcol=c(1, 2))
+plotPpmError(obj, what="Ident")
+plotPpmError(obj, what="Quant")
+par(mfcol=c(1, 1))
+```
+
+```{r filtering.ppmErrorQsPre, echo=FALSE, result="asis"}
+knitr::kable(getPpmErrorQs(obj))
+```
+
+```{r filtering.ppm, echo=FALSE}
+filterQuantPpmError(obj, ppm=quantppm)
+filterIdentPpmError(obj, ppm=identppm)
+```
+
+```{r filtering.ppmErrorPost, echo=FALSE}
+par(mfcol=c(1, 2))
+plotPpmError(obj, what="Ident")
+plotPpmError(obj, what="Quant")
+par(mfcol=c(1, 1))
+```
+
+```{r filtering.ppmErrorQsPost, echo=FALSE, result="asis"}
+knitr::kable(getPpmErrorQs(obj))
+```
+
+```{r filtering.fpr, echo=FALSE}
+filterIdentProtFpr(obj, fpr=fpr)
+filterQuantProtFpr(obj, fpr=fpr)
+```
+
+```{r merge, echo=FALSE}
+mergePeptides(obj)
+```
+
+## Retention Time Modelling
+
+### Retention Time Model
+
+```{r rtmodel.plotRt, echo=FALSE}
+plotRt(obj, what="data")
+```
+
+```{r rtmodel.modelling, echo=FALSE}
+setLowessSpan(obj, span)
+modelRt(obj)
+```
+
+```{r rtmodel.rtdiffs, echo=FALSE}
+par(mfcol=c(1, 2))
+plotRtDiffs(obj)
+plotRt(obj, what="model", nsd=1) ## better focus on model
+par(mfcol=c(1, 1))
+```
+
+```{r rtmodel.rtdiffsTable, echo=FALSE, result="asis"}
+rtQs <- t(getRtQs(obj))
+rownames(rtQs) <- c("Retention time difference:")
+knitr::kable(rtQs)
+```
+
+### Feature Space
+
+```{r rtmodel.plotAllFeatures, echo=FALSE}
+plotFeatures(obj, what="all")
+```
+
+```{r rtmodel.plotSomeFeatures, echo=FALSE, dev="svg", fig.cap="Using nsd = 2 and ppm error = 10 as an example.<br />Optimal values are selected below."}
+setRtNsd(obj, 2)     ## RtNsd and PpmError are used for detailed plot
+setPpmError(obj, 10) ## if not set manually, default values are set automatically
+plotFeatures(obj, what="some", xlim=c(30,50), ylim=c(1160, 1165))
+```
+
+## Grid Optimisation
+
+`r if(grid.n) { paste0("Using", grid.n, "features.") } else { paste0("Using ",
+grid.subset * 100, "% of the data.") }`
+```{r, grid.comment, echo=FALSE, eval=FALSE, result="hide"}
+# abuse inline r here to show the progress bar of the gridsearch in the
+# R console - regular r chunks capture stdout
+```
+`r if (grid.n) { searchGrid(obj, ppms=seq(grid.ppm.from, grid.ppm.to, grid.ppm.by), nsds=seq(grid.nsd.from, grid.nsd.to, grid.nsd.by), n=grid.n, verbose=verbose) } else { searchGrid(obj, ppms=seq(grid.ppm.from, grid.ppm.to, grid.ppm.by), nsds=seq(grid.nsd.from, grid.nsd.to, grid.nsd.by), subset=grid.subset, verbose=verbose) }`
+
+plotGrid(obj, what="details")
+
+### Grid Tables {.tabset}
+
+```{r grid.table, echo=FALSE, results="asis"}
+names <- c("total", "model", "details")
+what <- c("total", "model", "details")
+for (i in seq(along=names)){
+  cat("\n####", names[i], "\n")
+  cat("\n##### Image\n")
+  plotGrid(obj, what=what[i])
+  cat("\n\n##### Table\n")
+  print(knitr::kable(as.data.frame(getGrid(obj)[[i]][,,1])))
+  cat("\nBest Grid Value ", names[i], ": ", getBestGridValue(obj)[i], "\n", sep="")
+  #cat("\n##### Best Grid Parameters\n")
+  print(knitr::kable(as.data.frame(getBestGridParams(obj)[[i]])))
+}
+```
+
+### Grid Details
+
+```{r grid.details, echo=FALSE, result="asis"}
+gridDetails <- do.call(rbind, getGridDetails(obj))
+cond <- do.call(rbind, strsplit(rownames(gridDetails), ":"))[, 1:2] ## imdiff not supported by synergise1
+colnames(cond) <- c("nsd", "ppm")
+gridDetails <- cbind(cond, gridDetails)
+gridDetails[] <- as.numeric(gridDetails)
+rownames(gridDetails) <- NULL
+knitr::kable(as.data.frame(gridDetails))
+```
+
+### Best Grid Parameters
+
+```{r grid.bestParamaters, echo=FALSE, result="asis"}
+setBestGridParams(obj, what=grid.param.sel)
+```
+
+Setting best grid parameters using '`r grid.param.sel`'
+
+  - Mass tolerance (ppm): `r obj$PpmError`
+  - Number of retention time stdev: `r obj$RtNsd`
+
+## EMRT Matching
+
+```{r emrt.find, echo=FALSE}
+findEMRTs(obj)
+rescueEMRTs(obj, mergedEMRTs)
+plotEMRTtable(obj)
+```
+
+```{r emrt.table, echo=FALSE, result="asis"}
+tab <- as.data.frame(getEMRTtable(obj))
+colnames(tab) <- c("Number of assigned EMRTs", "Freq")
+knitr::kable(tab)
+```
+
+## Performance
+
+```{r performance, echo=FALSE, result="asis"}
+perf <- performance(obj, verbose=FALSE)
+group <- c("(S) Synapter (uniquely matched EMRTs)",
+           "(I) Identification", "(Q) Quantitation", "(S/Q) Enrichment")
+values <- c(perf$Synapter, perf$Ident, perf$Quant, paste0(round(perf$Enrichment, 2), "%"))
+knitr::kable(data.frame(group, values, stringsAsFactors=FALSE), align="lr")
+
+overlap <- as.data.frame(perf$VennCounts)
+colnames(overlap) <- "Number of peptides"
+knitr::kable(overlap)
+```
+
+## Exported Files
+
+- [Identification Peptides](IdentPeptides.csv)
+- [Quantitation Peptides](QuantPeptides.csv)
+- [Merged Peptides](MergedPeptides.csv)
+- [Matched Peptides](MatchedPeptides.csv)
+- [QuantPeptides.csv](QuantPeptides.csv)
+- [Grid Details](GridDetails.txt)
+- [Saved R Object (binary)](SynapterObject.rda)
+
+## Full Analysis Log
+
+```{r log, echo=FALSE, results="asis"}
+log <- getLog(obj)
+for (i in seq(along=log)){
+  cat("  - ", log[i], "\n")
+}
+```

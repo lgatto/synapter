@@ -79,8 +79,10 @@ CHANGES IN VERSION 1.99.0
  o add `filterNonUniqueIdentMatches` (see #111 for details) [2016-02-22 Mon]
  o Remove "light" version of `writeMergedPeptides` and `writeMachtedPeptides`
    (now always the full `data.frame` is saved; see #95) [2016-10-16 Sun]
- o Adapt `synergize` to new grid search (closes #81) [2016-10-16 So]
+ o Adapt `synergise` to new grid search (closes #81) [2016-10-16 So]
  o Update synapterTiny and `synapterTinyData` [2016-10-16 So]
+ o Replace `hwriter` by `rmarkdown` report in `synergise`; closes #120.
+  [2016-10-17 Mon]
 
 CHANGES IN VERSION 1.13.1
 -------------------------
