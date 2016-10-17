@@ -278,7 +278,7 @@ setMethod("rescaleForTop3", signature(before="MSnSet", after="MSnSet"),
                             onlyForSaturatedRuns=onlyForSaturatedRuns, ...)
 })
 
-rescaleForTop3 <- function(before, after, saturationThreshold, onlyForSaturatedRuns=TRUE) {
+.rescaleForTop3 <- function(before, after, saturationThreshold, onlyForSaturatedRuns=TRUE) {
   i <- grep("isotopicDistr", fvarLabels(before))
 
   if (!length(i)) {

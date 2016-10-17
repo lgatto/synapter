@@ -166,6 +166,7 @@ synergize1 <- function(filenames,
   fdrMethod <- match.arg(fdrMethod)
   grid.param.sel <- match.arg(grid.param.sel)
   mergedEMRTs <- match.arg(mergedEMRTs)
+  gridDetails <- NULL
 
   if (missing(outputdir)) {
     stop("No 'outputdir' given.")
