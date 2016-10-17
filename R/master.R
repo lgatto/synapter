@@ -415,9 +415,11 @@ makeMaster <- function(pepfiles,
                                         files = fragmentfiles,
                                         removeNeutralLoss = removeNeutralLoss,
                                         verbose = verbose)
-    lib <- .fragments2spectra(df = master,
+    lib <- .fragments2spectra(df = NULL, # df is not needed for storeAll=TRUE, because we don't use
+                                         # ID intersection
                               fragments = fragments,
                               file = fragmentfiles,
+                              storeAll = TRUE,
                               removePrecursor = removePrecursor,
                               tolerance = tolerance,
                               verbose = verbose)
