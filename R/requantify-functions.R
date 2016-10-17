@@ -62,7 +62,7 @@
 #' @references
 #' See discussion on github: \url{https://github.com/lgatto/synapter/issues/39}
 #' @seealso MSnSet documentation: \code{\linkS4class{MSnSet}}
-#' @aliases requantify requantify-method,MSnSet
+#' @aliases requantify
 #' @rdname requantify
 setMethod("requantify", signature(object="MSnSet"),
           function(object, saturationThreshold,
@@ -225,6 +225,58 @@ setMethod("requantify", signature(object="MSnSet"),
   }
   r
 }
+
+#' Rescale for TOP3
+#'
+#' This method rescales the intensity values of an \code{\linkS4class{MSnSet}}
+#' object to be suiteable for TOP3 quantification.
+#'
+#' @details
+#' If an \code{\linkS4class{MSnSet}} object was requantified using the
+#' \code{method="sum"} requantification method
+#' (see \code{\link{requantify,MSnSet-method}}) TOP3 is not valid anymore
+#' because the most abundant proteins are penalised by removing high intensity
+#' isotopes.
+#'
+#' To overcome this \code{rescaleForTop3} takes the proportion
+#' \code{isotope/sum(isotopes} for each requantified peptide and calculates a
+#' correction factor by comparing these proportions against the unsaturated
+#' isotopes before requantification. The new rescale intensity values of the
+#' isotopes are the mean correction factor multiplied with the corrected
+#' intensity values (see
+#' \url{https://github.com/lgatto/synapter/issues/39#issuecomment-207987278} for
+#' the complete explanation/discussion).
+#'
+#' @usage
+#' \S4method{rescaleForTop3}{MSnSet,MSnSet}(before, after, saturationThreshold,
+#' onlyForSaturatedRuns=TRUE, \ldots)
+#'
+#' @param before An \code{\linkS4class{MSnSet}} object before requantification.
+#' @param after The same \code{\linkS4class{MSnSet}} object as \code{before} but
+#' after requantification.
+#' @param saturationThreshold \code{double}, intensity of an ion (isotope of a
+#' given charge state) at which saturation is starting to occur.
+#' @param onlyForSaturatedRuns \code{logical}, rescale just runs where at least
+#' one isotope is affected by saturation.
+#' @param \ldots further arguments passed to internal functions. Currently
+#' ignored.
+#' @return \code{\linkS4class{MSnSet}} where the
+#' \code{assayData} are requantified.
+#'
+#' @author Sebastian Gibb \email{mail@@sebastiangibb.de} and Pavel Shliaha
+#' @references
+#' See discussion on github: \url{https://github.com/lgatto/synapter/issues/39}
+#' @seealso MSnSet documentation: \code{\linkS4class{MSnSet}}
+#' \url{https://github.com/lgatto/synapter/issues/39#issuecomment-207987278}
+#' @aliases rescaleForTop3
+#' @rdname rescaleForTop3
+
+setMethod("rescaleForTop3", signature(before="MSnSet", after="MSnSet"),
+          function(before, after, saturationThreshold, onlyForSaturatedRuns=TRUE, ...) {
+            .rescaleForTop3(before=before, after=after,
+                            saturationThreshold=saturationThreshold,
+                            onlyForSaturatedRuns=onlyForSaturatedRuns, ...)
+})
 
 rescaleForTop3 <- function(before, after, saturationThreshold, onlyForSaturatedRuns=TRUE) {
   i <- grep("isotopicDistr", fvarLabels(before))
