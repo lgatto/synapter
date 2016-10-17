@@ -4,7 +4,6 @@
 \name{synapterPlgsAgreement,MSnSet-method}
 \alias{synapterPlgsAgreement}
 \alias{synapterPlgsAgreement,MSnSet-method}
-\alias{synapterPlgsAgreement-method,MSnSet}
 \title{Synapter/PLGS Agreement}
 \usage{
 \S4method{synapterPlgsAgreement}{MSnSet}(object, \ldots)

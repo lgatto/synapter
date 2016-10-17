@@ -4,7 +4,6 @@
 \name{requantify,MSnSet-method}
 \alias{requantify}
 \alias{requantify,MSnSet-method}
-\alias{requantify-method,MSnSet}
 \title{Intensity requantification}
 \usage{
 \S4method{requantify}{MSnSet}(object, saturationThreshold,

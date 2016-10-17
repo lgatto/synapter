@@ -51,7 +51,7 @@
 #' @references
 #' See discussion on github: \url{https://github.com/lgatto/synapter/issues/73}
 #' @seealso MSnSet documentation: \code{\linkS4class{MSnSet}}
-#' @aliases synapterPlgsAgreement synapterPlgsAgreement-method,MSnSet
+#' @aliases synapterPlgsAgreement
 #' @rdname synapterPlgsAgreement
 setMethod("synapterPlgsAgreement", signature(object="MSnSet"),
           function(object, ...) .synapterPlgsAgreement(object))
@@ -78,9 +78,25 @@ setMethod("synapterPlgsAgreement", signature(object="MSnSet"),
   msnset
 }
 
-#' apply intensity correction
-#' TODO: manual page
-#' @noRd
+#' Correct Intensity
+#'
+#' This method corrects the intensity values of an \code{\linkS4class{MSnSet}}
+#' object by applying the intensity model built in the synapter workflow by
+#' \code{\link{modelIntensity}}.
+#'
+#' @usage
+#' \S4method{correctIntensity}{MSnSet}(object, \ldots)
+#'
+#' @param object An \code{\linkS4class{MSnSet}} object.
+#' @param \ldots further arguments, not used yet.
+#' @return A \code{\linkS4class{MSnSet}} with corrected intensity values
+#' (\code{exprs}).
+#'
+#' @author Sebastian Gibb \email{mail@@sebastiangibb.de}
+#' @seealso MSnSet documentation: \code{\linkS4class{MSnSet}}
+#' @aliases correctIntensity
+#' @rdname correctIntensity
+
 setMethod("correctIntensity", signature(object="MSnSet"),
           function(object, ...) .correctIntensity(object))
 
@@ -89,7 +105,9 @@ setMethod("correctIntensity", signature(object="MSnSet"),
   i <- grep("intensityCorrectionFactor", fvarLabels(msnset))
 
   if (!length(i)) {
-    stop("No 'intensityCorrectionFactor' found! Did you run 'modelIntensity' on the synapter object?")
+    stop("No 'intensityCorrectionFactor' found! ",
+         "Did you run 'modelIntensity' on the synapter object before ",
+         "converting into a MSnSet?")
   }
 
   exprs(msnset) <- exprs(msnset) * as.matrix(fData(msnset)[, i, drop=FALSE])
