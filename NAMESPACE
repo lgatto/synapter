@@ -4,6 +4,11 @@ import(utils)
 import(MSnbase)
 import(methods)
 
+importFrom(graphics, abline, axis, boxplot, grid, hist, layout, legend, lines,
+                     par, points, polygon, rect, rug, segments, text)
+importFrom(stats, ave, density, fitted, loess, lowess, median, na.omit,
+                  predict, quantile, rnorm, sd, setNames, weighted.mean)
+
 importFrom(qvalue, qvalue)
 importFrom(multtest, mt.rawp2adjp)
 importFrom(lattice, levelplot, densityplot, barchart)
