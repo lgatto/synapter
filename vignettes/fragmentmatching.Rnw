@@ -121,7 +121,6 @@ options(replace.assign = TRUE,
 @
 
 <<setup, echo=FALSE>>=
-library(xtable)
 suppressPackageStartupMessages(library(synapter))
 library(synapterdata)
 data(synobj2)
@@ -138,10 +137,10 @@ and with \Rfunction{vignette("synapter", package = "synapter")}.
 \bigskip
 
 In this vignette we introduce a new fragment matching feature (see
-figures \ref{fig:xm1}, \ref{fig:xm2} and \ref{fig:xm3}), which
+figures \ref{fig:fm1}, \ref{fig:fm2} and \ref{fig:fm3}), which
 improves the matching of identification and the quantitation
-features. After applying the usual \Rfunction{synergise} workflow (see
-\Rfunction{?synergise} and \Rfunction{?Synapter} for details) a number
+features. After applying the usual \Rfunction{synergise1} workflow (see
+\Rfunction{?synergise1} and \Rfunction{?Synapter} for details) a number
 of multiple matches and possible false unique matches remain that can
 be deconvoluted by comparing common peaks in the identification fragment
 peaks and the quantitation spectra.
@@ -163,25 +162,16 @@ following sections then describe the new fragment matching functionality.
 
 \section{Running \Rfunction{synergise}}\label{sec:synergise}
 
-One has to run the \Rfunction{synergise} workflow before fragment
+One has to run the \Rfunction{synergise1} workflow before fragment
 matching can be applied. Please read the general \Rpackage{synapter}
-vignette for the general use of \Rfunction{synergise}.
-
-<<create-synobj2, cache=FALSE, eval=TRUE, echo=FALSE>>=
-cat(readLines(system.file(file.path("scripts", "create_synobj2.R"),
-                          package="synapterdata"))[-c(11:18, 20:24)],
-    sep = "\n")
-@
-
-\section{Loading the fragment and spectra data}\label{sec:spec}
-
-The data needed for the fragment matching procedure are a
+vignette for the general use of \Rfunction{synergise1}.
+The additional data needed for the fragment matching procedure are a
 \code{final\_fragment.csv} file for the identification run and
 a \code{Spectrum.xml} file for the quantitation run.
 
-<<prepare-loadspectra, echo=FALSE, eval=TRUE, tidy=FALSE>>=
+<<create-synobj2, cache=FALSE, eval=TRUE, echo=FALSE>>=
 cat(readLines(system.file(file.path("scripts", "create_synobj2.R"),
-                          package="synapterdata"))[c(11:18, 20:21)], sep = "\n")
+                          package="synapterdata")), sep = "\n")
 @
 
 \section{Filtering fragments}\label{sec:filtfrag}
@@ -208,7 +198,6 @@ filterFragments(synobj2, what = "spectra.quant", minIntensity = 70,
                 verbose = FALSE)
 @
 
-
 \section{Fragment matching}\label{sec:fragmentmatching}
 
 This method, named \Rfunction{fragmentMatching}, performs the matching of
@@ -221,7 +210,7 @@ to be set using the \Rfunction{setFragmentMatchingPpmTolerance}
 function. Peaks/Fragments within this tolerance are treated as
 identical.
 
-<<cx>>=
+<<fm>>=
 setFragmentMatchingPpmTolerance(synobj2, 25)
 fragmentMatching(synobj2, verbose = FALSE)
 @
@@ -230,13 +219,13 @@ The \Rfunction{plotFragmentMatching} function illustrates the details of
 this fragment matching procedure. If it is called without any additional
 argument every matched pair (fragment vs spectrum) is plotted.
 One can use the \code{key} argument to select a special value in a column
-(defined by the \code{column} argument) of the \code{MatchedEMRTs} data.frame.
-E.g. if one wants to select the fragment matching results with a high number of
-common peaks, e.g. 28 common peaks:
+(defined by the \code{column} argument) of the \code{MatchedEMRTs}
+\code{data.frame}. E.g. if one wants to select the fragment matching results
+with a high number of common peaks, e.g. 28 common peaks:
 
 \begin{figure}[!hbt]
   \begin{center}
-<<plotcx22, dev ='pdf', fig.widht=10, fig.height=5>>=
+<<plotfm22, dev ='pdf', fig.widht=10, fig.height=5>>=
 plotFragmentMatching(synobj2, key = 28,
                   column = "FragmentMatching",
                   verbose = FALSE)
@@ -245,7 +234,7 @@ plotFragmentMatching(synobj2, key = 28,
   identification data are shown on the top (blue) and the quantitation
   data are on the bottom (red). Common peaks are displayed in darker colours
   and highlighted by full points.}
-    \label{fig:xm1}
+    \label{fig:fm1}
   \end{center}
 \end{figure}
 
@@ -255,13 +244,13 @@ sequence \code{"TALIDGLAQR"}.
 
 \begin{figure}[!hbt]
   \begin{center}
-<<plotcxseq, dev ='pdf', fig.widht=10, fig.height=5>>=
+<<plotfmseq, dev ='pdf', fig.widht=10, fig.height=5>>=
 plotFragmentMatching(synobj2,
                   key = "TALIDGLAQR", column = "peptide.seq",
                   verbose = FALSE)
 @
 \caption{Fragment matching for peptide \code{TALIDGLAQ}. }
-    \label{fig:xm2}
+    \label{fig:fm2}
   \end{center}
 \end{figure}
 
@@ -269,14 +258,14 @@ Maybe the peptide with a special precursor ID looks interesting.
 
 \begin{figure}[!hbt]
   \begin{center}
-<<plotcxid, dev ='pdf', fig.widht=10, fig.height=5>>=
+<<plotfmid, dev ='pdf', fig.widht=10, fig.height=5>>=
 plotFragmentMatching(synobj2,
                   key = 12589, column = "precursor.leID.ident",
                   verbose = FALSE)
 @
 \caption{Fragment matching precursor with \texttt{leID} identifier
   12589. }
-    \label{fig:xm3}
+    \label{fig:fm3}
   \end{center}
 \end{figure}
 
@@ -292,7 +281,7 @@ illustrated in tables \ref{tab:unique} and \ref{tab:multiple}.
 
 \begin{figure}[!hbt]
   \begin{center}
-<<plotcxperformance, dev='pdf', fig.widht=8, fig.height=4>>=
+<<plotfmperformance, dev='pdf', fig.widht=8, fig.height=4>>=
 m <- plotFragmentMatchingPerformance(synobj2)
 @
 \caption{Number of true/false match peptides for different peak
@@ -301,20 +290,18 @@ m <- plotFragmentMatchingPerformance(synobj2)
   matches. The former metric is used to filter out possible false
   positive unique matches while the second is used to filter multiple
   matches. Empty circles indicate zero peptides. }
-    \label{fig:xmplot}
+    \label{fig:fmplot}
   \end{center}
 \end{figure}
 
 <<confusionmatrixunique, results="asis", echo=FALSE>>=
-xtable(m$unique[1:15,], row.names=FALSE,
-       caption="Number of true positives, false negatives, false positives, false negatives and false discovery rate for a given number of common peaks",
-       label = "tab:unique")
+knitr::kable(m$unique[1:15,], row.names=FALSE,
+            caption="Number of true positives, false negatives, false positives, false negatives and false discovery rate for a given number of common peaks \\label{tab:unique}")
 @
 
 <<confusionmatrixnonunqiue, results="asis", echo=FALSE>>=
-xtable(m$nonunique[1:15,], row.names=FALSE,
-       caption="Number of true positives, false negatives, false positives, false negatives and false discovery rate for a given difference in number of common peaks between the higest and second highest multiply matching EMRTs in terms of number of common peptides.",
-       label="tab:multiple")
+knitr::kable(m$nonunique[1:15,], row.names=FALSE,
+             caption="Number of true positives, false negatives, false positives, false negatives and false discovery rate for a given difference in number of common peaks between the higest and second highest multiply matching EMRTs in terms of number of common peptides. \\label={tab:multiple}")
 @
 
 \clearpage
@@ -355,10 +342,10 @@ into a unique match as the difference between the best and second
 matches is 5 and the best match with 7 common fragments will be
 upgraded to a unique match.
 
-The right panel of figure \ref{fig:xmplot} and table
+The right panel of figure \ref{fig:fmplot} and table
 \ref{tab:multiple} can be used to choose a good threshold for the
 difference in number of common peaks. In the following example we
-rescue 289 unique matches out of the non unique ones.
+rescue 130 unique matches out of the non unique ones.
 
 <<filernonunique>>=
 performance(synobj2)
