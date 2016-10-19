@@ -9,11 +9,12 @@ Synapter <- function(filenames, master = FALSE) {
       stop("File names must be provided as a named list with names 'identpeptide','quantpeptide', 'quantpep3d' and 'fasta' [optional 'identfragments' and 'quantspectra'].")
     flength <- sapply(filenames, length)
     if (!all(flength == 1))
-        stop("This interface only accepts single MSe/HDMSe files as input. See '?synapterGUI' and '?synergise' for alternative interfaces.")
+        stop("This interface only accepts single MSe/HDMSe files as input. See '?synergise' for alternative interfaces.")
     ftest <- sapply(filenames, file.exists)
     if (any(!ftest))
       stop(paste(filenames[!ftest], collapse = " "),
            " do(es) not exists.")
+    filenames <- lapply(filenames, normalizePath)
     xx$IdentPeptideFile <- filenames$identpeptide
     xx$QuantPeptideFile <- filenames$quantpeptide
     xx$QuantPep3DFile <- filenames$quantpep3d
@@ -37,7 +38,7 @@ Synapter <- function(filenames, master = FALSE) {
   } else {
     xx$loadData()
   }
-  return(xx)
+  xx
 }
 
 setMethod(show, "Synapter",
