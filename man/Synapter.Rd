@@ -87,6 +87,8 @@
 \alias{performance2,Synapter-method}
 \alias{performance}
 \alias{performance2}
+\alias{fragmentMatchingPerformance,Synapter-method}
+\alias{fragmentMatchingPerformance}
 \alias{getIdentificationFragments,Synapter-method}
 \alias{getIdentificationFragments}
 \alias{getQuantitationSpectra,Synapter-method}
@@ -439,7 +441,9 @@ Synapter(filenames, master) ## creates an instance of class 'Synapter'
     common peaks for unique matches.  The right panel visualizes the performance
     of different differences (delta) of common peaks between the best match
     (highest number of common peaks) and the second best match in each non
-    unique match group.
+    unique match group. \code{plotFragmentMatchingPerformance} returns the
+    corresponding values invisible or use \code{fragmentMatchingPerformance} to
+    access these data.
     Use \code{filterUniqueMatches} and \code{filterNonUniqueMatches} to remove
     unique or non unique matches below the threshold of common peaks
     respective the difference in common peaks from the MatchedEMRTs data.frame.
@@ -716,6 +720,26 @@ Synapter(filenames, master) ## creates an instance of class 'Synapter'
 	transfered EMRTs.
       }
 
+      \item{fragmentMatchingPerformance}{\code{signature(object="Synapter",
+          what = c("unique", "non-unique")}:
+        Returns the performance of the fragment matching for \code{unqiue} or
+        \code{non-unique} matches. The return valus is a \code{matrix} with
+        seven columns. The first column \code{ncommon}/\code{deltacommon}
+        contains the thresholds. Column 2 to 5 are the true positives \code{tp},
+        false positives \code{fp}, true negatives \code{tn}, false negatives
+        \code{fn} for the merged peptide data. The sixth column \code{all} shows
+        the corresponding number of peptides for all peptides
+        (not just the merged ones) and the last column shows the FDR \code{fdr}
+        for the current threshold (in that row) for the merged data.
+
+        Please note that the FDR is overfitted/underestimated because the merged
+        peptides are the peptides from the highest quality spectra were PLGS could
+        easily identify the peptides. The peptides that are not present in the
+        merged data are often of lower quality hence the FDR would be higher by
+        trend.
+
+        See \code{plotFragmentMatchingPerformance} for a graphical
+        representation.}
     }
   }
 
@@ -802,7 +826,9 @@ Synapter(filenames, master) ## creates an instance of class 'Synapter'
     \item{filterUniqueMatches}{\code{signature(object="Synapter", minNumber =
         "numeric")}:
       Removes all unique matches that have less than \code{minNumber} of
-      peaks/fragments in common. Use \code{plotFragmentMatchingPerformance}
+      peaks/fragments in common. Use
+      \code{fragmentMatchingPerformance(..., what="unique")}/
+      \code{plotFragmentMatchingPerformance}
       (left panel) to find an ideal threshold.
     }
 
@@ -814,7 +840,8 @@ Synapter(filenames, master) ## creates an instance of class 'Synapter'
       peaks/fragments) less than \code{minDelta}. For the matches above the
       threshold only the one with the highest number of common peaks/fragments
       in each match group is kept.
-      Use \code{plotFragmentMatchingPerformance} (right panel) to find an ideal
+      Use \code{fragmentMatchingPerformance(..., what="non-unique")}/
+      \code{plotFragmentMatchingPerformance} (right panel) to find an ideal
       threshold.
     }
 
@@ -945,21 +972,8 @@ Synapter(filenames, master) ## creates an instance of class 'Synapter'
     Use \code{filterUniqueMatches} and \code{filterNonUniqueMatches} to filter
     the \code{MatchedEMRT} \code{data.frame} using one of these thresholds.
     This function returns a \code{list} with two named elements (\code{unqiue}
-    and \code{nonunqiue} invisibly. Each \code{list} element contains a
-    \code{matrix} with seven columns. The first column
-    \code{ncommon}/\code{deltacommon} contains the
-    thresholds. Column 2 to 5 are the true positives \code{tp}, false positives
-    \code{fp}, true negatives \code{tn}, false negatives \code{fn} for the
-    merged peptide data. The sixth column \code{all} shows the corresponding
-    number of peptides for all peptides (not just the merged ones) and the last
-    column shows the FDR \code{fdr} for the current threshold (in that row) for
-    the merged data.
-
-    Please note that the FDR is overfitted/underestimated because the merged
-    peptides are the peptides from the highest quality spectra were PLGS could
-    easily identify the peptides. The peptides that are not present in the
-    merged data are often of lower quality hence the FDR would be higher by
-    trend.
+    and \code{nonunqiue} invisibly. These are the same data as return by
+    \code{fragmentMatchingPerformance}.
 
     Use \code{showAllPeptides=TRUE} to add a line for all peptides (not just
     the merged onces) to both plots.

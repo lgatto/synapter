@@ -47,6 +47,7 @@ exportMethods(show,
               rescueEMRTs,
               searchGrid,
               fragmentMatching,
+              fragmentMatchingPerformance,
               ## getters and setters
               getGrid,
               getGridDetails,

@@ -587,6 +587,15 @@ setMethod(plotFragmentMatching, "Synapter",
                                ...)
           })
 
+setMethod(fragmentMatchingPerformance, "Synapter",
+          function(object, what = c("unique", "non-unique")) {
+            if (!nrow(object$FragmentMatching)) {
+              stop("You have to run ", sQuote("fragmentMatching"), " first!")
+            }
+            what <- match.arg(what)
+            .fragmentMatchingContingencyMatrix(object$FragmentMatching, what = what)
+          })
+
 setMethod(plotFragmentMatchingPerformance, "Synapter",
           function(object, showAllPeptides=FALSE, ...) {
             if (!nrow(object$FragmentMatching)) {
