@@ -15,6 +15,11 @@ output:
     mathjax: null
 ---
 
+```{r setup, echo=FALSE}
+knitr::read_chunk(system.file("reports", "scripts", "synergise.R",
+                              package="synapter"))
+```
+
 # Input
 
 ## Files
@@ -70,108 +75,67 @@ knitr::kable(gridParameters, align="lr")
 
 ### Peptide Scores
 
-```{r filtering.pepScores, echo=FALSE}
-plotPepScores(obj)
+```{r synergise.filtering.pepScores, echo=FALSE}
 ```
 
 ### Peptide Numbers
 
-```{r filtering.pepNumbers, echo=FALSE}
-knitr::kable(getPepNumbers(obj))
+```{r synergise.filtering.pepNumbers, echo=FALSE}
 ```
 
 ### Peptide FDR
 
-```{r filtering.fdr, echo=FALSE}
-plotFdr(obj)
+```{r synergise.filtering.fdr, echo=FALSE}
 ```
 
-```{r filtering.data, echo=FALSE}
-if (uniquepep) {
-    filterUniqueDbPeptides(obj, missedCleavages=missedCleavages,
-                           IisL=IisL, verbose=verbose)
-}
-filterPeptideLength(obj, l=peplen)
-setPepScoreFdr(obj, fdr=fdr)
-filterQuantPepScore(obj, method=fdrMethod)
-  if (!master)
-    filterIdentPepScore(obj, method=fdrMethod)
+```{r synergise.filtering.data, echo=FALSE}
 ```
 
 ## Mass tolerance
 
-```{r filtering.ppmErrorPre, echo=FALSE}
-par(mfcol=c(1, 2))
-plotPpmError(obj, what="Ident")
-plotPpmError(obj, what="Quant")
-par(mfcol=c(1, 1))
+```{r synergise.filtering.ppmErrorPre, echo=FALSE}
 ```
 
-```{r filtering.ppmErrorQsPre, echo=FALSE, result="asis"}
-knitr::kable(getPpmErrorQs(obj))
+```{r synergise.filtering.ppmErrorQsPre, echo=FALSE, result="asis"}
 ```
 
-```{r filtering.ppm, echo=FALSE}
-filterQuantPpmError(obj, ppm=quantppm)
-filterIdentPpmError(obj, ppm=identppm)
+```{r synergise.filtering.ppm, echo=FALSE}
 ```
 
-```{r filtering.ppmErrorPost, echo=FALSE}
-par(mfcol=c(1, 2))
-plotPpmError(obj, what="Ident")
-plotPpmError(obj, what="Quant")
-par(mfcol=c(1, 1))
+```{r synergise.filtering.ppmErrorPost, echo=FALSE}
 ```
 
-```{r filtering.ppmErrorQsPost, echo=FALSE, result="asis"}
-knitr::kable(getPpmErrorQs(obj))
+```{r synergise.filtering.ppmErrorQsPost, echo=FALSE, result="asis"}
 ```
 
-```{r filtering.fpr, echo=FALSE}
-filterIdentProtFpr(obj, fpr=fpr)
-filterQuantProtFpr(obj, fpr=fpr)
+```{r synergise.filtering.fpr, echo=FALSE}
 ```
 
-```{r merge, echo=FALSE}
-mergePeptides(obj)
+```{r synergise.merge, echo=FALSE}
 ```
 
 ## Retention Time Modelling
 
 ### Retention Time Model
 
-```{r rtmodel.plotRt, echo=FALSE}
-plotRt(obj, what="data")
+```{r synergise.rtmodel.plotRt, echo=FALSE}
 ```
 
-```{r rtmodel.modelling, echo=FALSE}
-setLowessSpan(obj, span)
-modelRt(obj)
+```{r synergise.rtmodel.modelling, echo=FALSE}
 ```
 
-```{r rtmodel.rtdiffs, echo=FALSE}
-par(mfcol=c(1, 2))
-plotRtDiffs(obj)
-plotRt(obj, what="model", nsd=1) ## better focus on model
-par(mfcol=c(1, 1))
+```{r synergise.rtmodel.rtdiffs, echo=FALSE}
 ```
 
-```{r rtmodel.rtdiffsTable, echo=FALSE, result="asis"}
-rtQs <- t(getRtQs(obj))
-rownames(rtQs) <- c("Retention time difference:")
-knitr::kable(rtQs)
+```{r synergise.rtmodel.rtdiffsTable, echo=FALSE, result="asis"}
 ```
 
 ### Feature Space
 
-```{r rtmodel.plotAllFeatures, echo=FALSE}
-plotFeatures(obj, what="all")
+```{r synergise.rtmodel.plotAllFeatures, echo=FALSE}
 ```
 
-```{r rtmodel.plotSomeFeatures, echo=FALSE, dev="svg", fig.cap="Using nsd = 2 and ppm error = 10 as an example.<br />Optimal values are selected below."}
-setRtNsd(obj, 2)     ## RtNsd and PpmError are used for detailed plot
-setPpmError(obj, 10) ## if not set manually, default values are set automatically
-plotFeatures(obj, what="some", xlim=c(30,50), ylim=c(1160, 1165))
+```{r synergise.rtmodel.plotSomeFeatures, echo=FALSE, dev="svg", fig.cap="Using nsd = 2 and ppm error = 10 as an example.<br />Optimal values are selected below."}
 ```
 
 ## Grid Optimisation
@@ -217,8 +181,7 @@ knitr::kable(as.data.frame(gridDetails))
 
 ### Best Grid Parameters
 
-```{r grid.bestParamaters, echo=FALSE, result="asis"}
-setBestGridParams(obj, what=grid.param.sel)
+```{r synergise.grid.bestParamaters, echo=FALSE, result="asis"}
 ```
 
 Setting best grid parameters using '`r grid.param.sel`'
@@ -228,33 +191,21 @@ Setting best grid parameters using '`r grid.param.sel`'
 
 ## EMRT Matching
 
-```{r emrt.find, echo=FALSE}
-findEMRTs(obj)
-rescueEMRTs(obj, mergedEMRTs)
-plotEMRTtable(obj)
+```{r synergise.emrt.find, echo=FALSE}
 ```
 
-```{r emrt.table, echo=FALSE, result="asis"}
-tab <- as.data.frame(getEMRTtable(obj))
-colnames(tab) <- c("Number of assigned EMRTs", "Freq")
-knitr::kable(tab)
+```{r synergise.emrt.table, echo=FALSE, result="asis"}
 ```
 
 ## Performance
 
-```{r performance, echo=FALSE, result="asis"}
-perf <- performance(obj, verbose=FALSE)
-group <- c("(S) Synapter (uniquely matched EMRTs)",
-           "(I) Identification", "(Q) Quantitation", "(S/Q) Enrichment")
-values <- c(perf$Synapter, perf$Ident, perf$Quant, paste0(round(perf$Enrichment, 2), "%"))
-knitr::kable(data.frame(group, values, stringsAsFactors=FALSE), align="lr")
-
-overlap <- as.data.frame(perf$VennCounts)
-colnames(overlap) <- "Number of peptides"
-knitr::kable(overlap)
+```{r synergise.performance, echo=FALSE, result="asis"}
 ```
 
 ## Exported Files
+
+```{r synergise.export, echo=FALSE}
+```
 
 - [Identification Peptides](IdentPeptides.csv)
 - [Quantitation Peptides](QuantPeptides.csv)
@@ -266,9 +217,5 @@ knitr::kable(overlap)
 
 ## Full Analysis Log
 
-```{r log, echo=FALSE, results="asis"}
-log <- getLog(obj)
-for (i in seq(along=log)){
-  cat("  - ", log[i], "\n")
-}
+```{r synergise.log, echo=FALSE, results="asis"}
 ```

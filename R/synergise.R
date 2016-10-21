@@ -174,10 +174,14 @@ synergize1 <- function(filenames,
 
   if (!file.exists(outputdir)) {
     stop("'outputdir' not found.")
+  } else {
+    outputdir <- normalizePath(outputdir)
   }
 
   if (!file.exists(template)) {
     stop("'template' not found.")
+  } else {
+    template <- normalizePath(template)
   }
 
   if (!missing(object)) {
@@ -196,13 +200,6 @@ synergize1 <- function(filenames,
   }
 
   render(template, output_file=outputfile, output_dir=outputdir, quiet=!verbose)
-
-  writeMergedPeptides(obj, file=file.path(outputdir, "MergedPeptides.csv"))
-  writeMatchedEMRTs(obj, file=file.path(outputdir, "MatchedPeptides.csv"))
-  writeIdentPeptides(obj, file=file.path(outputdir, "IdentPeptides.csv"))
-  writeQuantPeptides(obj, file=file.path(outputdir, "QuantPeptides.csv"))
-  write.table(gridDetails, file=file.path(outputdir, "GridDetails.txt"))
-  save(obj, file=file.path(outputdir, "SynapterObject.rda"))
 
   invisible(obj)
 }
