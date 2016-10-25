@@ -55,7 +55,7 @@ mergePeptides(obj)
 plotRt(obj, what="data")
 
 ## @knitr synergise.rtmodel.modelling
-setLowessSpan(obj, span)
+setLowessSpan(obj, span.rt)
 modelRt(obj)
 
 ## @knitr synergise.rtmodel.rtdiffs

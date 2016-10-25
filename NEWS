@@ -84,6 +84,7 @@ CHANGES IN VERSION 1.99.0
  o Replace `hwriter` by `rmarkdown` report in `synergise`; closes #120.
   [2016-10-17 Mon]
  o Add `fragmentMatchingPerformance` [2016-10-20 Thu]
+ o Add `synergise2`; closes #119 [2016-10-25 Di]
 
 CHANGES IN VERSION 1.13.1
 -------------------------

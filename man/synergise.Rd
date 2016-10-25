@@ -23,8 +23,7 @@ synergise(filenames, master = FALSE, object, outputdir,
 \item{filenames}{A named \code{list} of file names to be load. The
 names must be \code{identpeptide}, \code{quantpeptide},
 \code{quantpep3d} and \code{fasta} (could be an RDS file created by
-\code{link{createUniquePeptideDbRds}}). If missing, a dialog box opens
-to select files interactively. \code{identpeptide} can be a \code{csv}
+\code{link{createUniquePeptideDbRds}}). \code{identpeptide} can be a \code{csv}
 final peptide file (from PLGS) or a saved \code{"\linkS4class{MasterPeptides}"}
 data object as created by \code{\link{makeMaster}} if working with
 \emph{master} peptide data. To serialise the \code{"\linkS4class{MasterPeptides}"}
@@ -121,18 +120,15 @@ Invisibly returns an object of class \code{Synapter}.
 \description{
 Performs a complete default analysis on the files defined
 in \code{filenames}, creates a complete html report and
-saves/exports all results as \code{csv} and \code{rda} files.
+saves/exports all results as \code{csv} and \code{rds} files.
 See details for a description of the pipeline and
 \code{\link{Synapter}} for manual execution of individual steps.
 }
 \details{
 Data can be input as a \code{\link{Synapter}} object if available or
 as a list of files (see \code{filenames}) that will be used to read the
-data in. If none of \code{object} and \code{filenames} are provided, file
-section menus are open to select input files. The html report and result
-files will be created in the \code{outputdir} folder. If not provided,
-the destination can be selected through a selection menu. All other
-input parameters have default values.
+data in. The html report and result files will be created in the
+\code{outputdir} folder. All other input parameters have default values.
 
 The data processing and analysis pipeline is as follows:
 \enumerate{
@@ -169,8 +165,8 @@ the file was created with \code{\link{makeMaster}} are not repeated here.
 \examples{
 output <- tempdir() ## a temporary directory
 synapterTinyData()
-synergise(object = synapterTiny, outputdir = output, grid.subset = 0.2)
-htmlReport <- paste0("file:///", file.path(output, "index.html")) ## the result report
+synergise(object = synapterTiny, outputdir = output, outputfile = "synapter.html", grid.subset = 0.2)
+htmlReport <- paste0("file:///", file.path(output, "synapter.html")) ## the result report
 \dontrun{
 browseURL(htmlReport) ## open the report with default browser
 }

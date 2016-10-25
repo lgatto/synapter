@@ -20,11 +20,11 @@ knitr::read_chunk(system.file("reports", "scripts", "synergise.R",
                               package="synapter"))
 ```
 
-# Input
+# Input {.tabset}
 
 ## Files
 
-```{r input.files, echo=FALSE, result="asis"}
+```{r input.files, echo=FALSE, results="asis"}
 inputFiles <-
     rbind(c("Identification peptide:", basename(obj$IdentPeptideFile), nrow(obj$IdentPeptideData)),
           c("Quantitation peptide:",   basename(obj$QuantPeptideFile), nrow(obj$QuantPeptideData)),
@@ -36,7 +36,7 @@ knitr::kable(inputFiles, align="llr")
 
 ## General Parameters
 
-```{r input.parameters, echo=FALSE, result="asis"}
+```{r input.parameters, echo=FALSE, results="asis"}
 parameters <-
     rbind(c("Master", master),
           c("Peptide FDR", fdr),
@@ -46,7 +46,7 @@ parameters <-
           c("Isoleucin equals Leucin", IisL),
           c("Identification mass tolerance (ppm)", identppm),
           c("Quantitation mass tolerance (ppm)", quantppm),
-          c("Loess span (RT modelling)", span),
+          c("Loess span (RT modelling)", span.rt),
           c("Filtering unique peptides", as.character(uniquepep)))
 colnames(parameters) <- c("Parameter name", "Value")
 knitr::kable(parameters, align="lr")
@@ -54,7 +54,7 @@ knitr::kable(parameters, align="lr")
 
 ## Grid Search Parameters
 
-```{r input.gridparameters, echo=FALSE, result="asis"}
+```{r input.gridparameters, echo=FALSE, results="asis"}
 gridParameters <-
     rbind(c("Mass tolerance (ppm) start", grid.ppm.from),
           c("Mass tolerance (ppm) end", grid.ppm.to),
@@ -96,7 +96,7 @@ knitr::kable(gridParameters, align="lr")
 ```{r synergise.filtering.ppmErrorPre, echo=FALSE}
 ```
 
-```{r synergise.filtering.ppmErrorQsPre, echo=FALSE, result="asis"}
+```{r synergise.filtering.ppmErrorQsPre, echo=FALSE, results="asis"}
 ```
 
 ```{r synergise.filtering.ppm, echo=FALSE}
@@ -105,7 +105,7 @@ knitr::kable(gridParameters, align="lr")
 ```{r synergise.filtering.ppmErrorPost, echo=FALSE}
 ```
 
-```{r synergise.filtering.ppmErrorQsPost, echo=FALSE, result="asis"}
+```{r synergise.filtering.ppmErrorQsPost, echo=FALSE, results="asis"}
 ```
 
 ```{r synergise.filtering.fpr, echo=FALSE}
@@ -127,7 +127,7 @@ knitr::kable(gridParameters, align="lr")
 ```{r synergise.rtmodel.rtdiffs, echo=FALSE}
 ```
 
-```{r synergise.rtmodel.rtdiffsTable, echo=FALSE, result="asis"}
+```{r synergise.rtmodel.rtdiffsTable, echo=FALSE, results="asis"}
 ```
 
 ### Feature Space
@@ -142,7 +142,7 @@ knitr::kable(gridParameters, align="lr")
 
 `r if(grid.n) { paste0("Using", grid.n, "features.") } else { paste0("Using ",
 grid.subset * 100, "% of the data.") }`
-```{r, grid.comment, echo=FALSE, eval=FALSE, result="hide"}
+```{r, grid.comment, echo=FALSE, eval=FALSE, results="hide"}
 # abuse inline r here to show the progress bar of the gridsearch in the
 # R console - regular r chunks capture stdout
 ```
@@ -169,7 +169,7 @@ for (i in seq(along=names)){
 
 ### Grid Details
 
-```{r grid.details, echo=FALSE, result="asis"}
+```{r grid.details, echo=FALSE, results="asis"}
 gridDetails <- do.call(rbind, getGridDetails(obj))
 cond <- do.call(rbind, strsplit(rownames(gridDetails), ":"))[, 1:2] ## imdiff not supported by synergise1
 colnames(cond) <- c("nsd", "ppm")
@@ -181,7 +181,7 @@ knitr::kable(as.data.frame(gridDetails))
 
 ### Best Grid Parameters
 
-```{r synergise.grid.bestParamaters, echo=FALSE, result="asis"}
+```{r synergise.grid.bestParamaters, echo=FALSE, results="asis"}
 ```
 
 Setting best grid parameters using '`r grid.param.sel`'
@@ -194,12 +194,12 @@ Setting best grid parameters using '`r grid.param.sel`'
 ```{r synergise.emrt.find, echo=FALSE}
 ```
 
-```{r synergise.emrt.table, echo=FALSE, result="asis"}
+```{r synergise.emrt.table, echo=FALSE, results="asis"}
 ```
 
 ## Performance
 
-```{r synergise.performance, echo=FALSE, result="asis"}
+```{r synergise.performance, echo=FALSE, results="asis"}
 ```
 
 ## Exported Files
