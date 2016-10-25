@@ -146,7 +146,7 @@ grid.subset * 100, "% of the data.") }`
 # abuse inline r here to show the progress bar of the gridsearch in the
 # R console - regular r chunks capture stdout
 ```
-`r if (grid.n) { searchGrid(obj, ppms=seq(grid.ppm.from, grid.ppm.to, grid.ppm.by), nsds=seq(grid.nsd.from, grid.nsd.to, grid.nsd.by), n=grid.n, verbose=verbose) } else { searchGrid(obj, ppms=seq(grid.ppm.from, grid.ppm.to, grid.ppm.by), nsds=seq(grid.nsd.from, grid.nsd.to, grid.nsd.by), subset=grid.subset, verbose=verbose) }`
+`r if (grid.n) { searchGrid(obj, ppms=seq(grid.ppm.from, grid.ppm.to, grid.ppm.by), nsds=seq(grid.nsd.from, grid.nsd.to, grid.nsd.by), imdiffs=Inf, n=grid.n, verbose=verbose) } else { searchGrid(obj, ppms=seq(grid.ppm.from, grid.ppm.to, grid.ppm.by), nsds=seq(grid.nsd.from, grid.nsd.to, grid.nsd.by), imdiffs=Inf, subset=grid.subset, verbose=verbose) }`
 
 plotGrid(obj, what="details")
 
