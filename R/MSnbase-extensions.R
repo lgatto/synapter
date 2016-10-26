@@ -84,10 +84,8 @@ setMethod("synapterPlgsAgreement", signature(object="MSnSet"),
 #' object by applying the intensity model built in the synapter workflow by
 #' \code{\link{modelIntensity}}.
 #'
-#' @usage
-#' \S4method{correctIntensity}{MSnSet}(object, \ldots)
-#'
 #' @param object An \code{\linkS4class{MSnSet}} object.
+#' @param method Correct (\code{*}) or undo correction (\code{/}).
 #' @param \ldots further arguments, not used yet.
 #' @return A \code{\linkS4class{MSnSet}} with corrected intensity values
 #' (\code{exprs}).
@@ -95,22 +93,22 @@ setMethod("synapterPlgsAgreement", signature(object="MSnSet"),
 #' @author Sebastian Gibb \email{mail@@sebastiangibb.de}
 #' @seealso MSnSet documentation: \code{\linkS4class{MSnSet}}
 #' @aliases correctIntensity
-#' @rdname correctIntensity
+#' @noRd
+.correctIntensity <- function(msnset, method=c("correct", "undo")) {
 
-setMethod("correctIntensity", signature(object="MSnSet"),
-          function(object, ...) .correctIntensity(object))
-
-.correctIntensity <- function(msnset) {
+  method <- match.arg(method)
 
   i <- grep("intensityCorrectionFactor", fvarLabels(msnset))
 
-  if (!length(i)) {
-    stop("No 'intensityCorrectionFactor' found! ",
-         "Did you run 'modelIntensity' on the synapter object before ",
-         "converting into a MSnSet?")
-  }
+  if (length(i)) {
+    m <- as.matrix(fData(msnset)[, i, drop=FALSE])
 
-  exprs(msnset) <- exprs(msnset) * as.matrix(fData(msnset)[, i, drop=FALSE])
+    if (method == "undo") {
+      exprs(msnset) <- exprs(msnset) / m
+    } else {
+      exprs(msnset) <- exprs(msnset) * m
+    }
+  }
 
   msnset
 }

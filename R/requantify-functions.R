@@ -91,6 +91,8 @@ setMethod("requantify", signature(object="MSnSet"),
   isNA <- is.na(e)
   f[isNA] <- NA_character_
 
+  e <- .correctIntensity(e, method="undo")
+
   method <- match.arg(method)
 
   if (substring(method, 1, 2) != "th") {
@@ -121,6 +123,7 @@ setMethod("requantify", signature(object="MSnSet"),
     }
   }
 
+  e <- .correctIntensity(e, method="correct")
   exprs(msnset)[!isNA] <- e[!isNA]
   msnset
 }

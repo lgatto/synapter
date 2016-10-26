@@ -40,9 +40,7 @@ test_that("synapterPlgsAgreement", {
   expect_equal(synapterPlgsAgreement(m), r)
 })
 
-test_that("correctIntensity", {
-  expect_error(correctIntensity(1:3))
-
+test_that(".correctIntensity", {
   fdata = new("AnnotatedDataFrame",
               data = data.frame(intensityCorrectionFactor.A = 1:3,
                                 intensityCorrectionFactor.B = 2:4,
@@ -64,6 +62,7 @@ test_that("correctIntensity", {
                                 processing = "Coerced from a 'Synapter' object."),
            annotation = "No annotation",
            featureData = fdata)
-  expect_equal(correctIntensity(m), r)
+  expect_equal(.correctIntensity(m, method="correct"), r)
+  expect_equal(.correctIntensity(r, method="undo"), m)
 })
 

@@ -420,6 +420,10 @@
                                                       .self$LowessSpan))
                         .self$MatchedEMRTs$intensityCorrectionFactor <-
                           predictIntensities(.self$MatchedEMRTs, .self$IntenModel)
+
+                        .self$SynapterLog <- c(.self$SynapterLog, "Correct intensity values.")
+                        .self$MatchedEMRTs$Counts <- .self$MatchedEMRTs$Counts *
+                          .self$MatchedEMRTs$intensityCorrectionFactor
                     },
                     findEMRTs = function() {
                         if (length(.self$RtModel) == 0)

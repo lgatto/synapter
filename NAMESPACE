@@ -124,6 +124,5 @@ exportMethods(show,
               getQuantitationSpectra,
               updateObject,
               ## MSnset
-              correctIntensity,
               requantify,
               synapterPlgsAgreement)
