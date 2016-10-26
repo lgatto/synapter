@@ -48,12 +48,20 @@ setMethod(show, "Synapter",
             cat("Class version", object$ClassVersion, "\n")
             cat("Package version", object$Version, "\n")
             cat("Data files:\n")
-            cat(" + Quantitation pep file:",
-                basename(object$QuantPeptideFile), "\n")
             cat(" + Identification pep file:",
                 basename(object$IdentPeptideFile), "\n")
+            if (length(object$IdentFragmentFile)) {
+              cat(" + Identification Fragment file:",
+                  basename(object$QuantSpectrumFile), "\n")
+            }
+            cat(" + Quantitation pep file:",
+                basename(object$QuantPeptideFile), "\n")
             cat(" + Quantitation Pep3DAMRT file:",
                 basename(object$QuantPep3DFile), "\n")
+            if (length(object$QuantSpectrumFile)) {
+              cat(" + Quantitation Spectrum file:",
+                  basename(object$QuantSpectrumFile), "\n")
+            }
             cat(" + Fasta file:",
                 basename(object$DbFastaFile), "\n")
             cat("Log:\n")
