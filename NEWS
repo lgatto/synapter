@@ -15,57 +15,31 @@ CHANGES IN VERSION 1.99.0
  o add createUniquePeptideDbRds (regards #55) [2014-04-29 Tue]
  o allow to use an RDS instead of a fasta file as 'Unique Peptides Database';
    closes #55 [2014-04-29 Tue]
- o add removePrecursor and tolerance argument to loadSpectrumXmlFiles and
-   loadFragmentCsvFiles; closes #59 [2014-04-30 Wed]
  o introduce IisL argument to dbUniquePeptideSet which treats I/L as same
    aminoacid if IisL == TRUE (default: IisL = FALSE);
    closes #60 [2014-04-30 Wed]
  o introduce filterFragments and plotCumulativeNumberOfFragments method.
    [2014-05-08 Thu]
- o add plotCrossMatchingDiff and a `what = "diff"` argument to
-   filterMatchedEMRTsByCommonPeaks [2014-05-09 Fri]
- o remove plotCrossMatchingSummary, plotCrossMatchingDiff,
-   plotCumulativeNumberOfFragments,
-   {get,set}CrossMatchingMinimalNumberOfCommonPeaks and
-   filterMatchedEMRTsByCommonPeaks [2014-05-11 Sun]
- o change plotCrossMatchingPerformance [2014-05-11 Sun]
  o add filterUniqueMatches and filterNonUniqueMatches [2014-05-11 Sun]
  o extract the ion that is used for identification (isFid == 1) from the Pep3D
    file instead of the first instance [2014-05-13 Tue]
  o add basic vignette for the ion mobility [2014-05-14 Wed]
  o add basic vignette for the fragment matching workflow [2014-05-15 Thu]
- o add loadSpectrumXmlFiles and loadFragmentCsvFiles method [2014-04-23 Wed]
- o add crossMatching, setCrossMatchingPpmTolerance and
-   getCrossMatchingPpmTolerance method [2014-04-23 Wed]
- o add plotCrossMatching method  [2014-04-24 Thu]
- o add plotCrossMatchingSummary [2014-04-25 Fri]
- o add {set,get}CrossMatchingMinimalNumberOfCommonPeaks [2014-04-25 Fri]
- o add filterMatchedEMRTsByCommonPeaks [2014-04-25 Fri]
  o add testthat to Suggests [2014-04-25 Fri]
- o add matchColumn argument to filterMatchedEMRTsByCommonPeaks and
-   plotCrossMatchingSummary [2014-04-28 Mon]
  o fix retention time model calculation in plotFeatures(..., what="some")
    [2014-04-28 Mon]
  o add recommended biocView [2014-06-05 Thu]
  o replace `any(is.na(...)` by `anyNA(...)`; synapter depends on
    R >= 3.1.0 now [2014-11-01 Sat]
- o Only suggesting tcltk and tcltk2, as gui is now deprecated
-   [2014-11-21 Fri]
  o add updateObject and validObject method [2014-11-16 Sun]
  o add ClassVersion field to Synapter class [2014-11-21 Fri]
  o add Versioned class as parent class to MasterPeptides and MasterFdrResults
    [2014-11-22 Sat]
- o reduce CrossMatching (2x2) to FragmentMatching (1x1); rename all
-   functions/methods/variables from *CrossMatching to *FragmentMatching
-   [2014-11-24 Mon]
+ o introduce FragmentMatching [2014-11-24 Mon]
  o remove unused internal functions: filterCommonSeq, filterKeepUniqueSeq,
    filterKeepUniqueProt [2014-11-27 Thu]
  o loading identification fragments and quantitation spectra via Synapter
    constructor [2014-12-07 Sun]
- o remove loadIdentificationFragments/loadQuantitationSpectra methods, use
-   'Synapter(filenames = c(..., identfragments = "fragments.csv",
-                           quantspectra = "Spectrum.xml"))' instead.
-   [2014-12-07 Sun]
  o rename QuantPep3DData$Function column into QuantPep3DData$matchedEMRTs;
    closes #67 [2015-07-26 Sun]
  o remove "mergedEMRTs" argument from `findEMRTs`. Now `rescueEMRTs` has to be
