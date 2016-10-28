@@ -990,7 +990,7 @@
                         logmsg <- paste0("peptides that match unique protein (",
                                          attr(upepset, "missedCleavages"),
                                          " missed cleavages; I/L treatment: ",
-                                         ifelse(attr(upepset, "IisL"), "I == L", "I != L"), ")")
+                                         ifelse(attr(upepset, "IisL"), "I == L", "I != L"), ") ")
 
                         if ("ident" %in% what) {
                           sel <- .self$IdentPeptideData$peptide.seq %in% upepset
