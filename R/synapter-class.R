@@ -1024,6 +1024,8 @@
                                 " data first!")
                          }
 
+
+                         pcBefore <- .sumAllPeakCounts(msexp)
                          msg <- "Filtered "
 
                          if (what == "fragments.ident") {
@@ -1032,7 +1034,8 @@
                                               minIntensity = minIntensity,
                                               maxNumber = maxNumber,
                                               verbose = verbose)
-                           msg <- paste0("identification fragment data")
+                           msg <- paste0(msg, "identification fragment data")
+                           pcAfter <- .sumAllPeakCounts(.self$IdentFragmentData)
                          }
 
                          if (what == "spectra.quant") {
@@ -1041,16 +1044,20 @@
                                               minIntensity = minIntensity,
                                               maxNumber = maxNumber,
                                               verbose = verbose)
-                           msg <- paste0("quantitation spectra")
+                           msg <- paste0(msg, "quantitation spectra")
+                           pcAfter <- .sumAllPeakCounts(.self$QuantSpectrumData)
                          }
 
-                         msg <- paste0(" using a ",
+
+                         msg <- paste0(msg, " using a ",
                                        ifelse(is.null(minIntensity), "",
                                               paste0("minimal intensity > ",
                                                      minIntensity)),
                                        ifelse(is.null(maxNumber), "",
                                               paste0("maximal number < ",
-                                                     maxNumber)))
+                                                     maxNumber)), ". ",
+                                       pcBefore - pcAfter, " peaks removed, ",
+                                       pcAfter, " left.")
 
                          .self$SynapterLog <- c(.self$SynapterLog, msg)
                        },
