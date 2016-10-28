@@ -69,9 +69,6 @@ rtQs <- t(getRtQs(obj))
 rownames(rtQs) <- c("Retention time difference:")
 knitr::kable(rtQs)
 
-## @knitr synergise.rtmodel.plotAllFeatures
-plotFeatures(obj, what="all")
-
 ## @knitr synergise.rtmodel.plotSomeFeatures
 setRtNsd(obj, 2)     ## RtNsd and PpmError are used for detailed plot
 setPpmError(obj, 10) ## if not set manually, default values are set automatically

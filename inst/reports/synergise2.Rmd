@@ -152,7 +152,8 @@ knitr::kable(fmParameters, align="lr")
 
 ### Feature Space
 
-```{r synergise.rtmodel.plotAllFeatures, echo=FALSE}
+```{r rtmodel.plotAllFeatures, echo=FALSE}
+plotFeatures(obj, what="all", ionmobility=TRUE)
 ```
 
 ```{r synergise.rtmodel.plotSomeFeatures, echo=FALSE, dev="svg", fig.cap="Using nsd = 2 and ppm error = 10 as an example.<br />Optimal values are selected below."}
