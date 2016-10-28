@@ -80,6 +80,8 @@ knitr::kable(gridParameters, align="lr")
 ```{r input.fmparameters, echo=FALSE, results="asis"}
 fmParameters <-
     rbind(c("Fragment Matching mass tolerance (ppm)", fm.ppm),
+          c("Minimal Intensity for Identification Fragments", fm.ident.minIntensity),
+          c("Minimal Intensity for Quantitation Spectra", fm.quant.minIntensity),
           c("Minimum Number of Common Peaks", fm.minCommon),
           c("Minimum Number of Delta Common Peaks", fm.minDelta),
           c("Unique Matches FDR", fm.fdr.unique),
@@ -225,6 +227,16 @@ Setting best grid parameters using '`r grid.param.sel`'
 # abuse inline r here to show the progress bar of the fragment matching in the
 # R console - regular r chunks capture stdout
 ```
+
+### Filtering Fragments
+
+```{r, fm.filtering, echo=FALSE}
+plotCumulativeNumberOfFragments(obj, what = "fragments.ident")
+plotCumulativeNumberOfFragments(obj, what = "spectra.quant")
+```
+`r invisible(filterFragments(obj, what="fragments.ident", minIntensity=fm.ident.minIntensity))`
+`r invisible(filterFragments(obj, what="spectra.quant", minIntensity=fm.quant.minIntensity))`
+
 `r invisible(fragmentMatching(obj, ppm = fm.ppm))`
 `r invisible({pdf(file.path(outputdir, "FragmentMatching.pdf"), width=10, height=8); plotFragmentMatching(obj); dev.off()})`
 

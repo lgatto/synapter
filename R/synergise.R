@@ -304,6 +304,10 @@ synergize1 <- function(filenames,
 ##' selection methods.
 ##' @param fm.ppm Fragment Matching tolerance: Peaks in a range of \code{fm.ppm}
 ##' are considered as identical. Default is 25.
+##' @param fm.ident.minIntensity Minimal intensity of a Identification fragment
+##' to be not filtered prior to Fragment Matching.
+##' @param fm.quant.minIntensity Minimal intensity of a peaks in a Quantitation
+##' spectra to be not filtered prior to Fragment Matching.
 ##' @param fm.minCommon Minimal number of peaks that unique matches need to have
 ##' in common. Default 1.
 ##' @param fm.minDelta Minimal difference in number of peaks that non-unique matches need
@@ -372,6 +376,8 @@ synergize2 <- function(filenames,
                        grid.param.sel = c("auto", "model", "total", "details"),
                        ## fragment matching
                        fm.ppm = 25,
+                       fm.ident.minIntensity = 70,
+                       fm.quant.minIntensity = 70,
                        fm.minCommon = 1,
                        fm.minDelta = 2,
                        fm.fdr.unique = Inf,
@@ -389,7 +395,9 @@ synergize2 <- function(filenames,
              grid.ppm.from=grid.ppm.from, grid.ppm.to=grid.ppm.to, grid.ppm.by=grid.ppm.by,
              grid.nsd.from=grid.nsd.from, grid.nsd.to=grid.nsd.to, grid.nsd.by=grid.nsd.by,
              grid.subset=grid.subset, grid.n=grid.n, grid.param.sel=grid.param.sel,
-             fm.ppm=fm.ppm, fm.minCommon=fm.minCommon, fm.minDelta=fm.minDelta,
+             fm.ppm=fm.ppm, fm.ident.minIntensity = fm.ident.minIntensity,
+             fm.quant.minIntensity = fm.quant.minIntensity,
+             fm.minCommon=fm.minCommon, fm.minDelta=fm.minDelta,
              fm.fdr.unique=fm.fdr.unique, fm.fdr.nonunique=fm.fdr.nonunique,
              mergedEMRTs=mergedEMRTs, template=template, verbose=verbose)
 }
@@ -431,6 +439,8 @@ synergize2 <- function(filenames,
                        grid.param.sel = c("auto", "model", "total", "details"),
                        ## fragment matching
                        fm.ppm = 25,
+                       fm.ident.minIntensity = 70,
+                       fm.quant.minIntensity = 70,
                        fm.minCommon = 1,
                        fm.minDelta = 2,
                        fm.fdr.unique = Inf,

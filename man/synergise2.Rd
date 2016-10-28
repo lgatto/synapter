@@ -15,6 +15,7 @@ synergise2(filenames, master = FALSE, object, outputdir,
   grid.nsd.by = 0.5, grid.imdiffs.from = 0.6, grid.imdiffs.to = 1.6,
   grid.imdiffs.by = 0.2, grid.subset = 1, grid.n = 0,
   grid.param.sel = c("auto", "model", "total", "details"), fm.ppm = 25,
+  fm.ident.minIntensity = 70, fm.quant.minIntensity = 70,
   fm.minCommon = 1, fm.minDelta = 2, fm.fdr.unique = Inf,
   fm.fdr.nonunique = Inf, mergedEMRTs = c("rescue", "copy", "transfer"),
   template = system.file("reports", "synergise2.Rmd", package = "synapter"),
@@ -119,6 +120,12 @@ selection methods.}
 
 \item{fm.ppm}{Fragment Matching tolerance: Peaks in a range of \code{fm.ppm}
 are considered as identical. Default is 25.}
+
+\item{fm.ident.minIntensity}{Minimal intensity of a Identification fragment
+to be not filtered prior to Fragment Matching.}
+
+\item{fm.quant.minIntensity}{Minimal intensity of a peaks in a Quantitation
+spectra to be not filtered prior to Fragment Matching.}
 
 \item{fm.minCommon}{Minimal number of peaks that unique matches need to have
 in common. Default 1.}
