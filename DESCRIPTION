@@ -10,7 +10,7 @@ Maintainer: Laurent Gatto <lg390@cam.ac.uk> and
 Depends:
     R (>= 3.1.0),
     methods,
-    MSnbase (>= 1.19.13)
+    MSnbase (>= 2.1.2)
 Imports:
     RColorBrewer,
     lattice,

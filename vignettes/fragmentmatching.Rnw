@@ -123,7 +123,7 @@ options(replace.assign = TRUE,
 <<setup, echo=FALSE>>=
 suppressPackageStartupMessages(library(synapter))
 library(synapterdata)
-data(synobj2)
+data(synobj2, package="synapterdata")
 @
 
 \section{Introduction}
@@ -172,7 +172,7 @@ a \code{Spectrum.xml} file for the quantitation run.
 <<create-synobj2, cache=FALSE, eval=TRUE, echo=-c(1:2)>>=
 cat(readLines(system.file(file.path("scripts", "create_synobj2.R"),
                           package="synapterdata")), sep = "\n")
-synobj2 <- synergise1(object=synobj2, outputdir=tempdir())
+synobj2 <- synergise1(object=synobj2, outputdir=tempdir(), verbose=FALSE)
 @
 
 \section{Filtering fragments}\label{sec:filtfrag}

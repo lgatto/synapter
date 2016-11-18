@@ -281,17 +281,31 @@
     }
   }
 
-  new("Spectrum2",
-      precScanNum=as.integer(leID),
-      precursorMz=precursor.mhp,
-      precursorIntensity=precursor.inten,
-      precursorCharge=as.integer(precursor.z),
-      rt=precursor.retT,
-      centroided=TRUE,
-      # tic=precursor.inten,
-      peaksCount=length(o),
-      mz=mass[o], intensity=intensity[o],
-      fromFile=1L)
+  ## use MSnbase:::Spectrum2_mz_sorted to improve speed in class creation;
+  ## see https://github.com/lgatto/MSnbase/issues/171
+  #new("Spectrum2",
+  #    precScanNum=as.integer(leID),
+  #    precursorMz=precursor.mhp,
+  #    precursorIntensity=precursor.inten,
+  #    precursorCharge=as.integer(precursor.z),
+  #    rt=precursor.retT,
+  #    centroided=TRUE,
+  #    # tic=precursor.inten,
+  #    peaksCount=length(o),
+  #    mz=mass[o], intensity=intensity[o],
+  #    fromFile=1L)
+  s <- MSnbase:::Spectrum2_mz_sorted(precScanNum=as.integer(leID),
+                                     precursorMz=precursor.mhp,
+                                     precursorIntensity=precursor.inten,
+                                     precursorCharge=as.integer(precursor.z),
+                                     rt=precursor.retT,
+                                     centroided=TRUE,
+                                     peaksCount=length(o),
+                                     mz=mass[o], intensity=intensity[o],
+                                     fromFile=1L)
+  if (validObject(s)) {
+    s
+  }
 }
 
 #' create an empty instance of an MSnbase::Spectrum2 object
@@ -303,7 +317,10 @@
     leID <- as.integer(tail(strsplit(key, ":")[[1]], 1))
   }
 
-  new("Spectrum2", precScanNum=as.integer(leID), fromFile=1L)
+  ## use MSnbase:::Spectrum2_mz_sorted to improve speed in class creation;
+  ## see https://github.com/lgatto/MSnbase/issues/171
+  #new("Spectrum2", precScanNum=as.integer(leID), fromFile=1L)
+  MSnbase:::Spectrum2_mz_sorted(precScanNum=as.integer(leID), fromFile=1L)
 }
 
 #' @param msexp MSnExp object to filter
