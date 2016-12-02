@@ -261,18 +261,20 @@ for (i in seq(along=names)){
 
 ```{r fm.selBestParam, echo = FALSE, results="asis"}
 common <- c(NA, NA)
-selCommon <- tail(which(colSums(t(fragmentMatchingStats[[1]][-1, c("ncommon", "fdr")]) <= c(fm.minCommon, fm.fdr.unique)) == 2), 1)
+selCommon <- which(fragmentMatchingStats$unique[, "ncommon"] >= fm.minCommon &
+  fragmentMatchingStats$unique[, "fdr"] <= fm.fdr.unique)[1]
 
-if (length(selCommon)) {
-  common <- fragmentMatchingStats[[1]][-1, c("ncommon", "fdr")][selCommon,]
+if (!is.na(selCommon)) {
+  common <- fragmentMatchingStats$unique[selCommon, c("ncommon", "fdr"])
   filterUniqueMatches(obj, minNumber = common[1L])
 }
 
 delta <- c(NA, NA)
-selDelta <- tail(which(colSums(t(fragmentMatchingStats[[2]][-1, c("deltacommon", "fdr")]) <= c(fm.minDelta, fm.fdr.nonunique)) == 2), 1)
+selDelta <- which(fragmentMatchingStats$nonunique[, "deltacommon"] >= fm.minDelta &
+  fragmentMatchingStats$nonunique[, "fdr"] <= fm.fdr.nonunique)[1]
 
-if (length(selDelta)) {
-  delta <- fragmentMatchingStats[[2]][-1, c("deltacommon", "fdr")][selDelta,]
+if (!is.na(selDelta)) {
+  delta <- fragmentMatchingStats$nonunique[selDelta, c("deltacommon", "fdr")])
   filterNonUniqueMatches(obj, minDelta = delta[1L])
 }
 

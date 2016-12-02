@@ -16,8 +16,8 @@ synergise2(filenames, master = FALSE, object, outputdir,
   grid.imdiffs.by = 0.2, grid.subset = 1, grid.n = 0,
   grid.param.sel = c("auto", "model", "total", "details"), fm.ppm = 25,
   fm.ident.minIntensity = 70, fm.quant.minIntensity = 70,
-  fm.minCommon = 1, fm.minDelta = 2, fm.fdr.unique = Inf,
-  fm.fdr.nonunique = Inf, mergedEMRTs = c("rescue", "copy", "transfer"),
+  fm.minCommon = 1, fm.minDelta = 1, fm.fdr.unique = 0.05,
+  fm.fdr.nonunique = 0.05, mergedEMRTs = c("rescue", "copy", "transfer"),
   template = system.file("reports", "synergise2.Rmd", package = "synapter"),
   verbose = interactive())
 }
@@ -131,15 +131,15 @@ spectra to be not filtered prior to Fragment Matching.}
 in common. Default 1.}
 
 \item{fm.minDelta}{Minimal difference in number of peaks that non-unique matches need
-to have to be considered as true match. Default 2.}
+to have to be considered as true match. Default 1.}
 
 \item{fm.fdr.unique}{Minimal FDR to select \code{fm.minCommon} automatically
-(if both values are given the smaller is used). Default \code{Inf} means FDR
-is not used.}
+(if both values are given the more restrictive one (that filters more
+fragments) is used). Default 0.05.}
 
 \item{fm.fdr.nonunique}{Minimal FDR to select \code{fm.minDelta} automatically
-(if both values are given the smaller is used). Default \code{Inf} means FDR
-is not used.}
+(if both values are given the more restrictive one (that filters more
+fragments) is used). Default 0.05.}
 
 \item{mergedEMRTs}{One of \code{"rescue"} (default), \code{"copy"}
 or \code{"transfer"}. See the documentation for the
@@ -208,7 +208,7 @@ The data processing and analysis pipeline is as follows:
        (see \code{grid.param.sel} parameter).
  \item Fragment Matching is used to filter false-positive matches from the
        grid search using a default of 1 common peak for unique matches and
-       at least a difference of 2 common peaks to choose the correct match
+       at least a difference of 1 common peaks to choose the correct match
        out of non-unique matches (see \code{fm.minCommon} and
        \code{fm.minDelta}).
  \item The intensity is corrected by a Local Polynomial Regression Fitting
