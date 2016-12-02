@@ -751,14 +751,14 @@ setMethod(writeIdentPeptides, "Synapter",
           function(object,
                    file = "Res-IdentPeptides.csv",
                    ...) {
-              write.csv(object$IdentPeptideData, file = file, ...)
+              write.csv(object$IdentPeptideData, file = file, row.names = FALSE, ...)
           })
 
 setMethod(writeQuantPeptides, "Synapter",
           function(object,
                    file = "Res-QuantPeptides.csv",
                    ...) {
-              write.csv(object$QuantPeptideData, file = file, ...)
+              write.csv(object$QuantPeptideData, file = file, row.names = FALSE, ...)
           })
 
 
@@ -766,7 +766,7 @@ setMethod(writeMergedPeptides, "Synapter",
           function(object,
                    file = "Res-MergedPeptides.csv",
                    ...) {
-              write.csv(object$MergedFeatures, file = file, ...)
+              write.csv(object$MergedFeatures, file = file, row.names = FALSE, ...)
           })
 
 
@@ -774,7 +774,7 @@ setMethod(writeMatchedEMRTs, "Synapter",
           function(object,
                    file = "Res-MatchedEMRTs.csv",
                    ...) {
-              write.csv(object$MatchedEMRTs, file = file, ...)
+              write.csv(object$MatchedEMRTs, file = file, row.names = FALSE, ...)
           })
 
 setAs("Synapter", "MSnSet",

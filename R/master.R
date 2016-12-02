@@ -55,13 +55,13 @@ setMethod("writeMasterPeptides", c("MasterPeptides", "character"),
   filename <- sprintf("%02i-%s", seq_along(x@masters), basename(file))
   path <- dirname(file)
   for (i in seq(along=x@masters)) {
-    write.csv(x@masters[[i]], file = file.path(path, filename[i]), ...)
+    write.csv(x@masters[[i]], file = file.path(path, filename[i]), row.names = FALSE, ...)
   }
 })
 
 setMethod("writeFragmentLibrary", c("MasterPeptides", "character"),
           function(x, file, ...) {
-  write.csv(x@fragments, file = file, ...)
+  write.csv(x@fragments, file = file, row.names = FALSE, ...)
 })
 
 ##' This function takes all possible combination of \code{pepfiles}
