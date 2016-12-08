@@ -265,7 +265,7 @@ selCommon <- which(fragmentMatchingStats$unique[, "ncommon"] >= fm.minCommon &
   fragmentMatchingStats$unique[, "fdr"] <= fm.fdr.unique)[1]
 
 if (!is.na(selCommon)) {
-  common <- fragmentMatchingStats$unique[selCommon, c("ncommon", "fdr"])
+  common <- fragmentMatchingStats$unique[selCommon, c("ncommon", "fdr")]
   filterUniqueMatches(obj, minNumber = common[1L])
 }
 
@@ -274,7 +274,7 @@ selDelta <- which(fragmentMatchingStats$nonunique[, "deltacommon"] >= fm.minDelt
   fragmentMatchingStats$nonunique[, "fdr"] <= fm.fdr.nonunique)[1]
 
 if (!is.na(selDelta)) {
-  delta <- fragmentMatchingStats$nonunique[selDelta, c("deltacommon", "fdr")])
+  delta <- fragmentMatchingStats$nonunique[selDelta, c("deltacommon", "fdr")]
   filterNonUniqueMatches(obj, minDelta = delta[1L])
 }
 
