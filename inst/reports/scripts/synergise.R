@@ -77,11 +77,6 @@ plotFeatures(obj, what="some", xlim=c(30,50), ylim=c(1160, 1165))
 ## @knitr synergise.grid.bestParamaters
 setBestGridParams(obj, what=grid.param.sel)
 
-## @knitr synergise.emrt.find
-findEMRTs(obj)
-rescueEMRTs(obj, mergedEMRTs)
-plotEMRTtable(obj)
-
 ## @knitr synergise.emrt.table
 tab <- as.data.frame(getEMRTtable(obj))
 colnames(tab) <- c("Number of assigned EMRTs", "Freq")

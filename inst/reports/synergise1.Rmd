@@ -193,6 +193,9 @@ Setting best grid parameters using '`r grid.param.sel`'
 ## EMRT Matching
 
 ```{r synergise.emrt.find, echo=FALSE}
+findEMRTs(obj)
+rescueEMRTs(obj, mergedEMRTs)
+plotEMRTtable(obj)
 ```
 
 ```{r synergise.emrt.table, echo=FALSE, results="asis"}
