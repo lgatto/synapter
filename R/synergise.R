@@ -237,11 +237,14 @@ synergize1 <- function(filenames,
 ##' @param filenames A named \code{list} of file names to be load. The
 ##' names must be \code{identpeptide}, \code{quantpeptide},
 ##' \code{quantpep3d} and \code{fasta} (could be an RDS file created by
-##' \code{link{createUniquePeptideDbRds}}). \code{identpeptide} can be a \code{csv}
-##' final peptide file (from PLGS) or a saved \code{"\linkS4class{MasterPeptides}"}
-##' data object as created by \code{\link{makeMaster}} if working with
-##' \emph{master} peptide data. To serialise the \code{"\linkS4class{MasterPeptides}"}
-##' instance, use the \code{saveRDS} function, and file extenstion \code{rds}.
+##' \code{link{createUniquePeptideDbRds}}). If fragmentmatching should be used
+##' \code{identfragments} (could be skipped if a master RDS files is used for
+##' \code{identpeptide}) and \code{quantspectra} have to be given as well.
+##' \code{identpeptide} can be a \code{csv} final peptide file (from PLGS) or
+##' a saved \code{"\linkS4class{MasterPeptides}"} data object as created by
+##' \code{\link{makeMaster}} if working with \emph{master} peptide data.
+##' To serialise the \code{"\linkS4class{MasterPeptides}"} instance, use the
+##' \code{saveRDS} function, and file extenstion \code{rds}.
 ##' @param master A \code{logical} indicating if the identification final
 ##' peptide files are master (see \code{\link{makeMaster}}) or
 ##' regular files. Default is \code{FALSE}.
