@@ -337,3 +337,8 @@ modelIntensity(obj)
 
 ```{r synergise.log, echo=FALSE, results="asis"}
 ```
+
+## Session Info
+
+```{r synergise.sessionInfo, echo=FALSE}
+```

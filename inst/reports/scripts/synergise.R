@@ -106,3 +106,6 @@ log <- getLog(obj)
 for (i in seq(along=log)){
   cat("  - ", log[i], "\n")
 }
+
+## @knitr synergise.sessionInfo
+sessionInfo()
