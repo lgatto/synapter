@@ -184,9 +184,6 @@ calculateGridPerformance <- function(identpep, sortedPep3d, mergedpep, matches) 
   spectrumID <- rep(NA_real_, n)
   spectrumID[k1] <- sortedPep3d$spectrumID[unlist(matches[k1])]
 
-  multipleMatchedSpectrumIDs <- vector(mode="list", length=n)
-  multipleMatchedSpectrumIDs[k2] <- matches[k2]
-
   ## grd1: number of unique matches divided by total number of matches
   ## => sum(k==1)/length(k) == mean(k==1)
   grd1 <- mean(k == 1L)
@@ -204,7 +201,7 @@ calculateGridPerformance <- function(identpep, sortedPep3d, mergedpep, matches) 
   details[k1][spectrumID[k1] == precursor.leID.quant[k1]] <- 1L
   details[k2] <- -2L
   details[k2][unlist(lapply(k2, function(i) {
-    precursor.leID.quant[i] %in% multipleMatchedSpectrumIDs[[i]]}))] <- 2L
+    precursor.leID.quant[i] %in% matches[[i]]}))] <- 2L
 
   ## exclude all values where precursor.leID.quant == NA
   details <- details[notNaIdx]
