@@ -1,0 +1,248 @@
+---
+title: "Fragment matching using `synapter`"
+author:
+- name: Laurent Gatto
+  affiliation: Computational Proteomics Unit, Cambridge, UK.
+- name: Sebastian Gibb
+  affiliation: Department of Anesthesiology and Intensive Care, University Medicine Greifswald, Germany.
+- name: Pavel V. Shliaha
+  affiliation: Department of Biochemistry and Molecular Biology, University of Southern Denmark
+package: synapter
+abstract: >
+  This vignette describes how to apply fragment matching to
+  MS$^E$/HDMS$^E$ data using the `r Biocpkg("synapter")` package. The
+  fragment matching feature allows one to rescue non unique matches
+  and remove falsely assigned unique matches as well.
+bibliography: synapter.bib
+output:
+  BiocStyle::html_document2:
+    toc_float: true
+vignette: >
+  %\VignetteIndexEntry{Fragment matching using `synapter`}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteKeywords{Mass Spectrometry, Proteomics, Bioinformatics, quantitative, Ion mobility, label-free}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r environment, echo=FALSE}
+suppressPackageStartupMessages(library("synapter"))
+suppressPackageStartupMessages(library("synapterdata"))
+suppressPackageStartupMessages(library("BiocStyle"))
+data(synobj2, package="synapterdata")
+```
+
+```{r include_forword, child="Foreword.md"}
+```
+
+```{r include_bugs, child="Bugs.md"}
+```
+
+# Introduction
+
+This document assumes familiarity with standard `r Biocpkg("synapter")`
+pipeline described in [@Bond2013] and in the package
+`r Biocpkg("synapter")` vignette, available
+online^[http://www.bioconductor.org/packages/synapter/]
+and with `vignette("synapter", package = "synapter")`.
+
+In this vignette we introduce a new fragment matching feature (see
+figures \ref{fig:fm1}, \ref{fig:fm2} and \ref{fig:fm3}), which
+improves the matching of identification and the quantitation
+features. After applying the usual `synergise1` workflow (see
+`?synergise1` and `?Synapter` for details) a number of multiple matches and
+possible false unique matches remain that can be deconvoluted by comparing
+common peaks in the identification fragment peaks and the quantitation spectra.
+
+The example data \Robject{synobj2} used throughout this document is
+available in the `r Biocpkg("synapterdata")` package and can be directly
+load as follows:
+
+```{r loadsynobj2, eval=FALSE}
+library("synapterdata")
+data(synobj2)
+```
+
+In sections \ref{sec:synergise} and \ref{sec:spec}, we describe how
+\Robject{synobj2} was generated. The test files used in this vignette can be
+downloaded from [http://proteome.sysbiol.cam.ac.uk/lgatto/synapter/data/].
+The following sections then describe the new fragment matching functionality.
+
+# Running `synergise1`\label{sec:synergise}
+
+One has to run the `synergise1` workflow before fragment
+matching can be applied. Please read the general `r Biocpkg("synapter")`
+vignette for the general use of `synergise1`.
+The additional data needed for the fragment matching procedure are a
+`final_fragment.csv` file for the identification run and a
+`Spectrum.xml` file for the quantitation run.
+
+```{r create-synobj2, cache=FALSE, eval=TRUE, echo=-c(1:2)}
+cat(readLines(system.file(file.path("scripts", "create_synobj2.R"),
+                          package="synapterdata")), sep = "\n")
+synobj2 <- synergise1(object=synobj2, outputdir=tempdir(), verbose=FALSE)
+```
+
+# Filtering fragments\label{sec:filtfrag}
+
+This step is optional and allows one to remove low abundance fragments
+in the spectra using `filterFragments`. Filtering fragments can remove noise
+in the spectra and reduce undesired fragment matches. Prior to filtering, the
+`plotCumulativeNumberOfFragments` function can be use to visualise the
+intensity of all fragments. Both functions have an argument `what` to decide
+what spectra/fragments to filter/plot. Choose `fragments.ident` for the
+identification fragments and `spectra.quant` for the quantitation fragments.
+
+```{r filterfragmentsplot}
+plotCumulativeNumberOfFragments(synobj2, what = "fragments.ident")
+plotCumulativeNumberOfFragments(synobj2, what = "spectra.quant")
+```
+
+```{r filterfragments}
+filterFragments(synobj2, what = "fragments.ident", minIntensity = 70,
+                verbose = FALSE)
+filterFragments(synobj2, what = "spectra.quant", minIntensity = 70,
+                verbose = FALSE)
+```
+
+# Fragment matching\label{sec:fragmentmatching}
+
+This method, named `fragmentMatching`, performs the matching of the
+identification fragments vs the quantitation spectra and counts the number
+of identical peaks for each combination.
+
+Because the peaks/fragments in the spectra of one run will never be
+numerically identical to these in another, a tolerance parameter has
+to be set using the `setFragmentMatchingPpmTolerance` function.
+Peaks/Fragments within this tolerance are treated as identical.
+
+```{r fm}
+setFragmentMatchingPpmTolerance(synobj2, 25)
+fragmentMatching(synobj2, verbose = FALSE)
+```
+
+The `plotFragmentMatching` function illustrates the details of this fragment
+matching procedure. If it is called without any additional argument every
+matched pair (fragment vs spectrum) is plotted.
+One can use the `key` argument to select a special value in a column
+(defined by the `column` argument) of the `MatchedEMRTs` `data.frame`.
+E.g. if one wants to select the fragment matching results with a high number
+of common peaks, e.g. 28 common peaks:
+
+```{r plotfm22, fig.width=10, fig.height=5, fig.cap="\\label{fig:fm1}Fragment matching for cases with 28 common fragments. The identification data are shown on the top (blue) and the quantitation data are on the bottom (red). Common peaks are displayed in darker colours and highlighted by full points."}
+plotFragmentMatching(synobj2, key = 28,
+                     column = "FragmentMatching",
+                     verbose = FALSE)
+```
+
+Or, if one is interested in all results for the peptide with the sequence
+`"TALIDGLAQR"`.
+
+```{r plotfmseq, fig.width=10, fig.height=5, fig.cap="\\label{fig:fm2}Fragment matching for peptide \code{TALIDGLAQ}."}
+plotFragmentMatching(synobj2,
+                     key = "TALIDGLAQR", column = "peptide.seq",
+                     verbose = FALSE)
+```
+
+Maybe the peptide with a special precursor ID looks interesting.
+
+```{r, plotfmid, fig.width=10, fig.height=5, fig.cap="\\label{fig:fm3}Fragment matching precursor with \texttt{leID} identifier 12589."}
+plotFragmentMatching(synobj2,
+                     key = 12589, column = "precursor.leID.ident",
+                     verbose = FALSE)
+```
+
+# Plot distribution of common peaks\label{sec:plotperf}
+
+The `plotFragmentMatchingPerformance` function can be used to
+assess the performance of the fragment matching and the result of the
+filtering procedure (see below) based on the number of common
+peaks. This function invisibly returns a list with matrices containing
+true positive, false positive, true negative and false negative
+matches for the unique and non unique matches EMRT matches, as
+illustrated in tables \ref{tab:unique} and \ref{tab:multiple}.
+Both tables could be also generated by `fragmentMatchingPerformance`.
+
+```{r plotfmperformance, fig.width=8, fig.height=4, fig.cap="\\label{fig:fmplot}Number of true/false match peptides for different peak matching thresholds and difference in number of peaks between the first and second (in terms of number of common peaks) possible matches. The former metric is used to filter out possible false positive unique matches while the second is used to filter multiple matches. Empty circles indicate zero peptides."}
+m <- plotFragmentMatchingPerformance(synobj2)
+```
+
+```{r confusionmatrixunique, results="asis", echo=FALSE}
+knitr::kable(m$unique[1:15,], row.names=FALSE,
+            caption="Number of true positives, false negatives, false positives, false negatives and false discovery rate for a given number of common peaks \\label{tab:unique}")
+```
+
+```{confusionmatrixnonunqiue, results="asis", echo=FALSE}
+knitr::kable(m$nonunique[1:15,], row.names=FALSE,
+             caption="Number of true positives, false negatives, false positives, false negatives and false discovery rate for a given difference in number of common peaks between the higest and second highest multiply matching EMRTs in terms of number of common peptides. \\label={tab:multiple}")
+```
+
+# Filtering unique matches\label{sec:unique}
+
+From the left panel on figure \ref{fig:fmplot} and table
+\ref{tab:unique} displaying counts for unique matches one can define
+filtering values for the unique (this section) and multiple matches
+(next section). In the case of uniquely matching EMRTs, one can easily
+reduce the number of false matches by requiring that true matches
+must have at least one peak/fragment in common. Clearly this will also
+remove some true matches. The question is whether you want to rely on
+matches that have no (or only a few) peaks/fragments in common?
+
+```{r filerunique}
+performance(synobj2)
+getEMRTtable(synobj2)
+filterUniqueMatches(synobj2, minNumber = 1)
+performance(synobj2)
+getEMRTtable(synobj2)
+```
+
+# Filtering non-unique matches\label{sec:multiple}
+
+The largest benefit of fragment matching is for non unique
+matches. If we assume that true match have a highest number of common
+peaks/fragments, we can distinguish correct matches among multiple
+possible matches that could not resolved before (c.f. section
+\ref{sec:plotperf}). To do so, we use the difference of common peaks
+from the highest to the second highest number in the match
+group. Assuming two cases with multiple matches. In the first case, we
+have two possible matches: a match with 7 and a match with 2 fragments
+in common. In the second ambiguous match, there are a matches with 2
+and 1 fragments in common respectively. If we decide to accept a
+difference of at least 2, our first multiple match case be resolved
+into a unique match as the difference between the best and second
+matches is 5 and the best match with 7 common fragments will be
+upgraded to a unique match.
+
+The right panel of figure \ref{fig:fmplot} and table
+\ref{tab:multiple} can be used to choose a good threshold for the
+difference in number of common peaks. In the following example we
+rescue 130 unique matches out of the non unique ones.
+
+```{r filernonunique}
+performance(synobj2)
+getEMRTtable(synobj2)
+filterNonUniqueMatches(synobj2, minDelta = 2)
+performance(synobj2)
+getEMRTtable(synobj2)
+```
+
+# Exporting results
+
+Like in the initial `r Biocpkg("synapter")` workflow, it is possible to export the
+`MatchedEMRT` results using the `writeMatchedEMRTs` function. The table has
+some new columns that correspond to the fragment matching procedure,
+e.g. `FragmentMatching`, \ldots.
+
+```{r export, eval=FALSE}
+writeMatchedEMRTs(synobj2, file = "MatchedEMRTs.csv", what = "full")
+```
+
+# Session information\label{sec:sessionInfo}
+
+All software and respective versions used to produce this document are
+listed below.
+
+```{r sessioninfo, results='asis', echo=FALSE, cache=FALSE}}
+sessionInfo()
+```
+
+# References
