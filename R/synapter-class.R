@@ -739,7 +739,6 @@
                        filterPeptideLength = function(l) {
                            'Filters quantitation and identificatio run peptides of length < l out.'
                            .filterPeptideLength <- function(seq, l)
-                               nchar(seq) >= l
                            selQt <- .filterPeptideLength(.self$QuantPeptideData$peptide.seq, l)
                            selId <- .filterPeptideLength(.self$IdentPeptideData$peptide.seq, l)
                            .self$QuantPeptideData <- .self$QuantPeptideData[selQt, ]
