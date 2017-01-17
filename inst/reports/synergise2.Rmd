@@ -306,12 +306,12 @@ knitr::kable(tab)
 
 ```{r synergise.intmodel.plotInt, echo=FALSE}
 plotIntensity(obj, what="data")
-plotRt(obj, what="model", nsd=1) ## better focus on model
 ```
 
 ```{r synergise.intmodel.modelling, echo=FALSE}
 setLowessSpan(obj, span.int)
 modelIntensity(obj)
+plotIntensity(obj, what="model", nsd=1) ## better focus on model
 ```
 
 ## Performance
