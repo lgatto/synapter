@@ -93,8 +93,6 @@ digraph flowchart {
       IR2->SFT;
       SFT->SRTA;
       SRTA->SRTM;
-      SFT->SRTI;
-      SRTI->SIM;
     }
     subgraph cluster12 {
       label="Quantitation Run (QR)";
@@ -108,13 +106,15 @@ digraph flowchart {
     }
 
     SRTM->SIT;
-    SIM->SIT;
     SRMD->SIT;
 
     SIT->SFFM;
     SFFM->SITF;
 
-    SITF->SMITF [style="dotted", xlabel="multiple synapter runs", minlen=2];
+    SITF->SRTI;
+    SRTI->SIM;
+
+    SIM->SMITF [style="dotted", xlabel="multiple synapter runs", minlen=2];
 
     SMITF->SDA;
     SDA->SPCF;
