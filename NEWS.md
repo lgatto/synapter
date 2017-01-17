@@ -28,6 +28,7 @@
     `filterNonUniqueMatches`, `filterFragments`,
     `plotCumulativeNumberOfFragments`, `plotFragmentMatchingPerformance`,
     `getIdentificationFragments` and `getQuantitationSpectra`.
+- Integrate a fragment library into *master* objects; closes #63 and #74.
 
 #### Misc
 
