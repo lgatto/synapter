@@ -153,7 +153,7 @@ setMethod(searchGrid, "Synapter",
                    imdiffs,
                    subset,
                    n,
-                   verbose = TRUE) {
+                   verbose = interactive()) {
             if (missing(ppms))
               ppms <- seq(2, 20, 2)
             names(ppms) <- ppms
@@ -320,7 +320,7 @@ setMethod(filterPeptideLength, "Synapter",
 
 
 setMethod(filterUniqueDbPeptides, "Synapter",
-          function(object, missedCleavages = 0, IisL = FALSE, verbose = TRUE) {
+          function(object, missedCleavages = 0, IisL = FALSE, verbose = interactive()) {
             object$filterUniqueSeq()
             object$filterUniqueDbPeptides(object$DbFastaFile,
                                           what = c("ident", "quant"),
@@ -330,7 +330,7 @@ setMethod(filterUniqueDbPeptides, "Synapter",
           })
 
 setMethod(filterUniqueQuantDbPeptides, "Synapter",
-          function(object, missedCleavages = 0, IisL = FALSE, verbose = TRUE) {
+          function(object, missedCleavages = 0, IisL = FALSE, verbose = interactive()) {
             object$filterUniqueQuantSeq()
             object$filterUniqueQuantDbPeptides(object$DbFastaFile,
                                                missedCleavages = missedCleavages,
@@ -339,7 +339,7 @@ setMethod(filterUniqueQuantDbPeptides, "Synapter",
           })
 
 setMethod(filterUniqueIdentDbPeptides, "Synapter",
-          function(object, missedCleavages = 0, IisL = FALSE, verbose = TRUE) {
+          function(object, missedCleavages = 0, IisL = FALSE, verbose = interactive()) {
             object$filterUniqueIdentSeq()
             object$filterUniqueIdentDbPeptides(object$DbFastaFile,
                                                missedCleavages = missedCleavages,
@@ -397,7 +397,7 @@ setMethod(filterQuantPpmError, "Synapter",
 # filter post merging
 setMethod(filterFragments, "Synapter",
           function(object, what, minIntensity = NULL, maxNumber = NULL,
-                   verbose = TRUE) {
+                   verbose = interactive()) {
             object$filterFragments(what = what,
                                    minIntensity = minIntensity,
                                    maxNumber = maxNumber,
@@ -585,7 +585,7 @@ setMethod(plotFeatures, "Synapter",
           })
 
 setMethod(plotFragmentMatching, "Synapter",
-          function(object, key, column="peptide.seq", verbose=TRUE, ...) {
+          function(object, key, column="peptide.seq", verbose=interactive(), ...) {
             if (!nrow(object$FragmentMatching)) {
               stop("You have to run ", sQuote("fragmentMatching"), " first!")
             }
@@ -635,7 +635,7 @@ setMethod(plotEMRTtable, "Synapter",
           })
 
 setMethod(performance, "Synapter",
-          function(object, verbose = TRUE) {
+          function(object, verbose = interactive()) {
             if (nrow(object$MergedFeatures) == 0)
               stop("Merging required before estimating performance.")
             if (nrow(object$MatchedEMRTs) == 0)
@@ -676,7 +676,7 @@ setMethod(performance, "Synapter",
           })
 
 setMethod(performance2, "Synapter",
-          function(object, verbose = TRUE) {
+          function(object, verbose = interactive()) {
               id.source <- object$MatchedEMRTs$idSource
               counts <- object$MatchedEMRTs$Counts
               na.counts <- is.na(counts)
@@ -729,7 +729,7 @@ setMethod(plotGrid, "Synapter",
           })
 
 setMethod(fragmentMatching, "Synapter",
-          function(object, ppm, verbose=TRUE) {
+          function(object, ppm, verbose=interactive()) {
             if (!missing(ppm)) {
               setFragmentMatchingPpmTolerance(object, ppm)
             }
@@ -849,7 +849,7 @@ setMethod(isCurrent, "Synapter",
 setValidity("Synapter", .validSynapterObject)
 
 setMethod(updateObject, "Synapter",
-          function(object, ..., verbose = TRUE) {
+          function(object, ..., verbose = interactive()) {
             .updateSynapterObject(object, ..., verbose=verbose)
 })
 

@@ -1,5 +1,5 @@
 dbUniquePeptideSet <- function(file, missedCleavages = 0,
-                               IisL = FALSE, verbose = TRUE) {
+                               IisL = FALSE, verbose = interactive()) {
   if (tolower(file_ext(file)) == "rds") {
     peptides <- readRDS(file)
 
@@ -37,7 +37,7 @@ dbUniquePeptideSet <- function(file, missedCleavages = 0,
 }
 
 .dbUniquePeptideSet <- function(fastafile, missedCleavages = 0,
-                                IisL = FALSE, verbose = TRUE) {
+                                IisL = FALSE, verbose = interactive()) {
 
   missedCleavages <- max(missedCleavages)
   stopifnot(missedCleavages >= 0)
@@ -104,7 +104,7 @@ createUniquePeptideDbRds <- function(fastaFile,
                                      outputFile = paste0(fastaFile, ".rds"),
                                      missedCleavages = 0,
                                      IisL = FALSE,
-                                     verbose = TRUE) {
+                                     verbose = interactive()) {
   if (!file.exists(fastaFile)) {
     stop("File ", sQuote(fastaFile), " does not exists!")
   }

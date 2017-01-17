@@ -20,7 +20,7 @@
 #' @param verbose verbose output?
 #' @return a data.frame
 #' @noRd
-.readFragments <- function(file, removeNeutralLoss=FALSE, verbose=TRUE) {
+.readFragments <- function(file, removeNeutralLoss=FALSE, verbose=interactive()) {
   stopifnot(file.exists(file))
 
   if (verbose) {
@@ -69,7 +69,7 @@
 .finalFragment2spectra <- function(df, file, storeAll=TRUE,
                                    removeNeutralLoss=TRUE,
                                    removePrecursor=TRUE,
-                                   tolerance=25e-6, verbose=TRUE) {
+                                   tolerance=25e-6, verbose=interactive()) {
   fragments <- .readFragments(file, removeNeutralLoss=removeNeutralLoss,
                               verbose=verbose)
   .fragments2spectra(df=df, fragments=fragments, file=file, storeAll=storeAll,
@@ -89,7 +89,7 @@
 #' @noRd
 .fragments2spectra <- function(df, fragments, file, storeAll=TRUE,
                                removePrecursor=TRUE, tolerance=25e-6,
-                               verbose=TRUE) {
+                               verbose=interactive()) {
 
   assignments <- new.env(hash=TRUE, parent=emptyenv())
   idx <- split(1:nrow(fragments), f=fragments$precursor.leID)

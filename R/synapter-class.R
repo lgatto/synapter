@@ -279,7 +279,7 @@
                                                            removeNeutralLoss=TRUE,
                                                            removePrecursor=TRUE,
                                                            tolerance=25e-6,
-                                                           verbose=TRUE) {
+                                                           verbose=interactive()) {
                       .self$IdentFragmentFile <- filename
 
                       if (length(filename)) {
@@ -300,7 +300,7 @@
                     loadQuantitationSpectra = function(filename,
                                                        removePrecursor=TRUE,
                                                        tolerance=25e-6,
-                                                       verbose=TRUE) {
+                                                       verbose=interactive()) {
                       .self$QuantSpectrumFile <- filename
 
                       if (length(filename)) {
@@ -465,7 +465,7 @@
                                                      paste(dim(.self$MatchedEMRTs), collapse = ","),
                                                      "] (", method, ")"))
                     },
-                    fragmentMatching = function(verbose=TRUE) {
+                    fragmentMatching = function(verbose=interactive()) {
                       if (!nrow(.self$MatchedEMRTs)) {
                         stop("You have to run ", sQuote("findEMRTs"),
                              " first!")
@@ -518,7 +518,7 @@
 .Synapter$methods(
                   list(
                        searchGrid = function(ppms, nsds, imdiffs, subset, n,
-                                             verbose = TRUE) {
+                                             verbose = interactive()) {
                          'Performs a grid search in ppm x nsd x imdiff space.'
                          .IdentPeptideData <- .self$IdentPeptideData
                          if (!missing(subset)) {
@@ -959,7 +959,7 @@
                                                       "]", sep=""))
                        },
 
-                       filterUniqueQuantDbPeptides = function(filename, missedCleavages = 0,  IisL = FALSE, verbose = TRUE) {
+                       filterUniqueQuantDbPeptides = function(filename, missedCleavages = 0,  IisL = FALSE, verbose = interactive()) {
                          'Filters quantitation tryptic peptides that match one and only one protein in the fasta database.'
                          .self$filterUniqueDbPeptides(filename,
                                                       what="quant",
@@ -968,7 +968,7 @@
                                                       verbose=verbose)
                        },
 
-                       filterUniqueIdentDbPeptides = function(filename, missedCleavages = 0, IisL = FALSE, verbose = TRUE) {
+                       filterUniqueIdentDbPeptides = function(filename, missedCleavages = 0, IisL = FALSE, verbose = interactive()) {
                          'Filters identification tryptic peptides that match one and only one protein in the fasta database.'
                          .self$filterUniqueDbPeptides(filename,
                                                       what="ident",
@@ -977,7 +977,7 @@
                                                       verbose=verbose)
                        },
 
-                       filterUniqueDbPeptides = function(filename, what = c("ident", "quant"), missedCleavages = 0, IisL = FALSE, verbose = TRUE) {
+                       filterUniqueDbPeptides = function(filename, what = c("ident", "quant"), missedCleavages = 0, IisL = FALSE, verbose = interactive()) {
                         'Filters tryptic peptides that match one and only one protein in the fasta database.'
                         what <- match.arg(what, several.ok=TRUE)
 
@@ -1009,7 +1009,7 @@
                        },
 
                        filterFragments = function(what, minIntensity = NULL,
-                                                  maxNumber = NULL, verbose = TRUE) {
+                                                  maxNumber = NULL, verbose = interactive()) {
                          'Filters spectra/fragments using a minimal intensity or a maximal number of fragments as threshold.'
 
                          what <- match.arg(what, choices = c("fragments.ident",

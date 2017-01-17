@@ -3,7 +3,7 @@
 \title{Create an RDS file for the 'Unique Peptides Database'}
 \usage{
 createUniquePeptideDbRds(fastaFile, outputFile = paste0(fastaFile, ".rds"),
-  missedCleavages = 0, IisL = FALSE, verbose = TRUE)
+  missedCleavages = 0, IisL = FALSE, verbose = interactive())
 }
 \arguments{
   \item{fastaFile}{file path of the input fasta file}

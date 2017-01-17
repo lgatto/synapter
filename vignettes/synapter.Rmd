@@ -393,8 +393,7 @@ figure [1](\#fig:estimateFdrPlot)).
 ## fasta database from the synapterdata package
 inputfiles <- getHDMSeFinalPeptide()
 fasta <- getFasta()
-cmb <- estimateMasterFdr(inputfiles, fasta, masterFdr = 0.02,
-                         verbose = FALSE)
+cmb <- estimateMasterFdr(inputfiles, fasta, masterFdr = 0.02)
 cmb
 ```
 
@@ -424,7 +423,7 @@ can be saved to disk using `saveRDS` for further analysis,
 as described in section [HDMS$^E$/MS$^E$ data analysis](\#sec:synapter).
 
 ```{r master, cache=TRUE, warning=FALSE}
-master <- makeMaster(inputfiles[bestComb(cmb)], verbose = FALSE)
+master <- makeMaster(inputfiles[bestComb(cmb)])
 master
 ```
 

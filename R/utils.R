@@ -295,7 +295,7 @@ gridSearch3 <- function(model,
                         ppms,
                         nsds,
                         imdiffs,
-                        verbose = TRUE) {
+                        verbose = interactive()) {
   ## As initial gridSearch, but now returns a list
   ## with two grids; first one as before, percent of
   ## uniquely matched features; second is percent of
@@ -449,7 +449,7 @@ isCorrespondingPep3DataFile <- function(quant, pep3d) {
 ## adds a columns "gridSearchResult" that could be "unique-true",
 ## "unique-false", "non-unique-true", "non-unique-false"
 ## please note that it would change the order of the data.frame
-flatMatchedEMRTs <- function(emrts, pep3d, na.rm=TRUE, verbose=TRUE) {
+flatMatchedEMRTs <- function(emrts, pep3d, na.rm=TRUE, verbose=interactive()) {
   if (verbose) {
     message("create flat EMRT data.frame (one matched EMRT per row)")
   }

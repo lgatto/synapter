@@ -9,7 +9,7 @@
 #' combined)
 #' @noRd
 .createFragmentLibrary <- function(master, files, removeNeutralLoss=FALSE,
-                                   verbose=TRUE) {
+                                   verbose=interactive()) {
   fragments <- lapply(files, function(f) {
     r <- .readFragments(file=f, removeNeutralLoss=removeNeutralLoss,
                         verbose=verbose)

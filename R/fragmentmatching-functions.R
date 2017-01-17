@@ -112,7 +112,7 @@
 #' gridSearchResult, FragmentMatching
 #' @noRd
 .fragmentMatching <- function(flatEmrts, identFragments, quantSpectra,
-                              tolerance=25e-6, verbose=TRUE) {
+                              tolerance=25e-6, verbose=interactive()) {
   if (verbose) {
     message("Look for common peaks")
     pb <- txtProgressBar(0, nrow(flatEmrts), style=3)
@@ -169,7 +169,7 @@
 #' @param column in which column we should look for "key"
 #' @param verbose verbose output?
 #' @noRd
-.plotFragmentMatching <- function(obj, key, column="peptide.seq", verbose=TRUE,
+.plotFragmentMatching <- function(obj, key, column="peptide.seq", verbose=interactive(),
                               ...) {
   fm <- obj$FragmentMatching
 

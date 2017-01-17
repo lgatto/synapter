@@ -37,7 +37,7 @@
 ##' newSynapterObj
 ##'
 ##' @noRd
-.updateSynapterObject <- function(object, verbose=TRUE) {
+.updateSynapterObject <- function(object, verbose=interactive()) {
 
   if (!isCurrent(object)) {
     newObject <- object$copy()

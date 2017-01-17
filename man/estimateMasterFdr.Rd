@@ -6,7 +6,7 @@
 \usage{
 estimateMasterFdr(pepfiles, fastafile, masterFdr = 0.025, fdr = 0.01,
   proteotypic = TRUE, missedCleavages = 0, IisL = FALSE,
-  maxFileComb = length(pepfiles), verbose = TRUE)
+  maxFileComb = length(pepfiles), verbose = interactive())
 }
 \arguments{
 \item{pepfiles}{A \code{list} of \code{vector} of final peptide

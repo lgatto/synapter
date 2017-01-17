@@ -84,8 +84,7 @@ cat(readLines(system.file(file.path("scripts", "create_synobj2.R"),
 ```
 ```{r create_synobj2}
 synobj2 <- synergise1(object=synobj2,
-                      outputdir=tempdir(),
-                      verbose=FALSE)
+                      outputdir=tempdir())
 ```
 
 # Filtering fragments{#sec:filtfrag}
@@ -108,12 +107,10 @@ plotCumulativeNumberOfFragments(synobj2,
 ```{r filterfragments}
 filterFragments(synobj2,
                 what = "fragments.ident",
-                minIntensity = 70,
-                verbose = FALSE)
+                minIntensity = 70)
 filterFragments(synobj2,
                 what = "spectra.quant",
-                minIntensity = 70,
-                verbose = FALSE)
+                minIntensity = 70)
 ```
 
 # Fragment matching{#sec:fragmentmatching}
@@ -129,7 +126,7 @@ Peaks/Fragments within this tolerance are treated as identical.
 
 ```{r fm}
 setFragmentMatchingPpmTolerance(synobj2, 25)
-fragmentMatching(synobj2, verbose = FALSE)
+fragmentMatching(synobj2)
 ```
 
 The `plotFragmentMatching` function illustrates the details of this fragment
@@ -143,8 +140,7 @@ of common peaks, e.g. 28 common peaks:
 ```{r plotfm22, fig.cap="Fragment matching for cases with 28 common fragments. The identification data are shown on the top (blue) and the quantitation data are on the bottom (red). Common peaks are displayed in darker colours and highlighted by full points."}
 plotFragmentMatching(synobj2,
                      key = 28,
-                     column = "FragmentMatching",
-                     verbose = FALSE)
+                     column = "FragmentMatching")
 ```
 
 Or, if one is interested in all results for the peptide with the sequence
@@ -153,8 +149,7 @@ Or, if one is interested in all results for the peptide with the sequence
 ```{r plotfmseq, fig.cap="Fragment matching for peptide *TALIDGLAQ*."}
 plotFragmentMatching(synobj2,
                      key = "TALIDGLAQR",
-                     column = "peptide.seq",
-                     verbose = FALSE)
+                     column = "peptide.seq")
 ```
 
 Maybe the peptide with a special precursor ID looks interesting.
@@ -162,8 +157,7 @@ Maybe the peptide with a special precursor ID looks interesting.
 ```{r, plotfmid, fig.cap="Fragment matching precursor with *leID* identifier 12589."}
 plotFragmentMatching(synobj2,
                      key = 12589,
-                     column = "precursor.leID.ident",
-                     verbose = FALSE)
+                     column = "precursor.leID.ident")
 ```
 
 # Plot distribution of common peaks{#sec:plotperf}

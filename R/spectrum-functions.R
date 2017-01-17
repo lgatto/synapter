@@ -330,7 +330,7 @@
 #' @return modified MSnExp object
 #' @noRd
 .filterIntensity <- function(msexp, minIntensity=NULL, maxNumber=NULL,
-                             verbose=TRUE) {
+                             verbose=interactive()) {
   if(is.null(minIntensity) && is.null(maxNumber)) {
     stop("At least one of arguments ", sQuote("minIntensity"), " and ",
          sQuote("maxNumber"), " must be given!")

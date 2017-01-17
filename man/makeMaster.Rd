@@ -11,7 +11,7 @@
 makeMaster(pepfiles, fragmentfiles, fdr = 0.01, method = c("BH",
   "Bonferroni", "qval"), span = 0.05, maxDeltaRt = Inf,
   removeNeutralLoss = TRUE, removePrecursor = TRUE, tolerance = 2.5e-05,
-  verbose = TRUE)
+  verbose = interactive())
 }
 \arguments{
 \item{pepfiles}{A \code{character} vector of final peptide file
