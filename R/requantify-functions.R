@@ -83,6 +83,8 @@ setMethod("requantify", signature(object="MSnSet"),
     stop("Could not find any isotopic distribution information.")
   }
 
+  msnset <- .correctIntensity(msnset, method="undo")
+
   e <- exprs(msnset)
   f <- as.matrix(fData(msnset)[, i])
   ## don't introduce new values for missing entries (could happen if there is
@@ -90,8 +92,6 @@ setMethod("requantify", signature(object="MSnSet"),
   ## see https://github.com/lgatto/synapter/issues/39#issuecomment-200355965
   isNA <- is.na(e)
   f[isNA] <- NA_character_
-
-  e <- .correctIntensity(e, method="undo")
 
   method <- match.arg(method)
 
@@ -123,9 +123,8 @@ setMethod("requantify", signature(object="MSnSet"),
     }
   }
 
-  e <- .correctIntensity(e, method="correct")
   exprs(msnset)[!isNA] <- e[!isNA]
-  msnset
+  .correctIntensity(msnset, method="correct")
 }
 
 .isUnsaturatedIsotope <- function(x, saturationThreshold=Inf) {
