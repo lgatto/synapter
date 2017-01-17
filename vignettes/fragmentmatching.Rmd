@@ -17,9 +17,6 @@ bibliography: synapter.bib
 output:
   BiocStyle::html_document2:
     toc_float: true
-    dev: svg
-    fig.width: 12
-    fig.height: 7
     tidy: TRUE
 vignette: >
   %\VignetteIndexEntry{Fragment matching using 'synapter'}
