@@ -79,7 +79,8 @@ The additional data needed for the fragment matching procedure are a
 for the quantitation run.
 
 ```{r create-synobj2-file, comment=NA}
-cat(readLines(system.file(file.path("scripts", "create_synobj2.R"))))
+cat(readLines(system.file(file.path("scripts", "create_synobj2.R"),
+                          package="synapterdata")))
 ```
 ```{r create_synobj2}
 synobj2 <- synergise1(object=synobj2,
