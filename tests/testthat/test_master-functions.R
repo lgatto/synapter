@@ -5,20 +5,15 @@ test_that(".calculatePeptideFileCombinations", {
   r2 <- list(c(1, 2), c(1, 3), c(1, 4), c(2, 3), c(2, 4), c(3, 4),
              c(1, 2, 3), c(1, 2, 4), c(1, 3, 4), c(2, 3, 4), 1:4)
   r3 <- list(c(1, 2), c(1, 3), c(1, 4), c(2, 3), c(2, 4), c(3, 4))
-  expect_equal(synapter:::.calculatePeptideFileCombinations(3,
-                                                            verbose=FALSE),
-               r1)
-  expect_equal(synapter:::.calculatePeptideFileCombinations(4,
-                                                            verbose=FALSE),
-               r2)
-  expect_equal(synapter:::.calculatePeptideFileCombinations(4, 2,
-                                                            verbose=FALSE),
-               r3)
-  expect_message(synapter:::.calculatePeptideFileCombinations(3),
+  expect_equal(synapter:::.calculatePeptideFileCombinations(3), r1)
+  expect_equal(synapter:::.calculatePeptideFileCombinations(4), r2)
+  expect_equal(synapter:::.calculatePeptideFileCombinations(4, 2), r3)
+  expect_silent(synapter:::.calculatePeptideFileCombinations(4, 2))
+  expect_message(synapter:::.calculatePeptideFileCombinations(3, verbose=TRUE),
                  "3 peptide files available - 4 combinations")
-  expect_message(synapter:::.calculatePeptideFileCombinations(4),
+  expect_message(synapter:::.calculatePeptideFileCombinations(4, verbose=TRUE),
                  "4 peptide files available - 11 combinations")
-  expect_message(synapter:::.calculatePeptideFileCombinations(4, 2),
+  expect_message(synapter:::.calculatePeptideFileCombinations(4, 2, verbose=TRUE),
                  "4 peptide files available - 6 combinations (limited by maxFileComb=2)*")
 })
 
