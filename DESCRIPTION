@@ -5,6 +5,16 @@ Title: Label-free data analysis pipeline for optimal
 Version: 1.99.0
 Author: Laurent Gatto, Nick J. Bond, Pavel V. Shliaha and
     Sebastian Gibb.
+Authors@R: c(person(given = "Laurent", family = "Gatto",
+	                  email = "lg390@cam.ac.uk",
+                    role = c("aut", "cre")),
+             person(given = c("Nick", "J."), family = "Bond",
+                    role = c("aut")),
+             person(given = c("Pavel", "V."), family = "Shliaha",
+                    role = c("aut")),
+             person(given = "Sebastian", family = "Gibb",
+	                  email = "mail@sebastiangibb.de",
+                    role = c("aut", "cre")))
 Maintainer: Laurent Gatto <lg390@cam.ac.uk> and
     Sebastian Gibb <mail@sebastiangibb.de>
 Depends:
