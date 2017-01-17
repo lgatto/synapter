@@ -132,8 +132,8 @@ setLowessSpan(synobj2, span=0.05)
 modelRt(synobj2)
 
 par(mfcol=c(1, 2))
-plotRtDiffs(obj)
-plotRt(obj, what="model", nsd=1)
+plotRtDiffs(synobj2)
+plotRt(synobj2, what="model", nsd=1)
 par(mfcol=c(1, 1))
 
 plotFeatures(synobj2, what="all", ionmobility=TRUE)
