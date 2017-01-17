@@ -439,7 +439,6 @@ summarises all there is to know to utilise `r Biocpkg("synapter")`'s functionali
 
 Function             Description
 -------------------  --------------------------------------------------------
-`synapterGUI()`      Opens the graphical user interface
 `synergise`          Runs the complete identification transfer
 `estimateMasterFdr`  Chooses which files to be used to create the *master* IR
 `makeMaster`         Creates the *master* IR
@@ -568,7 +567,7 @@ tmp <- sapply(nms, function(.ups) {
 We now have 6 `MSnSet` instances, containing protein
 quantitation for the 6 UPS/*E. coli* runs.
 
-## Combining data and filtering
+## Combining data and filtering{#combine}
 
 We now want to filter data out based on missing quantitation data,
 retaining proteins that have been quantified in at a least two out of

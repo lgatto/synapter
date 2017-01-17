@@ -56,17 +56,19 @@ In contrast to the original workflow the `final_fragment.csv` file for the
 identification run and a `Spectrum.xml` file for the quantification run are
 needed if the fragment matching should be applied.
 
-Subsequently the original workflow is enhanced by the new [3D grid
-search]{\#gridsearch} and the [intensity modeling]{\#intensitymodel}.
-Afterwards the [fragment matching]{\#fragmentmatching} could be applied.
-`r Biocpkg("MSnbase")`[@Gatto2012] is used for further analysis.
+Subsequently the original workflow is enhanced by the new
+[3D grid search](\#gridsearch) and the [intensity modeling](\#intensitymodel).
+Afterwards the [fragment matching](\#fragmentmatching) could be applied.
+`r Biocpkg("MSnbase")` [@Gatto2012] is used for further analysis.
 The new `r Biocpkg("synapter")` adds
-[`r Biocpkg("synapter")`/*PLGS* consensus filtering]{\#synapterplgs}
-and the [detector saturation correction]{\#saturation} for `MSnSet`s.
+[*synapter*/*PLGS* consensus filtering](\#synapterplgs)
+and the [detector saturation correction](\#saturation) for `MSnSet`s.
 
 ![New *synapter* workflow. Dark green boxes show the traditional *synapter1* part and the light green boxes highlight the new *synapter2* functionality.](Figures/synapter2workflow.png)
 
-# Create a `Synapter` object
+## Step-by-step workflow
+
+### Create a `Synapter` object
 
 To demonstrate a typical step-by-step workflow we use example data
 that are available on http://proteome.sysbiol.cam.ac.uk/lgatto/synapter/data/.
@@ -86,7 +88,7 @@ cat(readLines(system.file(file.path("scripts", "create_synobj2.R"),
 synobj2
 ```
 
-# Filtering
+### Filtering
 
 The first steps in each `r Biocpkg("synapter")` analysis are filtering by
 peptide sequence, peptide length, ppm error and *false positive rate*.
@@ -115,7 +117,7 @@ filterIdentProtFpr(synobj2, fpr=0.05)
 filterQuantProtFpr(synobj2, fpr=0.05)
 ```
 
-# Modeling retention time
+### Modeling retention time
 
 Next we merge the identified peptides from the identification run and
 quantification run and build a
@@ -139,7 +141,7 @@ par(mfcol=c(1, 1))
 plotFeatures(synobj2, what="all", ionmobility=TRUE)
 ```
 
-# Grid search{#gridsearch}
+### Grid search{#gridsearch}
 
 To find *EMRTS* (exact *m/z*-retention time pairs) we try are running a grid
 search to find the best retention time tolerance and *m/z* tolerance that
@@ -161,48 +163,141 @@ findEMRTs(synobj2)
 plotEMRTtable(synobj2)
 ```
 
-# Fragment matching
+### Fragment matching{#fragmentmatching}
 
-filterFragments(expl, what="fragments.ident", minIntensity=fm.ident.minIntensity)
-filterFragments(expl, what="spectra.quant", minIntensity=fm.quant.minIntensity)
-fragmentMatching(expl, ppm=fm.ppm)
+For the details of the fragment matching procedure we refer to the
+fragment matching vignette that is available
+[online](https://bioconductor.org/packages/release/bioc/vignettes/synapter/inst/doc/fragmentmatching.html)
+and with `vignette("fragmentmatching", package = "synapter")`.
+Briefly we compare the fragments of the identification run with the spectra from
+the quantification run and remove entries where there are very few/none common
+peaks/fragments between them.
 
-fragmentMatchingStats <- fragmentMatchingPerformance(expl, what="non-unique")
-sel <- which(fragmentMatchingStats[, "fdr"] < fm.fdr.nonunique)
-nonUniqueThreshold <- min(fragmentMatchingStats[sel, "deltacommon"])
+First we starting by removing less intense fragments and peaks.
 
-filterUniqueMatches(expl, minNumber=1)
-filterNonUniqueMatches(expl, minDelta=nonUniqueThreshold)
-filterNonUniqueIdentMatches(expl)
+```{r filterfragments}
+filterFragments(synobj2,
+                what="fragments.ident",
+                minIntensity=70)
+filterFragments(synobj2,
+                what="spectra.quant",
+                minIntensity=70)
+```
 
-rescueEMRTs(expl, method="rescue")
+Next we look for common peaks via `fragmentMatching`:
 
-# Modeling intensity
+```{r fm}
+fragmentMatching(synobj2)
+```
 
-setLowessSpan(expl, span.int)
-modelIntensity(expl)
+We get tables for unique and non-unique matches:
 
-# export
+```{r fmperf, results="asis"}
+knitr::kable(fragmentMatchingPerformance(synobj2,
+                                         what="unique"))
+knitr::kable(fragmentMatchingPerformance(synobj2,
+                                         what="non-unique"))
+```
 
-writeMergedPeptides(expl, file=file.path(outputDir, "explicit", "MergedPeptides.csv"))
-writeMatchedEMRTs(expl, file=file.path(outputDir, "explicit", "MatchedPeptides.csv"))
-writeIdentPeptides(expl, file=file.path(outputDir, "explicit", "IdentPeptides.csv"))
-writeQuantPeptides(expl, file=file.path(outputDir, "explicit", "QuantPeptides.csv"))
-saveRDS(expl, file=file.path(outputDir, "explicit", "SynapterObject.rds"))
+Subsequently we could filter by minimal accepted common peaks:
 
-# convert to MSnbase
+```{r filterfm}
+filterUniqueMatches(synobj2, minNumber=1)
+filterNonUniqueMatches(synobj2, minDelta=2)
+filterNonUniqueIdentMatches(synobj2)
+```
 
-# synapter/PLGS agreement
+Finally we rescue EMRTs that are filtered but were identified by *PLGS*:
 
-# detector saturation correction
+```{r rescue}
+rescueEMRTs(synobj2, method="rescue")
+```
 
-# what we have done
+### Modeling intensity{#intensitymodel}
 
-getLog
+In a similar manner as correcting for the retention time drift we correct
+systematic errors of the intensity via a
+[*LOWESS*](https://en.wikipedia.org/wiki/Local_regression) model.
+The function `modelIntensity` has to applied after `findEMRTs`. The model is
+build on the merged peptides as it is done for the retention time model. But in
+contrast to the retention time model the prediction is necessary for the matched
+quantitation data.
 
-# Functions not covered in this vignette
+```{r intmodel}
+plotIntensity(synobj2, what="data")
+setLowessSpan(synobj2, 0.05)
+modelIntensity(synobj2)
+plotIntensity(synobj2, what="model", nsd=1)
+```
 
-fragment library, multiple synapter runs
+## `synergise2`
+
+The whole workflow described in the [step-by-step workflow](\#stepbystep) is
+wrapped in the `synergise2` function. As side effect it generates a nice
+*HTML* report. An example could be found on https://github.com/lgatto/synapter.
+
+```{r synergise2, eval=FALSE}
+synobj2 <- synergise2(filenames = inlist,
+                      outputdir = ".")
+```
+
+# *synapter*/*PLGS* agreement{#synapterplgs}
+
+For the next steps we need to convert the `Synapter` object into an `MSnSet`.
+
+```{r convert}
+msn <- as(synobj2, "MSnSet")
+```
+
+Subsequently we look for *synapter*/*PLGS* agreement (this is more
+useful for a combined `MSnSet`; see basic `r Biocpkg("synapter")`
+[online](https://bioconductor.org/packages/release/bioc/vignettes/synapter/inst/doc/synapter.html#combine)
+or with `vignette("synapter", package = "synapter")`).
+`synapterPlgsAgreement` adds an agreement column for each sample and counts the
+agreement/disagreement in additional columns:
+
+```{r synapterplgs, results="asis"}
+msn <- synapterPlgsAgreement(msn)
+knitr::kable(head(fData(msn)[, grepl("[Aa]gree",
+                                     fvarLabels(msn)),
+                             drop=FALSE]))
+```
+
+# Correction of detector saturation{#saturation}
+
+As described in [@Shliaha2013] Synapt G2 devices suffer from detector
+saturation. This could be partly corrected by `requantify`. Therefore a
+`saturationThreshold` has to be given above that intensity saturation
+potentially happens. There are several methods available.
+
+```{r saturation}
+msncor <- requantify(msn,
+                     saturationThreshold=1e5,
+                     method="sum")
+```
+
+If an `MSnSet` object was requantified using the `"sum"`
+requantification method *TOP3* normalisation is not valid anymore
+because the most abundant proteins are penalised by removing high intensity
+isotopes (for details see `?requantify` and `?rescaleForTop3`). This could be
+overcome by calling `rescaleForTop3`:
+
+```{r rescaletop3}
+msncor <- rescaleForTop3(before=msn,
+                         after=msncor,
+                         saturationThreshold=1e5)
+```
+
+# New functions not covered in this vignette
+
+Since `r Biocpkg("synapter")` 2.0 `makeMaster` supports fragment files as well.
+It is possible to create a fragment library that could used for
+[fragment matching](\#fragmentmatching) because of the large data this could not
+covered in this vignette. An introduction how to create a *master* could be
+found in the basic `r Biocpkg("synapter")` vignette, available
+[online](https://bioconductor.org/packages/release/bioc/vignettes/synapter/inst/doc/synapter.html)
+or with `vignette("synapter", package = "synapter")`. Please find details
+about creating a fragment library in `?makeMaster`.
 
 # Session information{#sec:sessionInfo}
 
