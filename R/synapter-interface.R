@@ -844,6 +844,12 @@ setMethod(isCurrent, "Synapter",
                              sQuote("object <- updateObject(object)"), "."))
     }
 
+    for (nm in names(.Synapter$fields())) {
+      if (!validObject(object[[nm]])) {
+        msg <- validMsg(msg, paste0(nm, " is not valid!"))
+      }
+    }
+
     if (is.null(msg)) TRUE else msg
 }
 setValidity("Synapter", .validSynapterObject)

@@ -182,8 +182,14 @@
                           phenoData=pdata,
                           featureData=fdata,
                           processingData=process)
-  if (validObject(msnexp))
-    return(msnexp)
+  ## don't do any validation here, we check each spectrum in
+  ## .createMsnbaseSpectrum2. validObject(msnexp) is really slow.
+  ## spectra data should be correct and we don't interested in header
+  ## information nor version information of the spectra
+  ## see https://github.com/lgatto/MSnbase/issue/183
+  #if (validObject(msnexp))
+  #  return(msnexp)
+  msnexp
 }
 
 #' create MS2 spectrum from spectrum.xml data
@@ -363,8 +369,6 @@
         character()
       }
     }, f=fragments, i=intensity(msexp), SIMPLIFY=FALSE, USE.NAMES=FALSE))
-
-    stopifnot(validObject(msexp))
   }
 
   if (verbose) {
