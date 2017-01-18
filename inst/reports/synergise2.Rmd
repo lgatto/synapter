@@ -136,9 +136,9 @@ knitr::kable(fmParameters, align="lr")
 ```{r synergise.merge, echo=FALSE}
 ```
 
-## Retention Time Modelling
+# Retention Time Modelling
 
-### Retention Time Model
+## Retention Time Model
 
 ```{r synergise.rtmodel.plotRt, echo=FALSE}
 ```
@@ -152,7 +152,7 @@ knitr::kable(fmParameters, align="lr")
 ```{r synergise.rtmodel.rtdiffsTable, echo=FALSE, results="asis"}
 ```
 
-### Feature Space
+## Feature Space
 
 ```{r rtmodel.plotAllFeatures, echo=FALSE}
 plotFeatures(obj, what="all", ionmobility=TRUE)
@@ -161,7 +161,7 @@ plotFeatures(obj, what="all", ionmobility=TRUE)
 ```{r synergise.rtmodel.plotSomeFeatures, echo=FALSE, dev="svg", fig.cap="Using nsd = 2 and ppm error = 10 as an example.<br />Optimal values are selected below."}
 ```
 
-## Grid Optimisation
+# Grid Optimisation
 
 `r if(grid.n) { paste0("Using", grid.n, "features.") } else { paste0("Using ",
 grid.subset * 100, "% of the data.") }`
@@ -171,7 +171,7 @@ grid.subset * 100, "% of the data.") }`
 ```
 `r if (grid.n) { searchGrid(obj, ppms=seq(grid.ppm.from, grid.ppm.to, grid.ppm.by), nsds=seq(grid.nsd.from, grid.nsd.to, grid.nsd.by), imdiffs=seq(grid.imdiffs.from, grid.imdiffs.to, grid.imdiffs.by), n=grid.n, verbose=verbose) } else { searchGrid(obj, ppms=seq(grid.ppm.from, grid.ppm.to, grid.ppm.by), nsds=seq(grid.nsd.from, grid.nsd.to, grid.nsd.by), imdiffs=seq(grid.imdiffs.from, grid.imdiffs.to, grid.imdiffs.by), subset=grid.subset, verbose=verbose) }`
 
-### Grid Tables {.tabset}
+## Grid Tables {.tabset}
 
 ```{r grid.table, echo=FALSE, results="asis"}
 names <- c("total", "model", "details")
@@ -191,7 +191,7 @@ for (i in seq(along=names)){
 }
 ```
 
-### Grid Details
+## Grid Details
 
 ```{r grid.details, echo=FALSE, results="asis"}
 gridDetails <- do.call(rbind, getGridDetails(obj))
@@ -203,7 +203,7 @@ rownames(gridDetails) <- NULL
 knitr::kable(as.data.frame(gridDetails))
 ```
 
-### Best Grid Parameters
+## Best Grid Parameters
 
 ```{r synergise.grid.bestParamaters, echo=FALSE, results="asis"}
 ```
@@ -213,7 +213,7 @@ Setting best grid parameters using '`r grid.param.sel`'
   - Mass tolerance (ppm): `r obj$PpmError`
   - Number of retention time stdev: `r obj$RtNsd`
 
-## EMRT Matching
+# EMRT Matching
 
 ```{r synergise.emrt.find, echo=FALSE}
 findEMRTs(obj)
@@ -223,14 +223,14 @@ plotEMRTtable(obj)
 ```{r synergise.emrt.table, echo=FALSE, results="asis"}
 ```
 
-## Fragment Matching
+# Fragment Matching
 
 ```{r, fm.comment, echo=FALSE, eval=FALSE, results="hide"}
 # abuse inline r here to show the progress bar of the fragment matching in the
 # R console - regular r chunks capture stdout
 ```
 
-### Filtering Fragments
+## Filtering Fragments
 
 ```{r, fm.filtering, echo=FALSE}
 plotCumulativeNumberOfFragments(obj, what = "fragments.ident")
@@ -242,7 +242,7 @@ plotCumulativeNumberOfFragments(obj, what = "spectra.quant")
 `r invisible(fragmentMatching(obj, ppm = fm.ppm))`
 `r invisible({pdf(file.path(outputdir, "FragmentMatching.pdf"), width=10, height=8); plotFragmentMatching(obj); dev.off()})`
 
-### Performance {.tabset}
+## Performance {.tabset}
 
 ```{r fm.performancePlot, echo = FALSE}
 fragmentMatchingStats <- plotFragmentMatchingPerformance(obj)
@@ -259,7 +259,7 @@ for (i in seq(along=names)){
 }
 ```
 
-### Best Parameters
+## Best Parameters
 
 ```{r fm.selBestParam, echo = FALSE, results="asis"}
 common <- c(NA, NA)
@@ -288,7 +288,7 @@ rownames(tab) <- NULL
 print(knitr::kable(tab))
 ```
 
-## EMRT Rescue
+# EMRT Rescue
 
 ```{r emrt.rescue, echo=FALSE}
 rescueEMRTs(obj, mergedEMRTs)
@@ -302,7 +302,7 @@ colnames(tab) <- c("Number of assigned EMRTs", "Freq")
 knitr::kable(tab)
 ```
 
-## Intensity Model
+# Intensity Model
 
 ```{r synergise.intmodel.plotInt, echo=FALSE}
 plotIntensity(obj, what="data")
@@ -314,12 +314,12 @@ modelIntensity(obj)
 plotIntensity(obj, what="model", nsd=1) ## better focus on model
 ```
 
-## Performance
+# Performance
 
 ```{r synergise.performance, echo=FALSE, results="asis"}
 ```
 
-## Exported Files
+# Exported Files
 
 ```{r synergise.export, echo=FALSE}
 ```
@@ -333,12 +333,12 @@ plotIntensity(obj, what="model", nsd=1) ## better focus on model
 - [Fragment Matching Plots](FragmentMatching.pdf)
 - [Saved R Object (binary)](SynapterObject.rda)
 
-## Full Analysis Log
+# Full Analysis Log
 
 ```{r synergise.log, echo=FALSE, results="asis"}
 ```
 
-## Session Info
+# Session Info
 
 ```{r synergise.sessionInfo, echo=FALSE}
 ```

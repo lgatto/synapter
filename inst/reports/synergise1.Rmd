@@ -114,9 +114,9 @@ knitr::kable(gridParameters, align="lr")
 ```{r synergise.merge, echo=FALSE}
 ```
 
-## Retention Time Modelling
+# Retention Time Modelling
 
-### Retention Time Model
+## Retention Time Model
 
 ```{r synergise.rtmodel.plotRt, echo=FALSE}
 ```
@@ -130,7 +130,7 @@ knitr::kable(gridParameters, align="lr")
 ```{r synergise.rtmodel.rtdiffsTable, echo=FALSE, results="asis"}
 ```
 
-### Feature Space
+## Feature Space
 
 ```{r rtmodel.plotAllFeatures, echo=FALSE}
 plotFeatures(obj, what="all")
@@ -139,7 +139,7 @@ plotFeatures(obj, what="all")
 ```{r synergise.rtmodel.plotSomeFeatures, echo=FALSE, dev="svg", fig.cap="Using nsd = 2 and ppm error = 10 as an example.<br />Optimal values are selected below."}
 ```
 
-## Grid Optimisation
+# Grid Optimisation
 
 `r if(grid.n) { paste0("Using", grid.n, "features.") } else { paste0("Using ",
 grid.subset * 100, "% of the data.") }`
@@ -151,7 +151,7 @@ grid.subset * 100, "% of the data.") }`
 
 plotGrid(obj, what="details")
 
-### Grid Tables {.tabset}
+## Grid Tables {.tabset}
 
 ```{r grid.table, echo=FALSE, results="asis"}
 names <- c("total", "model", "details")
@@ -168,7 +168,7 @@ for (i in seq(along=names)){
 }
 ```
 
-### Grid Details
+## Grid Details
 
 ```{r grid.details, echo=FALSE, results="asis"}
 gridDetails <- do.call(rbind, getGridDetails(obj))
@@ -180,7 +180,7 @@ rownames(gridDetails) <- NULL
 knitr::kable(as.data.frame(gridDetails))
 ```
 
-### Best Grid Parameters
+## Best Grid Parameters
 
 ```{r synergise.grid.bestParamaters, echo=FALSE, results="asis"}
 ```
@@ -190,7 +190,7 @@ Setting best grid parameters using '`r grid.param.sel`'
   - Mass tolerance (ppm): `r obj$PpmError`
   - Number of retention time stdev: `r obj$RtNsd`
 
-## EMRT Matching
+# EMRT Matching
 
 ```{r synergise.emrt.find, echo=FALSE}
 findEMRTs(obj)
@@ -201,12 +201,12 @@ plotEMRTtable(obj)
 ```{r synergise.emrt.table, echo=FALSE, results="asis"}
 ```
 
-## Performance
+# Performance
 
 ```{r synergise.performance, echo=FALSE, results="asis"}
 ```
 
-## Exported Files
+# Exported Files
 
 ```{r synergise.export, echo=FALSE}
 ```
@@ -219,12 +219,12 @@ plotEMRTtable(obj)
 - [Grid Details](GridDetails.txt)
 - [Saved R Object (binary)](SynapterObject.rda)
 
-## Full Analysis Log
+# Full Analysis Log
 
 ```{r synergise.log, echo=FALSE, results="asis"}
 ```
 
-## Session Info
+# Session Info
 
 ```{r synergise.sessionInfo, echo=FALSE}
 ```
