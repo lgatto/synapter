@@ -58,9 +58,9 @@ of the FWER and \code{"qval"} from the \code{qvalue} package. See
 \item{missedCleavages}{Number of allowed missed cleavages. Default
 is 0.}
 
-\item{IisL}{If \code{TRUE} (default) Isoleucin and Leucin are treated as
-equal. In this case sequences like "ABCI", "ABCL" are removed because they
-are not unqiue. If \code{FALSE} "ABCI" and "ABCL" are reported as
+\item{IisL}{If \code{TRUE} Isoleucin and Leucin are treated as equal.
+In this case sequences like "ABCI", "ABCL" are removed because they are
+not unqiue. If \code{FALSE} (default) "ABCI" and "ABCL" are reported as
 unique.}
 
 \item{identppm}{Identification mass tolerance (in ppm). Default is 20.}

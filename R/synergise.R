@@ -69,9 +69,9 @@
 ##' @param peplen Minimum peptide length. Default is 7.
 ##' @param missedCleavages Number of allowed missed cleavages. Default
 ##' is 0.
-##' @param IisL If \code{TRUE} (default) Isoleucin and Leucin are treated as
-##' equal. In this case sequences like "ABCI", "ABCL" are removed because they
-##' are not unqiue. If \code{FALSE} "ABCI" and "ABCL" are reported as
+##' @param IisL If \code{TRUE} Isoleucin and Leucin are treated as equal.
+##' In this case sequences like "ABCI", "ABCL" are removed because they are
+##' not unqiue. If \code{FALSE} (default) "ABCI" and "ABCL" are reported as
 ##' unique.
 ##' @param identppm Identification mass tolerance (in ppm). Default is 20.
 ##' @param quantppm Quantitation mass tolerance (in ppm). Default is 20.
@@ -264,9 +264,9 @@ synergize1 <- function(filenames,
 ##' @param peplen Minimum peptide length. Default is 7.
 ##' @param missedCleavages Number of allowed missed cleavages. Default
 ##' is 0.
-##' @param IisL If \code{TRUE} (default) Isoleucin and Leucin are treated as
-##' equal. In this case sequences like "ABCI", "ABCL" are removed because they
-##' are not unqiue. If \code{FALSE} "ABCI" and "ABCL" are reported as
+##' @param IisL If \code{TRUE} Isoleucin and Leucin are treated as equal.
+##' In this case sequences like "ABCI", "ABCL" are removed because they are
+##' not unqiue. If \code{FALSE} (default) "ABCI" and "ABCL" are reported as
 ##' unique.
 ##' @param identppm Identification mass tolerance (in ppm). Default is 20.
 ##' @param quantppm Quantitation mass tolerance (in ppm). Default is 20.
@@ -357,7 +357,7 @@ synergize2 <- function(filenames,
                        fpr = 0.01,
                        peplen = 7,
                        missedCleavages = 0,
-                       IisL = TRUE,
+                       IisL = FALSE,
                        identppm = 20,
                        quantppm = 20,
                        uniquepep = TRUE,
@@ -422,7 +422,7 @@ synergize2 <- function(filenames,
                        fpr = 0.01,
                        peplen = 7,
                        missedCleavages = 0,
-                       IisL = TRUE,
+                       IisL = FALSE,
                        identppm = 20,
                        quantppm = 20,
                        uniquepep = TRUE,
