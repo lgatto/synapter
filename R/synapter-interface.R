@@ -679,9 +679,11 @@ setMethod(performance2, "Synapter",
           function(object, verbose = interactive()) {
               id.source <- object$MatchedEMRTs$idSource
               counts <- object$MatchedEMRTs$Counts
-              na.counts <- is.na(counts)
-              ans <- table(id.source, na.counts)
-              print(ans)
+              if (verbose) {
+                na.counts <- is.na(counts)
+                ans <- table(id.source, na.counts)
+                print(ans)
+              }
               invisible(list(id.source = id.source, counts = counts))
           })
 
