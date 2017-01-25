@@ -82,16 +82,23 @@ tab <- as.data.frame(getEMRTtable(obj))
 colnames(tab) <- c("Number of assigned EMRTs", "Freq")
 knitr::kable(tab)
 
-## @knitr synergise.performance
+## @knitr synergise.performance.enrichment
 perf <- performance(obj, verbose=FALSE)
 group <- c("(S) Synapter (uniquely matched EMRTs)",
            "(I) Identification", "(Q) Quantitation", "(S/Q) Enrichment")
 values <- c(perf$Synapter, perf$Ident, perf$Quant, paste0(round(perf$Enrichment, 2), "%"))
 knitr::kable(data.frame(group, values, stringsAsFactors=FALSE), align="lr")
 
+## @knitr synergise.performance.overlap
 overlap <- as.data.frame(perf$VennCounts)
 colnames(overlap) <- "Number of peptides"
 knitr::kable(overlap)
+
+## @knitr synergise.performance.source
+perf2 <- performance2(obj, verbose=FALSE)
+perf2df <- table(perf2$id.source, is.na(perf2$counts))
+colnames(perf2df) <- c("Number of peptides with valid counts", "Number of `NA`")
+knitr::kable(perf2df)
 
 ## @knitr synergise.export
 writeMergedPeptides(obj, file=file.path(outputdir, "MergedPeptides.csv"))

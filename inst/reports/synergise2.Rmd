@@ -316,7 +316,16 @@ plotIntensity(obj, what="model", nsd=1) ## better focus on model
 
 # Performance
 
-```{r synergise.performance, echo=FALSE, results="asis"}
+## Enrichment
+```{r synergise.performance.enrichment, echo=FALSE, results="asis"}
+```
+
+## Overlap
+```{r synergise.performance.overlap, echo=FALSE, results="asis"}
+```
+
+## Source
+```{r synergise.performance.source, echo=FALSE, results="asis"}
 ```
 
 # Exported Files
