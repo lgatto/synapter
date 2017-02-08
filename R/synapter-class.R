@@ -1,6 +1,7 @@
 ##' IMPORTANT: update the initialization value of the ClassVersion field
 ##' everytime you change this file! (regardless if you just change the code in
 ##' a method or the complete API).
+.synapterClassVersion <- "2.0.0"
 .Synapter <-
     setRefClass("Synapter",
                 fields = list(
@@ -50,9 +51,7 @@
                     FragmentMatchingPpmTolerance = "numeric"),
                 methods = list(
                     initialize = function() {
-                        ## IMPORTANT: always increase the ClassVersion field if
-                        ## you change anything in this file!
-                        .self$ClassVersion <- "2.0.0"
+                        .self$ClassVersion <- .synapterClassVersion
 
                         .self$Version <- as.character(packageVersion("synapter"))
                         .self$SynapterLog <- c(.self$SynapterLog,

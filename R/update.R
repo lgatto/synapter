@@ -12,7 +12,7 @@
   ## synapter class version >= 2.0.0
   version <- as.package_version(object$ClassVersion)
 
-  isTRUE(version == .Synapter$new()$ClassVersion)
+  isTRUE(version == .synapterClassVersion)
 }
 
 ##' Updates an old synapter object
@@ -46,7 +46,7 @@
     colnames(newObject$QuantPep3DData)[
       colnames(newObject$QuantPep3DData) == "Function"] <- "matchedEMRTs"
 
-    newObject$ClassVersion <- .Synapter$new()$ClassVersion
+    newObject$ClassVersion <- .synapter$ClassVersion
     newObject$Version <- as.character(packageVersion("synapter"))
     newObject$SynapterLog <- c(newObject$SynapterLog,
                                paste("Instance updated to synapter",
