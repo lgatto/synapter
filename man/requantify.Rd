@@ -2,8 +2,8 @@
 % Please edit documentation in R/requantify-functions.R
 \docType{methods}
 \name{requantify,MSnSet-method}
-\alias{requantify}
 \alias{requantify,MSnSet-method}
+\alias{requantify}
 \title{Intensity requantification}
 \usage{
 \S4method{requantify}{MSnSet}(object, saturationThreshold,
@@ -70,13 +70,12 @@ saturated ion are requantified (unsaturated peptides are unaffected). If
 \code{saturationThreshold} are requantified by their theoretical
 distribution.
 }
-\author{
-Sebastian Gibb \email{mail@sebastiangibb.de} and Pavel Shliaha
-}
 \references{
 See discussion on github: \url{https://github.com/lgatto/synapter/issues/39}
 }
 \seealso{
 MSnSet documentation: \code{\linkS4class{MSnSet}}
 }
-
+\author{
+Sebastian Gibb \email{mail@sebastiangibb.de} and Pavel Shliaha
+}

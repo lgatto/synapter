@@ -59,9 +59,6 @@ peptides for that specific combination.
 The function returns an instance of the class
 \code{"\linkS4class{MasterFdrResults}"}.
 }
-\author{
-Laurent Gatto
-}
 \references{
 Bond N. J., Shliaha P.V., Lilley K.S. and Gatto L.,
 (2013) J. Prot. Research.
@@ -75,4 +72,6 @@ The vignette, accessible with \code{synapterGuide()} illustrates a
 complete pipeline using \code{estimateMasterFdr} and
 \code{makeMaster}.
 }
-
+\author{
+Laurent Gatto
+}

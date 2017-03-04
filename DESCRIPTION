@@ -50,4 +50,4 @@ License: GPL-2
 URL: http://lgatto.github.com/synapter/
 VignetteBuilder: knitr
 biocViews: MassSpectrometry, Proteomics, GUI, QualityControl
-RoxygenNote: 5.0.1
+RoxygenNote: 6.0.1

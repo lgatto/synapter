@@ -2,16 +2,16 @@
 % Please edit documentation in R/master.R
 \name{makeMaster}
 \alias{makeMaster}
-\alias{writeFragmentLibrary}
-\alias{writeFragmentLibrary,MasterPeptides,character-method}
 \alias{writeMasterPeptides}
 \alias{writeMasterPeptides,MasterPeptides,character-method}
+\alias{writeFragmentLibrary}
+\alias{writeFragmentLibrary,MasterPeptides,character-method}
 \title{Merges final peptide files}
 \usage{
 makeMaster(pepfiles, fragmentfiles, fdr = 0.01, method = c("BH",
-  "Bonferroni", "qval"), span = 0.05, maxDeltaRt = Inf,
-  removeNeutralLoss = TRUE, removePrecursor = TRUE, tolerance = 2.5e-05,
-  verbose = interactive())
+  "Bonferroni", "qval"), span.rt = 0.05, span.int = 0.05,
+  maxDeltaRt = Inf, removeNeutralLoss = TRUE, removePrecursor = TRUE,
+  tolerance = 2.5e-05, verbose = interactive())
 }
 \arguments{
 \item{pepfiles}{A \code{character} vector of final peptide file
@@ -27,8 +27,11 @@ discovery  rate limit.}
 \item{method}{A \code{character} indicating the p-value adjustment to
 be used. One of \code{BH} (default), \code{Bonferroni} or \code{qval}.}
 
-\item{span}{A \code{numeric} with the loess span parameter value
+\item{span.rt}{A \code{numeric} with the loess span parameter value
 to be used for retention time modelling.}
+
+\item{span.int}{A \code{numeric} with the loess span parameter value
+to be used for intensity modelling.}
 
 \item{maxDeltaRt}{A \code{double} value that sets a maximum limit for
 the retention time deviaton between master and slave run to be included}
@@ -120,9 +123,6 @@ intensity of the different runs.
 The fragment library dataframe can be exported to disk as
 \code{csv} file with \code{writeFragmentLibrary}.
 }
-\author{
-Laurent Gatto, Sebastian Gibb
-}
 \references{
 Shliaha P.V., Bond N. J., Lilley K.S. and Gatto L., in prep.
 }
@@ -140,4 +140,6 @@ The vignette, accessible with \code{synapterGuide()}
 illustrates a complete pipeline using \code{estimateMasterFdr} and
 \code{makeMaster}.
 }
-
+\author{
+Laurent Gatto, Sebastian Gibb
+}

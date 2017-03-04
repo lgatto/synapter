@@ -27,4 +27,3 @@ individual files.
 \author{
 Laurent Gatto
 }
-

@@ -2,8 +2,8 @@
 % Please edit documentation in R/MSnbase-extensions.R
 \docType{methods}
 \name{synapterPlgsAgreement,MSnSet-method}
-\alias{synapterPlgsAgreement}
 \alias{synapterPlgsAgreement,MSnSet-method}
+\alias{synapterPlgsAgreement}
 \title{Synapter/PLGS Agreement}
 \usage{
 \S4method{synapterPlgsAgreement}{MSnSet}(object, \ldots)
@@ -57,13 +57,12 @@ After combining multiple \code{\linkS4class{MSnSet}} the method
  nDisagree)}.}
 }
 }
-\author{
-Sebastian Gibb \email{mail@sebastiangibb.de}
-}
 \references{
 See discussion on github: \url{https://github.com/lgatto/synapter/issues/73}
 }
 \seealso{
 MSnSet documentation: \code{\linkS4class{MSnSet}}
 }
-
+\author{
+Sebastian Gibb \email{mail@sebastiangibb.de}
+}

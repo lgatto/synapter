@@ -2,8 +2,8 @@
 % Please edit documentation in R/synergise.R
 \name{synergise}
 \alias{synergise}
-\alias{synergise1}
 \alias{synergize}
+\alias{synergise1}
 \alias{synergize1}
 \title{Synergise identification and quantitation results}
 \usage{
@@ -171,11 +171,10 @@ htmlReport <- paste0("file:///", file.path(output, "synapter.html")) ## the resu
 browseURL(htmlReport) ## open the report with default browser
 }
 }
-\author{
-Laurent Gatto, Sebastian Gibb
-}
 \references{
 Bond N. J., Shliaha P.V., Lilley K.S. and Gatto
 L. (2013) J. Prot. Research.
 }
-
+\author{
+Laurent Gatto, Sebastian Gibb
+}

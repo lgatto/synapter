@@ -13,4 +13,3 @@ Opens the relevant vignette; a shortcut to using \code{vignette}.
 \author{
 Laurent Gatto
 }
-

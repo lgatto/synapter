@@ -2,8 +2,8 @@
 % Please edit documentation in R/requantify-functions.R
 \docType{methods}
 \name{rescaleForTop3,MSnSet,MSnSet-method}
-\alias{rescaleForTop3}
 \alias{rescaleForTop3,MSnSet,MSnSet-method}
+\alias{rescaleForTop3}
 \title{Rescale for TOP3}
 \usage{
 \S4method{rescaleForTop3}{MSnSet,MSnSet}(before, after, saturationThreshold,
@@ -48,9 +48,6 @@ intensity values (see
 \url{https://github.com/lgatto/synapter/issues/39#issuecomment-207987278} for
 the complete explanation/discussion).
 }
-\author{
-Sebastian Gibb \email{mail@sebastiangibb.de} and Pavel Shliaha
-}
 \references{
 See discussion on github: \url{https://github.com/lgatto/synapter/issues/39}
 }
@@ -58,4 +55,6 @@ See discussion on github: \url{https://github.com/lgatto/synapter/issues/39}
 MSnSet documentation: \code{\linkS4class{MSnSet}}
 \url{https://github.com/lgatto/synapter/issues/39#issuecomment-207987278}
 }
-
+\author{
+Sebastian Gibb \email{mail@sebastiangibb.de} and Pavel Shliaha
+}
