@@ -8,7 +8,7 @@
 synergise2(filenames, master = FALSE, object, outputdir,
   outputfile = paste0("synapter_report_", strftime(Sys.time(),
   "\%Y\%m\%d-\%H\%M\%S"), ".html"), fdr = 0.01, fdrMethod = c("BH",
-  "Bonferroni", "qval"), fpr = 0.01, peplen = 7, missedCleavages = 0,
+  "Bonferroni", "qval"), fpr = 0.01, peplen = 7, missedCleavages = 2,
   IisL = FALSE, identppm = 20, quantppm = 20, uniquepep = TRUE,
   span.rt = 0.05, span.int = 0.05, grid.ppm.from = 2, grid.ppm.to = 20,
   grid.ppm.by = 2, grid.nsd.from = 0.5, grid.nsd.to = 5,
@@ -61,7 +61,7 @@ of the FWER and \code{"qval"} from the \code{qvalue} package. See
 \item{peplen}{Minimum peptide length. Default is 7.}
 
 \item{missedCleavages}{Number of allowed missed cleavages. Default
-is 0.}
+is 2.}
 
 \item{IisL}{If \code{TRUE} Isoleucin and Leucin are treated as equal.
 In this case sequences like "ABCI", "ABCL" are removed because they are

@@ -263,7 +263,7 @@ synergize1 <- function(filenames,
 ##' @param fpr Protein false positive rate. Default is 0.01.
 ##' @param peplen Minimum peptide length. Default is 7.
 ##' @param missedCleavages Number of allowed missed cleavages. Default
-##' is 0.
+##' is 2.
 ##' @param IisL If \code{TRUE} Isoleucin and Leucin are treated as equal.
 ##' In this case sequences like "ABCI", "ABCL" are removed because they are
 ##' not unqiue. If \code{FALSE} (default) "ABCI" and "ABCL" are reported as
@@ -356,7 +356,7 @@ synergize2 <- function(filenames,
                        fdrMethod = c("BH", "Bonferroni", "qval" ),
                        fpr = 0.01,
                        peplen = 7,
-                       missedCleavages = 0,
+                       missedCleavages = 2,
                        IisL = FALSE,
                        identppm = 20,
                        quantppm = 20,

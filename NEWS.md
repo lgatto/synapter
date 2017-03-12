@@ -40,7 +40,8 @@
 - Add `rescueEMRTs` functions; replaces the argument `mergedEMRTs` in
     `findEMRTs`; closes #93 [2015-07-26 Sun].
 - Add `synergise2` which combines the integrates the new 3D grid search, the
-    fragment matching; closes #119 [2016-10-25 Di].
+    fragment matching; and uses slightly different default arguments than
+    `synergise1`; closes #119 [2016-10-25 Di].
 - Load isotopic distributions from Pep3D data and also export them to MSnSet, to
     allow the correction of detector saturation; closes #39 [2015-03-29 Sun].
 - Add `synapterPlgsAgreement` to find agreement between *synapter* and *PLGS*;
