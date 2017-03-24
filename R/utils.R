@@ -171,7 +171,6 @@ calculateGridPerformance <- function(identpep, sortedPep3d, mergedpep, matches) 
   ##     identified subset!
 
   ## #############################################################
-
   n <- length(matches)
   k <- lengths(matches)
   k1 <- which(k == 1L)
@@ -205,9 +204,7 @@ calculateGridPerformance <- function(identpep, sortedPep3d, mergedpep, matches) 
 
   ## exclude all values where precursor.leID.quant == NA
   details <- details[notNaIdx]
-
-  ## tabulate needs positive integer values
-  details <- setNames(tabulate(1-min(details)+details), sort(unique(details)))
+  details <- .table(details)
 
   ## make sure that we have alway 5 categories
   grddetails <- c("-2"=0, "-1"=0, "0"=0, "1"=0, "2"=0)
@@ -681,4 +678,16 @@ diagnosticErrors <- function(x) {
   emrts$matchedMultipleIdentEMRTs <- FALSE
   emrts$matchedMultipleIdentEMRTs[k1[dup]] <- TRUE
   emrts
+}
+
+#' .table is similar to table but because it is limited to numeric it is faster
+#' (but less general)
+#' @param x numeric vector
+#' @return named vector with numbers of occurence
+#' @noRd
+.table <- function(x) {
+  stopifnot(is.numeric(x))
+  ux <- sort(unique(x))
+  i <- match(x, ux)
+  setNames(tabulate(i, nbins=length(ux)), ux)
 }

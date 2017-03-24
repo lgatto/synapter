@@ -151,3 +151,9 @@ test_that(".filterNonUniqueIdentMatches", {
   r$matchedMultipleIdentEMRTs <- c(rep(TRUE, 2), rep(FALSE, 5))
   expect_equal(synapter:::.filterNonUniqueIdentMatches(emrts), r)
 })
+
+test_that(".table", {
+  expect_error(synapter:::.table(LETTERS[1:10]))
+  expect_equal(synapter:::.table(1:10), setNames(rep(1, 10), as.character(1:10)))
+  expect_equal(synapter:::.table(c(-2, 2, 2, 2)), setNames(c(1, 3), c("-2", "2")))
+})
