@@ -147,10 +147,12 @@ findRtIndices <- function(sortedPep3d, lowerHDMSeRt, upperHDMSeRt) {
 
 findMzIndices <- function(pep3dMz, hdmseMz, rtIndices, ppmthreshold) {
   stopifnot(nrow(rtIndices) == length(hdmseMz))
-  apply(cbind(rtIndices, hdmseMz), 1, function(x) {
-    (x[1]:x[2])[which((abs(error.ppm(obs=pep3dMz[x[1]:x[2]] ,
-                                     theo=x[3])) < ppmthreshold))]
-  })
+  l <- vector(mode="list", length=nrow(rtIndices))
+  for (i in seq(along=l)) {
+    j <- rtIndices[i, 1L]:rtIndices[i, 2L]
+    l[[i]] <- j[abs(error.ppm(obs=pep3dMz[j], theo=hdmseMz[i])) < ppmthreshold]
+  }
+  l
 }
 
 findImIndices <- function(pep3dIm, hdmseIm, mzIndices, imthreshold) {
@@ -158,9 +160,12 @@ findImIndices <- function(pep3dIm, hdmseIm, mzIndices, imthreshold) {
     return(mzIndices)
   }
   stopifnot(length(mzIndices) == length(hdmseIm))
-  mapply(function(mzIdx, im) {
-    mzIdx[which( abs(pep3dIm[mzIdx] - im) < imthreshold )]
-  }, mzIdx=mzIndices, im=hdmseIm, SIMPLIFY=FALSE, USE.NAMES=FALSE)
+  l <- vector(mode="list", length=length(mzIndices))
+  for (i in seq(along=l)) {
+    l[[i]] <-
+      mzIndices[[i]][abs(pep3dIm[mzIndices[[i]]] - hdmseIm[i]) < imthreshold]
+  }
+  l
 }
 
 calculateGridPerformance <- function(identpep, sortedPep3d, mergedpep, matches) {
