@@ -337,9 +337,9 @@ synergize1 <- function(filenames,
 ##' @examples
 ##' \dontrun{
 ##' library(synapterdata)
-##' data(synobj2)
+##' data(synobj3)
 ##' output <- tempdir() ## a temporary directory
-##' synergise2(object = synobj2, outputdir = output, outputfile = "synapter.html")
+##' synergise2(object = synobj3, outputdir = output, outputfile = "synapter.html")
 ##' htmlReport <- paste0("file:///", file.path(output, "synapter.html")) ## the result report
 ##' browseURL(htmlReport) ## open the report with default browser
 ##' }
