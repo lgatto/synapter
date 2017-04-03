@@ -35,7 +35,7 @@ Imports:
     readr (>= 0.2),
     rmarkdown (>= 1.0)
 Suggests:
-    synapterdata,
+    synapterdata (>= 1.13.1),
     xtable,
     testthat (>= 0.8),
     BRAIN,
