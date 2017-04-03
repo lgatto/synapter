@@ -115,8 +115,8 @@ test_that(".mergeMaster", {
   expect_error(synapter:::.mergeMaster(l[1]),
                "To create a master at least two identification data are needed.")
   expect_equal(suppressWarnings(
-                 synapter:::.mergeMaster(l, span=0.5, verbose = FALSE)), m,
-               tolerance = 0.02)
+                 synapter:::.mergeMaster(l, span.rt = 0.5, span.int = 0.5,
+                                         verbose = FALSE)), m, tolerance = 0.02)
 })
 
 test_that(".regeneratePrecursorLeId", {
