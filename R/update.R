@@ -46,7 +46,7 @@
     colnames(newObject$QuantPep3DData)[
       colnames(newObject$QuantPep3DData) == "Function"] <- "matchedEMRTs"
 
-    newObject$ClassVersion <- .synapter$ClassVersion
+    newObject$ClassVersion <- .synapterClassVersion
     newObject$Version <- as.character(packageVersion("synapter"))
     newObject$SynapterLog <- c(newObject$SynapterLog,
                                paste("Instance updated to synapter",
