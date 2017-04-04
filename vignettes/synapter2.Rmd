@@ -29,7 +29,7 @@ vignette: >
 suppressPackageStartupMessages(library("synapter"))
 suppressPackageStartupMessages(library("synapterdata"))
 suppressPackageStartupMessages(library("BiocStyle"))
-data(synobj3)
+data(synobj2)
 ```
 
 ```{r include_forword, child="Foreword.md"}
@@ -72,7 +72,7 @@ and the [detector saturation correction](\#saturation) for `MSnSet`s.
 
 To demonstrate a typical step-by-step workflow we use example data
 that are available on http://proteome.sysbiol.cam.ac.uk/lgatto/synapter/data/.
-There is also an `synobj3` object in `r Biocexptpkg("synapterdata")` which
+There is also an `synobj2` object in `r Biocexptpkg("synapterdata")` which
 contains the same data.
 
 The `Synapter` constructor uses a named `list` of input files. Please note that
@@ -80,12 +80,12 @@ we add `identfragments` (`final_fragment.csv`) and
 `quantspectra` (`Spectrum.xml`) because we want to apply the fragment matching
 later.
 
-```{r create-synobj3-file, results="asis", echo=FALSE, comment=NA}
-cat(readLines(system.file(file.path("scripts", "create_synobj3.R"),
+```{r create-synobj2-file, results="asis", echo=FALSE, comment=NA}
+cat(readLines(system.file(file.path("scripts", "create_synobj2.R"),
                           package="synapterdata"), n=13), sep="\n")
 ```
-```{r show-synobj3}
-synobj3
+```{r show-synobj2}
+synobj2
 ```
 
 ### Filtering
@@ -97,24 +97,24 @@ Here we use the default values for each method. But the accompanying plotting
 methods should be used to find the best threshold:
 
 ```{r filtering}
-filterUniqueDbPeptides(synobj3,
+filterUniqueDbPeptides(synobj2,
                        missedCleavages=0,
                        IisL=TRUE)
-filterPeptideLength(synobj3, l=7)
-plotFdr(synobj3)
-filterQuantPepScore(synobj3, method="BH",
+filterPeptideLength(synobj2, l=7)
+plotFdr(synobj2)
+filterQuantPepScore(synobj2, method="BH",
                     fdr=0.05)
-filterIdentPepScore(synobj3, method="BH",
+filterIdentPepScore(synobj2, method="BH",
                     fdr=0.05)
 par(mfcol=c(1, 2))
-plotPpmError(synobj3, what="Ident")
-plotPpmError(synobj3, what="Quant")
+plotPpmError(synobj2, what="Ident")
+plotPpmError(synobj2, what="Quant")
 par(mfcol=c(1, 1))
-filterQuantPpmError(synobj3, ppm=20)
-filterIdentPpmError(synobj3, ppm=20)
-plotPepScores(synobj3)
-filterIdentProtFpr(synobj3, fpr=0.05)
-filterQuantProtFpr(synobj3, fpr=0.05)
+filterQuantPpmError(synobj2, ppm=20)
+filterIdentPpmError(synobj2, ppm=20)
+plotPepScores(synobj2)
+filterIdentProtFpr(synobj2, fpr=0.05)
+filterQuantProtFpr(synobj2, fpr=0.05)
 ```
 
 ### Modeling retention time
@@ -127,18 +127,18 @@ Here we use the default values but as stated above the plotting methods should
 be used to find sensible thresholds.
 
 ```{r rtmodel}
-mergePeptides(synobj3)
+mergePeptides(synobj2)
 
-plotRt(synobj3, what="data")
-setLowessSpan(synobj3, span=0.05)
-modelRt(synobj3)
+plotRt(synobj2, what="data")
+setLowessSpan(synobj2, span=0.05)
+modelRt(synobj2)
 
 par(mfcol=c(1, 2))
-plotRtDiffs(synobj3)
-plotRt(synobj3, what="model", nsd=1)
+plotRtDiffs(synobj2)
+plotRt(synobj2, what="model", nsd=1)
 par(mfcol=c(1, 1))
 
-plotFeatures(synobj3, what="all", ionmobility=TRUE)
+plotFeatures(synobj2, what="all", ionmobility=TRUE)
 ```
 
 ### Grid search{#gridsearch}
@@ -154,13 +154,13 @@ If one or both datasets are MS$^E$ data it falls back to the traditional 2D grid
 search.
 
 ```{r gridsearch}
-searchGrid(synobj3,
+searchGrid(synobj2,
            imdiffs=seq(from=0.6, to=1.6, by=0.2),
            ppms=seq(from=2, to=20, by=2),
            nsds=seq(from=0.5, to=5, by=0.5))
-setBestGridParams(synobj3)
-findEMRTs(synobj3)
-plotEMRTtable(synobj3)
+setBestGridParams(synobj2)
+findEMRTs(synobj2)
+plotEMRTtable(synobj2)
 ```
 
 ### Fragment matching{#fragmentmatching}
@@ -176,10 +176,10 @@ peaks/fragments between them.
 First we starting by removing less intense fragments and peaks.
 
 ```{r filterfragments}
-filterFragments(synobj3,
+filterFragments(synobj2,
                 what="fragments.ident",
                 minIntensity=70)
-filterFragments(synobj3,
+filterFragments(synobj2,
                 what="spectra.quant",
                 minIntensity=70)
 ```
@@ -187,30 +187,30 @@ filterFragments(synobj3,
 Next we look for common peaks via `fragmentMatching`:
 
 ```{r fm}
-fragmentMatching(synobj3)
+fragmentMatching(synobj2)
 ```
 
 We get tables for unique and non-unique matches:
 
 ```{r fmperf, results="asis"}
-knitr::kable(fragmentMatchingPerformance(synobj3,
+knitr::kable(fragmentMatchingPerformance(synobj2,
                                          what="unique"))
-knitr::kable(fragmentMatchingPerformance(synobj3,
+knitr::kable(fragmentMatchingPerformance(synobj2,
                                          what="non-unique"))
 ```
 
 Subsequently we could filter by minimal accepted common peaks:
 
 ```{r filterfm}
-filterUniqueMatches(synobj3, minNumber=1)
-filterNonUniqueMatches(synobj3, minDelta=2)
-filterNonUniqueIdentMatches(synobj3)
+filterUniqueMatches(synobj2, minNumber=1)
+filterNonUniqueMatches(synobj2, minDelta=2)
+filterNonUniqueIdentMatches(synobj2)
 ```
 
 Finally we rescue EMRTs that are filtered but were identified by *PLGS*:
 
 ```{r rescue}
-rescueEMRTs(synobj3, method="rescue")
+rescueEMRTs(synobj2, method="rescue")
 ```
 
 ### Modeling intensity{#intensitymodel}
@@ -224,10 +224,10 @@ contrast to the retention time model the prediction is necessary for the matched
 quantitation data.
 
 ```{r intmodel}
-plotIntensity(synobj3, what="data")
-setLowessSpan(synobj3, 0.05)
-modelIntensity(synobj3)
-plotIntensity(synobj3, what="model", nsd=1)
+plotIntensity(synobj2, what="data")
+setLowessSpan(synobj2, 0.05)
+modelIntensity(synobj2)
+plotIntensity(synobj2, what="model", nsd=1)
 ```
 
 ## `synergise2`
@@ -237,7 +237,7 @@ wrapped in the `synergise2` function. As side effect it generates a nice
 *HTML* report. An example could be found on https://github.com/lgatto/synapter.
 
 ```{r synergise2, eval=FALSE}
-synobj3 <- synergise2(filenames = inlist,
+synobj2 <- synergise2(filenames = inlist,
                       outputdir = ".")
 ```
 
@@ -246,7 +246,7 @@ synobj3 <- synergise2(filenames = inlist,
 For the next steps we need to convert the `Synapter` object into an `MSnSet`.
 
 ```{r convert}
-msn <- as(synobj3, "MSnSet")
+msn <- as(synobj2, "MSnSet")
 ```
 
 Subsequently we look for *synapter*/*PLGS* agreement (this is more
