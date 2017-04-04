@@ -30,7 +30,7 @@ vignette: >
 suppressPackageStartupMessages(library("synapter"))
 suppressPackageStartupMessages(library("synapterdata"))
 suppressPackageStartupMessages(library("BiocStyle"))
-data(synobj2, package="synapterdata")
+synobj2RData()
 ```
 
 ```{r include_forword, child="Foreword.md"}
@@ -60,7 +60,7 @@ The example data `synobj2` used throughout this document is available in the
 
 ```{r loadsynobj2, eval=FALSE}
 library("synapterdata")
-data(synobj2)
+synobj2RData()
 ```
 
 In the [next section](\sec:synergise] we describe how `synobj2` was generated.

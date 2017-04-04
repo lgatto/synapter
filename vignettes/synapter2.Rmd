@@ -29,7 +29,7 @@ vignette: >
 suppressPackageStartupMessages(library("synapter"))
 suppressPackageStartupMessages(library("synapterdata"))
 suppressPackageStartupMessages(library("BiocStyle"))
-data(synobj2)
+synobj2RData()
 ```
 
 ```{r include_forword, child="Foreword.md"}
