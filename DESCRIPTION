@@ -49,5 +49,5 @@ Description: The synapter package provides functionality to reanalyse
 License: GPL-2
 URL: http://lgatto.github.com/synapter/
 VignetteBuilder: knitr
-biocViews: MassSpectrometry, Proteomics, GUI, QualityControl
+biocViews: MassSpectrometry, Proteomics, QualityControl
 RoxygenNote: 6.0.1
