@@ -165,7 +165,8 @@ the file was created with \code{\link{makeMaster}} are not repeated here.
 \examples{
 output <- tempdir() ## a temporary directory
 synapterTinyData()
-synergise(object = synapterTiny, outputdir = output, outputfile = "synapter.html", grid.subset = 0.2)
+synergise(object = synapterTiny, outputdir = output, outputfile = "synapter.html",
+          grid.subset = 0.2)
 htmlReport <- paste0("file:///", file.path(output, "synapter.html")) ## the result report
 \dontrun{
 browseURL(htmlReport) ## open the report with default browser
