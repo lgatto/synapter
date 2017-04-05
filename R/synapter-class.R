@@ -1,6 +1,7 @@
 ##' IMPORTANT: update the initialization value of the ClassVersion field
 ##' everytime you change this file! (regardless if you just change the code in
 ##' a method or the complete API).
+##' @noRd
 .synapterClassVersion <- "2.0.0"
 .Synapter <-
     setRefClass("Synapter",
