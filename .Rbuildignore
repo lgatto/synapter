@@ -2,6 +2,6 @@
 .gitignores
 README.md
 NEWS.md
-docs
 .travis.yml
 sandbox/*
+^docs$
