@@ -62,7 +62,49 @@ test_that(".correctIntensity", {
                                 processing = "Coerced from a 'Synapter' object."),
            annotation = "No annotation",
            featureData = fdata)
-  expect_equal(.correctIntensity(m, method="correct"), r)
-  expect_equal(.correctIntensity(r, method="undo"), m)
+  expect_equal(synapter:::.correctIntensity(m, method="correct"), r)
+  expect_equal(synapter:::.correctIntensity(r, method="undo"), m)
+})
+
+test_that(".getSpectrum", {
+  assaydata <- new.env(hash=TRUE, parent=emptyenv(), size=2)
+  assign("foo", new("Spectrum2", mz=1:3, intensity=1:3), envir=assaydata)
+  assign("bar", new("Spectrum2", mz=4:6, intensity=4:6), envir=assaydata)
+  m <- new("MSnExp",
+           assayData = assaydata,
+           processingData = new("MSnProcess",
+                                processing = "Loaded", files="foobar.csv"),
+           featureData = new("AnnotatedDataFrame", data=data.frame(spectrum=1:2,
+                                                                   row.names=c("bar", "foo"),
+                                                                   stringsAsFactors=FALSE)),
+           phenoData = new("NAnnotatedDataFrame", data=data.frame(sampleNames=1L,
+                                                                  type="spectrum")))
+  expect_equal(synapter:::.getSpectrum(key="spectrum:200", m),
+               new("Spectrum2", precScanNum=200L, fromFile=1L,
+                   acquisitionNum=NA_integer_,
+                   collisionEnergy=NA_real_,
+                   precursorCharge=NA_integer_,
+                   precursorIntensity=NA_real_,
+                   precursorMz=NA_real_,
+                   peaksCount=integer(),
+                   scanIndex=integer()))
+  expect_equal(synapter:::.getSpectrum(key="foo", m), m[["foo"]])
+  expect_equal(synapter:::.getSpectrum(key="bar", m), m[["bar"]])
+})
+
+test_that(".sumAllPeakCounts", {
+  assaydata <- new.env(hash=TRUE, parent=emptyenv(), size=2)
+  assign("foo", new("Spectrum2", mz=1:3, intensity=1:3), envir=assaydata)
+  assign("bar", new("Spectrum2", mz=4:6, intensity=4:6), envir=assaydata)
+  m <- new("MSnExp",
+           assayData = assaydata,
+           processingData = new("MSnProcess",
+                                processing = "Loaded", files="foobar.csv"),
+           featureData = new("AnnotatedDataFrame", data=data.frame(spectrum=1:2,
+                                                                   row.names=c("bar", "foo"),
+                                                                   stringsAsFactors=FALSE)),
+           phenoData = new("NAnnotatedDataFrame", data=data.frame(sampleNames=1L,
+                                                                  type="spectrum")))
+  expect_equal(synapter:::.sumAllPeakCounts(m), 6)
 })
 
