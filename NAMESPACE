@@ -1,39 +1,54 @@
 import(cleaver)
 import(knitr)
-import(hwriter)
 import(utils)
 import(MSnbase)
 import(methods)
-import(BiocParallel)
+
+importFrom(graphics, abline, axis, boxplot, grid, hist, layout, legend, lines,
+                     par, points, polygon, rect, rug, segments, text)
+importFrom(stats, ave, density, fitted, loess, lowess, median, na.omit,
+                  predict, quantile, rnorm, sd, setNames, weighted.mean)
 
 importFrom(qvalue, qvalue)
 importFrom(multtest, mt.rawp2adjp)
 importFrom(lattice, levelplot, densityplot, barchart)
 importFrom(RColorBrewer, brewer.pal)
-importFrom(Biobase, addVigs2WinMenu)
+importFrom(Biobase, addVigs2WinMenu, isCurrent, updateObject, validMsg, "exprs<-")
 importFrom(Biostrings, readAAStringSet)
+importFrom(tools, file_ext, file_path_sans_ext)
+importFrom(readr, read_csv, read_tsv, read_lines, cols_only)
+importFrom(rmarkdown, render)
 
 export(Synapter, ## constructor
        as.MSnSet.Synapter,
+       createUniquePeptideDbRds,
        synergise,
-       synapterGUI,
+       synergise1,
+       synergise2,
+       synergize,
+       synergize1,
+       synergize2,
        makeMaster,
-       writeMasterPeptides,
        estimateMasterFdr,
        inspectPeptideScores,
+       rescaleForTop3,
        synapterGuide,
        synapterTinyData)
 
 exportClasses(MasterPeptides,
               MasterFdrResults)
 
-exportMethods(show, 
+exportMethods(show,
               inputFiles,
               getLog,
               mergePeptides,
               modelRt,
+              modelIntensity,
               findEMRTs,
+              rescueEMRTs,
               searchGrid,
+              fragmentMatching,
+              fragmentMatchingPerformance,
               ## getters and setters
               getGrid,
               getGridDetails,
@@ -53,14 +68,19 @@ exportMethods(show,
               getLowessSpan,
               setRtNsd,
               getRtNsd,
+              setImDiff,
+              getImDiff,
               getPpmErrorQs,
               getRtQs,
               getPepNumbers,
               showFdrStats,
               getEMRTtable,
+              setFragmentMatchingPpmTolerance,
+              getFragmentMatchingPpmTolerance,
               performance,
               performance2,
               ## filtering prior to merging
+              filterFragments,
               filterPeptideLength,
               filterQuantPepScore,
               filterIdentPepScore,
@@ -71,28 +91,39 @@ exportMethods(show,
               filterUniqueDbPeptides,
               filterUniqueQuantDbPeptides,
               filterUniqueIdentDbPeptides,
+              filterUniqueMatches,
+              filterNonUniqueMatches,
+              filterNonUniqueIdentMatches,
               ## plotting
               plotPpmError,
               plotRtDiffs,
               plotRt,
+              plotIntensity,
               plotPepScores,
               plotFdr,
               plotEMRTtable,
               plotGrid,
               plotFeatures,
+              plotFragmentMatching,
+              plotFragmentMatchingPerformance,
+              plotCumulativeNumberOfFragments,
               ## exporters
               writeMergedPeptides,
               writeMatchedEMRTs,
               writeIdentPeptides,
-              writeQuantPeptides,              
+              writeQuantPeptides,
               ## MasterFdrResults and MasterPeptides
               bestComb,
               allComb,
               masterFdr,
               fileNames,
               plot,
-              show)
-              
-              
-
-
+              show,
+              writeMasterPeptides,
+              writeFragmentLibrary,
+              getIdentificationFragments,
+              getQuantitationSpectra,
+              updateObject,
+              ## MSnset
+              requantify,
+              synapterPlgsAgreement)

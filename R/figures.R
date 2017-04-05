@@ -18,81 +18,79 @@ plotErrorPpm <- function(xx) {
   boxplot(xx$errorppm.quant, horizontal=TRUE, xlab="Quantitation error [ppm]")
 }
 
-plotLowess <- function(xx,
-                       f = structure(
-                         c(2/3, 1/2, 1/4, 1/10, 1/16, 1/25, 1/50),
-                         names = c("2/3", "1/2", "1/4", "1/10", "1/16", "1/25", "1/50"))
-                       ) {
-  par(mfrow=c(1,2))
-  plot(xx$precursor.retT.ident, xx$deltaRt,
-       col = "#8FBDDA80", ## col2hcl("steelblue", alpha=.5),
-       pch = 19,
-       ylab = expression(Identification - Quantitation),
-       xlab = expression(Identification~retention~time))
+plotLowessData <- function(x, y,
+                           f = structure(
+                              c(2/3, 1/2, 1/4, 1/10, 1/16, 1/25, 1/50),
+                              names = c("2/3", "1/2", "1/4", "1/10", "1/16", "1/25", "1/50")),
+                           pch = 19,
+                           col = "#8FBDDA80", ## col2hcl("steelblue", alpha=.5)
+                           cols = brewer.pal(length(f), "Set1"),
+                           xlab = expression(Identification~retention~time),
+                           ylab = expression(Identification - Quantitation),
+                           ylim = NULL,
+                           legendpos = "bottomright") {
+  oldPar <- par(no.readonly=TRUE)
+  on.exit(par(oldPar))
+
+  par(mfrow=c(1, 2))
+  plot(x, y, col=col, pch = pch, xlab = xlab, ylab = ylab, ylim = ylim[[1]])
   abline(h=0)
   grid()
-  ## quick lowess to get range
-  lws <- lowess(xx$precursor.retT.ident, xx$deltaRt, f = 1/2)
-  plot(xx$precursor.retT.ident, xx$deltaRt,
-       col = "#8FBDDA80", ## col2hcl("steelblue", alpha=.5),
-       pch = 19,
-       ylab = expression(Identification - Quantitation),
-       ylim = range(lws$y) + c(-.2,.2),
-       xlab = expression(Identification~retention~time))
+
+  lws <- lapply(f, lowess, x=x, y=y)
+  if (is.null(ylim[[2]])) {
+    ylim[[2]] <- range(unlist(lapply(lws, function(ll)range(ll$y))))
+  }
+
+  plot(x, y, col=col, pch = pch, xlab = xlab, ylab = ylab, ylim = ylim[[2]])
   abline(h=0)
   grid()
-  cls <- brewer.pal(length(f), "Set1")  
-  sapply(1:length(f), function(i) {
-    span <- fi <- f[i]
-    ## using lowess
-    lws <- lowess(xx$precursor.retT.ident, xx$deltaRt, f = fi)
-    lines(lws$x, lws$y, col=cls[i])
-    ## using loess -- much slower, but has predict, for later predictions
-    ## lo <- loess(deltaRt ~ precursor.retT.ident, data = xx, span=span,
-    ##             degree=1, family="symmetric", iterations=4, surface="direct")
-    ## o <- order(xx$precursor.retT.ident)
-    ## lines(xx$precursor.retT.ident[o], fitted(lo)[o], col=cls[i])
-  })
-  legend("bottomright",
-         paste("span=", names(f), sep = ""),
-         col = cls, lty = 1, bty = "n", cex=.7)
-  par(mfrow=c(1,1))
+
+  for (i in seq(along=lws)) {
+    lines(lws[[i]]$x, lws[[i]]$y, col=cols[i])
+  }
+  legend(legendpos, paste0("span = ", names(f)), col = cols, lty = 1, bty = "n", cex=.7)
 }
 
+plotLowessModel <- function(x, y, model, nsd,
+                            pch = 19,
+                            col = "#0000004D", ## col2hcl("black", alpha=.3),
+                            cols = c("#8FBDDAFF",  ## col2hcl("steelblue", alpha=1)
+                                     "#8FBDDA80",  ## col2hcl("steelblue", alpha=.5)
+                                     "#8FBDDA33"), ## col2hcl("steelblue", alpha=.2)
+                            modelcol = "red",
+                            xlab = expression(Identification~retention~time),
+                            ylab = expression(Identification - Quantitation),
+                            ylim = NULL,
+                            legendpos = "bottomright") {
+  oldPar <- par(no.readonly=TRUE)
+  on.exit(par(oldPar))
 
-plotLowess2 <- function(xx, model, nsd, ...) {
   o <- model$o
   lo <- model$lo
   pp <- model$preds
   sd <- model$sd
-  
+
   sdlim1 <- sapply(nsd, function(i) pp$fit[o] - i * sd[o])
   sdlim2 <- sapply(nsd, function(i) pp$fit[o] + i * sd[o])
-  ylim <- range(c(sdlim1, sdlim2))
-  
-  plot(xx$precursor.retT.ident, xx$deltaRt,
-       col = "#8FBDDA80", ## col2hcl("steelblue", alpha=.5),
-       pch = 19,
-       ylim = ylim,
-       ylab = expression(Identification - Quantitation),
-       xlab = expression(Identification~retention~time),
-       type = "n",
-       ...)
-  grid()
-  polcls <- c("#8FBDDAFF", ## col2hcl("steelblue", alpha=1)
-              "#8FBDDA80", ## col2hcl("steelblue", alpha=.5)
-              "#8FBDDA33") ## col2hcl("steelblue", alpha=.2)
-  for (i in ncol(sdlim1):1) {
-    polygon(c(xx$precursor.retT.ident[o], rev(xx$precursor.retT.ident[o])),
-            c(sdlim1[,i], rev(sdlim2[,i])),
-            col = polcls[i],
-            lty = 0)
+
+  if (is.null(ylim)) {
+    ylim <- range(c(sdlim1, sdlim2))
   }
-  abline(h = 0, lty = "dotted")
-  points(xx$precursor.retT.ident, xx$deltaRt,
-         col = "#0000004D", ## col2hcl("black", alpha=.3),
-         pch = 19)
-  lines(xx$precursor.retT.ident[o], fitted(lo)[o], col="red", lwd=2)
+
+  plot(x, y, type = "n", xlab = xlab, ylab = ylab, ylim = ylim)
+  grid()
+
+  for (i in ncol(sdlim1):1L) {
+    polygon(c(x[o], rev(x[o])),
+            c(sdlim1[, i], rev(sdlim2[, i])),
+            col = cols[i], lty = 0L)
+  }
+  abline(h = 0L, lty = "dotted")
+  points(x, y, col = col, pch = pch)
+  lines(x[o], fitted(lo)[o], col=modelcol, lwd=2)
+  legend(legendpos, c(paste0(rep("nsd", length(nsd)), " = ", nsd), "model"),
+         col = c(cols, modelcol), lty = 1, bty = "n", cex=.7)
 }
 
 plotRetTimeDiffs <- function(object, plot = TRUE,
@@ -111,11 +109,12 @@ plotRetTimeDiffs <- function(object, plot = TRUE,
 }
 
 plot.some.features <- function(xx,
+                               identpep,
                                mse,
                                model,
                                ppmthreshold,
-                               nsd,                               
-                               xlim = c(40, 60), 
+                               nsd,
+                               xlim = c(40, 60),
                                ylim = c(1160, 1165)) {
   ## for EMRT mass, use [precursor|pretide].mhp.[hd]mse
   ## on the y axis, instead of calculating the mass
@@ -143,24 +142,17 @@ plot.some.features <- function(xx,
   text(xx$precursor.retT.quant, xx$peptide.mhp.quant,
        xx$peptide.seq, cex=.1, adj=c(0,1))
   ## mse pep3d data
-  points(mse$rt_min, mse$mwHPlus, 
+  points(mse$rt_min, mse$mwHPlus,
          col = "#FF000080", ## col2hcl("red", alpha=.5),
          cex = 0.2, pch = 3)
-  ## predicted
-  lo <- model$lo
   ## nsd
   mass.ranges <- estimate.mass.range(xx$peptide.mhp.ident, ppmthreshold)
-  ## from doHDMSePredictions 
-  .o <- order(xx$precursor.retT.ident)
-  .allpreds <- predict(model$lo, data.frame(precursor.retT.ident=xx$precursor.retT.ident), se=TRUE)
-  .sd <- .allpreds$se.fit[.o] * sqrt(model$lo$n)
-  .predicted <- xx$precursor.retT.ident - .allpreds$fit[.o]
-  .lower <- .predicted - (nsd * .sd)
-  .upper <- .predicted + (nsd * .sd)
-  stopifnot(all(.lower <= .upper))
-  rt.ranges <- cbind(.lower,
-                     .upper)
-  centers <- cbind(.predicted, xx$peptide.mhp.ident)
+  prediction <- doHDMSePredictions(identpep, model, nsd)
+  pid <- match(xx$precursor.leID.ident, identpep$precursor.leID)
+
+  rt.ranges <- cbind(prediction$lower[pid],
+                     prediction$upper[pid])
+  centers <- cbind(prediction$predicted[pid], xx$peptide.mhp.ident)
   ## points(centers, pch=".")
   rect(rt.ranges[,1], mass.ranges[,1],
        rt.ranges[,2], mass.ranges[,2],
@@ -174,8 +166,13 @@ plot.some.features <- function(xx,
          bty = "n")
 }
 
-plot.all.features <- function(xx, mse) {
-  par(mfrow=c(1,3))
+plot.all.features <- function(xx, mse, ionmobility=FALSE) {
+  if (ionmobility) {
+    par(mfrow=c(2, 3))
+  } else {
+    par(mfrow=c(1, 3))
+  }
+  ## rt vs mz
   ylim <- range(range(xx$peptide.mhp.ident),
                 range(xx$peptide.mhp.quant),
                 range(mse$mwHPlus))
@@ -183,23 +180,51 @@ plot.all.features <- function(xx, mse) {
                 range(xx$precursor.retT.quant),
                 range(mse$rt_min))
   plot(xx$precursor.retT.ident, xx$peptide.mhp.ident,
-       col = "#00000020", 
+       col = "#00000020",
        pch = 19, xlim = xlim, ylim = ylim,
        xlab = "retention time", ylab = "precursor mass",
        main = "Identification final peptide")
   grid()
   plot(xx$precursor.retT.quant, xx$peptide.mhp.quant,
-       col = "#00000020", 
+       col = "#00000020",
        pch = 19, xlim = xlim, ylim = ylim,
        xlab = "retention time", ylab = "precursor mass",
        main = "Quantitation final peptide")
   grid()
-  plot(mse$rt_min, mse$mwHPlus, 
-       col = "#00000005", 
+  plot(mse$rt_min, mse$mwHPlus,
+       col = "#00000005",
        pch = 19, xlim = xlim, ylim = ylim,
        xlab = "retention time", ylab = "precursor mass",
        main = "Quantitation Pep3D")
   grid()
+
+  ## mz vs im
+  if (ionmobility) {
+    ylim <- range(range(xx$precursor.Mobility.ident),
+                  range(xx$precursor.Mobility.quant),
+                  range(mse$clust_drift))
+    xlim <- range(range(xx$peptide.mhp.ident),
+                  range(xx$peptide.mhp.quant),
+                  range(mse$mwHPlus))
+    plot(xx$peptide.mhp.ident, xx$precursor.Mobility.ident,
+         col = "#00000020",
+         pch = 19, xlim = xlim, ylim = ylim,
+         xlab = "precursor mass", ylab = "ion mobility",
+         main = "Identification final peptide")
+    grid()
+    plot(xx$peptide.mhp.quant, xx$precursor.Mobility.quant,
+         col = "#00000020",
+         pch = 19, xlim = xlim, ylim = ylim,
+         xlab = "precursor mass", ylab = "ion mobility",
+         main = "Quantitation final peptide")
+    grid()
+    plot(mse$mwHPlus, mse$clust_drift,
+         col = "#00000005",
+         pch = 19, xlim = xlim, ylim = ylim,
+         xlab = "precursor mass", ylab = "ion mobility",
+         main = "Quantitation Pep3D")
+    grid()
+  }
   par(mfrow=c(1,1))
 }
 

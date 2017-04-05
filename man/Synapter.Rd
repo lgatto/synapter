@@ -17,10 +17,16 @@
 \alias{mergePeptides}
 \alias{modelRt,Synapter-method}
 \alias{modelRt}
+\alias{modelIntensity,Synapter-method}
+\alias{modelIntensity}
 \alias{findEMRTs,Synapter-method}
 \alias{findEMRTs}
+\alias{rescueEMRTs,Synapter-method}
+\alias{rescueEMRTs}
 \alias{searchGrid,Synapter-method}
 \alias{searchGrid}
+\alias{fragmentMatching,Synapter-method}
+\alias{fragmentMatching}
 
 % setters and getters
 \alias{getGrid,Synapter-method}
@@ -55,6 +61,10 @@
 \alias{setRtNsd}
 \alias{getRtNsd,Synapter-method}
 \alias{getRtNsd}
+\alias{setImDiff,Synapter-method}
+\alias{setImDiff}
+\alias{getImDiff,Synapter-method}
+\alias{getImDiff}
 \alias{getPpmErrorQs,Synapter-method}
 \alias{getPpmErrorQs}
 \alias{getRtQs,Synapter-method}
@@ -69,10 +79,20 @@
 \alias{getProtFpr}
 \alias{getEMRTtable,Synapter-method}
 \alias{getEMRTtable}
+\alias{setFragmentMatchingPpmTolerance,Synapter-method}
+\alias{setFragmentMatchingPpmTolerance}
+\alias{getFragmentMatchingPpmTolerance,Synapter-method}
+\alias{getFragmentMatchingPpmTolerance}
 \alias{performance,Synapter-method}
 \alias{performance2,Synapter-method}
 \alias{performance}
 \alias{performance2}
+\alias{fragmentMatchingPerformance,Synapter-method}
+\alias{fragmentMatchingPerformance}
+\alias{getIdentificationFragments,Synapter-method}
+\alias{getIdentificationFragments}
+\alias{getQuantitationSpectra,Synapter-method}
+\alias{getQuantitationSpectra}
 
 % filters
 \alias{filterPeptideLength,Synapter-method}
@@ -95,6 +115,14 @@
 \alias{filterIdentProtFpr}
 \alias{filterQuantProtFpr,Synapter-method}
 \alias{filterQuantProtFpr}
+\alias{filterFragments,Synapter-method}
+\alias{filterFragments}
+\alias{filterUniqueMatches,Synapter-method}
+\alias{filterUniqueMatches}
+\alias{filterNonUniqueMatches,Synapter-method}
+\alias{filterNonUniqueMatches}
+\alias{filterNonUniqueIdentMatches,Synapter-method}
+\alias{filterNonUniqueIdentMatches}
 
 % plotting
 \alias{plotEMRTtable,Synapter-method}
@@ -111,8 +139,14 @@
 \alias{plotFdr}
 \alias{plotRt,Synapter-method}
 \alias{plotRt}
+\alias{plotIntensity,Synapter-method}
+\alias{plotIntensity}
 \alias{plotRtDiffs,Synapter-method}
 \alias{plotRtDiffs}
+\alias{plotFragmentMatchingPerformance,Synapter-method}
+\alias{plotFragmentMatchingPerformance}
+\alias{plotCumulativeNumberOfFragments,Synapter-method}
+\alias{plotCumulativeNumberOfFragments}
 
 % exporters
 \alias{writeMatchedEMRTs,Synapter-method}
@@ -127,6 +161,9 @@
 
 % other
 \alias{as.MSnSet.Synapter}
+\alias{isCurrent,Synapter-method}
+\alias{validObject,Synapter-method}
+\alias{updateObject,Synapter-method}
 
 \docType{class}
 \encoding{UTF-8}
@@ -140,8 +177,9 @@
 
   The data, intermediate and final results are stored together
   in such a ad-how container called a class. In the frame of the
-  analysis of a set of 3 data files, namely as identification peptide,
-  a quantitation peptide and a quantitation Pep3D, such a container is created
+  analysis of a set of 3 or 5 data files, namely as identification peptide,
+  a quantitation peptide and a quantitation Pep3D, and identification fragments
+  and quantitation spectra, such a container is created
   and populated, updated according to the user's instructions
   and used to display and export results.
 
@@ -162,15 +200,16 @@ Synapter(filenames, master) ## creates an instance of class 'Synapter'
 
 \arguments{
   \item{filenames}{A named \code{list} of file names to be load. The
-    names must be 'identpeptide', 'quantpeptide', 'quantpep3d' and 'fasta'.
-    If missing, dialog boxes pop up to select the four files
-    manually.
+    names must be 'identpeptide', 'quantpeptide', 'quantpep3d' and 'fasta'
+    (could be an RDS file created by \code{link{createUniquePeptideDbRds}})
+    and (optional 'identfragments' and 'quantspectra').
     \code{identpeptide} can be a \code{csv} final peptide file (from
     PLGS) or a saved \code{"\linkS4class{MasterPeptides}"} data object as
     created by \code{\link{makeMaster}} if working with \emph{master}
     peptide data. To serialise the \code{"\linkS4class{MasterPeptides}"}
     instance, use the \code{saveRDS} function, and file extenstion
-    \code{rds}.
+    \code{rds}. This master file could contain a fragment library as well. In
+    this case the 'identfragments' argument would be ignored.
   }
   \item{master}{A \code{logical} that defines if the identification file
     is a \emph{master} file. See \code{\link{makeMaster}} for details
@@ -189,16 +228,19 @@ Synapter(filenames, master) ## creates an instance of class 'Synapter'
   \subsection{Loading the data}{
     The construction of the data and analysis container, technically
     defined as an instance or object of class \code{Synapter}, is created
-    with the \code{Synapter} constructor. This function opens four dialog
-    boxes for the user to point to the input files,
-    namely (and in that order), the identification final peptide csv file, the
-    quantitation final peptide  csv file and the quantitation Pep3D csv file (as exported
-    from the PLGS software) and the fasta file use for peptide
-    identification.
-    The files are read and the data is stored in the newly
-    created \code{Synapter} instance. The file names can also be
-    specified as a named list with names 'identpeptide', 'quantpeptide'
-    and 'quantpep3d' respectively.
+    with the \code{Synapter} constructor.
+    This function requires 4 or 6 files as input, namely,
+    the identification final peptide csv file, the quantitation final peptide
+    csv file, the quantitation Pep3D csv file (as exported from the PLGS
+    software), the fasta file use for peptide identification, and optional
+    the identification fragments csv file and the quantitation
+    spectra xml file. The fasta file ('fasta') could be an RDS file generated by
+    \code{link{createUniquePeptideDbRds}}, too.
+    The file names need to be specified as a named list with names
+    'identpeptide', 'quantpeptide', 'quantpep3d', 'fasta', 'identfragments'
+    and 'quantspectra' respectively.
+    These files are read and the data is stored in the newly
+    created \code{Synapter} instance.
 
     The final peptide files are filtered
     to retain peptides with \code{matchType} corresponding to
@@ -284,7 +326,26 @@ Synapter(filenames, master) ## creates an instance of class 'Synapter'
     deviations to plot. A histogram of retention time differences can
     be produced with the \code{plotRtDiffs} method.
 
-    Mention \code{plotFeatures} here.
+    To visualise the feature space \code{plotFeatures} could be used. It
+    generates one or two (if ion mobility is available) plots of
+    retention time vs mass and mass vs ion mobility for each data source,
+    namely, Identification data, Quantitation data and Quantitation Pep3D data.
+  }
+
+  \subsection{Intensity modelling}{
+    Systematic differences between intensities of identification features and
+    quantitation features depending on retention times are modelled by
+    fitting a local regression (see the \code{\link{loess}} function for
+    details), using the \code{modelIntensity} method. The smoothing parameter,
+    or number of neighbour data points used the for local fit, is
+    controlled by the \code{span} parameter that can be set in the above
+    method.
+
+    The effect of this parameter can be observed with the \code{plotIntensity}
+    method, specifying \code{what = "data"} as parameters. The resulting
+    model can then be visualised with the above method specifying
+    \code{what = "model"}, specifying up to 3 number of standard
+    deviations to plot.
   }
 
   \subsection{Grid search to optimise matching tolerances}{
@@ -320,8 +381,8 @@ Synapter(filenames, master) ## creates an instance of class 'Synapter'
     further details).
 
     The parameters used for matching can be set manually with
-    \code{setPpmError} and \code{setRtNsd} respectively, or using
-    \code{setBestGridParams} to apply best parameters as defined using
+    \code{setPpmError}, \code{setRtNsd}, \code{setImDiff} respectively,
+    or using \code{setBestGridParams} to apply best parameters as defined using
     the grid search. See example and method documentation for details.
   }
 
@@ -331,11 +392,12 @@ Synapter(filenames, master) ## creates an instance of class 'Synapter'
     defined above with a grid search, or using user-defined parameters.
 
     Matching is considered successful when one and only one EMRT is
-    found in the mass tolerance/retention time window defined by the
-    error ppm and number of retention time standard deviations
-    parameters. The values of uniquely matched EMRTs are reported in the
-    final \emph{matched} dataframe that can be exported (see below). If
-    however, none or more than one EMRTs are matched, 0 or the number of
+    found in the mass tolerance/retention time/ion mobility window defined
+    by the error ppm, number of retention time standard deviations, and ion
+    mobility difference parameters. The values of uniquely matched EMRTs are
+    reported in the final \emph{matched} dataframe that can be exported
+    (see below).
+    If however, none or more than one EMRTs are matched, 0 or the number of
     matches are reported.
 
     As identification peptides are serially individually matched to 'close'
@@ -354,6 +416,41 @@ Synapter(filenames, master) ## creates an instance of class 'Synapter'
     and Venn counts.
   }
 
+  \subsection{Remove Less Intense Peaks}{
+    As an additional step it is possible to remove less intense peaks from the
+    spectra and fragment data. Use \code{plotCumulativeNumberOfFragments} to
+    plot the number of fragments vs the intensity and to find a good threshold.
+    The \code{filterFragments} method could remove peaks if the intensity is
+    below a specified threshold via the \code{minIntensity} argument. Set the
+    \code{maxNumber} argument to keep only the \code{maxNumber} highest
+    peaks/fragments. The \code{what} argument controls the data on which the
+    filter is applied. Use \code{what = "fragments.ident"} for the
+    identification fragments and \code{what = "spectra.quant"} for the
+    quantiation spectra data.
+  }
+
+  \subsection{Fragment Matching}{
+    After importing fragment and spectra data it is possible to
+    match peaks between the identification fragments and the quantitation
+    spectra using the \code{fragmentMatching} method.
+    Use \code{setFragmentMatchingPpmTolerance} to set
+    the maximal allowed tolerance for considering a peak as identical.
+    There are two different methods to visualise the results of the fragment
+    matching procedure. \code{plotFragmentMatching} plots the fragments and
+    spectra for each considered pair.
+    \code{plotFragmentMatchingPerformance} draws two plots. On the left panel
+    you could see the performance of different thresholds for the number of
+    common peaks for unique matches.  The right panel visualizes the performance
+    of different differences (delta) of common peaks between the best match
+    (highest number of common peaks) and the second best match in each non
+    unique match group. \code{plotFragmentMatchingPerformance} returns the
+    corresponding values invisible or use \code{fragmentMatchingPerformance} to
+    access these data.
+    Use \code{filterUniqueMatches} and \code{filterNonUniqueMatches} to remove
+    unique or non unique matches below the threshold of common peaks
+    respective the difference in common peaks from the MatchedEMRTs data.frame.
+  }
+
   \subsection{Exporting and saving data}{
     The merged identification and quantitation peptides can be exported
     to csv using the  \code{writeMergedPeptides} method. Similarly, the
@@ -363,6 +460,10 @@ Synapter(filenames, master) ## creates an instance of class 'Synapter'
     Complete \code{Synapter} instances can be serialised with
     \code{save}, as any R object, and reloaded with \code{load} for
     further analysis.
+
+    It is possible to get the fragment and spectra data from the identification
+    and quantitation run using \code{getIdentificationFragments} respectively
+    \code{getQuantitationSpectra}.
   }
 }
 
@@ -383,16 +484,26 @@ Synapter(filenames, master) ## creates an instance of class 'Synapter'
 	\code{span} parameter value to control the degree of smoothing.
       }
 
+      \item{modelIntensity}{\code{signature(object = "Synapter",
+	  span = "numeric")}: Performs local polynomial regression
+	fitting (see \code{\link{loess}}) intensity values using
+	\code{span} parameter value to control the degree of smoothing.
+      }
+
       \item{findEMRTs}{\code{signature(object = "Synapter", ppm =
-	  "numeric", nsd = "numeric", mergedEMRTs = c("rescue", "copy",
-	  "transfer"))}:
+	  "numeric", nsd = "numeric", imdiff = "numeric")}:
 	Finds EMRTs matching identification peptides using \code{ppm}
-	mass tolerance and \code{nsd} number of retention time standard
-	deviations. The last two parameters are optional if previously
-	set with \code{setPpmError} and \code{setRtNsd} or, better,
-	\code{setBestGridParams} (see below). The \code{mergedEMRTs}
-	parameter defined the behaviour for those high confidence
-	features that where identified in both identification and
+	mass tolerance, \code{nsd} number of retention time standard
+	deviations and \code{imdiff} difference in ion mobility.
+  The last three parameters are optional if previously
+	set with \code{setPpmError}, \code{setRtNsd}, \code{setImDiff},
+  or, better, \code{setBestGridParams} (see below).
+      }
+
+    \item{rescueEMRTs}{\code{signature(object = "Synapter",
+    method = c("rescue", "copy"))}:
+  The \code{method} parameter defined the behaviour for those
+  high confidence features that where identified in both identification and
 	quantitation acquisitions and used for the retention time model
 	(see \code{mergePeptides}). Prior to version 1.1.1, these
 	features were transferred from the quantitation pep3d file if
@@ -407,12 +518,15 @@ Synapter(filenames, master) ## creates an instance of class 'Synapter'
       }
 
       \item{searchGrid}{\code{signature(object="Synapter",
-	  ppms="character", nsds="character", subset="numeric", n =
-	  "numeric", verbose="logical")}: Performs a grid search. The
-	grid is defined by the \code{ppm} and \code{nsd} numerical
-	vectors, representing the sequence of values to be
-	tested. Default are \code{seq(5, 20, 2)} and \code{seq(0.5, 5,
-	  0.5)} respectively. \code{subset} and \code{n} allow to use a
+	  ppms="numeric", nsds="numeric", imdiffs = "numeric",
+    subset="numeric", n = "numeric", verbose="logical")}:
+  Performs a grid search. The
+	grid is defined by the \code{ppm}, \code{nsd} and \code{imdiffs}
+  numerical vectors, representing the sequence of values to be
+	tested. Default are \code{seq(5, 20, 2)}, \code{seq(0.5, 5,
+	  0.5)}, \code{seq(0.2, 2, 0.2)} respectively. To ignore ion mobility set
+  \code{imdiffs = Inf}.
+  \code{subset} and \code{n} allow to use a
 	randomly  chosen subset of the data for the grid search to
 	reduce search time. \code{subset} is a numeric, between 0 and 1,
 	describing the percentage of data to be used; \code{n} specifies
@@ -422,7 +536,13 @@ Synapter(filenames, master) ## creates an instance of class 'Synapter'
 	in internal calls to \code{findEMRTs} is \code{"transfer"} - see
 	\code{findEMRTs} for details).
       }
-    }
+
+      \item{fragmentMatching}{\code{signature(object="Synapter",
+      ppm = "numeric", verbose = "logical"}:
+      Performs a fragment matching between spectra and fragment data.
+      The \code{ppm} argument controls the tolerance that is used to consider
+      two peaks (MZ values) as identical.  If \code{verbose} is \code{TRUE}
+      (default) a progress bar is shown.  }
   }
 
   \subsection{Methods to display, access and set data}{
@@ -439,9 +559,10 @@ Synapter(filenames, master) ## creates an instance of class 'Synapter'
       }
 
       \item{inputFiles}{\code{signature(object="Synapter")}: Returns a
-	\code{character} of length 4 with the names of the input files
+	\code{character} of length 6 with the names of the input files
 	used as \code{identpeptide}, \code{quantpeptide},
-	\code{quantpep3d} and \code{fasta}.
+	\code{quantpep3d}, \code{fasta}, \code{identfragments} and
+  \code{quantspectra}.
       }
 
       \item{getLog}{\code{signature(object="Synapter")}: Returns a
@@ -538,6 +659,15 @@ Synapter(filenames, master) ## creates an instance of class 'Synapter'
 	value of the retention time tolerance \code{nsd}.
       }
 
+      \item{setImDiff}{\code{signature(object="Synapter", imdiff =
+	  "numeric")}: Sets the ion mobility tolerance \code{imdiff},
+	default is 0.5.
+      }
+
+      \item{getImDiff}{\code{signature(object="Synapter")}: Returns the
+	value of the ion mobility tolerance \code{imdiff}.
+      }
+
       \item{getPpmErrorQs}{\code{signature(object="Synapter", qs =
 	  "numeric", digits = "numeric")}: Returns the mass tolerance
 	\code{qs} quantiles (default is \code{c(0.25, 0.5, 0.75, seq(0.9,
@@ -558,6 +688,15 @@ Synapter(filenames, master) ## creates an instance of class 'Synapter'
 	score densities (see \code{plotPepScores}). Especially the
 	difference between random and regular entries are informative in
 	respect with the confidence of the random scores distribution.
+      }
+
+      \item{setFragmentMatchingPpmTolerance}{\code{signature(object="Synapter",
+        ppm = "numeric")}: Sets the fragment matching mass tolerance \code{ppm}
+        (default is 25).
+      }
+
+      \item{getFragmentMatchingPpmTolerance}{\code{signature(object="Synapter")}:
+        Returns the fragment matching mass tolerance in ppm.
       }
 
       \item{showFdrStats}{\code{signature(object="Synapter", k =
@@ -583,6 +722,26 @@ Synapter(filenames, master) ## creates an instance of class 'Synapter'
 	transfered EMRTs.
       }
 
+      \item{fragmentMatchingPerformance}{\code{signature(object="Synapter",
+          what = c("unique", "non-unique")}:
+        Returns the performance of the fragment matching for \code{unqiue} or
+        \code{non-unique} matches. The return valus is a \code{matrix} with
+        seven columns. The first column \code{ncommon}/\code{deltacommon}
+        contains the thresholds. Column 2 to 5 are the true positives \code{tp},
+        false positives \code{fp}, true negatives \code{tn}, false negatives
+        \code{fn} for the merged peptide data. The sixth column \code{all} shows
+        the corresponding number of peptides for all peptides
+        (not just the merged ones) and the last column shows the FDR \code{fdr}
+        for the current threshold (in that row) for the merged data.
+
+        Please note that the FDR is overfitted/underestimated because the merged
+        peptides are the peptides from the highest quality spectra were PLGS could
+        easily identify the peptides. The peptides that are not present in the
+        merged data are often of lower quality hence the FDR would be higher by
+        trend.
+
+        See \code{plotFragmentMatchingPerformance} for a graphical
+        representation.}
     }
   }
 
@@ -590,14 +749,20 @@ Synapter(filenames, master) ## creates an instance of class 'Synapter'
 
     \describe{
 
-      \item{filterUniqueDbPeptides}{\code{signature(object="Synapter")}:
+      \item{filterUniqueDbPeptides}{\code{signature(object="Synapter",
+          missedCleavages = 0, IisL = TRUE, verbose = TRUE)}:
 	This method first digests the fasta database file and keeps
 	unique tryptic peptides. (NOTE: since version 1.5.3, the tryptic
 	digestion uses the \code{cleaver} package, replacing the more
 	simplistic inbuild function. The effect of this change is
-	documented in https://github.com/lgatto/synapter/pull/47). The
-	number of missed cleavages can be set as \code{missedCleavages}
-	(default is 0). Those peptide sequences are then used as a
+  documented in https://github.com/lgatto/synapter/pull/47).
+  The number of maximal missed cleavages can be set as \code{missedCleavages}
+       (default is 0).
+  If \code{IisL = TRUE} Isoleucin and Leucin are treated as the same aminoacid.
+  In this case sequences like "ABCI", "ABCL" are removed
+  because they are not unqiue anymore. If \code{IisL = FALSE} (default)
+  "ABCI" and "ABCL" are reported as unique.
+  The peptide sequences are then used as a
 	filter against the identification and quantitation peptides,
 	where only unique proteotyptic instances (no miscleavage allowed
 	by default) are eventually kept in the \code{object} instance.
@@ -606,11 +771,11 @@ Synapter(filenames, master) ## creates an instance of class 'Synapter'
 	database.  }
 
       \item{filterUniqueQuantDbPeptides}{\code{signature(object="Synapter",
-	  missedCleavages = 0, verbose = TRUE)}: As
+    missedCleavages = 0, IisL = TRUE, verbose = TRUE)}: As
 	\code{filterUniqueDbPeptides} for quantitation peptides only.  }
 
       \item{filterUniqueIdentDbPeptides}{\code{signature(object="Synapter",
-	  missedCleavages = 0, verbose = TRUE)}: As
+    missedCleavages = 0, IisL = TRUE, verbose = TRUE)}: As
 	\code{filterUniqueDbPeptides} for identification peptides
 	only. }
 
@@ -645,6 +810,50 @@ Synapter(filenames, master) ## creates an instance of class 'Synapter'
       \item{filterIdentPpmError}{\code{signature(object="Synapter")}: as
 	\code{filterQuantPpmError}, but for identification peptides.  }
 
+    \item{filterFragments}{\code{signature(object = "Synapter",
+        what = c("fragments.ident", "spectra.quant"),
+        minIntensity = "numeric", maxNumber = "numeric", verbose = "logical")}:
+      Filters the spectra/fragment data using a minimal intensity threshold
+      (\code{minIntensity}) or a maximal number of peaks/fragments threshold
+      (\code{maxNumber}). Please note that the maximal number is transfered to
+      an intensity threshold and the result could contain less peaks than
+      specified by \code{maxNumber}.
+      If both arguments are given, the more aggressive one is chosen.
+      Use the \code{what} argument to specify the data that should be filtered.
+      Set \code{what = "fragments.ident"} for the identification fragment data
+      or \code{what = "spectra.quant"} for the quantiation spectra.
+      If \code{verbose} is \code{TRUE} (default) a progress bar is shown.
+    }
+
+    \item{filterUniqueMatches}{\code{signature(object="Synapter", minNumber =
+        "numeric")}:
+      Removes all unique matches that have less than \code{minNumber} of
+      peaks/fragments in common. Use
+      \code{fragmentMatchingPerformance(..., what="unique")}/
+      \code{plotFragmentMatchingPerformance}
+      (left panel) to find an ideal threshold.
+    }
+
+    \item{filterNonUniqueMatches}{\code{signature(object="Synapter", minDelta =
+        "numeric")}:
+      Removes all non unique matches that have a difference between the best
+      match (highest number of common peaks/fragments, treated as true match)
+      and the second best match (second highest number of common
+      peaks/fragments) less than \code{minDelta}. For the matches above the
+      threshold only the one with the highest number of common peaks/fragments
+      in each match group is kept.
+      Use \code{fragmentMatchingPerformance(..., what="non-unique")}/
+      \code{plotFragmentMatchingPerformance} (right panel) to find an ideal
+      threshold.
+    }
+
+    \item{filterNonUniqueIdentMatches}{\code{signature(object="Synapter")}:
+      Removes all non unique identification matches. In rare circumstances (if
+      the grid search parameters are to wide/relaxed or a fragment library is
+      used) it could happen that the \code{searchGrid} methods matches a single
+      quantification EMRT to multiple identification EMRTs. This methods removes
+      all these non unique matches.
+    }
     }
   }
 
@@ -677,6 +886,21 @@ Synapter(filenames, master) ## creates an instance of class 'Synapter'
       the model.
     }
 
+      \item{plotIntensity}{\code{signature(object="Synapter", what =
+	  "character", f = "numeric", nsd = "numeric")}: Plots the (log2) ratio
+  of Identification and Quantitation intensities as a
+	function of the Identification retention time. If \code{what} is
+	\code{"data"}, two plots are generated: one ranging the full range
+	of ratios and one focusing on the highest data
+	point density and showing models with various \code{span}
+	parameter values, as defined by \code{f} (default is 2/3, 1/2,
+	1/4, 1/10, 1/16, 1/25, 1/50, passed as a numed numeric). If
+	\code{what} is \code{"model"}, a focused plot with the applied
+	span parameter is plotted and areas of \code{nsd} (default is
+	\code{x(1, 3, 5)} number of standard deviations are shaded around
+      the model.
+    }
+
     \item{plotPepScores}{\code{signature(object="Synapter")}: Plots the
       distribution of random and regular peptide scores for
       identification and quantitation features. This reflects how
@@ -699,16 +923,25 @@ Synapter(filenames, master) ## creates an instance of class 'Synapter'
     }
 
     \item{plotGrid}{\code{signature(object="Synapter", what =
-	"character")}: Plots a heatmap of the respective grid search
+	"character"), maindim = "character"}:
+      Plots a heatmap of the respective grid search
       results. This grid to be plotted is controlled by \code{what}:
       \code{"total"}, \code{"model"} or \code{"details"} are
-      available.
+      available. If ion mobility was used in the grid search you can use
+      \code{maindim} to decided which dimensions should be shown. \code{maindim}
+      could be one of \code{"im"} (default), \code{"rt"} and \code{"mz"}. If
+      \code{maindim = "im"} a heatmap for each ion mobility threshold is drawn.
+      For \code{maindim = "rt"} and \code{maindim} you get a heatmap for each
+      retention time respective mass threshold.
     }
 
     \item{plotFeatures}{\code{signature(object="Synapter", what =
-	"character", xlim = "numeric", ylim = "numeric")}: Plots the
-      retention time against precursor mass space. If \code{what} is
-      \code{"all"}, three such plots are created side by side: for the
+	"character", xlim = "numeric", ylim = "numeric", ionmobiltiy = "logical")}:
+      Plots the retention time against precursor mass space.
+      If \code{what} is \code{"all"}, three (six if ion mobility is available
+      and \code{ionmobility = TRUE} (default is \code{FALSE});
+      three additional plots with precursor mass against ion mobility)
+      such plots are created side by side: for the
       identification peptides, the quantitation peptides and the
       quantitation Pep3D data. If \code{what} is \code{"some"}, a
       subset of the rt/mass space can be defined with \code{xlim}
@@ -721,6 +954,40 @@ Synapter(filenames, master) ## creates an instance of class 'Synapter'
       centered at the expected modelled retention time. This last
       figure allows to visualise the EMRT matching.
     }
+
+    \item{plotFragmentMatching}{\code{signature(object = "Synapter",
+        key = "character", column = "character",
+        verbose = "logical", \dots)}:
+      Plots two spectra and fragments against each other. Please see
+      \code{\link{plotFragmentMatching}} for details.
+    }
+
+    \item{plotFragmentMatchingPerformance}{\code{signature(object = "Synapter",
+        showAllPeptides = FALSE)}:
+    Creates two plots. The left panel shows the performance of filtering the
+    unique matches of the merged peptides using a different number of common
+    peaks. The right panel shows the performance of filtering the non unique
+    matches of the merged peptides using different differences (delta) in
+    common peaks/fragments. These differences (delta) are
+    calculated between the match with the highest number of common
+    peaks/fragments and the second highest one.
+    Use \code{filterUniqueMatches} and \code{filterNonUniqueMatches} to filter
+    the \code{MatchedEMRT} \code{data.frame} using one of these thresholds.
+    This function returns a \code{list} with two named elements (\code{unqiue}
+    and \code{nonunqiue} invisibly. These are the same data as return by
+    \code{fragmentMatchingPerformance}.
+
+    Use \code{showAllPeptides=TRUE} to add a line for all peptides (not just
+    the merged onces) to both plots.
+    }
+
+    \item{plotCumulativeNumberOfFragments}{\code{signature(object = "Synapter",
+        what = c("fragments.ident", "spectra.quant"))}:
+    Plots the cumulative number of the fragments/peaks vs their intensity (log10
+    scaled). Use the \code{what} argument to create this plot for the
+    identification fragments (\code{what = "fragments.quant"}) or the
+    the quantitation spectra (\code{what = "spectra.quant"}).
+    }
   }
 }
 
@@ -730,22 +997,25 @@ Synapter(filenames, master) ## creates an instance of class 'Synapter'
       \item{writeMergedPeptides}{\code{signature(object="Synapter", file
 	  = "character", what = "character", ...)}: Exports the merged
 	peptide data to a comma-separated \code{file} (default name is
-	\code{"Res-MergedPeptides.csv"}). \code{what} can be
-	\code{"light"} (default) or \code{"full"} and specifies if the
-	full data or only selected columns are exported. \code{...} are
-	passed to \code{\link{write.csv}}.
+	\code{"Res-MergedPeptides.csv"}).
       }
       \item{writeMatchedEMRTs}{\code{signature(object="Synapter", file =
-	  "character", what = "character", ...)}: As above, saving the
+	  "character", \ldots)}: As above, saving the
 	matched EMRT table.
       }
       \item{writeIdentPeptides}{\code{signature(object="Synapter", file
-	  = "character", ...)}: As above, exporting the identification
+	  = "character", \ldots)}: As above, exporting the identification
 	peptide data.
       }
       \item{writeQuantPeptides}{\code{signature(object="Synapter", file
-	  = "character", ...)}: A above, exporting the quantitation
+	  = "character", \ldots)}: A above, exporting the quantitation
 	peptide data.
+      }
+      \item{getIdentificationFragments}{\code{signature(object="Synapter")}:
+        returns the identification fragments as \code{\linkS4class{MSnExp}}.
+      }
+      \item{getQuantitationSpectra}{\code{signature(object="Synapter")}:
+        returns the quantitation spectra as \code{\linkS4class{MSnExp}}.
       }
     }
   }
@@ -756,7 +1026,17 @@ Synapter(filenames, master) ## creates an instance of class 'Synapter'
       \item{as(, "MSnSet")}{\code{signature(x = "Synapter")}: Coerce
 	object from \code{Synapter} to \code{MSnSet} class. }
     }
+    \describe{
+      \item{validObject}{\code{signature(object = "Synapter")}:
+        Test whether a given \code{Synapter} object is valid.}
+    }
+    \describe{
+      \item{updateObject}{\code{signature(object = "Synapter")}: Updates an old
+       \code{Synapter} object.}
+    }
+
   }
+}
 }
 
 
@@ -790,6 +1070,30 @@ Synapter(filenames, master) ## creates an instance of class 'Synapter'
   The Effects of Travelling Wave Ion Mobility Separation on Data
   Independent Acquisition in Proteomics Studies, P.V. Shliaha, N.J. Bond,
   L. Gatto and K.S. Lilley, Journal of Proteome Research, 2013, in press.
+
+
+  Trypsin cleavage:
+
+  Glatter, Timo, et al.
+  Large-scale quantitative assessment of different in-solution protein digestion
+  protocols reveals superior cleavage efficiency of tandem Lys-C/trypsin
+  proteolysis over trypsin digestion.
+  Journal of proteome research 11.11 (2012): 5145-5156.
+  \url{http://dx.doi.org/10.1021/pr300273g}
+
+  Rodriguez, Jesse, et al.
+  Does trypsin cut before proline?.
+  Journal of proteome research 7.01 (2007): 300-305.
+  \url{http://dx.doi.org/10.1021/pr0705035}
+
+  Brownridge, Philip, and Robert J. Beynon.
+  The importance of the digest: proteolysis and absolute quantification in
+  proteomics.
+  Methods 54.4 (2011): 351-360.
+  \url{http://dx.doi.org/10.1016/j.ymeth.2011.05.005}
+
+  cleaver's rules are taken from:
+  \url{http://web.expasy.org/peptide_cutter/peptidecutter_enzymes.html#Tryps}
 }
 
 
@@ -886,10 +1190,10 @@ performance(synapterTiny)
 performance2(synapterTiny)
 
 ## (7) Exporting data to csv spreadsheets
-writeMergedPeptides(synapterTiny, what = "light") ## or what="full"
-writeMergedPeptides(synapterTiny, file = "myresults.csv", what="light")
-writeMatchedEMRTs(synapterTiny, what = "light")   ## or what="full"
-writeMatchedEMRTs(synapterTiny, file = "myresults2.csv", what="light")
+writeMergedPeptides(synapterTiny)
+writeMergedPeptides(synapterTiny, file = "myresults.csv")
+writeMatchedEMRTs(synapterTiny)
+writeMatchedEMRTs(synapterTiny, file = "myresults2.csv")
 ## These will export the filter peptide data
 writeIdentPeptides(synapterTiny, file = "myIdentPeptides.csv")
 writeQuantPeptides(synapterTiny, file = "myQuantPeptides.csv")

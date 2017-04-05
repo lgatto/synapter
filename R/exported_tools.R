@@ -15,8 +15,10 @@
 ##' @author Laurent Gatto
 inspectPeptideScores <- function(filename) {
   protein.dataBaseType <- NULL ## no visible binding note
-  x <- read.csv(filename, stringsAsFactor = FALSE)
-  x <- x[, c("peptide.seq", "peptide.score", "peptide.matchType", "protein.dataBaseType")]
+  x <- readcsv(filename, c("peptide.seq" = "c",
+                           "peptide.score" = "d",
+                           "peptide.matchType" = "c",
+                           "protein.dataBaseType" = "c"))
   x <- x[x$peptide.matchType %in% c("PepFrag1", "PepFrag2"), ]
   x <- x[!duplicated(x$peptide.seq), ]
   p <- densityplot( ~ peptide.score | peptide.matchType,
@@ -37,11 +39,12 @@ inspectPeptideScores <- function(filename) {
 ##' @usage
 ##' synapterGuide()
 ##' @author Laurent Gatto
-synapterGuide <- function() 
+synapterGuide <- function()
   vignette("synapter", package = "synapter")
 
 synapterTinyData <- function() {
   f <- system.file("extdata", "04_test_database.fasta", package = "synapter")
   data(synapterTiny, envir = .GlobalEnv)
   .GlobalEnv$synapterTiny$DbFastaFile <- f
+  .GlobalEnv$synapterTiny <- updateObject(.GlobalEnv$synapterTiny)
 }

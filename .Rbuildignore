@@ -1,3 +1,7 @@
 .gitignore
+.gitignores
 README.md
-sandbox
+NEWS.md
+.travis.yml
+sandbox/*
+^docs$
