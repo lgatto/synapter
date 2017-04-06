@@ -47,7 +47,7 @@ Description: The synapter package provides functionality to reanalyse
     accuracy can be combined to other quantitation files to
     maximise identification and quantitation accuracy.
 License: GPL-2
-URL: http://lgatto.github.com/synapter/
+URL: https://lgatto.github.io/synapter/
 VignetteBuilder: knitr
 biocViews: MassSpectrometry, Proteomics, QualityControl
 RoxygenNote: 6.0.1
