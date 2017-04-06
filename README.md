@@ -11,7 +11,9 @@ quantitation accuracy. It also allows to transfer identifications
 across multiple runs to reduce missing data across an experiment.
 
 The official release is the Bioconductor version, available
-[here](http://bioconductor.org/packages/devel/bioc/html/synapter.html).
+[here](http://bioconductor.org/packages/devel/bioc/html/synapter.html). The
+[github page](https://lgatto.github.io/synapter/) is a useful resource
+that gives access to all vignettes and manuals.
 
 ### Installation
 
