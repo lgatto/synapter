@@ -1,4 +1,4 @@
-# Synapter 2.0
+# Synapter 1.99
 
 ## Changes in version 1.99.1
 
