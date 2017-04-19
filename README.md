@@ -41,9 +41,6 @@ for on-line access to the vignette and the reference manual.
 Current: [![Build
 Status](https://travis-ci.org/lgatto/synapter.svg?branch=master)](https://travis-ci.org/lgatto/synapter)
 
-
-Version 2.0: [![Build Status](https://travis-ci.org/lgatto/synapter.svg?branch=2.0)](https://travis-ci.org/lgatto/synapter)
-
 ### PLGS processing
 
 The raw data files produced must first be processed by Water's PLGS
