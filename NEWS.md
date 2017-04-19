@@ -1,5 +1,9 @@
 # Synapter 1.99
 
+## Changes in version 1.99.2
+- update show,MasterPeptides to check of there's a fragmentlibrary
+  slot before trying to access it <2017-04-19 Wed>
+
 ## Changes in version 1.99.1
 
 - update NEWS file <2017-04-11 Tue>

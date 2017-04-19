@@ -39,14 +39,16 @@ setMethod("show", "MasterPeptides",
               cat(paste(f, collapse = "\n"), "\n")
             }
 
-            if (!length(object@fragmentlibrary)) {
-              cat("\n No fragment library.\n")
-            } else {
-              cat("\n Fragment library contains fragments for ",
-                  length(object@fragmentlibrary), " peptides.\n", sep="")
-              cat(paste0(" [", seq_along(object@fragmentfiles), "] ",
-                         basename(object@fragmentfiles), "\n"), sep="")
-            }
+              if (.hasSlot(object, "fragmentlibrary")) {
+                  if (!length(object@fragmentlibrary)) {
+                      cat("\n No fragment library.\n")
+                  } else {
+                      cat("\n Fragment library contains fragments for ",
+                          length(object@fragmentlibrary), " peptides.\n", sep="")
+                      cat(paste0(" [", seq_along(object@fragmentfiles), "] ",
+                                 basename(object@fragmentfiles), "\n"), sep="")
+                  }
+              }
             invisible(NULL)
           })
 
