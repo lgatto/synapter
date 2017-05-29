@@ -1,3 +1,11 @@
+# Synapter 2.1
+
+## Changes in version 2.1.1
+- Partly revert 95f4094 because MSnbase:::utils.applyColumnwiseByGroup is gone.
+
+# Synapter 2.0
+- Version bump for Bioc release version 3.5.
+
 # Synapter 1.99
 
 ## Changes in version 1.99.2
