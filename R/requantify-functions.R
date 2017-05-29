@@ -193,6 +193,17 @@ setMethod("requantify", signature(object="MSnSet"),
   runSums
 }
 
+.applyByChargeState <- function(x, charges, fun, ...) {
+  stopifnot(length(charges) == ncol(x))
+  ucharges <- unique(charges)
+  m <- matrix(NA_real_, ncol=length(ucharges), nrow=nrow(x),
+              dimnames=list(rownames(x), ucharges))
+  for (i in seq(along=ucharges)) {
+    m[, i] <- fun(x[, charges == ucharges[i], drop=FALSE], ...)
+  }
+  m
+}
+
 .requantifyTheoreticalDistribution <- function(x, sequence,
                                                saturationThreshold=Inf,
                                                method=c("mean", "median",
@@ -210,13 +221,12 @@ setMethod("requantify", signature(object="MSnSet"),
   th <- t(t(x)/probs[ci$isotopes])
   th[th == 0L] <- NA_real_
 
-  fun <- switch(match.arg(method),
-                "mean" = function(x)colMeans(x, na.rm=TRUE),
-                "median" = function(x)apply(x, 2, median, na.rm=TRUE),
-                "weighted.mean" = function(x)apply(x, 2,
-                                    function(xx)weighted.mean(xx, w=probs[seq_along(xx)], na.rm=TRUE)))
-
-  r <- t(MSnbase:::utils.applyColumnwiseByGroup(t(th), groupBy = ci$charges, FUN = fun))
+  r <- switch(match.arg(method),
+    "mean" = .applyByChargeState(th, charges, rowMeans, na.rm=TRUE),
+    "median" = .applyByChargeState(th, charges, function(x)apply(x, 1, median,
+                                                                 na.rm=TRUE)),
+    "weighted.mean" = .applyByChargeState(th, charges, function(x)apply(x, 1,
+                          function(xx)weighted.mean(xx, w=probs[seq_along(xx)], na.rm=TRUE))))
   r <- rowSums(r, na.rm=TRUE)
 
   if (!requantifyAll) {
