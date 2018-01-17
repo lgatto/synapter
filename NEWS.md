@@ -3,6 +3,7 @@
 ## Changes in version 2.3.1
 
 - Partly revert 95f4094 because MSnbase:::utils.applyColumnwiseByGroup is gone.
+- Use `html_document` instead of `html_document2` in the vignettes [2018-01-17].
 
 # Synapter 2.1
 
@@ -30,7 +31,7 @@
 
 - Replace 2D grid search (retention time, *m/z*) of synapter1 by 3D grid search
    (retention time, *m/z*, ion mobility); set argument `imdiff = Inf` to get the
-   original 2D grid search; closes #33.
+   original 2D grid search; closes [#33](https://github.com/lgatto/synapter/issues/33).
 - Add `{set,get}ImDiff` methods.
 - `getGrid` returns an array instead of a matrix (because of the new 3D grid
     search) [2014-05-16 Fri].
@@ -39,7 +40,7 @@
 - `plotGrid` gets a new argument "maindim" to decided which of the three
    dimension should be used. [2014-05-16 Fri]
 - Add `filterNonUniqueIdentMatches` to remove matches of multiple
-   identification data to a single quantitation entry (see #111 for details)
+   identification data to a single quantitation entry (see [#111](https://github.com/lgatto/synapter/issues/111) for details)
    [2016-02-22 Mon].
 
 #### Fragment matching
@@ -50,26 +51,26 @@
     `filterNonUniqueMatches`, `filterFragments`,
     `plotCumulativeNumberOfFragments`, `plotFragmentMatchingPerformance`,
     `getIdentificationFragments` and `getQuantitationSpectra`.
-- Integrate a fragment library into *master* objects; closes #63 and #74.
+- Integrate a fragment library into *master* objects; closes [#63](https://github.com/lgatto/synapter/issues/63) and [#74](https://github.com/lgatto/synapter/issues/74).
 
 #### Misc
 
 - Allow to use an RDS instead of a fasta file as 'Unique Peptides Database',
-   adds `createUniquePeptideDbRds`; closes #55 [2014-04-29 Tue].
+   adds `createUniquePeptideDbRds`; closes [#55](https://github.com/lgatto/synapter/issues/55) [2014-04-29 Tue].
 - Introduce `IisL` argument to `dbUniquePeptideSet` which treats I/L as same
    aminoacid if `IisL == TRUE` (default: `IisL = FALSE`);
-   closes #60 [2014-04-30 Wed].
+   closes [#60](https://github.com/lgatto/synapter/issues/60) [2014-04-30 Wed].
 - Add `rescueEMRTs` functions; replaces the argument `mergedEMRTs` in
-    `findEMRTs`; closes #93 [2015-07-26 Sun].
+    `findEMRTs`; closes [#93](https://github.com/lgatto/synapter/issues/93) [2015-07-26 Sun].
 - Add `synergise2` which combines the integrates the new 3D grid search, the
     fragment matching; and uses slightly different default arguments than
-    `synergise1`; closes #119 [2016-10-25 Di].
+    `synergise1`; closes [#119](https://github.com/lgatto/synapter/issues/119) [2016-10-25 Di].
 - Load isotopic distributions from Pep3D data and also export them to MSnSet, to
-    allow the correction of detector saturation; closes #39 [2015-03-29 Sun].
+    allow the correction of detector saturation; closes [#39](https://github.com/lgatto/synapter/issues/39) [2015-03-29 Sun].
 - Add `synapterPlgsAgreement` to find agreement between *synapter* and *PLGS*;
-    closes #73.
+    closes [#73](https://github.com/lgatto/synapter/issues/73).
 - Introduce `modelIntensity` to correct systematic intensity shifts
-   (similar to `modelRt`); closes #116.
+   (similar to `modelRt`); closes [#116](https://github.com/lgatto/synapter/issues/116).
 
 ### Improvements
 
@@ -77,8 +78,8 @@
    file instead of the first instance [2014-05-13 Tue].
 - Add `updateObject` and `validObject` method [2014-11-16 Sun].
 - Rename `QuantPep3DData$Function` column into `QuantPep3DData$matchedEMRTs`;
-   closes #67 [2015-07-26 Sun].
-- Use just unique peptides in master creation (see #107) [2016-01-23 Sat].
+   closes [#67](https://github.com/lgatto/synapter/issues/67) [2015-07-26 Sun].
+- Use just unique peptides in master creation (see [#107](https://github.com/lgatto/synapter/issues/107)) [2016-01-23 Sat].
 - New `rmarkdown` based reports for `synergise1` (synonym to `synergise`) and
    `synergise2`.
 
@@ -86,7 +87,7 @@
 
 - Use new loess model in master creation (now based on m-estimator instead of
    least squares, identical to retention time model in classical synergise
-   workflow; see #107 for details) [2016-01-23 Sat]
+   workflow; see [#107](https://github.com/lgatto/synapter/issues/107) for details) [2016-01-23 Sat]
 - Fix retention time model calculation in `plotFeatures(..., what="some")`
    [2014-04-28 Mon].
 
@@ -99,8 +100,8 @@
 - Add `ClassVersion` field to `Synapter` class [2014-11-21 Fri].
 - Add `Versioned` class as parent class to `MasterPeptides` and
    `MasterFdrResults` [2014-11-22 Sat].
-- Adapt `synergise` to new grid search (closes #81) [2016-10-16 So].
-- Replace `hwriter` by `rmarkdown` report in `synergise`; closes #120.
+- Adapt `synergise` to new grid search (closes [#81](https://github.com/lgatto/synapter/issues/81)) [2016-10-16 So].
+- Replace `hwriter` by `rmarkdown` report in `synergise`; closes [#120](https://github.com/lgatto/synapter/issues/120).
   [2016-10-17 Mon]
 
 ### Removed functions/arguments
@@ -109,9 +110,9 @@
 - Remove unused internal functions: `filterCommonSeq`, `filterKeepUniqueSeq`,
    `filterKeepUniqueProt` [2014-11-27 Thu].
 - Remove "mergedEMRTs" argument from `findEMRTs`. Now `rescueEMRTs` has to be
-   called manually at the end of the processing; close #93 [2015-07-26 Sun]
+   called manually at the end of the processing; close [#93](https://github.com/lgatto/synapter/issues/93) [2015-07-26 Sun]
 - Remove "light" version of `writeMergedPeptides` and `writeMachtedPeptides`
-   (now always the full `data.frame` is saved; see #95) [2016-10-16 Sun]
+   (now always the full `data.frame` is saved; see [#95](https://github.com/lgatto/synapter/issues/95)) [2016-10-16 Sun]
 - Update `synapterTiny` and `synapterTinyData` [2016-10-16 So]
 
 # Synapter 1.13
@@ -151,7 +152,7 @@
 ## Changes in version 1.9.5
 
 - update cross reference to qvalue::plot.qvalue in Synapter man page;
-   closes #86 [2015-03-31 Tue]
+   closes [#86](https://github.com/lgatto/synapter/issues/86) [2015-03-31 Tue]
 
 ## Changes in version 1.9.4
 
@@ -161,7 +162,7 @@
 ## Changes in version 1.9.3
 
 - Filter entries in quantiation final peptides and Pep3D data that don't match
-   in their intensity valus; see #42 for details. [2014-11-26 Wed]
+   in their intensity valus; see [#42](https://github.com/lgatto/synapter/issues/42) for details. [2014-11-26 Wed]
 
 ## Changes in version 1.9.2
 
@@ -188,7 +189,7 @@
 
 ## Changes in version 1.5.7
 
-- Enable setting number of missed cleavages (closes #53) [2014-03-24 Mon]
+- Enable setting number of missed cleavages (closes [#53](https://github.com/lgatto/synapter/issues/53)) [2014-03-24 Mon]
 
 ## Changes in version 1.5.6
 
@@ -196,7 +197,7 @@
    (was 5 before) [2014-03-05 Wed]
 - change the separator in GridDetails' names to ":"
    (was "." before) [2014-03-07 Fri]
-- test for corresponding Pep3D file (closes #42) [2014-03-19 Wed]
+- test for corresponding Pep3D file (closes [#42](https://github.com/lgatto/synapter/issues/42)) [2014-03-19 Wed]
 
 ## Changes in version 1.5.5
 
@@ -245,9 +246,9 @@
 ## Changes in version 1.3.1
 
 - Reporting total number of peptides in dbUniquePeptideSet.
-   Fixes issue #41. [2013-05-13 Mon]
+   Fixes issue [#41](https://github.com/lgatto/synapter/issues/41). [2013-05-13 Mon]
 - New mergedEMRTs arg in findEMRTs.
-   Closes issue #38. [2013-05-13 Mon]
+   Closes issue [#38](https://github.com/lgatto/synapter/issues/38). [2013-05-13 Mon]
 - fixed synapterTiny\$QuantPep3DData, which had the rownames
    as first column synapterTiny\$QuantPep3DData\$X. Detected
    thanks to new mergedEMRTs arg. [2013-05-13 Mon]
@@ -463,7 +464,7 @@
 - started method documentation in Synapter.Rd  [2012-05-11 Fri]
 - import Vennerable::Venn [2012-05-15 Tue]
 - updated makeMasterHDMSe file - now has a 'selection' parameter,
-   fixes issue #27. [2012-05-15 Tue]
+   fixes issue [#27](https://github.com/lgatto/synapter/issues/27). [2012-05-15 Tue]
 
 ## Changes in version 0.8.8
 
@@ -472,7 +473,7 @@
 - added Pavel's PLGS_Data_Processing.pdf slides as vignette [2012-05-03 Thu]
 - added Biobase import to benefit of addVigs2WinMenu [2012-05-03 Thu]
 - new plgsGuide() function to access the PLGS_Data_Processing vignette [2012-05-03 Thu]
-- fixed gui ppm.by label (issue #25) [2012-05-03 Thu]
+- fixed gui ppm.by label (issue [#25](https://github.com/lgatto/synapter/issues/25)) [2012-05-03 Thu]
 - License is GPL-2 [2012-05-03 Thu]
 - vignette improvements [2012-05-03 Thu]
 
@@ -558,7 +559,7 @@
 - non-unique matched features now get NAs except
    for the first column (Function) [2012-04-04 Wed]
 - changed FDR adjustment; it is now possible to choose between
-   'BH' (default), 'Bonferroni' and 'qval' - see issue #22 [2012-04-04 Wed]
+   'BH' (default), 'Bonferroni' and 'qval' - see issue [#22](https://github.com/lgatto/synapter/issues/22) [2012-04-04 Wed]
 - updated plotQvalues accordingly [2012-04-04 Wed]
 - fix in setBestGridParams (== to %in%) to avoid warnings
    when different nrow for prctModel (x) and details (y)
@@ -626,7 +627,7 @@ Changes IN VERSION 0.7.1
    dropped for Synapter class  [2012-03-07 Wed]
 - new dims method [2012-03-07 Wed]
 - best grid parameter selection based on +1/(+1 + -1) proportion
--f correct unique identifications (issue #18) [2012-03-07 Wed]
+-f correct unique identifications (issue [#18](https://github.com/lgatto/synapter/issues/18)) [2012-03-07 Wed]
 
 ## Changes in version 0.6.0
 
@@ -682,7 +683,7 @@ Changes IN VERSION 0.7.1
 Changes IN VERSION 0.4.7
 
 - fixed 'performance' typo in Synapter man [2012-02-09 Thu]
-- fixed bug in performance/getBestGridValue (issues #5 and #6) [2012-02-10 Fri]
+- fixed bug in performance/getBestGridValue (issues [#5](https://github.com/lgatto/synapter/issues/5) and [#6](https://github.com/lgatto/synapter/issues/6)) [2012-02-10 Fri]
 - Updated performance method [2012-02-10 Fri]
 - Added p/q-values to 'light' merged output [2012-02-10 Fri]
 
@@ -695,7 +696,7 @@ Changes IN VERSION 0.4.7
    data.frame (new). [2012-02-09 Thu]
 - doHDMSePredictions now returns a list. [2012-02-09 Thu]
 - added a subet parameter to searchGrid [2012-02-09 Thu]
-- added a performace method (see issue #1) [2012-02-09 Thu]
+- added a performace method (see issue [#1](https://github.com/lgatto/synapter/issues/1)) [2012-02-09 Thu]
 
 ## Changes in version 0.4.5
 

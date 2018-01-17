@@ -3,6 +3,7 @@
 Changes in version 2.3.1
 
 - Partly revert 95f4094 because MSnbase:::utils.applyColumnwiseByGroup is gone.
+- Use `html_document` instead of `html_document2` in the vignettes [2018-01-17].
 
 # Synapter 2.1
 

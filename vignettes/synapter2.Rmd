@@ -14,7 +14,7 @@ abstract: >
   the 3D grid search, fragment matching and correction of detector saturation.
 bibliography: synapter.bib
 output:
-  BiocStyle::html_document2:
+  BiocStyle::html_document:
     toc_float: true
     tidy: TRUE
 vignette: >

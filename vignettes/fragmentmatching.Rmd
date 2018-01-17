@@ -15,7 +15,7 @@ abstract: >
   and remove falsely assigned unique matches as well.
 bibliography: synapter.bib
 output:
-  BiocStyle::html_document2:
+  BiocStyle::html_document:
     toc_float: true
     tidy: TRUE
 vignette: >
