@@ -1,5 +1,3 @@
-
-
 ### Introduction
 
 The `synapter` package provides functionality to re-analyse MSe
@@ -48,6 +46,3 @@ software to produce `synapter` input files. This is described in
 details in the vignette. Additional information with lots of
 screenshots can be found in [these
 slides](http://proteome.sysbiol.cam.ac.uk/lgatto/synapter/PLGS_Data_Processing.pdf).
-
-
-
