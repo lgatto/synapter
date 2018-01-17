@@ -222,10 +222,10 @@ setMethod("requantify", signature(object="MSnSet"),
   th[th == 0L] <- NA_real_
 
   r <- switch(match.arg(method),
-    "mean" = .applyByChargeState(th, charges, rowMeans, na.rm=TRUE),
-    "median" = .applyByChargeState(th, charges, function(x)apply(x, 1, median,
-                                                                 na.rm=TRUE)),
-    "weighted.mean" = .applyByChargeState(th, charges, function(x)apply(x, 1,
+    "mean" = .applyByChargeState(th, ci$charges, rowMeans, na.rm=TRUE),
+    "median" = .applyByChargeState(th, ci$charges, function(x)apply(x, 1, median,
+                                                                    na.rm=TRUE)),
+    "weighted.mean" = .applyByChargeState(th, ci$charges, function(x)apply(x, 1,
                           function(xx)weighted.mean(xx, w=probs[seq_along(xx)], na.rm=TRUE))))
   r <- rowSums(r, na.rm=TRUE)
 
