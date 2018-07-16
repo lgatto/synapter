@@ -7,7 +7,7 @@
 \title{Rescale for TOP3}
 \usage{
 \S4method{rescaleForTop3}{MSnSet,MSnSet}(before, after, saturationThreshold,
-onlyForSaturatedRuns=TRUE, \ldots)
+onlyForSaturatedRuns=TRUE, \dots)
 }
 \arguments{
 \item{before}{An \code{\linkS4class{MSnSet}} object before requantification.}
@@ -21,7 +21,7 @@ given charge state) at which saturation is starting to occur.}
 \item{onlyForSaturatedRuns}{\code{logical}, rescale just runs where at least
 one isotope is affected by saturation.}
 
-\item{\ldots}{further arguments passed to internal functions. Currently
+\item{\dots}{further arguments passed to internal functions. Currently
 ignored.}
 }
 \value{

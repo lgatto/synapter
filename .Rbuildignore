@@ -5,3 +5,4 @@ NEWS.md
 .travis.yml
 sandbox/*
 ^docs$
+^_pkgdown\.yml$

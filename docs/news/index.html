@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>All news • synapter</title>
+<title>Changelog • synapter</title>
 
 <!-- jquery -->
 <script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha384-nrOSfDHtoPMzJHjVTdCopGqIqeYETSXhZDFyniQ8ZHcVy08QesyHcnOUpMpqnmWq" crossorigin="anonymous"></script>
@@ -18,14 +18,24 @@
 <!-- Font Awesome icons -->
 <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-T8Gy5hrqNKT+hzMclPo118YTQO6cYprQmhrYwIiQ/3axmI1hQomh7Ud2hPOy8SP1" crossorigin="anonymous">
 
+<!-- clipboard.js -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/1.7.1/clipboard.min.js" integrity="sha384-cV+rhyOuRHc9Ub/91rihWcGmMmCXDeksTtCihMupQHSsi8GIIRDG0ThDc3HGQFJ3" crossorigin="anonymous"></script>
+
+<!-- sticky kit -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/sticky-kit/1.1.3/sticky-kit.min.js" integrity="sha256-c4Rlo1ZozqTPE2RLuvbusY3+SU1pQaJC0TjuhygMipw=" crossorigin="anonymous"></script>
 
 <!-- pkgdown -->
 <link href="../pkgdown.css" rel="stylesheet">
-<script src="../jquery.sticky-kit.min.js"></script>
 <script src="../pkgdown.js"></script>
 
+
+
+<meta property="og:title" content="Changelog" />
+
+
+
 <!-- mathjax -->
-<script src='https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML'></script>
+<script src='https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML'></script>
 
 <!--[if lt IE 9]>
 <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
@@ -46,24 +56,50 @@
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
       </button>
-      <a class="navbar-brand" href="../index.html">synapter</a>
+      <span class="navbar-brand">
+        <a class="navbar-link" href="../index.html">synapter</a>
+        <span class="label label-default" data-toggle="tooltip" data-placement="bottom" title="Released package">2.5.2</span>
+      </span>
     </div>
+
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
         <li>
+  <a href="../index.html">
+    <span class="fa fa-home fa-lg"></span>
+     
+  </a>
+</li>
+<li>
+  <a href="../articles/synapter.html">Get started</a>
+</li>
+<li>
   <a href="../reference/index.html">Reference</a>
 </li>
-<li>
-  <a href="../articles/index.html">Articles</a>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    Articles
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="../articles/fragmentmatching.html">Fragment matching using *synapter*</a>
+    </li>
+    <li>
+      <a href="../articles/synapter2.html">Synapter2 and synergise2</a>
+    </li>
+  </ul>
 </li>
 <li>
-  <a href="../news/index.html">News</a>
+  <a href="../news/index.html">Changelog</a>
 </li>
       </ul>
       
       <ul class="nav navbar-nav navbar-right">
         
       </ul>
+      
     </div><!--/.nav-collapse -->
   </div><!--/.container -->
 </div><!--/.navbar -->
@@ -71,17 +107,71 @@
       
       </header>
 
-      <div class="row">
-
-  <div class="col-md-9">
+<div class="row">
+  <div class="col-md-9 contents">
     <div class="page-header">
-      <h1>Change log <small>All releases</small></h1>
+      <h1>Changelog <small></small></h1>
+      
     </div>
 
-    <div class="contents">
+    <div id="synapter-2-5" class="section level1">
+<h1 class="page-header">
+<a href="#synapter-2-5" class="anchor"></a>Synapter 2.5</h1>
+<div id="changes-in-version-2-5-2" class="section level2">
+<h2 class="hasAnchor">
+<a href="#changes-in-version-2-5-2" class="anchor"></a>Changes in version 2.5.2</h2>
+<ul>
+<li>Use <code><a href="http://www.rdocumentation.org/packages/BiocManager/topics/install">BiocManager::install</a></code> [2018-07-16].</li>
+</ul>
+</div>
+</div>
+    <div id="synapter-2-3" class="section level1">
+<h1 class="page-header">
+<a href="#synapter-2-3" class="anchor"></a>Synapter 2.3</h1>
+<div id="changes-in-version-2-3-1" class="section level2">
+<h2 class="hasAnchor">
+<a href="#changes-in-version-2-3-1" class="anchor"></a>Changes in version 2.3.1</h2>
+<ul>
+<li>Partly revert 95f4094 because MSnbase:::utils.applyColumnwiseByGroup is gone.</li>
+<li>Use <code>html_document</code> instead of <code>html_document2</code> in the vignettes [2018-01-17].</li>
+</ul>
+</div>
+</div>
+    <div id="synapter-2-1" class="section level1">
+<h1 class="page-header">
+<a href="#synapter-2-1" class="anchor"></a>Synapter 2.1</h1>
+<div id="changes-in-version-2-1-1" class="section level2">
+<h2 class="hasAnchor">
+<a href="#changes-in-version-2-1-1" class="anchor"></a>Changes in version 2.1.1</h2>
+<ul>
+<li>Partly revert 95f4094 because MSnbase:::utils.applyColumnwiseByGroup is gone.</li>
+</ul>
+</div>
+</div>
     <div id="synapter-2-0" class="section level1">
-<h1 class="hasAnchor">
+<h1 class="page-header">
 <a href="#synapter-2-0" class="anchor"></a>Synapter 2.0</h1>
+<ul>
+<li>Version bump for Bioc release version 3.5.</li>
+</ul>
+</div>
+    <div id="synapter-1-99" class="section level1">
+<h1 class="page-header">
+<a href="#synapter-1-99" class="anchor"></a>Synapter 1.99</h1>
+<div id="changes-in-version-1-99-2" class="section level2">
+<h2 class="hasAnchor">
+<a href="#changes-in-version-1-99-2" class="anchor"></a>Changes in version 1.99.2</h2>
+<ul>
+<li>update show,MasterPeptides to check of there’s a fragmentlibrary slot before trying to access it &lt;2017-04-19 Wed&gt;</li>
+</ul>
+</div>
+<div id="changes-in-version-1-99-1" class="section level2">
+<h2 class="hasAnchor">
+<a href="#changes-in-version-1-99-1" class="anchor"></a>Changes in version 1.99.1</h2>
+<ul>
+<li>update NEWS file &lt;2017-04-11 Tue&gt;</li>
+</ul>
+</div>
 <div id="changes-in-version-1-99-0" class="section level2">
 <h2 class="hasAnchor">
 <a href="#changes-in-version-1-99-0" class="anchor"></a>Changes in version 1.99.0</h2>
@@ -92,7 +182,7 @@
 <h4 class="hasAnchor">
 <a href="#ion-mobilitygrid-search-" class="anchor"></a>Ion mobility/Grid search.</h4>
 <ul>
-<li>Replace 2D grid search (retention time, <em>m/z</em>) of synapter1 by 3D grid search (retention time, <em>m/z</em>, ion mobility); set argument <code>imdiff = Inf</code> to get the original 2D grid search; closes #33.</li>
+<li>Replace 2D grid search (retention time, <em>m/z</em>) of synapter1 by 3D grid search (retention time, <em>m/z</em>, ion mobility); set argument <code>imdiff = Inf</code> to get the original 2D grid search; closes <a href="https://github.com/lgatto/synapter/issues/33">#33</a>.</li>
 <li>Add <code>{set,get}ImDiff</code> methods.</li>
 <li>
 <code>getGrid</code> returns an array instead of a matrix (because of the new 3D grid search) [2014-05-16 Fri].</li>
@@ -100,7 +190,7 @@
 <code><a href="../reference/Synapter.html">plotFeatures(..., what = "all")</a></code> gains a new argument: “ionmobilty” to plot <em>m/z</em> vs ionmobility as well. [2014-05-16 Fri]</li>
 <li>
 <code>plotGrid</code> gets a new argument “maindim” to decided which of the three dimension should be used. [2014-05-16 Fri]</li>
-<li>Add <code>filterNonUniqueIdentMatches</code> to remove matches of multiple identification data to a single quantitation entry (see #111 for details) [2016-02-22 Mon].</li>
+<li>Add <code>filterNonUniqueIdentMatches</code> to remove matches of multiple identification data to a single quantitation entry (see <a href="https://github.com/lgatto/synapter/issues/111">#111</a> for details) [2016-02-22 Mon].</li>
 </ul>
 </div>
 <div id="fragment-matching" class="section level4">
@@ -109,20 +199,20 @@
 <ul>
 <li>Load identification fragments (<code>final_fragments.csv</code>) and quantitation spectra (<code>Spectrum.xml</code>) via <code>Synapter</code> constructor.</li>
 <li>New functions: <code>fragmentMatchingPerformance</code>, <code>filterUniqueMatches</code>, <code>filterNonUniqueMatches</code>, <code>filterFragments</code>, <code>plotCumulativeNumberOfFragments</code>, <code>plotFragmentMatchingPerformance</code>, <code>getIdentificationFragments</code> and <code>getQuantitationSpectra</code>.</li>
-<li>Integrate a fragment library into <em>master</em> objects; closes #63 and #74.</li>
+<li>Integrate a fragment library into <em>master</em> objects; closes <a href="https://github.com/lgatto/synapter/issues/63">#63</a> and <a href="https://github.com/lgatto/synapter/issues/74">#74</a>.</li>
 </ul>
 </div>
 <div id="misc" class="section level4">
 <h4 class="hasAnchor">
 <a href="#misc" class="anchor"></a>Misc</h4>
 <ul>
-<li>Allow to use an RDS instead of a fasta file as ‘Unique Peptides Database’, adds <code>createUniquePeptideDbRds</code>; closes #55 [2014-04-29 Tue].</li>
-<li>Introduce <code>IisL</code> argument to <code>dbUniquePeptideSet</code> which treats I/L as same aminoacid if <code>IisL == TRUE</code> (default: <code>IisL = FALSE</code>); closes #60 [2014-04-30 Wed].</li>
-<li>Add <code>rescueEMRTs</code> functions; replaces the argument <code>mergedEMRTs</code> in <code>findEMRTs</code>; closes #93 [2015-07-26 Sun].</li>
-<li>Add <code>synergise2</code> which combines the integrates the new 3D grid search, the fragment matching; and uses slightly different default arguments than <code>synergise1</code>; closes #119 [2016-10-25 Di].</li>
-<li>Load isotopic distributions from Pep3D data and also export them to MSnSet, to allow the correction of detector saturation; closes #39 [2015-03-29 Sun].</li>
-<li>Add <code>synapterPlgsAgreement</code> to find agreement between <em>synapter</em> and <em>PLGS</em>; closes #73.</li>
-<li>Introduce <code>modelIntensity</code> to correct systematic intensity shifts (similar to <code>modelRt</code>); closes #116.</li>
+<li>Allow to use an RDS instead of a fasta file as ‘Unique Peptides Database’, adds <code>createUniquePeptideDbRds</code>; closes <a href="https://github.com/lgatto/synapter/issues/55">#55</a> [2014-04-29 Tue].</li>
+<li>Introduce <code>IisL</code> argument to <code>dbUniquePeptideSet</code> which treats I/L as same aminoacid if <code>IisL == TRUE</code> (default: <code>IisL = FALSE</code>); closes <a href="https://github.com/lgatto/synapter/issues/60">#60</a> [2014-04-30 Wed].</li>
+<li>Add <code>rescueEMRTs</code> functions; replaces the argument <code>mergedEMRTs</code> in <code>findEMRTs</code>; closes <a href="https://github.com/lgatto/synapter/issues/93">#93</a> [2015-07-26 Sun].</li>
+<li>Add <code>synergise2</code> which combines the integrates the new 3D grid search, the fragment matching; and uses slightly different default arguments than <code>synergise1</code>; closes <a href="https://github.com/lgatto/synapter/issues/119">#119</a> [2016-10-25 Di].</li>
+<li>Load isotopic distributions from Pep3D data and also export them to MSnSet, to allow the correction of detector saturation; closes <a href="https://github.com/lgatto/synapter/issues/39">#39</a> [2015-03-29 Sun].</li>
+<li>Add <code>synapterPlgsAgreement</code> to find agreement between <em>synapter</em> and <em>PLGS</em>; closes <a href="https://github.com/lgatto/synapter/issues/73">#73</a>.</li>
+<li>Introduce <code>modelIntensity</code> to correct systematic intensity shifts (similar to <code>modelRt</code>); closes <a href="https://github.com/lgatto/synapter/issues/116">#116</a>.</li>
 </ul>
 </div>
 </div>
@@ -132,8 +222,8 @@
 <ul>
 <li>Extract the ion that was used for identification (<code>isFid == 1</code>) from the Pep3D file instead of the first instance [2014-05-13 Tue].</li>
 <li>Add <code>updateObject</code> and <code>validObject</code> method [2014-11-16 Sun].</li>
-<li>Rename <code>QuantPep3DData$Function</code> column into <code>QuantPep3DData$matchedEMRTs</code>; closes #67 [2015-07-26 Sun].</li>
-<li>Use just unique peptides in master creation (see #107) [2016-01-23 Sat].</li>
+<li>Rename <code>QuantPep3DData$Function</code> column into <code>QuantPep3DData$matchedEMRTs</code>; closes <a href="https://github.com/lgatto/synapter/issues/67">#67</a> [2015-07-26 Sun].</li>
+<li>Use just unique peptides in master creation (see <a href="https://github.com/lgatto/synapter/issues/107">#107</a>) [2016-01-23 Sat].</li>
 <li>New <code>rmarkdown</code> based reports for <code>synergise1</code> (synonym to <code>synergise</code>) and <code>synergise2</code>.</li>
 </ul>
 </div>
@@ -141,7 +231,7 @@
 <h3 class="hasAnchor">
 <a href="#bugfixes" class="anchor"></a>Bugfixes</h3>
 <ul>
-<li>Use new loess model in master creation (now based on m-estimator instead of least squares, identical to retention time model in classical synergise workflow; see #107 for details) [2016-01-23 Sat]</li>
+<li>Use new loess model in master creation (now based on m-estimator instead of least squares, identical to retention time model in classical synergise workflow; see <a href="https://github.com/lgatto/synapter/issues/107">#107</a> for details) [2016-01-23 Sat]</li>
 <li>Fix retention time model calculation in <code><a href="../reference/Synapter.html">plotFeatures(..., what="some")</a></code> [2014-04-28 Mon].</li>
 </ul>
 </div>
@@ -154,8 +244,8 @@
 <li>Replace <code>any(is.na(...)</code> by <code>anyNA(...)</code>; <em>synapter</em> depends on <code>R &gt;= 3.1.0</code> now [2014-11-01 Sat].</li>
 <li>Add <code>ClassVersion</code> field to <code>Synapter</code> class [2014-11-21 Fri].</li>
 <li>Add <code>Versioned</code> class as parent class to <code>MasterPeptides</code> and <code>MasterFdrResults</code> [2014-11-22 Sat].</li>
-<li>Adapt <code>synergise</code> to new grid search (closes #81) [2016-10-16 So].</li>
-<li>Replace <code>hwriter</code> by <code>rmarkdown</code> report in <code>synergise</code>; closes #120. [2016-10-17 Mon]</li>
+<li>Adapt <code>synergise</code> to new grid search (closes <a href="https://github.com/lgatto/synapter/issues/81">#81</a>) [2016-10-16 So].</li>
+<li>Replace <code>hwriter</code> by <code>rmarkdown</code> report in <code>synergise</code>; closes <a href="https://github.com/lgatto/synapter/issues/120">#120</a>. [2016-10-17 Mon]</li>
 </ul>
 </div>
 <div id="removed-functionsarguments" class="section level3">
@@ -164,15 +254,15 @@
 <ul>
 <li>Remove <code>synapterGUI</code>.</li>
 <li>Remove unused internal functions: <code>filterCommonSeq</code>, <code>filterKeepUniqueSeq</code>, <code>filterKeepUniqueProt</code> [2014-11-27 Thu].</li>
-<li>Remove “mergedEMRTs” argument from <code>findEMRTs</code>. Now <code>rescueEMRTs</code> has to be called manually at the end of the processing; close #93 [2015-07-26 Sun]</li>
-<li>Remove “light” version of <code>writeMergedPeptides</code> and <code>writeMachtedPeptides</code> (now always the full <code>data.frame</code> is saved; see #95) [2016-10-16 Sun]</li>
+<li>Remove “mergedEMRTs” argument from <code>findEMRTs</code>. Now <code>rescueEMRTs</code> has to be called manually at the end of the processing; close <a href="https://github.com/lgatto/synapter/issues/93">#93</a> [2015-07-26 Sun]</li>
+<li>Remove “light” version of <code>writeMergedPeptides</code> and <code>writeMachtedPeptides</code> (now always the full <code>data.frame</code> is saved; see <a href="https://github.com/lgatto/synapter/issues/95">#95</a>) [2016-10-16 Sun]</li>
 <li>Update <code>synapterTiny</code> and <code>synapterTinyData</code> [2016-10-16 So]</li>
 </ul>
 </div>
 </div>
 </div>
     <div id="synapter-1-13" class="section level1">
-<h1 class="hasAnchor">
+<h1 class="page-header">
 <a href="#synapter-1-13" class="anchor"></a>Synapter 1.13</h1>
 <div id="changes-in-version-1-13-1" class="section level2">
 <h2 class="hasAnchor">
@@ -191,7 +281,7 @@
 </div>
 </div>
     <div id="synapter-1-12" class="section level1">
-<h1 class="hasAnchor">
+<h1 class="page-header">
 <a href="#synapter-1-12" class="anchor"></a>Synapter 1.12</h1>
 <div id="changes-in-version-1-12-0" class="section level2">
 <h2 class="hasAnchor">
@@ -202,7 +292,7 @@
 </div>
 </div>
     <div id="synapter-1-11" class="section level1">
-<h1 class="hasAnchor">
+<h1 class="page-header">
 <a href="#synapter-1-11" class="anchor"></a>Synapter 1.11</h1>
 <div id="changes-in-version-1-11-2" class="section level2">
 <h2 class="hasAnchor">
@@ -220,13 +310,13 @@
 </div>
 </div>
     <div id="synapter-1-9" class="section level1">
-<h1 class="hasAnchor">
+<h1 class="page-header">
 <a href="#synapter-1-9" class="anchor"></a>Synapter 1.9</h1>
 <div id="changes-in-version-1-9-5" class="section level2">
 <h2 class="hasAnchor">
 <a href="#changes-in-version-1-9-5" class="anchor"></a>Changes in version 1.9.5</h2>
 <ul>
-<li>update cross reference to qvalue::plot.qvalue in Synapter man page; closes #86 [2015-03-31 Tue]</li>
+<li>update cross reference to qvalue::plot.qvalue in Synapter man page; closes <a href="https://github.com/lgatto/synapter/issues/86">#86</a> [2015-03-31 Tue]</li>
 </ul>
 </div>
 <div id="changes-in-version-1-9-4" class="section level2">
@@ -241,7 +331,7 @@
 <h2 class="hasAnchor">
 <a href="#changes-in-version-1-9-3" class="anchor"></a>Changes in version 1.9.3</h2>
 <ul>
-<li>Filter entries in quantiation final peptides and Pep3D data that don’t match in their intensity valus; see #42 for details. [2014-11-26 Wed]</li>
+<li>Filter entries in quantiation final peptides and Pep3D data that don’t match in their intensity valus; see <a href="https://github.com/lgatto/synapter/issues/42">#42</a> for details. [2014-11-26 Wed]</li>
 </ul>
 </div>
 <div id="changes-in-version-1-9-2" class="section level2">
@@ -268,7 +358,7 @@
 </div>
 </div>
     <div id="synapter-1-7" class="section level1">
-<h1 class="hasAnchor">
+<h1 class="page-header">
 <a href="#synapter-1-7" class="anchor"></a>Synapter 1.7</h1>
 <div id="changes-in-version-1-7-0" class="section level2">
 <h2 class="hasAnchor">
@@ -280,13 +370,13 @@
 </div>
 </div>
     <div id="synapter-1-5" class="section level1">
-<h1 class="hasAnchor">
+<h1 class="page-header">
 <a href="#synapter-1-5" class="anchor"></a>Synapter 1.5</h1>
 <div id="changes-in-version-1-5-7" class="section level2">
 <h2 class="hasAnchor">
 <a href="#changes-in-version-1-5-7" class="anchor"></a>Changes in version 1.5.7</h2>
 <ul>
-<li>Enable setting number of missed cleavages (closes #53) [2014-03-24 Mon]</li>
+<li>Enable setting number of missed cleavages (closes <a href="https://github.com/lgatto/synapter/issues/53">#53</a>) [2014-03-24 Mon]</li>
 </ul>
 </div>
 <div id="changes-in-version-1-5-6" class="section level2">
@@ -295,7 +385,7 @@
 <ul>
 <li>change the default value of grid.ppm.from to 2 (was 5 before) [2014-03-05 Wed]</li>
 <li>change the separator in GridDetails’ names to “:” (was “.” before) [2014-03-07 Fri]</li>
-<li>test for corresponding Pep3D file (closes #42) [2014-03-19 Wed]</li>
+<li>test for corresponding Pep3D file (closes <a href="https://github.com/lgatto/synapter/issues/42">#42</a>) [2014-03-19 Wed]</li>
 </ul>
 </div>
 <div id="changes-in-version-1-5-5" class="section level2">
@@ -339,7 +429,7 @@
 </div>
 </div>
     <div id="synapter-1-3" class="section level1">
-<h1 class="hasAnchor">
+<h1 class="page-header">
 <a href="#synapter-1-3" class="anchor"></a>Synapter 1.3</h1>
 <div id="changes-in-version-1-3-4" class="section level2">
 <h2 class="hasAnchor">
@@ -367,8 +457,8 @@
 <h2 class="hasAnchor">
 <a href="#changes-in-version-1-3-1" class="anchor"></a>Changes in version 1.3.1</h2>
 <ul>
-<li>Reporting total number of peptides in dbUniquePeptideSet. Fixes issue #41. [2013-05-13 Mon]</li>
-<li>New mergedEMRTs arg in findEMRTs. Closes issue #38. [2013-05-13 Mon]</li>
+<li>Reporting total number of peptides in dbUniquePeptideSet. Fixes issue <a href="https://github.com/lgatto/synapter/issues/41">#41</a>. [2013-05-13 Mon]</li>
+<li>New mergedEMRTs arg in findEMRTs. Closes issue <a href="https://github.com/lgatto/synapter/issues/38">#38</a>. [2013-05-13 Mon]</li>
 <li>fixed synapterTiny\$QuantPep3DData, which had the rownames as first column synapterTiny\$QuantPep3DData\$X. Detected thanks to new mergedEMRTs arg. [2013-05-13 Mon]</li>
 <li>added mergedEMRTs arg to synergise [2013-05-22 Wed]</li>
 <li>Synapter checks that one file per list element is passed [2013-05-28 Tue]</li>
@@ -389,7 +479,7 @@
 </div>
 </div>
     <div id="synapter-1-2" class="section level1">
-<h1 class="hasAnchor">
+<h1 class="page-header">
 <a href="#synapter-1-2" class="anchor"></a>Synapter 1.2</h1>
 <div id="changes-in-version-1-2-0" class="section level2">
 <h2 class="hasAnchor">
@@ -400,7 +490,7 @@
 </div>
 </div>
     <div id="synapter-1-1" class="section level1">
-<h1 class="hasAnchor">
+<h1 class="page-header">
 <a href="#synapter-1-1" class="anchor"></a>Synapter 1.1</h1>
 <div id="changes-in-version-1-1-5" class="section level2">
 <h2 class="hasAnchor">
@@ -446,14 +536,17 @@
 </ul>
 </div>
 </div>
-    </div>
   </div>
 
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <div id="tocnav">
       <h2>Contents</h2>
       <ul class="nav nav-pills nav-stacked">
+        <li><a href="#synapter-2-5">2.5</a></li>
+        <li><a href="#synapter-2-3">2.3</a></li>
+        <li><a href="#synapter-2-1">2.1</a></li>
         <li><a href="#synapter-2-0">2.0</a></li>
+        <li><a href="#synapter-1-99">1.99</a></li>
         <li><a href="#synapter-1-13">1.13</a></li>
         <li><a href="#synapter-1-12">1.12</a></li>
         <li><a href="#synapter-1-11">1.11</a></li>
@@ -475,11 +568,14 @@
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="http://hadley.github.io/pkgdown/">pkgdown</a>.</p>
+  <p>Site built with <a href="http://pkgdown.r-lib.org/">pkgdown</a>.</p>
 </div>
 
       </footer>
    </div>
 
+  
+
   </body>
 </html>
+

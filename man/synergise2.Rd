@@ -10,16 +10,17 @@ synergise2(filenames, master = FALSE, object, outputdir,
   "\%Y\%m\%d-\%H\%M\%S"), ".html"), fdr = 0.01, fdrMethod = c("BH",
   "Bonferroni", "qval"), fpr = 0.01, peplen = 7, missedCleavages = 2,
   IisL = FALSE, identppm = 20, quantppm = 20, uniquepep = TRUE,
-  span.rt = 0.05, span.int = 0.05, grid.ppm.from = 2, grid.ppm.to = 20,
-  grid.ppm.by = 2, grid.nsd.from = 0.5, grid.nsd.to = 5,
-  grid.nsd.by = 0.5, grid.imdiffs.from = 0.6, grid.imdiffs.to = 1.6,
-  grid.imdiffs.by = 0.2, grid.subset = 1, grid.n = 0,
-  grid.param.sel = c("auto", "model", "total", "details"), fm.ppm = 25,
-  fm.ident.minIntensity = 70, fm.quant.minIntensity = 70,
-  fm.minCommon = 1, fm.minDelta = 1, fm.fdr.unique = 0.05,
-  fm.fdr.nonunique = 0.05, mergedEMRTs = c("rescue", "copy", "transfer"),
-  template = system.file("reports", "synergise2.Rmd", package = "synapter"),
-  verbose = interactive())
+  span.rt = 0.05, span.int = 0.05, grid.ppm.from = 2,
+  grid.ppm.to = 20, grid.ppm.by = 2, grid.nsd.from = 0.5,
+  grid.nsd.to = 5, grid.nsd.by = 0.5, grid.imdiffs.from = 0.6,
+  grid.imdiffs.to = 1.6, grid.imdiffs.by = 0.2, grid.subset = 1,
+  grid.n = 0, grid.param.sel = c("auto", "model", "total", "details"),
+  fm.ppm = 25, fm.ident.minIntensity = 70,
+  fm.quant.minIntensity = 70, fm.minCommon = 1, fm.minDelta = 1,
+  fm.fdr.unique = 0.05, fm.fdr.nonunique = 0.05,
+  mergedEMRTs = c("rescue", "copy", "transfer"),
+  template = system.file("reports", "synergise2.Rmd", package =
+  "synapter"), verbose = interactive())
 }
 \arguments{
 \item{filenames}{A named \code{list} of file names to be load. The

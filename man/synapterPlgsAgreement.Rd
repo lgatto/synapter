@@ -6,12 +6,12 @@
 \alias{synapterPlgsAgreement}
 \title{Synapter/PLGS Agreement}
 \usage{
-\S4method{synapterPlgsAgreement}{MSnSet}(object, \ldots)
+\S4method{synapterPlgsAgreement}{MSnSet}(object, \dots)
 }
 \arguments{
 \item{object}{An \code{\linkS4class{MSnSet}} object.}
 
-\item{\ldots}{further arguments, not used yet.}
+\item{\dots}{further arguments, not used yet.}
 }
 \value{
 \code{\linkS4class{MSnSet}} where the columns \code{nIdentified},

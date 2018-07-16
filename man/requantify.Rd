@@ -8,7 +8,7 @@
 \usage{
 \S4method{requantify}{MSnSet}(object, saturationThreshold,
 method=c("sum", "reference", "th.mean", "th.median",
-"th.weighted.mean"), \ldots)
+"th.weighted.mean"), \dots)
 }
 \arguments{
 \item{object}{An \code{\linkS4class{MSnSet}} object.}
@@ -19,7 +19,7 @@ given charge state) at which saturation is starting to occur.}
 \item{method}{\code{character}, requantification method, please see details
 section.}
 
-\item{\ldots}{further arguments passed to internal functions. Currently
+\item{\dots}{further arguments passed to internal functions. Currently
 \code{onlyCommonIsotopes} for \code{method="sum"} and \code{requantifyAll}
 for \code{method=c("th.mean", "th.median", "th.weighted.mean")} are supported.}
 }

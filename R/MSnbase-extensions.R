@@ -39,10 +39,10 @@
 #' }
 #'
 #' @usage
-#' \S4method{synapterPlgsAgreement}{MSnSet}(object, \ldots)
+#' \S4method{synapterPlgsAgreement}{MSnSet}(object, \dots)
 #'
 #' @param object An \code{\linkS4class{MSnSet}} object.
-#' @param \ldots further arguments, not used yet.
+#' @param \dots further arguments, not used yet.
 #' @return \code{\linkS4class{MSnSet}} where the columns \code{nIdentified},
 #' \code{nAgree}, \code{nDisagree} and \code{synapterPlgsAgreementRatio} were
 #' added to the feature data.
@@ -86,7 +86,7 @@ setMethod("synapterPlgsAgreement", signature(object="MSnSet"),
 #'
 #' @param object An \code{\linkS4class{MSnSet}} object.
 #' @param method Correct (\code{*}) or undo correction (\code{/}).
-#' @param \ldots further arguments, not used yet.
+#' @param \dots further arguments, not used yet.
 #' @return A \code{\linkS4class{MSnSet}} with corrected intensity values
 #' (\code{exprs}).
 #'
