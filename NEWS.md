@@ -1,7 +1,9 @@
-# Synapter 2.3
+# Synapter 2.5
 
-## Changes in version 2.3.2
-- Nothing yet.
+## Changes in version 2.5.2
+- Use `BiocManager::install` [2018-07-16].
+
+# Synapter 2.3
 
 ## Changes in version 2.3.1
 

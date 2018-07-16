@@ -19,8 +19,9 @@ that gives access to all vignettes and manuals.
 [Bioconductor](http://www.bioconductor.org) repository. The package
 and its dependencies can be installed with
 
-     source("http://www.bioconductor.org/biocLite.R")
-     biocLite("synapter")
+    if (!require("BiocManager"))
+        install.packages("BiocManager")
+    BiocManager::install("synapter")
 
 ### Help
 

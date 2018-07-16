@@ -243,7 +243,7 @@ matches out of the non unique ones.
 Like in the initial `r Biocpkg("synapter")` workflow, it is possible to export the
 `MatchedEMRT` results using the `writeMatchedEMRTs` function. The table has
 some new columns that correspond to the fragment matching procedure,
-e.g. `FragmentMatching`, \ldots.
+e.g. `FragmentMatching`, \dots.
 
 ```{r export, eval=FALSE}
 writeMatchedEMRTs(synobj2, file = "MatchedEMRTs.csv")

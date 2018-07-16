@@ -142,11 +142,9 @@ installation of the package and all its dependencies should be done
 using the dedicated Bioconductor infrastructure as shown below:
 
 ```{r install,  eval=FALSE}
-source("https://bioconductor.org/biocLite.R")
-## or, if you have already used the above before
-library("BiocInstaller")
-## and to install the package
-biocLite("synapter")
+if (!require("BiocManager"))
+    install.packages("BiocManager")
+BiocManager::install("synapter")
 ```
 
 After installation, `r Biocpkg("synapter")` will have to be explicitly loaded with

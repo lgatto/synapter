@@ -45,14 +45,14 @@
 #' @usage
 #' \S4method{requantify}{MSnSet}(object, saturationThreshold,
 #' method=c("sum", "reference", "th.mean", "th.median",
-#' "th.weighted.mean"), \ldots)
+#' "th.weighted.mean"), \dots)
 #'
 #' @param object An \code{\linkS4class{MSnSet}} object.
 #' @param saturationThreshold \code{double}, intensity of an ion (isotope of a
 #' given charge state) at which saturation is starting to occur.
 #' @param method \code{character}, requantification method, please see details
 #' section.
-#' @param \ldots further arguments passed to internal functions. Currently
+#' @param \dots further arguments passed to internal functions. Currently
 #' \code{onlyCommonIsotopes} for \code{method="sum"} and \code{requantifyAll}
 #' for \code{method=c("th.mean", "th.median", "th.weighted.mean")} are supported.
 #' @return \code{\linkS4class{MSnSet}} where the
@@ -110,7 +110,7 @@ setMethod("requantify", signature(object="MSnSet"),
     }))
   } else {
     if (!requireNamespace("BRAIN")) {
-      stop("Please install the BRAIN package via 'biocLite(\"BRAIN\")' to use this method.")
+      stop("Please install the BRAIN package via 'BiocManager::install(\"BRAIN\")' to use this method.")
     }
     ## remove "th." prefix
     method <- substring(method, 4, nchar(method))
@@ -261,7 +261,7 @@ setMethod("requantify", signature(object="MSnSet"),
 #'
 #' @usage
 #' \S4method{rescaleForTop3}{MSnSet,MSnSet}(before, after, saturationThreshold,
-#' onlyForSaturatedRuns=TRUE, \ldots)
+#' onlyForSaturatedRuns=TRUE, \dots)
 #'
 #' @param before An \code{\linkS4class{MSnSet}} object before requantification.
 #' @param after The same \code{\linkS4class{MSnSet}} object as \code{before} but
@@ -270,7 +270,7 @@ setMethod("requantify", signature(object="MSnSet"),
 #' given charge state) at which saturation is starting to occur.
 #' @param onlyForSaturatedRuns \code{logical}, rescale just runs where at least
 #' one isotope is affected by saturation.
-#' @param \ldots further arguments passed to internal functions. Currently
+#' @param \dots further arguments passed to internal functions. Currently
 #' ignored.
 #' @return \code{\linkS4class{MSnSet}} where the
 #' \code{assayData} are requantified.
