@@ -3,6 +3,14 @@
 ## Changes in version 2.5.2
 - Use `BiocManager::install` [2018-07-16].
 
+## Changes in version 2.5.0
+- New version for Bioconductor devel
+
+# Synapter 2.4
+
+## Changes in version 2.4.0
+- New version for Bioconductor release
+
 # Synapter 2.3
 
 ## Changes in version 2.3.1
