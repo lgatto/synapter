@@ -143,14 +143,6 @@ inlist &lt;- list(
 synobj2 &lt;- Synapter(inlist, master=FALSE)</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">synobj2 &lt;-<span class="st"> </span><span class="kw"><a href="../reference/synergise.html">synergise1</a></span>(<span class="dt">object=</span>synobj2,
                       <span class="dt">outputdir=</span><span class="kw">tempdir</span>())</code></pre></div>
-<pre><code>## Warning in doTryCatch(return(expr), name, parentenv, handler): semi-
-## transparency is not supported on this device: reported only once per page
-
-## Warning in doTryCatch(return(expr), name, parentenv, handler): semi-
-## transparency is not supported on this device: reported only once per page
-
-## Warning in doTryCatch(return(expr), name, parentenv, handler): semi-
-## transparency is not supported on this device: reported only once per page</code></pre>
 </div>
 <div id="sec:filtfrag" class="section level1">
 <h1 class="hasAnchor">
@@ -576,57 +568,59 @@ Number of true/false match peptides for different peak matching thresholds and d
 <a href="#sec:sessionInfo" class="anchor"></a>Session information</h1>
 <p>All software and respective versions used to produce this document are listed below.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">sessionInfo</span>()</code></pre></div>
-<pre><code>## R Under development (unstable) (2018-07-01 r74950)
+<pre><code>## R version 3.5.1 Patched (2018-08-16 r75161)
 ## Platform: x86_64-pc-linux-gnu (64-bit)
-## Running under: Debian GNU/Linux 9 (stretch)
+## Running under: Ubuntu 14.04.5 LTS
 ## 
 ## Matrix products: default
-## BLAS: /home/sebastian/opt/R/lib/R/lib/libRblas.so
-## LAPACK: /home/sebastian/opt/R/lib/R/lib/libRlapack.so
+## BLAS: /usr/lib/atlas-base/atlas/libblas.so.3.0
+## LAPACK: /usr/lib/lapack/liblapack.so.3.0
 ## 
 ## locale:
-##  [1] LC_CTYPE=de_DE.UTF-8       LC_NUMERIC=C              
-##  [3] LC_TIME=de_DE.UTF-8        LC_COLLATE=de_DE.UTF-8    
-##  [5] LC_MONETARY=de_DE.UTF-8    LC_MESSAGES=de_DE.UTF-8   
-##  [7] LC_PAPER=de_DE.UTF-8       LC_NAME=C                 
+##  [1] LC_CTYPE=en_GB.UTF-8       LC_NUMERIC=C              
+##  [3] LC_TIME=en_GB.UTF-8        LC_COLLATE=en_GB.UTF-8    
+##  [5] LC_MONETARY=en_GB.UTF-8    LC_MESSAGES=en_GB.UTF-8   
+##  [7] LC_PAPER=en_GB.UTF-8       LC_NAME=C                 
 ##  [9] LC_ADDRESS=C               LC_TELEPHONE=C            
-## [11] LC_MEASUREMENT=de_DE.UTF-8 LC_IDENTIFICATION=C       
+## [11] LC_MEASUREMENT=en_GB.UTF-8 LC_IDENTIFICATION=C       
 ## 
 ## attached base packages:
 ## [1] parallel  stats     graphics  grDevices utils     datasets  methods  
 ## [8] base     
 ## 
 ## other attached packages:
-##  [1] synapterdata_1.19.0 synapter_2.5.1      MSnbase_2.7.2      
-##  [4] ProtGenerics_1.13.0 BiocParallel_1.15.7 mzR_2.15.1         
-##  [7] Rcpp_0.12.17        Biobase_2.41.1      BiocGenerics_0.27.1
-## [10] BiocStyle_2.9.3    
+##  [1] synapterdata_1.18.0 synapter_2.5.2      MSnbase_2.7.4      
+##  [4] ProtGenerics_1.12.0 BiocParallel_1.14.2 mzR_2.15.2         
+##  [7] Rcpp_0.12.18        Biobase_2.40.0      BiocGenerics_0.26.0
+## [10] BiocStyle_2.8.2    
 ## 
 ## loaded via a namespace (and not attached):
-##  [1] vsn_3.49.1            splines_3.6.0         foreach_1.4.4        
-##  [4] assertthat_0.2.0      affy_1.59.0           highr_0.7            
-##  [7] stats4_3.6.0          yaml_2.1.19           impute_1.55.0        
+##  [1] vsn_3.48.1            splines_3.5.1         foreach_1.4.4        
+##  [4] assertthat_0.2.0      highr_0.7             affy_1.58.0          
+##  [7] stats4_3.5.1          yaml_2.2.0            impute_1.54.0        
 ## [10] pillar_1.3.0          backports_1.1.2       lattice_0.20-35      
-## [13] limma_3.37.3          digest_0.6.15         RColorBrewer_1.1-2   
-## [16] XVector_0.21.3        qvalue_2.13.0         colorspace_1.3-2     
-## [19] htmltools_0.3.6       preprocessCore_1.43.0 Matrix_1.2-14        
-## [22] plyr_1.8.4            MALDIquant_1.18       XML_3.98-1.12        
-## [25] pkgconfig_2.0.1       bookdown_0.7          zlibbioc_1.27.0      
-## [28] scales_0.5.0          affyio_1.51.0         cleaver_1.19.0       
-## [31] tibble_1.4.2          IRanges_2.15.14       ggplot2_3.0.0        
-## [34] lazyeval_0.2.1        survival_2.42-6       magrittr_1.5         
-## [37] crayon_1.3.4          memoise_1.1.0         evaluate_0.10.1      
-## [40] fs_1.2.3              doParallel_1.0.11     MASS_7.3-50          
-## [43] xml2_1.2.0            BiocInstaller_1.31.1  tools_3.6.0          
-## [46] hms_0.4.2             stringr_1.3.1         S4Vectors_0.19.17    
-## [49] munsell_0.5.0         Biostrings_2.49.0     pcaMethods_1.73.0    
-## [52] compiler_3.6.0        pkgdown_1.1.0.9000    mzID_1.19.0          
-## [55] rlang_0.2.1           grid_3.6.0            iterators_1.0.10     
-## [58] rmarkdown_1.10        gtable_0.2.0          codetools_0.2-15     
-## [61] multtest_2.37.0       roxygen2_6.0.1.9000   reshape2_1.4.3       
-## [64] R6_2.2.2              knitr_1.20            commonmark_1.5       
-## [67] rprojroot_1.3-2       readr_1.1.1           desc_1.2.0           
-## [70] stringi_1.2.3         xfun_0.3</code></pre>
+## [13] glue_1.3.0            limma_3.36.3          digest_0.6.16        
+## [16] RColorBrewer_1.1-2    XVector_0.20.0        qvalue_2.12.0        
+## [19] colorspace_1.3-2      htmltools_0.3.6       preprocessCore_1.42.0
+## [22] Matrix_1.2-14         plyr_1.8.4            MALDIquant_1.18      
+## [25] XML_3.98-1.16         pkgconfig_2.0.2       bookdown_0.7         
+## [28] zlibbioc_1.26.0       purrr_0.2.5           scales_1.0.0         
+## [31] affyio_1.50.0         cleaver_1.18.0        tibble_1.4.2         
+## [34] IRanges_2.14.11       ggplot2_3.0.0         lazyeval_0.2.1       
+## [37] survival_2.42-6       magrittr_1.5          crayon_1.3.4         
+## [40] memoise_1.1.0         evaluate_0.11         fs_1.2.6             
+## [43] doParallel_1.0.11     MASS_7.3-50           xml2_1.2.0           
+## [46] BiocInstaller_1.30.0  tools_3.5.1           hms_0.4.2            
+## [49] stringr_1.3.1         S4Vectors_0.18.3      munsell_0.5.0        
+## [52] bindrcpp_0.2.2        Biostrings_2.48.0     pcaMethods_1.72.0    
+## [55] compiler_3.5.1        pkgdown_1.1.0         mzID_1.18.0          
+## [58] rlang_0.2.2           grid_3.5.1            iterators_1.0.10     
+## [61] rmarkdown_1.10        gtable_0.2.0          codetools_0.2-15     
+## [64] multtest_2.36.0       roxygen2_6.1.0        reshape2_1.4.3       
+## [67] R6_2.2.2              knitr_1.20            dplyr_0.7.6          
+## [70] bindr_0.1.1           commonmark_1.5        rprojroot_1.3-2      
+## [73] readr_1.1.1           desc_1.2.0            stringi_1.2.4        
+## [76] tidyselect_0.2.4      xfun_0.3</code></pre>
 </div>
 <div id="references" class="section level1 unnumbered">
 <h1 class="hasAnchor">
