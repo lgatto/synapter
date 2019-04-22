@@ -313,7 +313,7 @@
 
 - new devel version bump [2012-10-01 Mon]
 
-# Synapter release candidate
+# Synapter 0.99
 
 ## Changes in version 0.99.15
 
