@@ -2,20 +2,20 @@ Package: synapter
 Type: Package
 Title: Label-free data analysis pipeline for optimal
     identification and quantitation
-Version: 2.7.0
+Version: 2.17.1
 Author: Laurent Gatto, Nick J. Bond, Pavel V. Shliaha and
     Sebastian Gibb.
 Authors@R: c(person(given = "Laurent", family = "Gatto",
-	                  email = "lg390@cam.ac.uk",
+                          email = "laurent.gatto@uclouvain.be",
                     role = c("aut", "cre")),
              person(given = c("Nick", "J."), family = "Bond",
                     role = c("aut")),
              person(given = c("Pavel", "V."), family = "Shliaha",
                     role = c("aut")),
              person(given = "Sebastian", family = "Gibb",
-	                  email = "mail@sebastiangibb.de",
+                          email = "mail@sebastiangibb.de",
                     role = c("aut", "cre")))
-Maintainer: Laurent Gatto <lg390@cam.ac.uk> and
+Maintainer: Laurent Gatto <laurent.gatto@uclouvain.be>
     Sebastian Gibb <mail@sebastiangibb.de>
 Depends:
     R (>= 3.1.0),
@@ -49,5 +49,5 @@ Description: The synapter package provides functionality to reanalyse
 License: GPL-2
 URL: https://lgatto.github.io/synapter/
 VignetteBuilder: knitr
-biocViews: MassSpectrometry, Proteomics, QualityControl
+biocViews: ImmunoOncology, MassSpectrometry, Proteomics, QualityControl
 RoxygenNote: 6.1.0

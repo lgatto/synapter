@@ -1,3 +1,9 @@
+# Synapter 2.17
+
+## Changes in version 2.17.1
+
+- Update Laurent's email address
+
 # Synapter 2.5
 
 ## Changes in version 2.5.2
@@ -313,7 +319,7 @@
 
 - new devel version bump [2012-10-01 Mon]
 
-# Synapter release candidate
+# Synapter 0.99
 
 ## Changes in version 0.99.15
 
