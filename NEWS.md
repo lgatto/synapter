@@ -1,3 +1,9 @@
+# Synapter 2.17
+
+## Changes in version 2.17.1
+
+- Update Laurent's email address
+
 # Synapter 2.5
 
 ## Changes in version 2.5.2
