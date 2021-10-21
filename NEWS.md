@@ -1,5 +1,8 @@
 # Synapter 2.17
 
+## Changes in version 2.17.2
+- fix error in vignette
+
 ## Changes in version 2.17.1
 
 - Update Laurent's email address

@@ -2,7 +2,7 @@
 title: "Fragment matching using *synapter*"
 author:
 - name: Laurent Gatto
-  affiliation: Computational Proteomics Unit, Cambridge, UK.
+  affiliation: UCLouvain
 - name: Sebastian Gibb
   affiliation: Department of Anesthesiology and Intensive Care, University Medicine Greifswald, Germany.
 - name: Pavel V. Shliaha
@@ -64,8 +64,6 @@ synobj2RData()
 ```
 
 In the [next section](\sec:synergise] we describe how `synobj2` was generated.
-The test files used in this vignette can be downloaded from
-http://proteome.sysbiol.cam.ac.uk/lgatto/synapter/data/.
 The following sections then describe the new fragment matching functionality.
 
 # Running `synergise1`{#sec:synergise}
@@ -78,10 +76,11 @@ The additional data needed for the fragment matching procedure are a
 `final_fragment.csv` file for the identification run and a `Spectrum.xml` file
 for the quantitation run.
 
-```{r create-synobj2-file, echo=FALSE, comment=NA}
-cat(readLines(system.file(file.path("scripts", "create_synobj2.R"),
-                          package="synapterdata"), n=13), sep="\n")
-```
+<!-- ```{r create-synobj2-file, echo=FALSE, comment=NA} -->
+<!-- cat(readLines(system.file(file.path("scripts", "create_synobj2.R"), -->
+<!--                           package="synapterdata"), n=13), sep="\n") -->
+<!-- ``` -->
+
 ```{r create_synobj2}
 synobj2 <- synergise1(object=synobj2,
                       outputdir=tempdir())
