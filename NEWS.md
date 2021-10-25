@@ -1,5 +1,8 @@
 # Synapter 2.17
 
+## Changes in version 2.17.3
+- put commented code chunk back in
+
 ## Changes in version 2.17.2
 - fix error in vignette
 
