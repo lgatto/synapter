@@ -1,5 +1,4 @@
 import(cleaver)
-import(knitr)
 import(utils)
 import(MSnbase)
 import(methods)
@@ -17,7 +16,6 @@ importFrom(Biobase, addVigs2WinMenu, isCurrent, updateObject, validMsg, "exprs<-
 importFrom(Biostrings, readAAStringSet)
 importFrom(tools, file_ext, file_path_sans_ext)
 importFrom(readr, read_csv, read_tsv, read_lines, cols_only)
-importFrom(rmarkdown, render)
 
 export(Synapter, ## constructor
        as.MSnSet.Synapter,
